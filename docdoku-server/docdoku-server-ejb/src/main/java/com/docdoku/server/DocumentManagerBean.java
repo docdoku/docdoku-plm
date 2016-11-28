@@ -752,7 +752,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
 
-        if(!aclUserEntries.isEmpty() || !aclGroupEntries.isEmpty()){
+        if(aclUserEntries != null && !aclUserEntries.isEmpty() || aclGroupEntries != null &&  !aclGroupEntries.isEmpty()){
             ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), aclUserEntries, aclGroupEntries);
             docR.setACL(acl);
         }
@@ -1543,7 +1543,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
 
-        if (!aclUserEntries.isEmpty() || !aclGroupEntries.isEmpty()) {
+        if(aclUserEntries != null && !aclUserEntries.isEmpty() || aclGroupEntries != null && !aclGroupEntries.isEmpty()){
             ACLFactory aclFactory = new ACLFactory(em);
             ACL acl = aclFactory.createACL(docR.getWorkspaceId(), aclUserEntries, aclGroupEntries);
             docR.setACL(acl);

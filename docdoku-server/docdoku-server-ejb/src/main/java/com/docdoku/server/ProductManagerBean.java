@@ -303,7 +303,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         }
 
-        if(!pACLUserEntries.isEmpty() || !pACLUserGroupEntries.isEmpty()){
+        if(pACLUserEntries != null && !pACLUserEntries.isEmpty() || pACLUserGroupEntries != null &&  !pACLUserGroupEntries.isEmpty()){
             ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), pACLUserEntries, pACLUserGroupEntries);
             newRevision.setACL(acl);
         }
@@ -2278,7 +2278,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         partR.setDescription(pDescription);
 
-        if(!pACLUserEntries.isEmpty() || !pACLUserGroupEntries.isEmpty()){
+        if(pACLUserEntries != null && !pACLUserEntries.isEmpty() || pACLUserGroupEntries != null &&  !pACLUserGroupEntries.isEmpty()){
             ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), pACLUserEntries, pACLUserGroupEntries);
             partR.setACL(acl);
         }

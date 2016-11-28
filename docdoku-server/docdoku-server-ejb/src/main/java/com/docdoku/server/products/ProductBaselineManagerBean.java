@@ -417,7 +417,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,String> userEntries, Map<String,String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
+    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,String> aclUserEntries, Map<String,String> aclUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
 
         Locale locale = new Locale(user.getLanguage());
@@ -428,9 +428,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         ProductConfiguration productConfiguration = new ProductConfiguration(user,configurationItem, name,description,null);
 
-        if (!userEntries.isEmpty() || !groupEntries.isEmpty()) {
+        if(aclUserEntries != null && !aclUserEntries.isEmpty() || aclUserGroupEntries != null &&  !aclUserGroupEntries.isEmpty()){
             ACLFactory aclFactory = new ACLFactory(em);
-            ACL acl = aclFactory.createACL(ciKey.getWorkspace(), userEntries, groupEntries);
+            ACL acl = aclFactory.createACL(ciKey.getWorkspace(), aclUserEntries, aclUserGroupEntries);
             productConfiguration.setAcl(acl);
         }
         productConfiguration.setOptionalUsageLinks(new HashSet<>(optionalUsageLinks));
