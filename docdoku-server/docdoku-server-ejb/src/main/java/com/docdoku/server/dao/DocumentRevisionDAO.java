@@ -21,14 +21,12 @@ package com.docdoku.server.dao;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserKey;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.DocumentIterationNotFoundException;
 import com.docdoku.core.exceptions.DocumentRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
-import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 
 import javax.persistence.*;
@@ -242,7 +240,7 @@ public class DocumentRevisionDAO {
 
         String excludedFolders = workspaceId + "/~%";
 
-        TypedQuery<DocumentRevision> query = em.createNamedQuery("DocumentRevision.findByWorkspace.filterUserACLEntry", DocumentRevision.class)
+        TypedQuery<DocumentRevision> query = em.createNamedQuery("DocumentRevision.findByWorkspace.filterACLEntry", DocumentRevision.class)
                         .setParameter("workspaceId", workspaceId)
                         .setParameter("user", user)
                         .setParameter("excludedFolders", excludedFolders);
@@ -257,7 +255,7 @@ public class DocumentRevisionDAO {
 
         String excludedFolders = workspaceId + "/~%";
 
-        return ((Number) em.createNamedQuery("DocumentRevision.countByWorkspace.filterUserACLEntry")
+        return ((Number) em.createNamedQuery("DocumentRevision.countByWorkspace.filterACLEntry")
                 .setParameter("workspaceId", workspaceId)
                 .setParameter("user", user)
                 .setParameter("excludedFolders", excludedFolders)

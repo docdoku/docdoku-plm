@@ -21,13 +21,11 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.PartRevisionAlreadyExistsException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
-import com.docdoku.core.workflow.Task;
 import com.docdoku.core.workflow.Workflow;
 
 import javax.persistence.*;
@@ -108,19 +106,10 @@ public class PartRevisionDAO {
     }
 
     public int getPartRevisionCountFiltered(User caller, String workspaceId) {
-        return ((Number) em.createNamedQuery("PartRevision.countByWorkspace.filterUserACLEntry")
+        return ((Number) em.createNamedQuery("PartRevision.countByWorkspace.filterACLEntry")
                 .setParameter("workspaceId", workspaceId)
                 .setParameter("user", caller)
                 .getSingleResult()).intValue();
-    }
-
-    public List<PartRevision> getPartRevisionsFiltered(User caller, String pWorkspaceId, int pStart, int pMaxResults) {
-        return em.createNamedQuery("PartRevision.findByWorkspace.filterUserACLEntry", PartRevision.class)
-                .setParameter("workspaceId", pWorkspaceId)
-                .setParameter("user", caller)
-                .setFirstResult(pStart)
-                .setMaxResults(pMaxResults)
-                .getResultList();
     }
 
     public void createPartR(PartRevision partR) throws PartRevisionAlreadyExistsException, CreationException {
