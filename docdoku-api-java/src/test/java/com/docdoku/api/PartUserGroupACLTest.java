@@ -23,8 +23,6 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
-import com.docdoku.api.services.DocumentApi;
-import com.docdoku.api.services.FoldersApi;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -35,15 +33,11 @@ import org.junit.runners.JUnit4;
 import java.util.Arrays;
 
 @RunWith(JUnit4.class)
-public class DocumentUserGroupACLTest {
+public class PartUserGroupACLTest {
 
     private static final WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
-    private static final FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-    private static final DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
 
     private static WorkspaceDTO workspace;
-    private static AccountDTO account1;
-    private static AccountDTO account2;
     private static UserGroupDTO group1 = new UserGroupDTO();
     private static UserGroupDTO group2 = new UserGroupDTO();
     private static ApiClient user1Client;
@@ -63,8 +57,8 @@ public class DocumentUserGroupACLTest {
 
         workspace = TestUtils.createWorkspace();
 
-        account1 = TestUtils.createAccount();
-        account2 = TestUtils.createAccount();
+        AccountDTO account1 = TestUtils.createAccount();
+        AccountDTO account2 = TestUtils.createAccount();
 
         group1.setId(TestUtils.randomString());
         group1.setWorkspaceId(workspace.getId());
@@ -120,107 +114,106 @@ public class DocumentUserGroupACLTest {
     @Test
     public void testFullAccessGroupACL() throws ApiException {
 
-        // Create documents full access for group1
-        DocumentRevisionDTO document = TestUtils.createDocument(workspace.getId(), null, Arrays.asList(group1FullAccess));
+        // Create parts full access for group1
+        PartRevisionDTO part = TestUtils.createPart(workspace.getId(), null, Arrays.asList(group1FullAccess));
 
         // Allowed for user 1 which belongs to group 1
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, true);
         // Not allowed for user 2 which does not belong to group 1
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, false);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, false);
 
         // Allow for user 1 which belongs to group 1
-        TestUtils.assertUserCanEditDocument(user1Client, document, true);
+        TestUtils.assertUserCanEditPart(user1Client, part, true);
         // Not allowed for user 2 which does not belong to group 1
-        TestUtils.assertUserCanEditDocument(user2Client, document, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, false);
 
-        // Create documents full access for group2
-        document = TestUtils.createDocument(workspace.getId(), null, Arrays.asList(group2FullAccess));
+        // Create parts full access for group2
+        part = TestUtils.createPart(workspace.getId(), null, Arrays.asList(group2FullAccess));
 
         // Not allowed for user 1 which does not belong to group 2
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, false);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, false);
         // Allowed for user 2 which belongs to group 2
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, true);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, true);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, false);
-        TestUtils.assertUserCanEditDocument(user2Client, document, true);
+        TestUtils.assertUserCanEditPart(user1Client, part, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, true);
 
-        // Create documents full access for group1 & group2
-        document =
-                TestUtils.createDocument(workspace.getId(), null, Arrays.asList(group1FullAccess, group2FullAccess));
+        // Create parts full access for group1 & group2
+        part = TestUtils.createPart(workspace.getId(), null, Arrays.asList(group1FullAccess, group2FullAccess));
 
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, true);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, true);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, true);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, true);
-        TestUtils.assertUserCanEditDocument(user2Client, document, true);
+        TestUtils.assertUserCanEditPart(user1Client, part, true);
+        TestUtils.assertUserCanEditPart(user2Client, part, true);
 
     }
 
     @Test
     public void testForbiddenAccessGroupACL() throws ApiException {
 
-        // Create documents forbidden for group1
-        DocumentRevisionDTO document = TestUtils.createDocument(workspace.getId(),
+        // Create parts forbidden for group1
+        PartRevisionDTO part = TestUtils.createPart(workspace.getId(),
                 null, Arrays.asList(group1Forbidden, group2FullAccess));
 
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, false);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, true);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, false);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, true);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, false);
-        TestUtils.assertUserCanEditDocument(user2Client, document, true);
+        TestUtils.assertUserCanEditPart(user1Client, part, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, true);
 
-        // Create documents forbidden for group2
-        document = TestUtils.createDocument(workspace.getId(),
+        // Create parts forbidden for group2
+        part = TestUtils.createPart(workspace.getId(),
                 null, Arrays.asList(group1FullAccess, group2Forbidden));
 
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, false);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, true);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, false);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, true);
-        TestUtils.assertUserCanEditDocument(user2Client, document, false);
+        TestUtils.assertUserCanEditPart(user1Client, part, true);
+        TestUtils.assertUserCanEditPart(user2Client, part, false);
 
-        // Create documents forbidden for group1 & group2
-        document = TestUtils.createDocument(workspace.getId(),
+        // Create parts forbidden for group1 & group2
+        part = TestUtils.createPart(workspace.getId(),
                 null, Arrays.asList(group1Forbidden, group2Forbidden));
 
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, false);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, false);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, false);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, false);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, false);
-        TestUtils.assertUserCanEditDocument(user2Client, document, false);
+        TestUtils.assertUserCanEditPart(user1Client, part, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, false);
     }
 
 
     @Test
     public void testReadOnlyAccessGroupACL() throws ApiException {
-        // Create documents read-only for group1
-        DocumentRevisionDTO document = TestUtils.createDocument(workspace.getId(),
+        // Create parts read-only for group1
+        PartRevisionDTO part = TestUtils.createPart(workspace.getId(),
                 null, Arrays.asList(group1ReadOnly, group2FullAccess));
 
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, true);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, true);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, true);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, false);
-        TestUtils.assertUserCanEditDocument(user2Client, document, true);
+        TestUtils.assertUserCanEditPart(user1Client, part, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, true);
 
-        // Create documents read-only for group2
-        document =  TestUtils.createDocument(workspace.getId(),
+        // Create parts read-only for group2
+        part =  TestUtils.createPart(workspace.getId(),
                 null, Arrays.asList(group1ReadOnly, group2Forbidden));
 
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, false);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, true);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, false);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, false);
-        TestUtils.assertUserCanEditDocument(user2Client, document, false);
+        TestUtils.assertUserCanEditPart(user1Client, part, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, false);
 
-        // Create documents read-only for group1 & group2
-        document =  TestUtils.createDocument(workspace.getId(),
+        // Create parts read-only for group1 & group2
+        part =  TestUtils.createPart(workspace.getId(),
                 null, Arrays.asList(group1ReadOnly, group2ReadOnly));
-        TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
-        TestUtils.assertUserCanRetrieveDocument(user2Client, document, true);
+        TestUtils.assertUserCanRetrievePart(user1Client, part, true);
+        TestUtils.assertUserCanRetrievePart(user2Client, part, true);
 
-        TestUtils.assertUserCanEditDocument(user1Client, document, false);
-        TestUtils.assertUserCanEditDocument(user2Client, document, false);
+        TestUtils.assertUserCanEditPart(user1Client, part, false);
+        TestUtils.assertUserCanEditPart(user2Client, part, false);
 
     }
 

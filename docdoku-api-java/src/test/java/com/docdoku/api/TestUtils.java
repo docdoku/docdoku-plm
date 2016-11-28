@@ -99,6 +99,19 @@ public class TestUtils {
             documentApi.undoCheckOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
         } catch (ApiException e) {
             Assert.assertFalse(expect);
+            Assert.assertEquals(403,e.getCode());
+        }
+    }
+
+    public static void assertUserCanEditPart(ApiClient client, PartRevisionDTO part, boolean expect) {
+        PartApi partApi = new PartApi(client);
+        try {
+            partApi.checkOut(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+            Assert.assertTrue(expect);
+            partApi.undoCheckOut(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+        } catch (ApiException e) {
+            Assert.assertFalse(expect);
+            Assert.assertEquals(403,e.getCode());
         }
     }
 
@@ -135,9 +148,55 @@ public class TestUtils {
     }
 
 
-    public static DocumentRevisionDTO createDocument(String workspaceId, List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries) throws ApiException {
-        ACLDTO acl = new ACLDTO();
+    public static void assertUserCanRetrievePart(ApiClient client, PartRevisionDTO part, boolean expect) {
 
+        // Unit access
+        try {
+            new PartApi(client).getPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
+            Assert.assertTrue(expect);
+        } catch (ApiException e) {
+            Assert.assertEquals(403, e.getCode());
+            Assert.assertFalse(expect);
+        }
+        // From lists access
+        try {
+            List<PartRevisionDTO> parts = new PartsApi(client)
+                    .getPartRevisions(part.getWorkspaceId(), 0, 100);
+            PartRevisionDTO partRevisionDTO = parts
+                    .stream()
+                    .filter(p -> p.getNumber().equals(part.getNumber()))
+                    .findFirst().orElse(null);
+
+            if (expect) {
+                Assert.assertNotNull(partRevisionDTO);
+            } else {
+                Assert.assertNull(partRevisionDTO);
+            }
+
+        } catch (ApiException e) {
+
+        }
+
+    }
+
+    public static DocumentRevisionDTO createDocument(String workspaceId, List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries) throws ApiException {
+        DocumentCreationDTO document = new DocumentCreationDTO();
+        document.setReference(TestUtils.randomString());
+        document.setAcl(createACL(userEntries,groupEntries));
+        DocumentRevisionDTO createdDocument = new FoldersApi(TestConfig.REGULAR_USER_CLIENT).createDocumentMasterInFolder(workspaceId, document, workspaceId);
+        return new DocumentApi(TestConfig.REGULAR_USER_CLIENT).checkInDocument(workspaceId, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+    }
+
+    public static PartRevisionDTO createPart(String workspaceId, List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries) throws ApiException {
+        PartCreationDTO part = new PartCreationDTO();
+        part.setNumber(TestUtils.randomString());
+        part.setAcl(createACL(userEntries,groupEntries));
+        PartRevisionDTO createdPart = new PartsApi(TestConfig.REGULAR_USER_CLIENT).createNewPart(workspaceId, part);
+        return new PartApi(TestConfig.REGULAR_USER_CLIENT).checkIn(workspaceId, createdPart.getNumber(), createdPart.getVersion(), "");
+    }
+
+    private static ACLDTO createACL(List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries){
+        ACLDTO acl = new ACLDTO();
         if(null != userEntries){
             acl.getUserEntries().addAll(userEntries);
         }
@@ -145,15 +204,7 @@ public class TestUtils {
         if(null != groupEntries) {
             acl.getGroupEntries().addAll(groupEntries);
         }
-
-        DocumentCreationDTO document = new DocumentCreationDTO();
-        document.setReference(TestUtils.randomString());
-        document.setAcl(acl);
-
-        DocumentRevisionDTO createdDocument = new FoldersApi(TestConfig.REGULAR_USER_CLIENT).createDocumentMasterInFolder(workspaceId, document, workspaceId);
-        return new DocumentApi(TestConfig.REGULAR_USER_CLIENT).checkInDocument(workspaceId, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        return acl;
     }
-
-
 
 }
