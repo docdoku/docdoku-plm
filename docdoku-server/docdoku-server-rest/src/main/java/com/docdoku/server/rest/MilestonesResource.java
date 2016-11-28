@@ -26,7 +26,6 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IChangeManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.ACLEntryDTO;
 import com.docdoku.server.rest.dto.change.ChangeOrderDTO;
 import com.docdoku.server.rest.dto.change.ChangeRequestDTO;
 import com.docdoku.server.rest.dto.change.MilestoneDTO;
@@ -44,9 +43,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RequestScoped
 @Api(hidden = true, value = "milestones", description = "Operations about milestones")
@@ -248,23 +245,12 @@ public class MilestonesResource {
             @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            changeManager.updateACLForMilestone(workspaceId, milestoneId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            changeManager.updateACLForMilestone(workspaceId, milestoneId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             changeManager.removeACLFromMilestone(workspaceId, milestoneId);
         }
+
         return Response.noContent().build();
     }
 }

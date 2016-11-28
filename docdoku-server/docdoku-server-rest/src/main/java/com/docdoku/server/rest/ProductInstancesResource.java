@@ -27,7 +27,6 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.product.*;
-import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IPSFilterManagerLocal;
@@ -145,9 +144,7 @@ public class ProductInstancesResource {
             throws EntityNotFoundException, EntityAlreadyExistsException, AccessRightException, CreationException,
             NotAllowedException, EntityConstraintException, UserNotActiveException {
 
-        ACLDTO acldto = productInstanceCreationDTO.getAcl();
-        Map<String, ACLPermission> userEntries = new HashMap<>();
-        Map<String, ACLPermission> grpEntries = new HashMap<>();
+
         List<InstanceAttributeDTO> instanceAttributeDTOs = productInstanceCreationDTO.getInstanceAttributes();
         List<InstanceAttribute> attributes = new ArrayList<>();
 
@@ -158,14 +155,10 @@ public class ProductInstancesResource {
             }
         }
 
-        if (acldto != null) {
-            for(ACLEntryDTO entry : acldto.getUserEntries()){
-                userEntries.put(entry.getKey(),entry.getValue());
-            }
-            for(ACLEntryDTO entry : acldto.getGroupEntries()){
-                grpEntries.put(entry.getKey(),entry.getValue());
-            }
-        }
+        ACLDTO acl = productInstanceCreationDTO.getAcl();
+        Map<String, String> userEntries = acl != null ? acl.getUserEntriesMap() : null;
+        Map<String, String> userGroupEntries = acl != null ? acl.getUserGroupEntriesMap() : null;
+
         Set<DocumentRevisionDTO> linkedDocs = productInstanceCreationDTO.getLinkedDocuments();
         DocumentRevisionKey[] links = null;
         String[] documentLinkComments = null;
@@ -181,7 +174,7 @@ public class ProductInstancesResource {
                 documentLinkComments[i++] = comment;
             }
         }
-        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId, new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(), userEntries, grpEntries, attributes, links, documentLinkComments);
+        ProductInstanceMaster productInstanceMaster = productInstanceService.createProductInstance(workspaceId, new ConfigurationItemKey(workspaceId, productInstanceCreationDTO.getConfigurationItemId()), productInstanceCreationDTO.getSerialNumber(), productInstanceCreationDTO.getBaselineId(), userEntries, userGroupEntries, attributes, links, documentLinkComments);
 
         return mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
     }
@@ -278,14 +271,14 @@ public class ProductInstancesResource {
             for (String path : productInstanceIterationDTO.getSubstituteLinks()) {
                 LightPartLinkListDTO lightPartLinkDTO = new LightPartLinkListDTO();
                 for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                    lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+                    lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
                 }
                 substitutesParts.add(lightPartLinkDTO);
             }
             for (String path : productInstanceIterationDTO.getOptionalUsageLinks()) {
                 LightPartLinkListDTO lightPartLinkDTO = new LightPartLinkListDTO();
                 for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                    lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+                    lightPartLinkDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
                 }
                 optionalParts.add(lightPartLinkDTO);
             }
@@ -297,7 +290,7 @@ public class ProductInstancesResource {
             for (PathDataMasterDTO pathDataMasterDTO : productInstanceIterationDTO.getPathDataMasterList()) {
                 LightPartLinkListDTO lightPartLinkListDTO = new LightPartLinkListDTO();
                 for (PartLink partLink : productService.decodePath(ciKey, pathDataMasterDTO.getPath())) {
-                    lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+                    lightPartLinkListDTO.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
                 }
                 pathDataPaths.add(lightPartLinkListDTO);
             }
@@ -348,20 +341,9 @@ public class ProductInstancesResource {
             @ApiParam(required = true, value = "ACL to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            productInstanceService.updateACLForProductInstanceMaster(workspaceId, configurationItemId, serialNumber, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            productInstanceService.updateACLForProductInstanceMaster(workspaceId, configurationItemId, serialNumber,
+                    acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             productInstanceService.removeACLFromProductInstanceMaster(workspaceId, configurationItemId, serialNumber);
         }
@@ -518,7 +500,7 @@ public class ProductInstancesResource {
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         for (PartLink partLink : path) {
-            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
         }
         dto.setPartLinksList(partLinksList);
 
@@ -677,7 +659,7 @@ public class ProductInstancesResource {
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, pathDataIterationCreationDTO.getPath());
         for (PartLink partLink : path) {
-            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
         }
         dto.setPartLinksList(partLinksList);
 
@@ -739,7 +721,7 @@ public class ProductInstancesResource {
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         for (PartLink partLink : path) {
-            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
         }
         dto.setPartLinksList(partLinksList);
 
@@ -804,7 +786,7 @@ public class ProductInstancesResource {
         LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
         List<PartLink> path = productService.decodePath(ciKey, dto.getPath());
         for (PartLink partLink : path) {
-            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+            partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
         }
         dto.setPartLinksList(partLinksList);
 
@@ -950,13 +932,14 @@ public class ProductInstancesResource {
             List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
 
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());;
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
+                ;
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
@@ -1057,13 +1040,13 @@ public class ProductInstancesResource {
 
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 

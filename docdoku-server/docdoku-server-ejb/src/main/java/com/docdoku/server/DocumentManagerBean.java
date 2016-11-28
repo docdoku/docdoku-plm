@@ -29,8 +29,6 @@ import com.docdoku.core.meta.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
@@ -639,7 +637,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision createDocumentMaster(String pParentFolder, String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, FolderNotFoundException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException, DocumentRevisionAlreadyExistsException, RoleNotFoundException, WorkflowModelNotFoundException, DocumentMasterAlreadyExistsException, UserGroupNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevision createDocumentMaster(String pParentFolder, String pDocMId, String pTitle, String pDescription, String pDocMTemplateId, String pWorkflowModelId, Map<String, String> aclUserEntries, Map<String, String> aclGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, FolderNotFoundException, DocumentMasterTemplateNotFoundException, FileAlreadyExistsException, CreationException, DocumentRevisionAlreadyExistsException, RoleNotFoundException, WorkflowModelNotFoundException, DocumentMasterAlreadyExistsException, UserGroupNotFoundException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
         Locale locale = new Locale(user.getLanguage());
@@ -753,22 +751,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-        //TODO refactor call ACLFactory
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
 
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
+        if(!aclUserEntries.isEmpty() || !aclGroupEntries.isEmpty()){
+            ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), aclUserEntries, aclGroupEntries);
             docR.setACL(acl);
         }
+
         Date now = new Date();
         docM.setCreationDate(now);
         docR.setCreationDate(now);
@@ -1448,7 +1436,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserGroupNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevision[] createDocumentRevision(DocumentRevisionKey pOriginalDocRPK, String pTitle, String pDescription, String pWorkflowModelId, Map<String, String> aclUserEntries, Map<String, String> aclGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, NotAllowedException, DocumentRevisionAlreadyExistsException, CreationException, WorkflowModelNotFoundException, RoleNotFoundException, DocumentRevisionNotFoundException, FileAlreadyExistsException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pOriginalDocRPK.getDocumentMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
         DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
@@ -1554,24 +1542,10 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
-        Map<String, String> userEntries = new HashMap<>();
-        Map<String, String> groupEntries = new HashMap<>();
 
-        if (pACLUserEntries != null) {
-            for (ACLUserEntry entry : pACLUserEntries) {
-                userEntries.put(entry.getPrincipalLogin(), entry.getPermission().name());
-            }
-        }
-
-        if (pACLUserGroupEntries != null) {
-            for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                groupEntries.put(entry.getPrincipal().getId(), entry.getPermission().name());
-            }
-        }
-
-        if (!userEntries.isEmpty() || !groupEntries.isEmpty()) {
+        if (!aclUserEntries.isEmpty() || !aclGroupEntries.isEmpty()) {
             ACLFactory aclFactory = new ACLFactory(em);
-            ACL acl = aclFactory.createACL(docR.getWorkspaceId(), userEntries, groupEntries);
+            ACL acl = aclFactory.createACL(docR.getWorkspaceId(), aclUserEntries, aclGroupEntries);
             docR.setACL(acl);
         }
 

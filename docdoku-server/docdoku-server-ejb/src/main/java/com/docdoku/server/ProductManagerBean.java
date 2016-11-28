@@ -32,8 +32,6 @@ import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLUserEntry;
-import com.docdoku.core.security.ACLUserGroupEntry;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntityKey;
@@ -200,7 +198,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException, UserGroupNotFoundException, WorkspaceNotEnabledException {
+    public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
         checkNameValidity(pNumber, locale);
@@ -304,22 +302,10 @@ public class ProductManagerBean implements IProductManagerLocal {
             }
 
         }
-        //TODO refactor call ACLFactory
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
 
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
+        if(!pACLUserEntries.isEmpty() || !pACLUserGroupEntries.isEmpty()){
+            ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), pACLUserEntries, pACLUserGroupEntries);
             newRevision.setACL(acl);
-            new ACLDAO(em).createACL(acl);
         }
 
         new PartMasterDAO(locale, em).createPartM(pm);
@@ -2132,7 +2118,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision createPartRevision(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, ACLUserEntry[] pACLUserEntries, ACLUserGroupEntry[] pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException, UserGroupNotFoundException, WorkspaceNotEnabledException {
+    public PartRevision createPartRevision(PartRevisionKey revisionKey, String pDescription, String pWorkflowModelId, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, PartRevisionNotFoundException, NotAllowedException, FileAlreadyExistsException, CreationException, RoleNotFoundException, WorkflowModelNotFoundException, PartRevisionAlreadyExistsException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(revisionKey.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
@@ -2292,21 +2278,11 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         partR.setDescription(pDescription);
 
-        if ((pACLUserEntries != null && pACLUserEntries.length > 0) || (pACLUserGroupEntries != null && pACLUserGroupEntries.length > 0)) {
-            ACL acl = new ACL();
-            if (pACLUserEntries != null) {
-                for (ACLUserEntry entry : pACLUserEntries) {
-                    acl.addEntry(em.getReference(User.class, new UserKey(user.getWorkspaceId(), entry.getPrincipalLogin())), entry.getPermission());
-                }
-            }
-
-            if (pACLUserGroupEntries != null) {
-                for (ACLUserGroupEntry entry : pACLUserGroupEntries) {
-                    acl.addEntry(em.getReference(UserGroup.class, new UserGroupKey(user.getWorkspaceId(), entry.getPrincipalId())), entry.getPermission());
-                }
-            }
+        if(!pACLUserEntries.isEmpty() || !pACLUserGroupEntries.isEmpty()){
+            ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), pACLUserEntries, pACLUserGroupEntries);
             partR.setACL(acl);
         }
+
         Date now = new Date();
         partR.setCreationDate(now);
         partR.setCheckOutUser(user);

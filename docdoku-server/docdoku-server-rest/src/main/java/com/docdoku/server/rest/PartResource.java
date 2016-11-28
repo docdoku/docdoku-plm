@@ -438,20 +438,8 @@ public class PartResource {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            productService.updatePartRevisionACL(workspaceId, revisionKey, userEntries, groupEntries);
-
+        if (acl.hasEntries()) {
+            productService.updatePartRevisionACL(workspaceId, revisionKey, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             productService.removeACLFromPartRevision(revisionKey);
         }
@@ -477,29 +465,13 @@ public class PartResource {
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException, NotAllowedException {
 
         RoleMappingDTO[] roleMappingDTOs = partCreationDTO.getRoleMapping();
-        ACLDTO acl = partCreationDTO.getAcl();
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         String description = partCreationDTO.getDescription();
         String workflowModelId = partCreationDTO.getWorkflowModelId();
 
-        ACLUserEntry[] userEntries = null;
-        ACLUserGroupEntry[] userGroupEntries = null;
-        if (acl != null) {
-            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-            int i = 0;
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-            i = 0;
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                userGroupEntries[i] = new ACLUserGroupEntry();
-                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-        }
+        ACLDTO acl = partCreationDTO.getAcl();
+        Map<String, String> userEntries = acl != null ? acl.getUserEntriesMap() : null;
+        Map<String, String> userGroupEntries = acl != null ? acl.getUserGroupEntriesMap() : null;
 
         Map<String, Collection<String>> userRoleMapping = new HashMap<>();
         Map<String, Collection<String>> groupRoleMapping = new HashMap<>();

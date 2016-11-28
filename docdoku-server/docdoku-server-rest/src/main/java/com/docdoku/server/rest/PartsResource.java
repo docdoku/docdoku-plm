@@ -20,10 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
-import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.PSFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -31,7 +28,7 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryResultRow;
-import com.docdoku.core.security.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -477,24 +474,8 @@ public class PartsResource {
         }
 
         ACLDTO acl = partCreationDTO.getAcl();
-        ACLUserEntry[] userEntries = null;
-        ACLUserGroupEntry[] userGroupEntries = null;
-        if (acl != null) {
-            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-            int i = 0;
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-            i = 0;
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                userGroupEntries[i] = new ACLUserGroupEntry();
-                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-        }
+        Map<String, String> userEntries = acl != null ? acl.getUserEntriesMap() : null;
+        Map<String, String> userGroupEntries = acl != null ? acl.getUserGroupEntriesMap() : null;
 
         PartMaster partMaster = productService.createPartMaster(workspaceId, partCreationDTO.getNumber(), partCreationDTO.getName(), partCreationDTO.isStandardPart(), pWorkflowModelId, partCreationDTO.getDescription(), partCreationDTO.getTemplateId(), userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
         return Tools.mapPartRevisionToPartDTO(partMaster.getLastRevision());

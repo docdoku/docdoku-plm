@@ -41,9 +41,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Yassine Belouad
@@ -221,20 +219,8 @@ public class DocumentTemplateResource {
             @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            documentService.updateACLForDocumentMasterTemplate(workspaceId, templateId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            documentService.updateACLForDocumentMasterTemplate(workspaceId, templateId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             documentService.removeACLFromDocumentMasterTemplate(workspaceId, templateId);
         }

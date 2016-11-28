@@ -363,26 +363,11 @@ public class DocumentResource {
         String pDescription = docCreationDTO.getDescription();
         String pWorkflowModelId = docCreationDTO.getWorkflowModelId();
         RoleMappingDTO[] roleMappingDTOs = docCreationDTO.getRoleMapping();
+
         ACLDTO acl = docCreationDTO.getAcl();
 
-        ACLUserEntry[] userEntries = null;
-        ACLUserGroupEntry[] userGroupEntries = null;
-        if (acl != null) {
-            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-            int i = 0;
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-            i = 0;
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                userGroupEntries[i] = new ACLUserGroupEntry();
-                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-        }
+        Map<String, String> userEntries = acl != null ? acl.getUserEntriesMap() : null;
+        Map<String, String> userGroupEntries = acl != null ? acl.getUserGroupEntriesMap() : null;
 
         Map<String, Collection<String>> userRoleMapping = new HashMap<>();
         Map<String, Collection<String>> groupRoleMapping = new HashMap<>();
@@ -705,20 +690,8 @@ public class DocumentResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException, NotAllowedException {
         DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            documentService.updateDocumentACL(workspaceId, documentRevisionKey, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            documentService.updateDocumentACL(workspaceId, documentRevisionKey, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             documentService.removeACLFromDocumentRevision(documentRevisionKey);
         }
@@ -876,7 +849,7 @@ public class DocumentResource {
             LightPartLinkListDTO partLinksList = new LightPartLinkListDTO();
             List<PartLink> path = productService.decodePath(productInstanceMaster.getInstanceOf().getKey(), pathDataMaster.getPath());
             for (PartLink partLink : path) {
-                partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+                partLinksList.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
             }
             dto.setPartLinksList(partLinksList);
 

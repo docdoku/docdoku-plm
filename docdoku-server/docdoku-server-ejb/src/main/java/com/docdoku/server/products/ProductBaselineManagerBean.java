@@ -28,7 +28,6 @@ import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
-import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -418,7 +417,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,ACLPermission> userEntries, Map<String,ACLPermission> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
+    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,String> userEntries, Map<String,String> groupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
 
         Locale locale = new Locale(user.getLanguage());
@@ -431,7 +430,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         if (!userEntries.isEmpty() || !groupEntries.isEmpty()) {
             ACLFactory aclFactory = new ACLFactory(em);
-            ACL acl = aclFactory.createACLFromPermissions(ciKey.getWorkspace(), userEntries, groupEntries);
+            ACL acl = aclFactory.createACL(ciKey.getWorkspace(), userEntries, groupEntries);
             productConfiguration.setAcl(acl);
         }
         productConfiguration.setOptionalUsageLinks(new HashSet<>(optionalUsageLinks));

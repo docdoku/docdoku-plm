@@ -358,20 +358,8 @@ public class ChangeIssuesResource {
 
         ChangeIssue changeIssue;
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            changeIssue = changeManager.updateACLForChangeIssue(pWorkspaceId, issueId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            changeIssue = changeManager.updateACLForChangeIssue(pWorkspaceId, issueId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             changeIssue = changeManager.removeACLFromChangeIssue(pWorkspaceId, issueId);
         }

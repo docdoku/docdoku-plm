@@ -24,12 +24,10 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartLink;
-import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IProductBaselineManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.ACLEntryDTO;
 import com.docdoku.server.rest.dto.LightPartLinkDTO;
 import com.docdoku.server.rest.dto.LightPartLinkListDTO;
 import com.docdoku.server.rest.dto.baseline.ProductConfigurationDTO;
@@ -47,7 +45,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -149,7 +146,7 @@ public class ProductConfigurationsResource {
         for (String path : productConfiguration.getSubstituteLinks()) {
             LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
             for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
             }
             substitutesParts.add(partDTOs);
         }
@@ -157,7 +154,7 @@ public class ProductConfigurationsResource {
         for (String path : productConfiguration.getOptionalUsageLinks()) {
             LightPartLinkListDTO partDTOs = new LightPartLinkListDTO();
             for (PartLink partLink : productService.decodePath(ciKey, path)) {
-                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+                partDTOs.getPartLinks().add(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
             }
             optionalParts.add(partDTOs);
         }
@@ -190,19 +187,11 @@ public class ProductConfigurationsResource {
         String description = pProductConfigurationDTO.getDescription();
         String name = pProductConfigurationDTO.getName();
 
-        ACLDTO acldto = pProductConfigurationDTO.getAcl();
-        Map<String, ACLPermission> userEntries = new HashMap<>();
-        Map<String, ACLPermission> grpEntries = new HashMap<>();
-        if (acldto != null) {
-            for(ACLEntryDTO entry : acldto.getUserEntries()){
-                userEntries.put(entry.getKey(),entry.getValue());
-            }
-            for(ACLEntryDTO entry : acldto.getGroupEntries()){
-                grpEntries.put(entry.getKey(),entry.getValue());
-            }
-        }
+        ACLDTO acl = pProductConfigurationDTO.getAcl();
+        Map<String, String> userEntries = acl != null ? acl.getUserEntriesMap() : null;
+        Map<String, String> userGroupEntries = acl != null ? acl.getUserGroupEntriesMap() : null;
 
-        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks(), userEntries, grpEntries);
+        ProductConfiguration productConfiguration = productBaselineService.createProductConfiguration(ciKey, name, description, pProductConfigurationDTO.getSubstituteLinks(), pProductConfigurationDTO.getOptionalUsageLinks(), userEntries, userGroupEntries);
         ProductConfigurationDTO productConfigurationDTO = mapper.map(productConfiguration, ProductConfigurationDTO.class);
         productConfigurationDTO.setConfigurationItemId(productConfiguration.getConfigurationItem().getId());
         return productConfigurationDTO;
@@ -229,20 +218,8 @@ public class ProductConfigurationsResource {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, pCiId);
 
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            productBaselineService.updateACLForConfiguration(ciKey, productConfigurationId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            productBaselineService.updateACLForConfiguration(ciKey, productConfigurationId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             productBaselineService.removeACLFromConfiguration(ciKey, productConfigurationId);
         }

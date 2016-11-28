@@ -370,20 +370,8 @@ public class ChangeOrdersResource {
             @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         ChangeItem changeOrder;
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
-
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            changeOrder = changeManager.updateACLForChangeOrder(pWorkspaceId, orderId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            changeOrder = changeManager.updateACLForChangeOrder(pWorkspaceId, orderId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             changeOrder = changeManager.removeACLFromChangeOrder(pWorkspaceId, orderId);
         }

@@ -395,21 +395,11 @@ public class ChangeRequestsResource {
             @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
             @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+
         ChangeRequest changeRequest;
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            changeRequest = changeManager.updateACLForChangeRequest(workspaceId, requestId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            changeRequest = changeManager.updateACLForChangeRequest(workspaceId, requestId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             changeRequest = changeManager.removeACLFromChangeRequest(workspaceId, requestId);
         }

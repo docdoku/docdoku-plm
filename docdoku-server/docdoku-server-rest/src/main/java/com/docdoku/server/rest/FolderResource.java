@@ -19,16 +19,12 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.User;
-import com.docdoku.core.common.UserGroup;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.security.*;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.server.rest.dto.*;
 import io.swagger.annotations.*;
@@ -132,24 +128,8 @@ public class FolderResource {
 
         ACLDTO acl = docCreationDTO.getAcl();
 
-        ACLUserEntry[] userEntries = null;
-        ACLUserGroupEntry[] userGroupEntries = null;
-        if (acl != null) {
-            userEntries = new ACLUserEntry[acl.getUserEntries().size()];
-            userGroupEntries = new ACLUserGroupEntry[acl.getGroupEntries().size()];
-            int i = 0;
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries[i] = new ACLUserEntry();
-                userEntries[i].setPrincipal(new User(new Workspace(workspaceId), new Account(entry.getKey())));
-                userEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-            i = 0;
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                userGroupEntries[i] = new ACLUserGroupEntry();
-                userGroupEntries[i].setPrincipal(new UserGroup(new Workspace(workspaceId), entry.getKey()));
-                userGroupEntries[i++].setPermission(ACLPermission.valueOf(entry.getValue().name()));
-            }
-        }
+        Map<String, String> userEntries = acl != null ? acl.getUserEntriesMap() : null;
+        Map<String, String> userGroupEntries = acl != null ? acl.getUserGroupEntriesMap() : null;
 
         Map<String, Collection<String>> userRoleMapping = new HashMap<>();
         Map<String, Collection<String>> groupRoleMapping = new HashMap<>();

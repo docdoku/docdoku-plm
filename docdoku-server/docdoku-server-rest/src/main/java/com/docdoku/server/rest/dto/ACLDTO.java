@@ -28,7 +28,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @XmlRootElement
 @ApiModel(value = "ACLDTO", description = "This class is the representation of an {@link com.docdoku.core.security.ACL} entity")
@@ -77,6 +79,26 @@ public class ACLDTO implements Serializable {
 
     public void setUserEntries(List<ACLEntryDTO> userEntries) {
         this.userEntries = userEntries;
+    }
+
+    public boolean hasEntries(){
+        return !userEntries.isEmpty() || !groupEntries.isEmpty();
+    }
+
+    public Map<String, String> getUserEntriesMap() {
+        Map<String, String> map = new HashMap<>();
+        for (ACLEntryDTO entry : getUserEntries()) {
+            map.put(entry.getKey(), entry.getValue().name());
+        }
+        return map;
+    }
+
+    public Map<String, String> getUserGroupEntriesMap() {
+        Map<String, String> map = new HashMap<>();
+        for (ACLEntryDTO entry : getGroupEntries()) {
+            map.put(entry.getKey(), entry.getValue().name());
+        }
+        return map;
     }
 
 }

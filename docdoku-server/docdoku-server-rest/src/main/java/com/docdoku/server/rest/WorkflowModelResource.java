@@ -27,7 +27,6 @@ import com.docdoku.core.workflow.ActivityModel;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkflowModelKey;
 import com.docdoku.server.rest.dto.ACLDTO;
-import com.docdoku.server.rest.dto.ACLEntryDTO;
 import com.docdoku.server.rest.dto.ActivityModelDTO;
 import com.docdoku.server.rest.dto.WorkflowModelDTO;
 import io.swagger.annotations.*;
@@ -168,20 +167,9 @@ public class WorkflowModelResource {
             @ApiParam(required = true, value = "Workflow model id") @PathParam("workflowModelId") String workflowModelId,
             @ApiParam(required = true, value = "ACL rules to set") ACLDTO acl)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
-        if (!acl.getGroupEntries().isEmpty() || !acl.getUserEntries().isEmpty()) {
 
-            Map<String, String> userEntries = new HashMap<>();
-            Map<String, String> groupEntries = new HashMap<>();
-
-            for (ACLEntryDTO entry : acl.getUserEntries()) {
-                userEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            for (ACLEntryDTO entry : acl.getGroupEntries()) {
-                groupEntries.put(entry.getKey(), entry.getValue().name());
-            }
-
-            workflowService.updateACLForWorkflow(pWorkspaceId, workflowModelId, userEntries, groupEntries);
+        if (acl.hasEntries()) {
+            workflowService.updateACLForWorkflow(pWorkspaceId, workflowModelId, acl.getUserEntriesMap(), acl.getUserGroupEntriesMap());
         } else {
             workflowService.removeACLFromWorkflow(pWorkspaceId, workflowModelId);
         }
