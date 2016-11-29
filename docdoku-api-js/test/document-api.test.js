@@ -50,7 +50,7 @@ describe('Document api tests', function() {
             api.apis.documents.getDocumentsInWorkspace({
                 workspaceId:config.workspace,
                 start:0,
-                configSpecType:null
+                max:100
             }).then(function(response){
                 var documents = response.obj;
                 expect(documents).to.be.an.array;
