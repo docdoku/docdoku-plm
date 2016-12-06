@@ -10,52 +10,21 @@ This module is designed to work in a nodejs or a browser application
 
 Add the script to your page, then it's available from the window object
 
-    <script src="docdoku-api.js"></script>
-    <script>
-        var client = new DocdokuPlmClient({url: 'http://localhost:8080/api'});
-
-        client.getApi().then(function (api) {
-            api.languages.getLanguages().then(function (response) {
-                var languages = response.obj;
-                languages.forEach(function (lang) {
-                    console.log('Available ' + lang);
-                });
-            });
-        });
-    </script>
-
+See [example](example/browser/index.html)
 
 ### Node Js
 
-Install package, then in your app
-
-    var DocdokuPlmClient = require('../lib/docdoku-api');
-    
-    var client = new DocdokuPlmClient({url:'http://localhost:8080/api'});
-    
-    client.getApi().then(function(api){
-        api.languages.getLanguages().then(function(response){
-          console.log(response.obj);
-        });
-    });
-
+See [example](example/npm/index.js)
 
 ## Development guide
 
 Package folders description
 
-* `lib` : main module sources
-* `test` : test sources. Uses mocha (command : `mocha run test`)
+* `example` : examples for browser and nodejs usage
+* `exports` : Export to window object code 
+* `target/docdoku-plm-api/` : generated sources from swagger codegen
 
 Build 
     
 * Run `mvn clean install` in docdoku-api module
-* Run `npm run build` in this module directory
-
-Tests
-
-* Run `npm install` before. Change with your credentials (needs a running server). 
-    
-    mocha test/*.test.js  --url=http://localhost:8080/api --login=foo --password=bar --workspace=foo
-    
-* Browser testing : run `npm run build`, then launch a static server in dist folder `http-server -p 8086` to see results in browser
+* Run `mvn clean install` in this module directory
