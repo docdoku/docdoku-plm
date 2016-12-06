@@ -5,37 +5,27 @@ module.exports = function (grunt) {
     require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
-        copy:{
-            spec:{
-                files : {
-                    'lib/spec.json':'../docdoku-api/target/swagger/swagger.json'
-                }
-            },
-            browser:{
-                files : {
-                    'dist/index.html':'example/browser.html'
-                }
-            }
-        },
+
         clean: {
             options: {
                 force: true
             },
-            files:['lib/spec.json', 'dist']
+            files: ['target/docdoku-plm-api/browser']
         },
-
         browserify: {
-            options:{
-                standalone:true
+            options: {
+                standalone: true
             },
             dist: {
                 files: {
-                    'dist/docdoku-api.js': ['lib/*.js']
+                    'target/docdoku-plm-api/browser/docdoku-plm-api.js': ['target/docdoku-plm-api/npm/src/index.js', 'exports/exports.js']
                 }
             }
         }
 
     });
 
-    grunt.registerTask('build',['clean', 'copy:spec','browserify:dist', 'copy:browser']);
+    grunt.registerTask('build', ['clean', 'browserify:dist']);
 };
+
+

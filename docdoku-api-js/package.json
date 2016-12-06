@@ -8,8 +8,8 @@
     "example": "example"
   },
   "scripts": {
-    "clean": "npm install && grunt clean",
-    "build": "npm install && grunt build"
+    "prebuild":"npm install",
+    "build": "grunt build"
   },
   "devDependencies": {
     "chai": "^3.5.0",
