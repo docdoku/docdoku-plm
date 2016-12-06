@@ -4,25 +4,29 @@
 
     angular.module('dplm.services')
         .service('DocdokuAPIService', function ($window, ConfigurationService) {
-            var DocdokuPLMClient = $window.require('docdoku-api-js');
 
-            var cookie = null;
+            var DocdokuPlmApi = $window.require('docdoku-plm-api');
 
-            var getClient = function () {
-                var client = new DocdokuPLMClient();
-                client.setOptions({
-                    url: ConfigurationService.getHostApiURL(),
-                    cookie: cookie
-                });
+            var client = new DocdokuPlmApi.ApiClient();
+            client.basePath = ConfigurationService.getHostApiURL();
+
+            var token = null;
+
+            this.getApi = function () {
+                return DocdokuPlmApi;
+            };
+
+            this.getClient = function () {
                 return client;
             };
 
-            this.setCookie = function (pCookie) {
-                cookie = pCookie;
-            };
-
-            this.getApi = function () {
-                return getClient().getApi();
+            this.setToken = function (pToken) {
+                token = pToken;
+                if (token) {
+                    client.defaultHeaders.Authorization = 'Bearer ' + token;
+                } else {
+                    delete client.defaultHeaders.Authorization;
+                }
             };
 
         });

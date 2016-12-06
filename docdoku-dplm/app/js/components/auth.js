@@ -9,51 +9,44 @@
             var user = {};
             this.user = user;
 
+            var api = DocdokuAPIService.getApi();
+            var authApi = new api.AuthApi(DocdokuAPIService.getClient());
+
             this.login = function (login, password) {
 
                 WorkspaceService.reset();
 
                 var deferred = $q.defer();
 
-                DocdokuAPIService.getApi()
-                    .then(function (api) {
-                        return api.auth.login({
-                            body: {
-                                login: login,
-                                password: password
-                            }
-                        });
-                    }, deferred.reject).then(function (response) {
-                        var headers = response.headers;
-
-                        var cookie = headers['set-cookie'][0];
-                        DocdokuAPIService.setCookie(cookie);
-
-                        angular.copy(response.obj, user);
-
-                        var lang = user.language;
-
-                        $translate.use(lang);
-                        deferred.resolve(user);
-
-                    }, deferred.reject);
+                authApi.login(api.LoginRequestDTO.constructFromObject({
+                    login: login,
+                    password: password
+                }), function (err, account, response) {
+                    DocdokuAPIService.setToken(response.headers.jwt);
+                    angular.copy(account, user);
+                    $translate.use(user.language);
+                    deferred.resolve(user);
+                });
 
                 return deferred.promise;
             };
 
             this.logout = function () {
                 var deferred = $q.defer();
-                DocdokuAPIService.getApi().then(function (api) {
 
-                    angular.copy({}, user);
+                angular.copy({}, user);
 
-                    ConfigurationService.deleteAuth();
-                    DocdokuAPIService.setCookie(null);
-                    DBService.removeDb();
-                    FolderService.removeFolders();
-                    WorkspaceService.resetWorkspaceSyncs();
+                ConfigurationService.deleteAuth();
+                DocdokuAPIService.setToken(null);
+                DBService.removeDb();
+                FolderService.removeFolders();
+                WorkspaceService.resetWorkspaceSyncs();
 
-                    api.auth.logout().then(deferred.resolve, deferred.reject);
+                authApi.logout(function (err, data, response) {
+                    if (err) {
+                        return deferred.reject(err);
+                    }
+                    return deferred.resolve(data);
                 });
 
                 return deferred.promise;

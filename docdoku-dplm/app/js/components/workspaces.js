@@ -10,170 +10,150 @@
             var fileMode = $filter('fileMode');
             var lastIteration = $filter('lastIteration');
 
+            var api = DocdokuAPIService.getApi();
+            var client = DocdokuAPIService.getClient();
+            var documentsApi = new api.DocumentsApi(client);
+            var foldersApi = new api.FoldersApi(client);
+            var documentApi = new api.DocumentApi(client);
+            var partsApi = new api.PartsApi(client);
+            var partApi = new api.PartApi(client);
+            var workspacesApi = new api.WorkspacesApi(client);
+
             var checkInDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    var updatedItem;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.documents.checkInDocument({
-                            workspaceId: document.workspaceId,
-                            documentId: document.documentMasterId,
-                            documentVersion: document.version
-                        }).then(function (response) {
-                            updatedItem = response.obj;
+                    documentApi.checkInDocument(document.workspaceId, document.documentMasterId, document.version, null,
+                        function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
+                            }
                             if (indexFolder && path) {
                                 RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
-                            return DBService.storeDocuments([updatedItem]);
-                        }).then(function () {
-                            resolve(updatedItem);
+                            return DBService.storeDocuments([updatedItem]).then(function () {
+                                resolve(updatedItem);
+                            });
                         });
-                    }, reject);
                 });
             };
 
             var checkOutDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    var updatedItem;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.documents.checkOutDocument({
-                            workspaceId: document.workspaceId,
-                            documentId: document.documentMasterId,
-                            documentVersion: document.version
-                        }).then(function (response) {
-                            updatedItem = response.obj;
+                    documentApi.checkOutDocument(document.workspaceId, document.documentMasterId, document.version, null,
+                        function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
+                            }
                             if (indexFolder && path) {
                                 RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
-                            return DBService.storeDocuments([updatedItem]);
-                        }).then(function () {
-                            resolve(updatedItem);
+                            return DBService.storeDocuments([updatedItem]).then(function () {
+                                resolve(updatedItem);
+                            });
                         });
-                    }, reject);
                 });
             };
 
 
             var undoCheckOutDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    var updatedItem;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.documents.checkOutDocument({
-                            workspaceId: document.workspaceId,
-                            documentId: document.documentMasterId,
-                            documentVersion: document.version
-                        }).then(function (response) {
-                            updatedItem = response.obj;
+                    documentApi.undoCheckOutDocument(document.workspaceId, document.documentMasterId, document.version, null,
+                        function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
+                            }
                             if (indexFolder && path) {
                                 RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
-                            return DBService.storeDocuments([updatedItem]);
-                        }).then(function () {
-                            resolve(updatedItem);
+                            return DBService.storeDocuments([updatedItem]).then(function () {
+                                resolve(updatedItem);
+                            });
                         });
-                    }, reject);
                 });
             };
 
 
             var checkInPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    var updatedItem;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.part.checkIn({
-                            workspaceId: part.workspaceId,
-                            partNumber: part.number,
-                            partVersion: part.version
-                        }).then(function (response) {
-                            updatedItem = response.obj;
+                    partApi.checkIn(part.workspaceId, part.number, part.version, null,
+                        function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
+                            }
                             if (indexFolder && path) {
                                 RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
-                            return DBService.storeParts([updatedItem]);
-                        }).then(function () {
-                            resolve(updatedItem);
+                            return DBService.storeParts([updatedItem]).then(function () {
+                                resolve(updatedItem);
+                            });
                         });
-                    }, reject);
                 });
             };
 
             var checkOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    var updatedItem;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.part.checkOut({
-                            workspaceId: part.workspaceId,
-                            partNumber: part.number,
-                            partVersion: part.version
-                        }).then(function (response) {
-                            updatedItem = response.obj;
+                    partApi.checkOut(part.workspaceId, part.number, part.version, null,
+                        function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
+                            }
                             if (indexFolder && path) {
                                 RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
-                            return DBService.storeParts([updatedItem]);
-                        }).then(function () {
-                            resolve(updatedItem);
+                            return DBService.storeParts([updatedItem]).then(function () {
+                                resolve(updatedItem);
+                            });
                         });
-                    }, reject);
                 });
             };
 
             var undoCheckOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    var updatedItem;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.part.undoCheckOut({
-                            workspaceId: part.workspaceId,
-                            partNumber: part.number,
-                            partVersion: part.version
-                        }).then(function (response) {
-                            updatedItem = response.obj;
+                    partApi.undoCheckOut(part.workspaceId, part.number, part.version, null,
+                        function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
+                            }
                             if (indexFolder && path) {
                                 RepositoryService.saveItemToIndex(indexFolder, path, updatedItem);
                             }
-                            return DBService.storeParts([updatedItem]);
-                        }).then(function () {
-                            resolve(updatedItem);
+                            return DBService.storeParts([updatedItem]).then(function () {
+                                resolve(updatedItem);
+                            });
                         });
-                    }, reject);
                 });
             };
 
             var saveDocumentNote = function (document, note) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        var lastDocumentIteration = lastIteration(document);
-                        api.apis.document.updateDocumentIteration({
-                            workspaceId: document.workspaceId,
-                            documentId: document.documentMasterId,
-                            documentVersion: document.version,
-                            docIteration: lastDocumentIteration.iteration,
-                            body: {
-                                revisionNote: note
+                    var lastDocumentIteration = lastIteration(document);
+                    documentApi.updateDocumentIteration(document.workspaceId, document.documentMasterId,
+                        document.version, lastDocumentIteration.iteration, {
+                            revisionNote: note
+                        }, function (err, updatedItem, response) {
+                            if (err) {
+                                return reject(err);
                             }
-                        }).then(function (response) {
-                            angular.copy(response.obj, lastDocumentIteration);
+                            angular.copy(updatedItem, lastDocumentIteration);
                             return DBService.storeDocuments([document]).then(resolve);
-                        }, reject);
-                    });
+                        });
                 });
             };
 
             var savePartNote = function (part, note) {
+
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.part.updatePartIteration({
-                            workspaceId: part.workspaceId,
-                            partNumber: part.number,
-                            partVersion: part.version,
-                            partIteration: lastIteration(part).iteration,
-                            body: {
-                                iterationNote: note
-                            }
-                        }).then(function (response) {
-                            return DBService.storeParts([response.obj]).then(resolve);
-                        }, reject);
+                    var lastPartIteration = lastIteration(part);
+                    partApi.updatePartIteration(part.workspaceId, part.number, part.version, lastPartIteration.iteration, {
+                        revisionNote: note
+                    }, function (err, updatedItem, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        angular.copy(updatedItem, lastPartIteration);
+                        return DBService.storeParts([part]).then(resolve);
                     });
                 });
+
             };
 
             var saveNote = function (item, note) {
@@ -192,50 +172,46 @@
 
             this.getWorkspaces = function () {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.workspaces.getWorkspacesForConnectedUser()
-                            .then(function (response) {
-                                angular.copy(response.obj.allWorkspaces.map(function (workspace) {
-                                    return workspace.id;
-                                }), _this.workspaces);
-                                resolve(_this.workspaces);
-                            }, reject);
-                    }, reject);
+
+                    workspacesApi.getWorkspacesForConnectedUser(function (err, workspaces, response) {
+
+                        if (err) {
+                            return reject(err);
+                        }
+
+                        angular.copy(workspaces.allWorkspaces.map(function (workspace) {
+                            return workspace.id;
+                        }), _this.workspaces);
+
+                        resolve(_this.workspaces);
+
+                    });
                 });
             };
 
             this.createPartInWorkspace = function (part) {
                 return $q(function (resolve, reject) {
-                    var createdPart;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.parts.createNewPart({
-                            workspaceId: part.workspaceId,
-                            body: part
-                        }).then(function (response) {
-                            createdPart = response.obj;
-                            return DBService.storeParts([createdPart]);
-                        }, reject).then(function () {
+                    partsApi.createNewPart(part.workspaceId, part, function (err, createdPart, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return DBService.storeParts([createdPart]).then(function () {
                             resolve(createdPart);
                         });
-                    }, reject);
+                    });
                 });
             };
 
             this.createDocumentInWorkspace = function (document) {
                 return $q(function (resolve, reject) {
-                    var createdDocument;
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.folders.createDocumentMasterInFolder({
-                            workspaceId: document.workspaceId,
-                            folderId: document.workspaceId,
-                            body: document
-                        }).then(function (response) {
-                            createdDocument = response.obj;
-                            return DBService.storeDocuments([createdDocument]);
-                        }, reject).then(function () {
+                    foldersApi.createDocumentMasterInFolder(document.workspaceId, document, document.workspaceId, function (err, createdDocument, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return DBService.storeDocuments([createdDocument]).then(function () {
                             resolve(createdDocument);
                         });
-                    }, reject);
+                    });
                 });
             };
 
@@ -270,53 +246,45 @@
 
             this.fetchParts = function (workspace, start, max) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.parts.getPartRevisions({
-                            workspaceId: workspace,
-                            start: start,
-                            length: max
-                        }).then(function (response) {
-                            return DBService.storeParts(response.obj);
-                        }).then(resolve);
-                    }, reject);
+                    partsApi.getPartRevisions(workspace, {start: start, length: max}, function (err, parts, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return DBService.storeParts(parts).then(resolve);
+                    });
                 });
             };
 
             this.fetchPartsCount = function (workspace) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.parts.getTotalNumberOfParts({
-                            workspaceId: workspace
-                        }).then(function (response) {
-                            resolve(response.obj.count);
-                        });
-                    }, reject);
+                    partsApi.getTotalNumberOfParts(workspace, function (err, data, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve(data.count);
+                    });
                 });
             };
 
             this.fetchDocuments = function (workspace, start, max) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.documents.getDocumentsInWorkspace({
-                            workspaceId: workspace,
-                            start: start,
-                            max: max
-                        }).then(function (response) {
-                            return DBService.storeDocuments(response.obj);
-                        }).then(resolve);
-                    }, reject);
+                   documentsApi.getDocumentsInWorkspace(workspace, {start: start, length: max}, function (err, documents, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        return DBService.storeDocuments(documents).then(resolve);
+                    });
                 });
             };
 
             this.fetchDocumentsCount = function (workspace) {
                 return $q(function (resolve, reject) {
-                    DocdokuAPIService.getApi().then(function (api) {
-                        api.apis.documents.getDocumentsInWorkspaceCount({
-                            workspaceId: workspace
-                        }).then(function (response) {
-                            resolve(response.obj.count);
-                        });
-                    }, reject);
+                    documentsApi.getDocumentsInWorkspaceCount(workspace, function (err, data, response) {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve(data.count);
+                    });
                 });
             };
 
