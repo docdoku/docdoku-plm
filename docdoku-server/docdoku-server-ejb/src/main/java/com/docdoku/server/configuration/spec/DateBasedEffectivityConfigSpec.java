@@ -21,13 +21,10 @@
 
 package com.docdoku.server.configuration.spec;
 
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.configuration.ProductConfiguration;
+import com.docdoku.core.product.*;
 
 import java.util.Date;
-import java.util.List;
-
 /**
  * A kind of {@link EffectivityConfigSpec} expressed by date and time.
  * 
@@ -37,26 +34,44 @@ import java.util.List;
  */
 
 public class DateBasedEffectivityConfigSpec extends EffectivityConfigSpec {
+
     /**
      * The date and/or time of the context.
      */
-
     private Date date;
 
-    public DateBasedEffectivityConfigSpec() {
+
+    public DateBasedEffectivityConfigSpec(Date date, ConfigurationItem configurationItem) {
+        super(configurationItem);
+        this.date=date;
+    }
+    public DateBasedEffectivityConfigSpec(Date date, ProductConfiguration configuration) {
+        super(configuration);
+        this.date=date;
     }
 
     @Override
-    public PartIteration filterPartIteration(PartMaster partMaster) {
-        // TODO : implement filter
-        return null;
+    protected boolean isEffective(Effectivity eff){
+        if(eff instanceof DateBasedEffectivity){
+            DateBasedEffectivity dateEff=(DateBasedEffectivity) eff;
+            return isEffective(dateEff);
+        }else
+            return false;
+    }
+    private boolean isEffective(DateBasedEffectivity dateEff){
+        ConfigurationItem ci = dateEff.getConfigurationItem();
+        if(ci != null && !ci.equals(configurationItem))
+            return false;
+
+        if(dateEff.getStartDate().after(date))
+            return false;
+
+        if(dateEff.getEndDate()!=null && dateEff.getEndDate().before(date))
+            return false;
+
+        return true;
     }
 
-    @Override
-    public PartLink filterPartLink(List<PartLink> path) {
-        // TODO : implement filter
-        return null;
-    }
 
     public Date getDate() {
         return date;

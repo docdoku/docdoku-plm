@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.*;
@@ -75,6 +75,9 @@ public class PartsResource {
     private PartResource partResource;
 
     @Inject
+    private PartEffectivityResource partEffectivityResource;
+
+    @Inject
     private IPSFilterManagerLocal filterService;
 
     @EJB
@@ -94,6 +97,13 @@ public class PartsResource {
     @Produces(MediaType.APPLICATION_JSON)
     public PartResource getPartResource() {
         return partResource;
+    }
+
+    @ApiOperation(value = "SubResource : PartEffectivity")
+    @Path("{partNumber: [^/].*}-{partVersion:[A-Z]+}/effectivities")
+    @Produces(MediaType.APPLICATION_JSON)
+    public PartEffectivityResource getPartEffectivity() {
+        return partEffectivityResource;
     }
 
     @GET
@@ -285,7 +295,7 @@ public class PartsResource {
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             BaselineNotFoundException, PartMasterNotFoundException, WorkspaceNotEnabledException {
 
-        PSFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
+        ProductStructureFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
         PartMaster partMaster = productService.getPartMaster(new PartMasterKey(workspaceId, partNumber));
         List<PartIteration> partIterations = filter.filter(partMaster);
         if (!partIterations.isEmpty()) {

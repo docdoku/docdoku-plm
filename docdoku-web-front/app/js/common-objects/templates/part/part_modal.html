@@ -39,6 +39,7 @@
                 {{#hasIterations}}
                 <li><a href="#tab-part-iteration" data-toggle="tab">{{i18n.ITERATION}}</a></li>
                 <li><a href="#tab-part-attributes" data-toggle="tab">{{i18n.ATTRIBUTES}}</a></li>
+                <li><a href="#tab-part-effectivity" data-toggle="tab">Effectivity</a></li>
                 <li><a href="#tab-part-files" data-toggle="tab">{{i18n.FILES}}</a></li>
                 <li><a href="#tab-assembly" data-toggle="tab">{{i18n.SUB_PARTS}}</a></li>
                 <li><a href="#tab-part-links" data-toggle="tab">{{i18n.LINKS}}</a></li>
@@ -232,6 +233,10 @@
                         <div id="attributes-list" class="attributes attributes-edit"></div>
                         <p>{{i18n.PRODUCT_INSTANCE_DATA_ATTRIBUTES_TEMPLATES}}</p>
                         <div id="attribute-templates-list" class="attributes attributes-edit"></div>
+                    </div>
+
+                    <div id="tab-part-effectivity" class="tab-pane">
+                        <div id="effectivities-list"></div>
                     </div>
 
                     <div id="tab-part-files" class="tab-pane files">

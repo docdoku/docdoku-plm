@@ -18,26 +18,8 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+package com.docdoku.core.product;
 
-package com.docdoku.core.configuration;
-
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartMaster;
-
-import java.io.Serializable;
-import java.util.List;
-
-/**
- * A PSFilter is used to select for each {@link com.docdoku.core.product.PartMaster}s
- * the right {@link com.docdoku.core.product.PartIteration}s
- *
- * @author Morgan Guimard
- */
-
-public abstract class PSFilter implements Serializable{
-    public PSFilter() {
-    }
-    public abstract List<PartIteration> filter(PartMaster partMaster);
-    public abstract List<PartLink> filter(List<PartLink> path);
+public enum TypeEffectivity {
+    SERIALNUMBERBASEDEFFECTIVITY, DATEBASEDEFFECTIVITY, LOTBASEDEFFECTIVITY
 }

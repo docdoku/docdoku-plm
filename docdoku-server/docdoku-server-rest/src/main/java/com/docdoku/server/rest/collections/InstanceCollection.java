@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.collections;
 
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.util.Tools;
@@ -37,19 +37,19 @@ public class InstanceCollection {
     private ConfigurationItemKey ciKey;
 
     // Used to walk the structure
-    private PSFilter filter;
+    private ProductStructureFilter filter;
 
     // All instances under these paths
     private List<List<PartLink>> paths;
 
-    public InstanceCollection(ConfigurationItemKey ciKey, PSFilter filter, List<List<PartLink>> paths) {
+    public InstanceCollection(ConfigurationItemKey ciKey, ProductStructureFilter filter, List<List<PartLink>> paths) {
         this.ciKey = ciKey;
         this.filter = filter;
         this.paths = paths;
     }
 
 
-    public PSFilter getFilter() {
+    public ProductStructureFilter getFilter() {
         return filter;
     }
 

@@ -21,10 +21,13 @@
 
 package com.docdoku.server.configuration.spec;
 
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartLink;
-import com.docdoku.core.product.PartMaster;
+import com.docdoku.core.configuration.ProductConfiguration;
+import com.docdoku.core.product.*;
+import com.docdoku.core.util.AlphanumericComparator;
+import com.docdoku.core.util.Tools;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -40,19 +43,40 @@ public class SerialNumberBasedEffectivityConfigSpec extends EffectivityConfigSpe
      * The serial number of the particular item specified by the context.
      */
     private String number;
-    public SerialNumberBasedEffectivityConfigSpec() {
+
+    private final static Comparator<CharSequence> STRING_COMPARATOR = new AlphanumericComparator();
+
+
+    public SerialNumberBasedEffectivityConfigSpec(String number, ConfigurationItem configurationItem) {
+        super(configurationItem);
+        this.number=number;
+    }
+    public SerialNumberBasedEffectivityConfigSpec(String number, ProductConfiguration configuration) {
+        super(configuration);
+        this.number=number;
     }
 
-    @Override
-    public PartIteration filterPartIteration(PartMaster partMaster) {
-        // TODO : implement filter
-        return null;
-    }
 
     @Override
-    public PartLink filterPartLink(List<PartLink> path) {
-        // TODO : implement filter
-        return null;
+    protected boolean isEffective(Effectivity eff){
+        if(eff instanceof SerialNumberBasedEffectivity){
+            SerialNumberBasedEffectivity serialEff=(SerialNumberBasedEffectivity) eff;
+            return isEffective(serialEff);
+        }else
+            return false;
+    }
+    private boolean isEffective(SerialNumberBasedEffectivity serialEff){
+        ConfigurationItem ci = serialEff.getConfigurationItem();
+        if(!configurationItem.equals(ci))
+            return false;
+
+        if(STRING_COMPARATOR.compare(number, serialEff.getStartNumber())<0)
+            return false;
+
+        if(serialEff.getEndNumber()!=null && STRING_COMPARATOR.compare(number, serialEff.getEndNumber())>0)
+            return false;
+
+        return true;
     }
 
     public void setNumber(String number) {

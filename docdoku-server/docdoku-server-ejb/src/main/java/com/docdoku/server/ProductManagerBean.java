@@ -109,7 +109,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<PartLink[]> findPartUsages(ConfigurationItemKey pKey, PSFilter filter, String search) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
+    public List<PartLink[]> findPartUsages(ConfigurationItemKey pKey, ProductStructureFilter filter, String search) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspace());
 
@@ -2453,7 +2453,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Component filterProductStructure(ConfigurationItemKey ciKey, PSFilter filter, List<PartLink> path, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartMasterNotFoundException, EntityConstraintException, WorkspaceNotEnabledException {
+    public Component filterProductStructure(ConfigurationItemKey ciKey, ProductStructureFilter filter, List<PartLink> path, Integer pDepth) throws ConfigurationItemNotFoundException, WorkspaceNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, PartUsageLinkNotFoundException, AccessRightException, PartMasterNotFoundException, EntityConstraintException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -2572,7 +2572,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, PSFilter filter, String configSpecType, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
+    public Component filterProductStructureOnLinkType(ConfigurationItemKey ciKey, ProductStructureFilter filter, String configSpecType, String path, String linkType) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -3019,7 +3019,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PSFilter getLatestCheckedInPSFilter(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
+    public ProductStructureFilter getLatestCheckedInPSFilter(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         return new LatestPSFilter(user);
     }
@@ -3139,7 +3139,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Map<String, Set<BinaryResource>> getBinariesInTree(Integer baselineId, String workspaceId, ConfigurationItemKey ciKey, PSFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, WorkspaceNotEnabledException {
+    public Map<String, Set<BinaryResource>> getBinariesInTree(Integer baselineId, String workspaceId, ConfigurationItemKey ciKey, ProductStructureFilter psFilter, boolean exportNativeCADFiles, boolean exportDocumentLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Map<String, Set<BinaryResource>> result = new HashMap<>();
@@ -3277,7 +3277,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         List<QueryResultRow> rows = new ArrayList<>();
 
-        PSFilter filter = serialNumber != null ? psFilterManager.getPSFilter(ciKey, "pi-" + serialNumber, false) : psFilterManager.getPSFilter(ciKey, "latest", false);
+        ProductStructureFilter filter = serialNumber != null ? psFilterManager.getPSFilter(ciKey, "pi-" + serialNumber, false) : psFilterManager.getPSFilter(ciKey, "latest", false);
 
         ProductInstanceIteration productInstanceIteration = null;
         if (serialNumber != null) {

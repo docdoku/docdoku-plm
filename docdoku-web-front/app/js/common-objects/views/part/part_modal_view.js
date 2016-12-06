@@ -7,6 +7,7 @@ define([
     'text!common-objects/templates/part/part_modal.html',
     'common-objects/views/attributes/attributes',
     'common-objects/views/attributes/template_new_attributes',
+    'common-objects/views/part/part_effectivities_view',
     'common-objects/views/part/part_assembly_view',
     'common-objects/views/part/modification_notification_group_list_view',
     'common-objects/views/linked/linked_documents',
@@ -19,16 +20,14 @@ define([
     'common-objects/utils/date',
     'common-objects/views/tags/tag',
     'common-objects/models/tag'
-], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartAssemblyView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
+], function (Backbone, Mustache, ModalView, FileListView, template, AttributesView, TemplateNewAttributesView, PartEffectivitiesView, PartAssemblyView, ModificationNotificationGroupListView, LinkedDocumentsView, UsedByView, AlertView, LinkedDocumentCollection, LinkedDocumentIterationCollection, LifecycleView, ConversionStatusView, date,TagView,Tag) {
 
     'use strict';
 
     var PartModalView = ModalView.extend({
 
         initialize: function () {
-
             this.iterations = this.model.getIterations();
-
             this.iteration = this.options.iteration && this.options.iteration < this.iterations.size() ?
                 this.iterations.get(this.options.iteration) : this.model.getLastIteration();
 
@@ -149,6 +148,7 @@ define([
                 this.initCadFileUploadView();
                 this.initAttachedFilesUploadView();
                 this.initAttributesView();
+                this.initPartEffectivitiesView();
                 this.initPartAssemblyView();
                 this.initLinkedDocumentsView();
                 this.initUsedByView();
@@ -289,6 +289,15 @@ define([
 
         updateConversionStatusView:function(){
             this.conversionStatusView.launch();
+        },
+
+        initPartEffectivitiesView: function () {
+            this.partEffectivitiesView = new PartEffectivitiesView({
+                el: '#effectivities-list',
+                notifications: this.$el.find('.notifications').first(),
+                productId: this.model.id,
+                model: this.model
+            }).render();
         },
 
         initPartAssemblyView: function () {
@@ -499,7 +508,7 @@ define([
 
         },
 
-        onSuccess: function () {
+        onSuccessfulLoad: function () {
             this.model.fetch().success(function () {
                 this.iteration = this.model.getLastIteration();
                 this.iterations = this.model.getIterations();

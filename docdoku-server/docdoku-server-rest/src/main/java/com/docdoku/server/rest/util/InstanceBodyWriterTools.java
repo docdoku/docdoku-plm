@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
@@ -112,7 +112,7 @@ public class InstanceBodyWriterTools {
         try {
 
             PartLink partLink = currentPath.get(currentPath.size() - 1);
-            PSFilter filter = virtualInstanceCollection.getFilter();
+            ProductStructureFilter filter = virtualInstanceCollection.getFilter();
             List<PartIteration> filteredPartIterations = filter.filter(partLink.getComponent());
 
             if (!filteredPartIterations.isEmpty()) {

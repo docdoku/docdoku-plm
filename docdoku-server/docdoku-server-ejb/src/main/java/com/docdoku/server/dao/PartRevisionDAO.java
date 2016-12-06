@@ -182,4 +182,10 @@ public class PartRevisionDAO {
                 .setParameter("login", assignedUserLogin)
                 .getResultList();
     }
+
+    public void removePartRevisionEffectivity(PartRevision pPartRevision, Effectivity pEffectivity) {
+        pPartRevision.removeEffectivity(pEffectivity);
+        em.merge(pPartRevision);
+        em.flush();
+    }
 }

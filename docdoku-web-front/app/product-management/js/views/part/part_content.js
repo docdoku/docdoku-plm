@@ -8,11 +8,13 @@ define([
     'text!templates/part/part_content.html',
     'views/part/part_list',
     'views/part/part_creation_view',
+    'common-objects/views/part/part_creation_effectivity_view',
     'views/part/part_new_version',
     'common-objects/views/prompt',
     'common-objects/views/security/acl_edit',
     'views/query_builder',
     'text!common-objects/templates/buttons/delete_button.html',
+    'text!common-objects/templates/buttons/new_effectivity_button.html',
     'text!common-objects/templates/buttons/checkout_button_group.html',
     'text!common-objects/templates/buttons/new_version_button.html',
     'text!common-objects/templates/buttons/release_button.html',
@@ -29,11 +31,12 @@ define([
     'views/advanced_search',
     'views/part/part_grouped_by_list',
     'text!common-objects/templates/buttons/import_button.html',
-], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, statusFilter, AlertView, TagsManagementView, PartImporterView, ProductCreationView, AdvancedSearchView, PartGroupedByView, importButton) {
+], function (Backbone, Mustache, Async, PartCollection, PartSearchCollection, template, PartListView, PartCreationView, PartCreationEffectivityView, PartNewVersionView, PromptView, ACLEditView, QueryBuilder, deleteButton, newEffectivityButton, checkoutButtonGroup, newVersionButton, releaseButton, aclButton, newProductButton, tagsButton, obsoleteButton, searchForm, statusFilter, AlertView, TagsManagementView, PartImporterView, ProductCreationView, AdvancedSearchView, PartGroupedByView, importButton) {
     'use strict';
     var PartContentView = Backbone.View.extend({
         events: {
             'click button.new-part': 'newPart',
+            'click button.new-effectivity': 'newEffectivity',
             'click button.delete': 'deletePart',
             'click button.checkout': 'checkout',
             'click button.undocheckout': 'undocheckout',
@@ -63,6 +66,7 @@ define([
             aclButton: aclButton,
             checkoutButtonGroup: checkoutButtonGroup,
             newVersionButton: newVersionButton,
+            newEffectivityButton: newEffectivityButton,
             releaseButton: releaseButton,
             searchForm: searchForm,
             newProductButton: newProductButton,
@@ -136,6 +140,7 @@ define([
             this.checkoutButton = this.$('.checkout');
             this.undoCheckoutButton = this.$('.undocheckout');
             this.aclButton = this.$('.edit-acl');
+            this.effectivityButton = this.$('.new-effectivity');
             this.checkinButton = this.$('.checkin');
             this.newVersionButton = this.$('.new-version');
             this.newProductButton = this.$('.new-product');
@@ -159,6 +164,7 @@ define([
             this.partListView.on('error', this.onError);
             this.partListView.on('warning', this.onWarning);
             this.partListView.on('delete-button:display', this.changeDeleteButtonDisplay);
+            this.partListView.on('effectivity-button:display', this.changeEffectivityButtonDisplay);
             this.partListView.on('checkout-group:display', this.changeCheckoutGroupDisplay);
             this.partListView.on('checkout-group:update', this.updateCheckoutButtons);
             this.partListView.on('acl-edit-button:display', this.changeACLButtonDisplay);
@@ -186,6 +192,13 @@ define([
             partCreationView.openModal();
         },
 
+        newEffectivity: function() {
+            var partCreationEffectivityView = new PartCreationEffectivityView({
+              selectedPart: this.partListView.getSelectedPart()
+            });
+            partCreationEffectivityView.openModal();
+        },
+
         fetchPartAndAdd: function (part) {
             var self = this;
             part.set('partKey', part.getNumber() + '-A');
@@ -205,6 +218,10 @@ define([
 
         changeDeleteButtonDisplay: function (state) {
             this.deleteButton.toggle(state);
+        },
+
+        changeEffectivityButtonDisplay: function (state) {
+            this.effectivityButton.toggle(state);
         },
 
         changeACLButtonDisplay: function (state) {
