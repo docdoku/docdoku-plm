@@ -26,7 +26,7 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -53,7 +53,7 @@ public class PartResourceTest {
     @Mock
     private IProductManagerLocal productService;
     @Mock
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Mock
     private EntityManager em;
     @Mock

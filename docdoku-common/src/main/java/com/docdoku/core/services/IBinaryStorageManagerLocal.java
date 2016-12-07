@@ -29,16 +29,16 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 
-public interface IDataManagerLocal {
+public interface IBinaryStorageManagerLocal {
     InputStream getBinaryResourceInputStream(BinaryResource binaryResource) throws StorageException;
-    InputStream getBinarySubResourceInputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     OutputStream getBinaryResourceOutputStream(BinaryResource binaryResource) throws StorageException;
-    OutputStream getBinarySubResourceOutputStream(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
-    boolean exists(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
+    boolean exists(BinaryResource binaryResource, String generatedFileName) throws StorageException;
+    Date getLastModified(BinaryResource binaryResource, String generatedFileName) throws StorageException;
+    InputStream getGeneratedFileInputStream(BinaryResource binaryResource, String generatedFileName) throws StorageException;
+    OutputStream getGeneratedFileOutputStream(BinaryResource binaryResource, String generatedFileName) throws StorageException;
     void copyData(BinaryResource source, BinaryResource destination) throws StorageException;
     void deleteData(BinaryResource binaryResource) throws StorageException;
     void renameFile(BinaryResource binaryResource, String pNewName) throws StorageException, FileNotFoundException;
-    Date getLastModified(BinaryResource binaryResource, String subResourceVirtualPath) throws StorageException;
     String getExternalStorageURI(BinaryResource binaryResource);
     String getShortenExternalStorageURI(BinaryResource binaryResource);
     void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;

@@ -26,7 +26,7 @@ import com.docdoku.core.product.CADInstance;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.InternalService;
 import com.docdoku.server.converters.CADConverter;
@@ -62,7 +62,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     static {
         try (InputStream inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES)){
@@ -94,7 +94,7 @@ public class CatiaProductFileParserImpl implements CADConverter {
 
         tmpCadFile = new File(tempDir, cadFile.getName());
 
-        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try(InputStream in = storageManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);

@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.resourcegetters;
+package com.docdoku.server.converters;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
@@ -28,10 +28,8 @@ import com.docdoku.core.product.PartIteration;
 import java.io.InputStream;
 import java.util.Locale;
 
-public interface DocumentResourceGetter {
-    boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource);
+public interface OnDemandConverter {
+    boolean canConvert(String outputFormat, BinaryResource binaryResource);
     InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException;
     InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, PartIteration partIteration, Locale locale) throws ConvertedResourceException;
-    boolean canGetSubResourceVirtualPath(BinaryResource binaryResource);
-    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

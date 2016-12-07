@@ -23,7 +23,7 @@ package com.docdoku.server.converters.catia;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.server.InternalService;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
@@ -50,7 +50,7 @@ public class CatiaFileConverterImpl implements CADConverter{
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     private static final Logger LOGGER = Logger.getLogger(CatiaFileConverterImpl.class.getName());
 
@@ -80,7 +80,7 @@ public class CatiaFileConverterImpl implements CADConverter{
             return null;
         }
 
-        try(InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try(InputStream in = storageManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);

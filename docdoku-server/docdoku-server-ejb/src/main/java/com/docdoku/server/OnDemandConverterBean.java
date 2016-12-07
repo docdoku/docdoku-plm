@@ -26,7 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
-import com.docdoku.server.resourcegetters.DocumentResourceGetter;
+import com.docdoku.server.converters.OnDemandConverter;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
@@ -39,12 +39,12 @@ import java.util.Locale;
 /**
  * Resource Getter
  */
-@Stateless(name="DocumentResourceGetterBean")
-public class DocumentResourceGetterBean implements IDocumentResourceGetterManagerLocal {
+@Stateless(name="OnDemandConverterBean")
+public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
 
     @Inject
     @Any
-    private Instance<DocumentResourceGetter> documentResourceGetters;
+    private Instance<OnDemandConverter> documentResourceGetters;
 
     @Inject
     private IDocumentManagerLocal documentService;
@@ -74,15 +74,15 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
 
         docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
 
-        DocumentResourceGetter selectedDocumentResourceGetter = null;
-        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
-                selectedDocumentResourceGetter = documentResourceGetter;
+        OnDemandConverter selectedOnDemandConverter = null;
+        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
+            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
+                selectedOnDemandConverter = onDemandConverter;
                 break;
             }
         }
-        if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,docI,locale);
+        if (selectedOnDemandConverter != null) {
+            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource,docI,locale);
         }
 
         return null;
@@ -104,33 +104,18 @@ public class DocumentResourceGetterBean implements IDocumentResourceGetterManage
 
         partIteration = productService.findPartIterationByBinaryResource(binaryResource);
 
-        DocumentResourceGetter selectedDocumentResourceGetter = null;
-        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
-                selectedDocumentResourceGetter = documentResourceGetter;
+        OnDemandConverter selectedOnDemandConverter = null;
+        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
+            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
+                selectedOnDemandConverter = onDemandConverter;
                 break;
             }
         }
-        if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource,partIteration,locale);
+        if (selectedOnDemandConverter != null) {
+            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, partIteration, locale);
         }
 
         return null;
-    }
-
-    @Override
-    public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {
-        DocumentResourceGetter selectedDocumentResourceGetter = null;
-        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetSubResourceVirtualPath(binaryResource)) {
-                selectedDocumentResourceGetter = documentResourceGetter;
-                break;
-            }
-        }
-        if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getSubResourceVirtualPath(binaryResource, subResourceUri);
-        }
-        return "";
     }
 
 }

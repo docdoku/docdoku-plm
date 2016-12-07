@@ -27,6 +27,7 @@ import com.docdoku.core.exceptions.StorageException;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 
 public interface StorageProvider {
@@ -40,4 +41,8 @@ public interface StorageProvider {
     String getShortenExternalResourceURI(BinaryResource binaryResource);
     void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException;
     void renameData(File file, String pNewName) throws StorageException;
+    boolean exists(BinaryResource binaryResource, String generatedFileName);
+    Date getLastModified(BinaryResource binaryResource, String generatedFileName) throws FileNotFoundException;
+    InputStream getGeneratedFileInputStream(BinaryResource pBinaryResource, String generatedFileName) throws StorageException, FileNotFoundException;
+    OutputStream getGeneratedFileOutputStream(BinaryResource binaryResource, String generatedFileName) throws StorageException;
 }

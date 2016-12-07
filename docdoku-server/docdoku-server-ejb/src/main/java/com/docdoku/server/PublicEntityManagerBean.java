@@ -38,7 +38,7 @@ import com.docdoku.core.services.IPublicEntityManagerLocal;
 import com.docdoku.server.dao.BinaryResourceDAO;
 import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.dao.PartRevisionDAO;
-import com.docdoku.server.resourcegetters.DocumentResourceGetter;
+import com.docdoku.server.converters.OnDemandConverter;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -70,7 +70,7 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
 
     @Inject
     @Any
-    private Instance<DocumentResourceGetter> documentResourceGetters;
+    private Instance<OnDemandConverter> documentResourceGetters;
 
     @Override
     @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -146,15 +146,15 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
         PartRevision partRevision = getPublicPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
         // todo : handle risk of NPE on partRevision
         PartIteration partIteration = partRevision.getLastCheckedInIteration();
-        DocumentResourceGetter selectedDocumentResourceGetter = null;
-        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
-                selectedDocumentResourceGetter = documentResourceGetter;
+        OnDemandConverter selectedOnDemandConverter = null;
+        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
+            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
+                selectedOnDemandConverter = onDemandConverter;
                 break;
             }
         }
-        if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource, partIteration, locale);
+        if (selectedOnDemandConverter != null) {
+            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, partIteration, locale);
         }
 
         return null;
@@ -198,15 +198,15 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
         DocumentRevision documentRevision = getPublicDocumentRevision(new DocumentRevisionKey(workspaceId, documentMasterId, documentVersion));
         // todo : handle risk of NPE on documentRevision
         DocumentIteration documentIteration = documentRevision.getLastCheckedInIteration();
-        DocumentResourceGetter selectedDocumentResourceGetter = null;
-        for (DocumentResourceGetter documentResourceGetter : documentResourceGetters) {
-            if (documentResourceGetter.canGetConvertedResource(outputFormat, binaryResource)) {
-                selectedDocumentResourceGetter = documentResourceGetter;
+        OnDemandConverter selectedOnDemandConverter = null;
+        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
+            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
+                selectedOnDemandConverter = onDemandConverter;
                 break;
             }
         }
-        if (selectedDocumentResourceGetter != null) {
-            return selectedDocumentResourceGetter.getConvertedResource(outputFormat, binaryResource, documentIteration, locale);
+        if (selectedOnDemandConverter != null) {
+            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, documentIteration, locale);
         }
 
         return null;

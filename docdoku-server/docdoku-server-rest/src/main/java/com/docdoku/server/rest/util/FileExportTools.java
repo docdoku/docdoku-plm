@@ -21,7 +21,7 @@
 package com.docdoku.server.rest.util;
 
 import com.docdoku.core.exceptions.StorageException;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import java.util.zip.ZipOutputStream;
 public class FileExportTools {
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     public static void addToZipFile(InputStream binaryResourceInputStream, String binaryResourceName, String folderName, ZipOutputStream zos)
             throws IOException, StorageException {

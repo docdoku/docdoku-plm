@@ -20,7 +20,7 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.InternalService;
 import com.github.mustachejava.DefaultMustacheFactory;
@@ -36,7 +36,7 @@ public class MultimediaViewerImpl implements DocumentViewer {
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Override
     public boolean canRenderViewerTemplate(BinaryResource binaryResource) {
@@ -52,7 +52,7 @@ public class MultimediaViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, multimediaResource, uuid, templateWriter.toString(), false);
+        return ViewerUtils.getViewerTemplate(storageManager, multimediaResource, uuid, templateWriter.toString(), false);
     }
 
 }

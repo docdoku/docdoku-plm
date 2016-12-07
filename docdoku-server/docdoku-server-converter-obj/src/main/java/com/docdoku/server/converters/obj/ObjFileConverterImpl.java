@@ -23,16 +23,12 @@ package com.docdoku.server.converters.obj;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.server.InternalService;
-import com.docdoku.server.ServiceLocator;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +44,7 @@ public class ObjFileConverterImpl implements CADConverter {
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     private static final Logger LOGGER = Logger.getLogger(ObjFileConverterImpl.class.getName());
 
@@ -58,7 +54,7 @@ public class ObjFileConverterImpl implements CADConverter {
 
         File tmpCadFile = new File(tempDir, partToConvert.getKey() + ".obj");
 
-        try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try (InputStream in = storageManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);

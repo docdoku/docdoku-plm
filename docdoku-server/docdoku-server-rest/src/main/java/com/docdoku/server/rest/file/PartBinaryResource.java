@@ -71,7 +71,7 @@ public class PartBinaryResource {
     private static final String ATTACHED_FILES_SUBTYPE = "attachedfiles";
     private static final String UTF8_ENCODING = "UTF-8";
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Inject
     private IProductManagerLocal productService;
     @Inject
@@ -83,7 +83,7 @@ public class PartBinaryResource {
     @Inject
     private IPublicEntityManagerLocal publicEntityManager;
     @Inject
-    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+    private IOnDemandConverterManagerLocal binaryResourceGetterService;
 
 
     public PartBinaryResource() {
@@ -121,7 +121,7 @@ public class PartBinaryResource {
             Part part = parts.iterator().next();
             String fileName = part.getSubmittedFileName();
             BinaryResource binaryResource = productService.saveNativeCADInPartIteration(partPK, fileName, 0);
-            OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+            OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
             long length = BinaryResourceUpload.uploadBinary(outputStream, part);
             productService.saveNativeCADInPartIteration(partPK, fileName, length);
             tryToConvertCADFileToOBJ(partPK, binaryResource);
@@ -163,7 +163,7 @@ public class PartBinaryResource {
             for (Part formPart : formParts) {
                 fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
                 BinaryResource binaryResource = productService.saveFileInPartIteration(partPK, fileName, ATTACHED_FILES_SUBTYPE, 0);
-                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+                OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
                 long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
                 productService.saveFileInPartIteration(partPK, fileName, ATTACHED_FILES_SUBTYPE, length);
             }
@@ -350,18 +350,13 @@ public class PartBinaryResource {
             return rb.build();
         }
 
-        //attachedfiles is not a valid subtype
-        if (subType != null && !subType.isEmpty() && !ATTACHED_FILES_SUBTYPE.equals(subType)) {
-            binaryResourceDownloadMeta.setSubResourceVirtualPath(subType);
-        }
 
         InputStream binaryContentInputStream = null;
         try {
             if (ATTACHED_FILES_SUBTYPE.equals(subType) && output != null && !output.isEmpty()) {
-                binaryResourceDownloadMeta.setSubResourceVirtualPath(null);
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output, uuid);
             } else {
-                binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
@@ -384,7 +379,7 @@ public class PartBinaryResource {
                 return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-                return documentResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
+                return binaryResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
             } else {
                 return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }

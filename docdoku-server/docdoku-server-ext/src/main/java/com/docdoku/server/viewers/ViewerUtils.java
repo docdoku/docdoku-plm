@@ -21,7 +21,7 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
@@ -46,7 +46,7 @@ public class ViewerUtils {
         }
     }
 
-    public static String getViewerTemplate(IDataManagerLocal dataManager, BinaryResource binaryResource, String uuid, String viewer, boolean pdf) throws IOException {
+    public static String getViewerTemplate(IBinaryStorageManagerLocal storageManager, BinaryResource binaryResource, String uuid, String viewer, boolean pdf) throws IOException {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/viewer_template.mustache");
         Map<String, Object> scopes = new HashMap<>();
@@ -55,10 +55,10 @@ public class ViewerUtils {
             scopes.put("pdfUri", ViewerUtils.getURI(binaryResource, uuid)+"?output=pdf");
         }
 
-        String externalURL = dataManager.getExternalStorageURI(binaryResource);
+        String externalURL = storageManager.getExternalStorageURI(binaryResource);
         scopes.put("externalUriResource", externalURL);
 
-        String shortenExternalURL = dataManager.getShortenExternalStorageURI(binaryResource);
+        String shortenExternalURL = storageManager.getShortenExternalStorageURI(binaryResource);
         scopes.put("shortenExternalUriResource", shortenExternalURL);
 
         scopes.put("fileName", binaryResource.getName());

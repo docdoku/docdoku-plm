@@ -30,7 +30,7 @@ import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.util.NamingConvention;
@@ -70,7 +70,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     private IUserManagerLocal userManager;
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     private static final Logger LOGGER = Logger.getLogger(ProductInstanceManagerBean.class.getName());
 
@@ -477,7 +477,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             private void copyBinary(BinaryResource sourceFile, BinaryResource targetFile) throws FileAlreadyExistsException, CreationException {
                 binDAO.createBinaryResource(targetFile);
                 try {
-                    dataManager.copyData(sourceFile, targetFile);
+                    storageManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -522,7 +522,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         binDAO.removeBinaryResource(file);
 
         try {
-            dataManager.deleteData(file);
+            storageManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }
@@ -556,7 +556,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             //check access rights on product instance
             checkProductInstanceWriteAccess(user.getWorkspaceId(), productInstanceMaster, user);
 
-            dataManager.renameFile(file, pNewName);
+            storageManager.renameFile(file, pNewName);
             productInstanceIteration.removeFile(file);
             binDAO.removeBinaryResource(file);
 
@@ -582,7 +582,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         for (ProductInstanceIteration pii : prodInstM.getProductInstanceIterations()) {
             for (BinaryResource file : pii.getAttachedFiles()) {
                 try {
-                    dataManager.deleteData(file);
+                    storageManager.deleteData(file);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -746,7 +746,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
                     binDAO.createBinaryResource(targetFile);
                     targetFiles.add(targetFile);
                     try {
-                        dataManager.copyData(sourceFile, targetFile);
+                        storageManager.copyData(sourceFile, targetFile);
                     } catch (StorageException e) {
                         LOGGER.log(Level.INFO, null, e);
                     }
@@ -845,7 +845,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         for(PathDataIteration pathDataIteration : pathDataMaster.getPathDataIterations()) {
             for (BinaryResource file : pathDataIteration.getAttachedFiles()) {
                 try {
-                    dataManager.deleteData(file);
+                    storageManager.deleteData(file);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -1004,7 +1004,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
             }
 
             try {
-                dataManager.renameFile(file, pNewName);
+                storageManager.renameFile(file, pNewName);
                 pathDataIteration.removeFile(file);
                 binDAO.removeBinaryResource(file);
 
@@ -1045,7 +1045,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         binDAO.removeBinaryResource(file);
 
         try {
-            dataManager.deleteData(file);
+            storageManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }

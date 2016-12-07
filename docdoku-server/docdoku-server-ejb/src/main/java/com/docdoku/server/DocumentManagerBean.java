@@ -85,7 +85,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     private ESSearcher esSearcher;
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     private Event<TagEvent> tagEvent;
@@ -693,7 +693,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
                 newDoc.addFile(targetFile);
                 try {
-                    dataManager.copyData(sourceFile, targetFile);
+                    storageManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -1036,7 +1036,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
             for (BinaryResource file : doc.getAttachedFiles()) {
                 try {
-                    dataManager.deleteData(file);
+                    storageManager.deleteData(file);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -1226,7 +1226,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         for (DocumentIteration doc : docR.getDocumentIterations()) {
             for (BinaryResource file : doc.getAttachedFiles()) {
                 try {
-                    dataManager.deleteData(file);
+                    storageManager.deleteData(file);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -1250,7 +1250,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         for (BinaryResource file : template.getAttachedFiles()) {
             try {
-                dataManager.deleteData(file);
+                storageManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1277,7 +1277,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             binDAO.removeBinaryResource(file);
 
             try {
-                dataManager.deleteData(file);
+                storageManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1314,7 +1314,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             user = checkDocumentRevisionWriteAccess(docR.getKey());
 
             if (isCheckoutByUser(user, docR) && docR.getLastIteration().equals(document)) {
-                dataManager.renameFile(file, pNewName);
+                storageManager.renameFile(file, pNewName);
                 document.removeFile(file);
                 binDAO.removeBinaryResource(file);
                 BinaryResource newFile = new BinaryResource(file.getNewFullName(pNewName), file.getContentLength(), file.getLastModified());
@@ -1343,7 +1343,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         binDAO.removeBinaryResource(file);
 
         try {
-            dataManager.deleteData(file);
+            storageManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }
@@ -1368,7 +1368,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
             checkDocumentTemplateWriteAccess(template, user);
 
-            dataManager.renameFile(file, pNewName);
+            storageManager.renameFile(file, pNewName);
             template.removeFile(file);
             binDAO.removeBinaryResource(file);
 
@@ -1470,7 +1470,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 binDAO.createBinaryResource(targetFile);
                 firstIte.addFile(targetFile);
                 try {
-                    dataManager.copyData(sourceFile, targetFile);
+                    storageManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }

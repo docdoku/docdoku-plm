@@ -24,7 +24,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartMasterTemplateKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
@@ -62,7 +62,7 @@ import java.util.Collection;
 public class PartTemplateBinaryResource {
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     private IProductManagerLocal productService;
@@ -97,7 +97,7 @@ public class PartTemplateBinaryResource {
                 fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
                 // Init the binary resource with a null length
                 binaryResource = productService.saveFileInTemplate(templatePK, fileName, 0);
-                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+                OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
                 length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
                 productService.saveFileInTemplate(templatePK, fileName, length);
             }
@@ -145,7 +145,7 @@ public class PartTemplateBinaryResource {
 
         InputStream binaryContentInputStream = null;
         try {
-            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException e) {
             Streams.close(binaryContentInputStream);

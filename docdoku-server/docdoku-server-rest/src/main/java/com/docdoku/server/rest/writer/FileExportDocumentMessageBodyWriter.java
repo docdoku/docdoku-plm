@@ -23,7 +23,7 @@ package com.docdoku.server.rest.writer;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.BaselinedDocumentBinaryResourceCollection;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.util.FileExportDocumentEntity;
 import com.docdoku.server.rest.util.FileExportTools;
@@ -49,7 +49,7 @@ public class FileExportDocumentMessageBodyWriter implements MessageBodyWriter<Fi
 
     private static final Logger LOGGER = Logger.getLogger(FileExportDocumentMessageBodyWriter.class.getName());
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Inject
     private IDocumentBaselineManagerLocal documentBaselineService;
 
@@ -95,7 +95,7 @@ public class FileExportDocumentMessageBodyWriter implements MessageBodyWriter<Fi
     public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos)
             throws IOException, StorageException {
 
-        try (InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
+        try (InputStream binaryResourceInputStream = storageManager.getBinaryResourceInputStream(binaryResource)) {
             FileExportTools.addToZipFile(binaryResourceInputStream, binaryResource.getName(), folderName, zos);
         }
     }

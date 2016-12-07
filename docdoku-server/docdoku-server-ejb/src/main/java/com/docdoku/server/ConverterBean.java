@@ -24,7 +24,7 @@ import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
@@ -67,7 +67,7 @@ public class ConverterBean implements IConverterManagerLocal {
     private IProductManagerLocal productService;
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/utils/conf.properties";
     private static final Properties CONF = new Properties();
@@ -204,7 +204,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
         try {
             Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality, file.length(), box);
-            os = dataManager.getBinaryResourceOutputStream(lod);
+            os = storageManager.getBinaryResourceOutputStream(lod);
             Files.copy(file.toPath(), os);
             LOGGER.log(Level.INFO, "Decimation and save done");
         } catch (Exception e) {
@@ -230,7 +230,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
         try {
             BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, file.getName(), "attachedfiles" ,file.length());
-            os = dataManager.getBinaryResourceOutputStream(binaryResource);
+            os = storageManager.getBinaryResourceOutputStream(binaryResource);
             Files.copy(file.toPath(), os);
             LOGGER.log(Level.INFO, "Attached file copied");
         } catch (Exception e) {

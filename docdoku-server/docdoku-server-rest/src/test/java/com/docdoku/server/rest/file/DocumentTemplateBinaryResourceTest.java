@@ -22,9 +22,9 @@ package com.docdoku.server.rest.file;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentMasterTemplateKey;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.IOnDemandConverterManagerLocal;
 import com.docdoku.server.util.PartImpl;
 import com.docdoku.server.util.ResourceUtil;
 import org.junit.Assert;
@@ -50,11 +50,11 @@ public class DocumentTemplateBinaryResourceTest {
     @InjectMocks
     DocumentTemplateBinaryResource documentTemplateBinaryResource = new DocumentTemplateBinaryResource();
     @Mock
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Mock
     private IDocumentManagerLocal documentService;
     @Mock
-    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+    private IOnDemandConverterManagerLocal binaryResourceGetterService;
     @Spy
     BinaryResource binaryResource;
 
@@ -74,7 +74,7 @@ public class DocumentTemplateBinaryResourceTest {
         Mockito.when(documentService.getTemplateBinaryResource(fullName)).thenReturn(binaryResource);
         File input = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile());
         FileInputStream fileInputStream = new FileInputStream(input);
-        Mockito.when(dataManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);
+        Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);
         //When
         Response response = documentTemplateBinaryResource.downloadDocumentTemplateFile(request, ResourceUtil.RANGE, ResourceUtil.WORKSPACE_ID, ResourceUtil.DOC_TEMPLATE_ID, ResourceUtil.FILENAME1, ResourceUtil.FILE_TYPE, null);
 
@@ -96,7 +96,7 @@ public class DocumentTemplateBinaryResourceTest {
 
         OutputStream outputStream = new FileOutputStream(uploadedFile);
         Mockito.when(documentService.saveFileInTemplate(Matchers.any(DocumentMasterTemplateKey.class), Matchers.anyString(), Matchers.anyInt())).thenReturn(binaryResource);
-        Mockito.when(dataManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
+        Mockito.when(storageManager.getBinaryResourceOutputStream(binaryResource)).thenReturn(outputStream);
         Mockito.when(request.getRequestURI()).thenReturn(ResourceUtil.WORKSPACE_ID + "/documents/" + ResourceUtil.DOCUMENT_ID + "/" + ResourceUtil.FILENAME1);
 
         //When

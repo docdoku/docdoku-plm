@@ -30,7 +30,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartSubstituteLink;
 import com.docdoku.core.product.PartUsageLink;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.workflow.WorkflowModel;
 import com.docdoku.core.workflow.WorkspaceWorkflow;
 
@@ -48,7 +48,7 @@ public class WorkspaceDAO {
 
     private EntityManager em;
     private Locale mLocale;
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     public WorkspaceDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
@@ -60,9 +60,9 @@ public class WorkspaceDAO {
         mLocale = Locale.getDefault();
     }
 
-    public WorkspaceDAO(EntityManager pEM, IDataManagerLocal pDataManager) {
+    public WorkspaceDAO(EntityManager pEM, IBinaryStorageManagerLocal pStorageManager) {
         em = pEM;
-        dataManager = pDataManager;
+        storageManager = pStorageManager;
     }
 
     public void updateWorkspace(Workspace pWorkspace) {
@@ -356,7 +356,7 @@ public class WorkspaceDAO {
         em.remove(workspace);
 
         // Delete workspace files
-        dataManager.deleteWorkspaceFolder(workspaceId, binaryResourcesInWorkspace);
+        storageManager.deleteWorkspaceFolder(workspaceId, binaryResourcesInWorkspace);
 
         em.flush();
 

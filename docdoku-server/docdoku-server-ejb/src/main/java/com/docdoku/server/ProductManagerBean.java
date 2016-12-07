@@ -85,7 +85,7 @@ public class ProductManagerBean implements IProductManagerLocal {
     private IContextManagerLocal contextManager;
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     private ESIndexer esIndexer;
@@ -295,7 +295,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 binDAO.createBinaryResource(targetFile);
                 ite.setNativeCADFile(targetFile);
                 try {
-                    dataManager.copyData(sourceFile, targetFile);
+                    storageManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -352,7 +352,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
             for (Geometry file : partIte.getGeometries()) {
                 try {
-                    dataManager.deleteData(file);
+                    storageManager.deleteData(file);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -360,7 +360,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
             for (BinaryResource file : partIte.getAttachedFiles()) {
                 try {
-                    dataManager.deleteData(file);
+                    storageManager.deleteData(file);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -369,7 +369,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             BinaryResource nativeCAD = partIte.getNativeCADFile();
             if (nativeCAD != null) {
                 try {
-                    dataManager.deleteData(nativeCAD);
+                    storageManager.deleteData(nativeCAD);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -607,7 +607,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 binDAO.removeBinaryResource(nativeCADBinaryResource);
 
                 try {
-                    dataManager.deleteData(nativeCADBinaryResource);
+                    storageManager.deleteData(nativeCADBinaryResource);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -623,7 +623,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 partI.removeGeometry(geometry);
                 binDAO.removeBinaryResource(geometry);
                 try {
-                    dataManager.deleteData(geometry);
+                    storageManager.deleteData(geometry);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -1534,7 +1534,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partIteration)) {
 
-            dataManager.renameFile(file, pNewName);
+            storageManager.renameFile(file, pNewName);
 
             if (pSubType != null && "nativecad".equals(pSubType)) {
                 partIteration.setNativeCADFile(null);
@@ -1567,7 +1567,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         BinaryResource br = partIteration.getNativeCADFile();
         if (br != null) {
             try {
-                dataManager.deleteData(br);
+                storageManager.deleteData(br);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1578,7 +1578,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         List<Geometry> geometries = new ArrayList<>(partIteration.getGeometries());
         for (Geometry geometry : geometries) {
             try {
-                dataManager.deleteData(geometry);
+                storageManager.deleteData(geometry);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1592,7 +1592,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         // Delete attached files
         for (BinaryResource file : partIteration.getAttachedFiles()) {
             try {
-                dataManager.deleteData(file);
+                storageManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1622,7 +1622,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             }
 
             try {
-                dataManager.deleteData(file);
+                storageManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1882,7 +1882,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         BinaryResource file = template.getAttachedFile();
         if (file != null) {
             try {
-                dataManager.deleteData(file);
+                storageManager.deleteData(file);
             } catch (StorageException e) {
                 LOGGER.log(Level.INFO, null, e);
             }
@@ -1909,7 +1909,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             binaryResource = bin;
         } else if(bin != null && !bin.getFullName().equals(fullName)) {
             try {
-                dataManager.deleteData(bin);
+                storageManager.deleteData(bin);
             } catch (StorageException e) {
                 LOGGER.log(Level.WARNING, "Could not delete attached file", e);
             }
@@ -1940,7 +1940,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         binDAO.removeBinaryResource(file);
 
         try {
-            dataManager.deleteData(file);
+            storageManager.deleteData(file);
         } catch (StorageException e) {
             LOGGER.log(Level.INFO, null, e);
         }
@@ -1961,7 +1961,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         checkPartTemplateWriteAccess(template, user);
 
-        dataManager.renameFile(file, pNewName);
+        storageManager.renameFile(file, pNewName);
 
         template.setAttachedFile(null);
         binDAO.removeBinaryResource(file);
@@ -2152,7 +2152,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.addAttachedFile(targetFile);
                 try {
-                    dataManager.copyData(sourceFile, targetFile);
+                    storageManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -2187,7 +2187,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.addGeometry(targetFile);
                 try {
-                    dataManager.copyData(sourceFile, targetFile);
+                    storageManager.copyData(sourceFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
@@ -2203,7 +2203,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.setNativeCADFile(targetFile);
                 try {
-                    dataManager.copyData(nativeCADFile, targetFile);
+                    storageManager.copyData(nativeCADFile, targetFile);
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }

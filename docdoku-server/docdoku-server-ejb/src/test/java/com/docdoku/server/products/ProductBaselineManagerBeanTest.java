@@ -27,7 +27,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItem;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PathToPathLink;
-import com.docdoku.server.DataManagerBean;
+import com.docdoku.server.BinaryStorageManagerBean;
 import com.docdoku.server.ProductManagerBean;
 import com.docdoku.server.UserManagerBean;
 import com.docdoku.server.dao.ConfigurationItemDAO;
@@ -69,7 +69,7 @@ public class ProductBaselineManagerBeanTest {
     @Mock
     EntityManager em;
     @Mock
-    DataManagerBean dataManager;
+    BinaryStorageManagerBean dataManager;
     @Mock
     ProductManagerBean productService;
 

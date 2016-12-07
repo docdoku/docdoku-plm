@@ -78,7 +78,7 @@ public class DocumentManagerBeanTest {
     @Mock
     private ESSearcher esSearcher;
     @Mock
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Mock
     private TypedQuery<DocumentIteration> documentIterationQuery;
     @Mock

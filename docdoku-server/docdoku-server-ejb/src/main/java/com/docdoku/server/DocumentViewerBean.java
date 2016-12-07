@@ -21,7 +21,7 @@ package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IFileViewerManagerLocal;
 import com.docdoku.server.viewers.DocumentViewer;
 import com.docdoku.server.viewers.ViewerUtils;
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 public class DocumentViewerBean implements IFileViewerManagerLocal {
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     @Any
@@ -96,7 +96,7 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, binaryResource, uuid, templateWriter.toString(),false);
+        return ViewerUtils.getViewerTemplate(storageManager, binaryResource, uuid, templateWriter.toString(),false);
     }
 
 }

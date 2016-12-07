@@ -23,7 +23,7 @@ package com.docdoku.server.converters.step;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.InternalService;
 import com.docdoku.server.converters.CADConverter;
@@ -52,7 +52,7 @@ public class StepFileConverterImpl implements CADConverter {
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     static {
         try (InputStream inputStream = StepFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)){
@@ -79,7 +79,7 @@ public class StepFileConverterImpl implements CADConverter {
             Files.copy(scriptStream, scriptToOBJ.toPath());
         }
 
-        try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try (InputStream in = storageManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);

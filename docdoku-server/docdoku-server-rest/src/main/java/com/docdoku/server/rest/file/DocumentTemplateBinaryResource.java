@@ -24,9 +24,9 @@ import com.docdoku.core.document.DocumentMasterTemplateKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.core.services.IDocumentResourceGetterManagerLocal;
+import com.docdoku.core.services.IOnDemandConverterManagerLocal;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.FileConversionException;
 import com.docdoku.server.rest.exceptions.NotModifiedException;
@@ -66,11 +66,11 @@ public class DocumentTemplateBinaryResource {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentTemplateBinaryResource.class.getName());
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Inject
     private IDocumentManagerLocal documentService;
     @Inject
-    private IDocumentResourceGetterManagerLocal documentResourceGetterService;
+    private IOnDemandConverterManagerLocal binaryResourceGetterService;
 
 
     public DocumentTemplateBinaryResource() {
@@ -103,7 +103,7 @@ public class DocumentTemplateBinaryResource {
                 fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
                 // Init the binary resource with a null length
                 binaryResource = documentService.saveFileInTemplate(templatePK, fileName, 0);
-                OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+                OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
                 length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
                 documentService.saveFileInTemplate(templatePK, fileName, length);
             }
@@ -157,7 +157,7 @@ public class DocumentTemplateBinaryResource {
             if (output != null && !output.isEmpty()) {
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
             } else {
-                binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
@@ -176,7 +176,7 @@ public class DocumentTemplateBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String output) throws FileConversionException {
         try {
-            return documentResourceGetterService.getDocumentConvertedResource(output, binaryResource);
+            return binaryResourceGetterService.getDocumentConvertedResource(output, binaryResource);
         } catch (Exception e) {
             throw new FileConversionException(e);
         }

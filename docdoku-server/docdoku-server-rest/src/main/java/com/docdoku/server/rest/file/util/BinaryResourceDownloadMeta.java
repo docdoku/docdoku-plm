@@ -42,8 +42,6 @@ public class BinaryResourceDownloadMeta {
     private long length;
     private Date lastModified;
 
-    private String subResourceVirtualPath;
-
     public BinaryResourceDownloadMeta(BinaryResource binaryResource, String outputFormat, String downloadType) {
         this.fullName = binaryResource.getName();
         this.outputFormat = outputFormat;
@@ -145,11 +143,6 @@ public class BinaryResourceDownloadMeta {
         return new EntityTag(fullName + "_" + length + "_" + lastModified.getTime());
     }
 
-    public void setSubResourceVirtualPath(String subResourceVirtualPath) {
-        if (subResourceVirtualPath != null && !subResourceVirtualPath.isEmpty()) {
-            this.subResourceVirtualPath = subResourceVirtualPath;
-        }
-    }
 
     /**
      * Get the Content type for this file
@@ -158,15 +151,12 @@ public class BinaryResourceDownloadMeta {
      */
     public String getContentType() {
         String contentType;
-        if (subResourceVirtualPath != null) {
-            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(subResourceVirtualPath);
+        if (outputFormat != null) {
+            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName + "." + outputFormat);
         } else {
-            if (outputFormat != null) {
-                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName + "." + outputFormat);
-            } else {
-                contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName);
-            }
+            contentType = FileTypeMap.getDefaultFileTypeMap().getContentType(fullName);
         }
+
 
         if (contentType != null && contentType.startsWith("text")) {
             contentType += ";charset=" + CHARSET;

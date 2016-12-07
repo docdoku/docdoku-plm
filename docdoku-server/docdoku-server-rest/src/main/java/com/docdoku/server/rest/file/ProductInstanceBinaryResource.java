@@ -26,7 +26,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IContextManagerLocal;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IPublicEntityManagerLocal;
 import com.docdoku.server.helpers.Streams;
@@ -67,7 +67,7 @@ import java.util.Collection;
 public class ProductInstanceBinaryResource {
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     private IContextManagerLocal contextManager;
@@ -156,7 +156,7 @@ public class ProductInstanceBinaryResource {
         }
         InputStream binaryContentInputStream = null;
         try {
-            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException e) {
             Streams.close(binaryContentInputStream);
@@ -285,7 +285,7 @@ public class ProductInstanceBinaryResource {
 
         InputStream binaryContentInputStream = null;
         try {
-            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException e) {
             Streams.close(binaryContentInputStream);
@@ -331,7 +331,7 @@ public class ProductInstanceBinaryResource {
         InputStream binaryContentInputStream = null;
 
         try {
-            binaryContentInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException e) {
             Streams.close(binaryContentInputStream);
@@ -365,7 +365,7 @@ public class ProductInstanceBinaryResource {
         String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
         BinaryResource binaryResource = productInstanceManagerLocal.saveFileInProductInstance(workspaceId, pdtIterationKey, fileName, 0);
-        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
         productInstanceManagerLocal.saveFileInProductInstance(workspaceId, pdtIterationKey, fileName, (int) length);
         return fileName;
@@ -377,7 +377,7 @@ public class ProductInstanceBinaryResource {
         String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
         BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, 0);
-        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
         productInstanceManagerLocal.saveFileInPathData(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, (int) length);
         return fileName;
@@ -389,7 +389,7 @@ public class ProductInstanceBinaryResource {
         String fileName = Normalizer.normalize(formPart.getSubmittedFileName(), Normalizer.Form.NFC);
         // Init the binary resource with a null length
         BinaryResource binaryResource = productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, 0);
-        OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
+        OutputStream outputStream = storageManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
         productInstanceManagerLocal.saveFileInPathDataIteration(workspaceId, configurationItemId, serialNumber, pathDataId, iteration, fileName, (int) length);
         return fileName;

@@ -34,7 +34,7 @@ import java.util.logging.Logger;
 
 @ApplicationScoped
 public class ServiceLocator {
-    private static final String DATA_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/DataManagerBean!com.docdoku.core.services.IDataManagerLocal";
+    private static final String STORAGE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/BinaryStorageManagerBean!com.docdoku.core.services.IBinaryStorageManagerLocal";
     private static final String PRODUCT_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean!com.docdoku.core.services.IProductManagerLocal";
     private static final String PRODUCT_INSTANCE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean!com.docdoku.core.services.IProductInstanceManagerLocal";
     private static final String USER_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/UserManagerBean!com.docdoku.core.services.IUserManagerLocal";
@@ -66,8 +66,8 @@ public class ServiceLocator {
 
     @InternalService
     @Produces
-    public IDataManagerLocal findDataManager() throws NamingException {
-        return (IDataManagerLocal) context.lookup(DATA_MANAGER);
+    public IBinaryStorageManagerLocal findStorageManager() throws NamingException {
+        return (IBinaryStorageManagerLocal) context.lookup(STORAGE_MANAGER);
     }
 
     @InternalService

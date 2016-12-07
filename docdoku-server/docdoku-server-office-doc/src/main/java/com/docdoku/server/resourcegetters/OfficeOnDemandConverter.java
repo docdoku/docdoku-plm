@@ -24,10 +24,11 @@ import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.InternalService;
+import com.docdoku.server.converters.OnDemandConverter;
 import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
 import com.itextpdf.text.DocumentException;
@@ -39,20 +40,20 @@ import java.io.OutputStream;
 import java.util.Locale;
 import java.util.logging.Logger;
 
-public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
+public class OfficeOnDemandConverter implements OnDemandConverter {
 
-    private static final Logger LOGGER = Logger.getLogger(DocumentResourceGetter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OnDemandConverter.class.getName());
 
     @Inject
     private FileConverter fileConverter;
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
 
     @Override
-    public boolean canGetConvertedResource(String outputFormat, BinaryResource binaryResource) {
+    public boolean canConvert(String outputFormat, BinaryResource binaryResource) {
         return FileIO.isDocFile(binaryResource.getName()) && outputSupported(outputFormat);
     }
 
@@ -104,38 +105,28 @@ public class OfficeDocumentResourceGetter implements DocumentResourceGetter {
         InputStream inputStream;
 
         if ("pdf".equals(extension)) {
-            inputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+            inputStream = storageManager.getBinaryResourceInputStream(binaryResource);
         } else {
-            String subResourceVirtualPath = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
-            if (dataManager.exists(binaryResource, subResourceVirtualPath) &&
-                    dataManager.getLastModified(binaryResource, subResourceVirtualPath).after(binaryResource.getLastModified())) {
+            String pdfFileName = FileIO.getFileNameWithoutExtension(binaryResource.getName()) + ".pdf";
+            if (storageManager.exists(binaryResource, pdfFileName) &&
+                    storageManager.getLastModified(binaryResource, pdfFileName).after(binaryResource.getLastModified())) {
                 //if the resource is already converted, return it
-                inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
+                inputStream = storageManager.getGeneratedFileInputStream(binaryResource, pdfFileName);
             } else {
                 String normalizedName = Tools.unAccent(binaryResource.getName());
                 //copy the converted file for further reuse
 
                 // TODO check for resources to be closed
-                try (OutputStream outputStream = dataManager.getBinarySubResourceOutputStream(binaryResource, subResourceVirtualPath);
-                     InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource);
+                try (OutputStream outputStream = storageManager.getGeneratedFileOutputStream(binaryResource, pdfFileName);
+                     InputStream binaryResourceInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
                      InputStream inputStreamConverted = fileConverter.convertToPDF(normalizedName,binaryResourceInputStream)) {
                     ByteStreams.copy(inputStreamConverted, outputStream);
                 }
-                inputStream = dataManager.getBinarySubResourceInputStream(binaryResource, subResourceVirtualPath);
+                inputStream = storageManager.getGeneratedFileInputStream(binaryResource, pdfFileName);
             }
         }
 
         return inputStream;
-    }
-
-    @Override
-    public boolean canGetSubResourceVirtualPath(BinaryResource binaryResource) {
-        return false;
-    }
-
-    @Override
-    public String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri) {
-        return null;
     }
 
 }

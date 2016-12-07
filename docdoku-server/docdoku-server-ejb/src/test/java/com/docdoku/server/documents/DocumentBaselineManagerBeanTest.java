@@ -32,7 +32,7 @@ import com.docdoku.core.document.Folder;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.DataManagerBean;
+import com.docdoku.server.BinaryStorageManagerBean;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.util.DocumentUtil;
 import org.junit.Assert;
@@ -59,7 +59,7 @@ public class DocumentBaselineManagerBeanTest {
     @Mock
     EntityManager em;
     @Mock
-    DataManagerBean dataManager;
+    BinaryStorageManagerBean dataManager;
     @Mock
     TypedQuery<Folder> folderTypedQuery;
     @Mock

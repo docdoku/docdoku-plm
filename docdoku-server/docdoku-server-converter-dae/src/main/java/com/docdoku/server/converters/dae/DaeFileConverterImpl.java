@@ -23,7 +23,7 @@ package com.docdoku.server.converters.dae;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.server.InternalService;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
@@ -47,7 +47,7 @@ public class DaeFileConverterImpl implements CADConverter {
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     static {
         try (InputStream inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)){
@@ -76,7 +76,7 @@ public class DaeFileConverterImpl implements CADConverter {
 
 
         File tmpCadFile = new File(tempDir, cadFile.getName().trim());
-        try (InputStream in = dataManager.getBinaryResourceInputStream(cadFile)) {
+        try (InputStream in = storageManager.getBinaryResourceInputStream(cadFile)) {
             Files.copy(in, tmpCadFile.toPath());
         } catch (StorageException e) {
             LOGGER.log(Level.WARNING, null, e);

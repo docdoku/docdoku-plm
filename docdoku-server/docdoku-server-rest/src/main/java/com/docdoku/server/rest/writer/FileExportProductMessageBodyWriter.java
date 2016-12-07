@@ -26,7 +26,7 @@ import com.docdoku.core.configuration.ProductInstanceMasterKey;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.util.FileExportProductEntity;
@@ -56,7 +56,7 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
 
     private static final Logger LOGGER = Logger.getLogger(FileExportProductMessageBodyWriter.class.getName());
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
     @Inject
     private IProductManagerLocal productService;
     @Inject
@@ -149,7 +149,7 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
 
     public void addToZipFile(BinaryResource binaryResource, String folderName, ZipOutputStream zos) throws IOException, StorageException {
 
-        try (InputStream binaryResourceInputStream = dataManager.getBinaryResourceInputStream(binaryResource)) {
+        try (InputStream binaryResourceInputStream = storageManager.getBinaryResourceInputStream(binaryResource)) {
             FileExportTools.addToZipFile(binaryResourceInputStream, binaryResource.getName(), folderName, zos);
         }
     }

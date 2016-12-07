@@ -25,12 +25,11 @@ import com.docdoku.core.exceptions.*;
 
 import java.io.InputStream;
 
-public interface IDocumentResourceGetterManagerLocal {
+public interface IOnDemandConverterManagerLocal {
     InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException;
 
     InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException;
 
-    String getSubResourceVirtualPath(BinaryResource binaryResource, String subResourceUri);
 }

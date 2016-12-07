@@ -52,7 +52,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     private EntityManager em;
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -80,7 +80,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
         try{
-            Workspace workspace = new WorkspaceDAO(em, dataManager).loadWorkspace(workspaceId);
+            Workspace workspace = new WorkspaceDAO(em, storageManager).loadWorkspace(workspaceId);
             if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
                 doWorkspaceDeletion(workspace);
                 esIndexer.deleteWorkspace(workspaceId);
@@ -141,7 +141,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         Account admin = workspace.getAdmin();
         String workspaceId = workspace.getId();
         try {
-            new WorkspaceDAO(em, dataManager).removeWorkspace(workspace);
+            new WorkspaceDAO(em, storageManager).removeWorkspace(workspace);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE,"IOException while deleting the workspace : "+workspaceId,e);
         } catch (StorageException e) {

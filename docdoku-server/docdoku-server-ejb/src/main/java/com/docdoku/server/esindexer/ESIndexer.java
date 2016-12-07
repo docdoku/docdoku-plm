@@ -30,7 +30,7 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.DocumentMasterDAO;
 import com.docdoku.server.dao.PartMasterDAO;
@@ -77,7 +77,7 @@ public class ESIndexer {
     private SessionContext ctx;
 
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
     @Inject
     private IAccountManagerLocal accountManager;
@@ -470,7 +470,7 @@ public class ESIndexer {
     private UpdateRequestBuilder indexRequest(DocumentIteration doc) throws NoNodeAvailableException {
         Map<String, String> binaryList = new HashMap<>();
         for (BinaryResource bin : doc.getAttachedFiles()) {
-            try (InputStream in = dataManager.getBinaryResourceInputStream(bin)) {
+            try (InputStream in = storageManager.getBinaryResourceInputStream(bin)) {
                 binaryList.put(bin.getName(), ESTools.streamToString(bin.getFullName(), in));
             } catch (StorageException | IOException e) {
                 LOGGER.log(Level.SEVERE, "Cannot read file " + bin.getFullName(), e);
@@ -492,7 +492,7 @@ public class ESIndexer {
     private UpdateRequestBuilder indexRequest(PartIteration part) {
         Map<String, String> binaryList = new HashMap<>();
         for (BinaryResource bin : part.getAttachedFiles()) {
-            try (InputStream in = dataManager.getBinaryResourceInputStream(bin)) {
+            try (InputStream in = storageManager.getBinaryResourceInputStream(bin)) {
                 binaryList.put(bin.getName(), ESTools.streamToString(bin.getFullName(), in));
             } catch (StorageException | IOException e) {
                 LOGGER.log(Level.SEVERE, "Cannot read file " + bin.getFullName(), e);

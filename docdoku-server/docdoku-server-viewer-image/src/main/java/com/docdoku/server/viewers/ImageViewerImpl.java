@@ -20,7 +20,7 @@
 package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.services.IDataManagerLocal;
+import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.server.InternalService;
 import com.github.mustachejava.DefaultMustacheFactory;
@@ -39,7 +39,7 @@ public class ImageViewerImpl implements DocumentViewer {
 
     @InternalService
     @Inject
-    private IDataManagerLocal dataManager;
+    private IBinaryStorageManagerLocal storageManager;
 
 
 
@@ -57,7 +57,7 @@ public class ImageViewerImpl implements DocumentViewer {
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(dataManager, imageResource, uuid, templateWriter.toString(),false);
+        return ViewerUtils.getViewerTemplate(storageManager, imageResource, uuid, templateWriter.toString(),false);
     }
 
 }
