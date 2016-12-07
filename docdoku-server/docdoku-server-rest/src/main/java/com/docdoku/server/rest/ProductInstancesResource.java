@@ -507,7 +507,7 @@ public class ProductInstancesResource {
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         List<InstanceAttributeTemplateDTO> attributeTemplatesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, "pi-" + serialNumber, false);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, "pi-" + serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 
@@ -665,7 +665,7 @@ public class ProductInstancesResource {
 
         List<InstanceAttributeDTO> attributesDTO = new ArrayList<>();
         PartLink partLink = path.get(path.size() - 1);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, "pi-" + serialNumber, false);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, "pi-" + serialNumber, false);
         List<PartIteration> partIterations = filter.filter(partLink.getComponent());
         PartIteration partIteration = partIterations.get(0);
 

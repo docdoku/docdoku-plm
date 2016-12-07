@@ -374,7 +374,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
         String serialNumber = lastIteration.getSerialNumber();
         BinaryResourceDAO binDAO = new BinaryResourceDAO(new Locale(user.getLanguage()), em);
 
-        PSFilter filter = new ProductBaselineConfigSpec(productBaseline,user);
+        ProductStructureFilter filter = new ProductBaselineConfigSpec(productBaseline);
 
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override

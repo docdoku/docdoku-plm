@@ -38,7 +38,10 @@ import java.io.Serializable;
 @XmlSeeAlso({DateBasedEffectivity.class, SerialNumberBasedEffectivity.class, LotBasedEffectivity.class})
 @Inheritance()
 @Entity
-@NamedQuery(name="Effectivity.removeEffectivitiesFromConfigurationItem",query="DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId")
+@NamedQueries({
+    @NamedQuery(name = "Effectivity.removeEffectivitiesFromConfigurationItem", query = "DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId"),
+
+})
 
 public abstract class Effectivity implements Serializable {
 
@@ -56,7 +59,6 @@ public abstract class Effectivity implements Serializable {
         @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private ConfigurationItem configurationItem;
-
 
     public Effectivity() {
     }

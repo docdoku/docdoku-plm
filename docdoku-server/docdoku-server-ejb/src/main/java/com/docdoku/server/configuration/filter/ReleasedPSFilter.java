@@ -22,21 +22,23 @@
 package com.docdoku.server.configuration.filter;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link com.docdoku.server.configuration.spec} which selects all released iterations.
+ * A {@link com.docdoku.core.configuration.ProductStructureFilter} implementation
+ * which selects the last iteration of all released revisions.
  *
  * @author Taylor LABEJOF
  * @version 2.0, 29/08/14
  * @since   V2.0
  */
 
-public class ReleasedPSFilter extends PSFilter {
+public class ReleasedPSFilter implements ProductStructureFilter, Serializable {
 
     private User user;
     private boolean diverge = false;

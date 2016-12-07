@@ -19,9 +19,7 @@
  */
 package com.docdoku.server.configuration.spec;
 
-import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartMaster;
@@ -33,10 +31,10 @@ import java.util.List;
 
 
 /**
- * A {@link com.docdoku.core.configuration.ProductConfigSpec} which returns the {@link PartIteration} and {@link DocumentIteration}
- * which belong to the given baseline.
+ * A {@link com.docdoku.core.configuration.ProductConfigSpec} which returns the {@link PartIteration}
+ * which belongs to the given baseline.
  *
- * As a baseline should have no ambiguities, if a filter returns null the spec is considered as invalid.
+ * As a baseline should have no ambiguity, if a filter returns null the spec is considered as invalid.
  *
  * @author Florent Garin
  * @version 1.1, 30/10/11
@@ -45,15 +43,13 @@ import java.util.List;
 public class ProductBaselineConfigSpec extends ProductConfigSpec {
 
     private ProductBaseline productBaseline;
-    private User user;
 
-    public ProductBaselineConfigSpec(ProductBaseline productBaseline, User user) {
+    public ProductBaselineConfigSpec(ProductBaseline productBaseline) {
         // Prevent NullPointerException
         if(productBaseline == null){
             throw new IllegalArgumentException("Cannot instantiate a BaselineProductConfigSpec without a baseline");
         }
         this.productBaseline = productBaseline;
-        this.user = user;
     }
 
     public ProductBaseline getProductBaseline() {
@@ -61,13 +57,6 @@ public class ProductBaselineConfigSpec extends ProductConfigSpec {
     }
     public void setProductBaseline(ProductBaseline productBaseline) {
         this.productBaseline = productBaseline;
-    }
-
-    public User getUser() {
-        return user;
-    }
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public int getPartCollectionId(){
@@ -108,7 +97,6 @@ public class ProductBaselineConfigSpec extends ProductConfigSpec {
             if(productBaseline.hasSubstituteLink(Tools.getPathAsString(substitutePath))){
                 return substituteLink;
             }
-
         }
 
         return nominalLink;

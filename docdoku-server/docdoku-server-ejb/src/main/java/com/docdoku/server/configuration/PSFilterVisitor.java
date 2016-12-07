@@ -21,7 +21,7 @@
 package com.docdoku.server.configuration;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.exceptions.EntityConstraintException;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.exceptions.PartMasterNotFoundException;
@@ -42,14 +42,14 @@ public abstract class PSFilterVisitor {
     private User user;
     private Locale locale;
     private String workspaceId;
-    private PSFilter filter;
+    private ProductStructureFilter filter;
     private EntityManager em;
     private PartMasterDAO partMasterDAO;
     private Component component;
     private int stopAtDepth = -1;
     private boolean stopped = false;
 
-    public PSFilterVisitor(EntityManager pEm, User pUser, PSFilter pFilter)
+    public PSFilterVisitor(EntityManager pEm, User pUser, ProductStructureFilter pFilter)
             throws PartMasterNotFoundException, NotAllowedException, EntityConstraintException {
 
         filter = pFilter;

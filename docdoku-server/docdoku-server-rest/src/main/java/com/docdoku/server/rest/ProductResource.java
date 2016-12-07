@@ -9,18 +9,20 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * DocDokuPLM is distributed in the hope that it will be useful,  
- * but WITHOUT ANY WARRANTY; without even the implied warranty of  
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
- * GNU Affero General Public License for more details.  
- *  
- * You should have received a copy of the GNU Affero General Public License  
- * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
+ * DocDokuPLM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
+import com.docdoku.core.configuration.CascadeResult;
+import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationLink;
@@ -124,6 +126,31 @@ public class ProductResource {
         return dtos;
     }
 
+    @GET
+    @ApiOperation(value = "Search configuration items", response = ConfigurationItemDTO.class, responseContainer = "List")
+    @Path("numbers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchConfigurationItemId(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+                                              @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
+            throws UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException, WorkspaceNotFoundException {
+
+        String wksId = Tools.stripTrailingSlash(workspaceId);
+        List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
+        List<ConfigurationItemDTO> ciDTOs = new ArrayList<>();
+
+        for(int i=0; i<cis.size() && ciDTOs.size() < 8; i++) {
+            ConfigurationItem ci = cis.get(i);
+
+            if(ci.getId().contains(q)) {
+                ciDTOs.add(new ConfigurationItemDTO(mapper.map(ci.getAuthor(), UserDTO.class), ci.getId(), ci.getWorkspaceId(),
+                        ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion()));
+            }
+        }
+
+        return Response.ok(new GenericEntity<List<ConfigurationItemDTO>>(ciDTOs) {
+        }).build();
+    }
+
     @POST
     @ApiOperation(value = "Create configuration item",
             response = ConfigurationItemDTO.class)
@@ -174,7 +201,7 @@ public class ProductResource {
             EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
         Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
@@ -228,7 +255,7 @@ public class ProductResource {
             EntityConstraintException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         Component component;
 
         if (linkType == null) {
@@ -315,7 +342,7 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+        ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink[]> usagePaths = productService.findPartUsages(ciKey, filter, search);
 
         List<PathDTO> pathsDTO = new ArrayList<>();
@@ -457,7 +484,7 @@ public class ProductResource {
             //this request is resources consuming so we cache the response for 30 minutes
             cc.setMaxAge(60 * 15);
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-            PSFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
+            ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
             List<PartLink> decodedPath = productService.decodePath(ciKey, path);
 
             List<List<PartLink>> paths = new ArrayList<>();
@@ -502,7 +529,7 @@ public class ProductResource {
 
             ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
-            PSFilter filter = psFilterService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
+            ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, pathsDTO.getConfigSpec(), diverge);
 
             List<List<PartLink>> paths = new ArrayList<>();
 
@@ -571,7 +598,7 @@ public class ProductResource {
 
         FileExportProductEntity fileExportEntity = new FileExportProductEntity();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        PSFilter psFilter = psFilterService.getPSFilter(ciKey, configSpecType, false);
+        ProductStructureFilter psFilter = psFilterService.getPSFilter(ciKey, configSpecType, false);
 
         fileExportEntity.setPsFilter(psFilter);
         fileExportEntity.setConfigurationItemKey(ciKey);

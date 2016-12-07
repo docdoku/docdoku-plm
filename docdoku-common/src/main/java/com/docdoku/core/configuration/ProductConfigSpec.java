@@ -21,8 +21,6 @@
 
 package com.docdoku.core.configuration;
 
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
 import com.docdoku.core.product.PartMaster;
@@ -33,14 +31,19 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * A ConfigSpec is used to select for each {@link PartMaster}s and {@link DocumentRevision}s
- * the right {@link PartIteration} and {@link DocumentIteration} according to specific rules.
- * 
+ * A ConfigSpec is used to select for each {@link PartMaster}s
+ * the right {@link PartIteration} according to specific rules.
+ *
+ * It also selects from a complete {@link PartLink} path the one
+ * which has to be considered (itself or a variant).
+ *
+ * ProductConfigSpec is a restrictive type of {@link ProductStructureFilter}.
+ *
  * @author Florent Garin
  * @version 1.1, 30/10/11
  * @since V1.1
  */
-public abstract class ProductConfigSpec extends PSFilter implements Serializable{
+public abstract class ProductConfigSpec implements ProductStructureFilter, Serializable{
 
     public ProductConfigSpec() {
     }

@@ -32,6 +32,11 @@
             var utcToLocalDateTime = $filter('utcToLocalDateTime');
             var fileMode = $filter('fileMode');
 
+            var api = DocdokuAPIService.getApi();
+            var client = DocdokuAPIService.getClient();
+            var documentApi = new api.DocumentApi(client);
+            var partApi = new api.PartApi(client);
+
             var indexes = {};
 
             var getIndexValue = function (index, path, key) {
@@ -81,13 +86,12 @@
             var documentRequest = function (api, workspaceId, documentId, version) {
                 return function () {
                     return $q(function (resolve, reject) {
-                        api.apis.document.getDocumentRevision({
-                            workspaceId: workspaceId,
-                            documentId: documentId,
-                            documentVersion: version
-                        }).then(function (response) {
-                            resolve(response.obj);
-                        }, reject);
+                        documentApi.getDocumentRevision(workspaceId,documentId,version,function (err, document, response) {
+                            if(err){
+                                return reject(err);
+                            }
+                            resolve(document);
+                        });
                     });
                 };
             };
@@ -95,13 +99,12 @@
             var partRequest = function (api, workspaceId, number, version) {
                 return function () {
                     return $q(function (resolve, reject) {
-                        api.apis.part.getPartRevision({
-                            workspaceId: workspaceId,
-                            partNumber: number,
-                            partVersion: version
-                        }).then(function (response) {
-                            resolve(response.obj);
-                        }, reject);
+                        partApi.getPartRevision(workspaceId,number,version,function (err, part, response) {
+                            if(err){
+                                return reject(err);
+                            }
+                            resolve(part);
+                        });
                     });
                 };
             };
@@ -258,34 +261,31 @@
 
                 var chain = $q.when();
 
-                DocdokuAPIService.getApi().then(function (api) {
-                    documents.forEach(function (id) {
-                        var filePath = id.substr(0, id.length - IndexKeys.DOCUMENT_MASTER_ID.length - 1);
-                        var version = getIndexValue(index, filePath, IndexKeys.REVISION);
-                        var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
-                        chain = chain.then(documentRequest(api, workspaceId, index[id], version)).then(function (document) {
-                            updateIndexForDocument(index, filePath, document);
-                            return DBService.storeDocuments([document]);
-                        }, function () {
-                            removeFromIndex(index, filePath);
-                        }).then(notify);
-                    });
+                documents.forEach(function (id) {
+                    var filePath = id.substr(0, id.length - IndexKeys.DOCUMENT_MASTER_ID.length - 1);
+                    var version = getIndexValue(index, filePath, IndexKeys.REVISION);
+                    var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
+                    chain = chain.then(documentRequest(workspaceId, index[id], version)).then(function (document) {
+                        updateIndexForDocument(index, filePath, document);
+                        return DBService.storeDocuments([document]);
+                    }, function () {
+                        removeFromIndex(index, filePath);
+                    }).then(notify);
+                });
 
-                    parts.forEach(function (number) {
-                        var filePath = number.substr(0, number.length - IndexKeys.NUMBER.length - 1);
-                        var version = getIndexValue(index, filePath, IndexKeys.REVISION);
-                        var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
-                        chain = chain.then(partRequest(api, workspaceId, index[number], version)).then(function (part) {
-                            updateIndexForPart(index, filePath, part);
-                            return DBService.storeParts([part]);
-                        }, function () {
-                            removeFromIndex(index, filePath);
-                        }).then(notify);
-                    });
+                parts.forEach(function (number) {
+                    var filePath = number.substr(0, number.length - IndexKeys.NUMBER.length - 1);
+                    var version = getIndexValue(index, filePath, IndexKeys.REVISION);
+                    var workspaceId = getIndexValue(index, filePath, IndexKeys.WORKSPACE_ID);
+                    chain = chain.then(partRequest(workspaceId, index[number], version)).then(function (part) {
+                        updateIndexForPart(index, filePath, part);
+                        return DBService.storeParts([part]);
+                    }, function () {
+                        removeFromIndex(index, filePath);
+                    }).then(notify);
+                });
 
-                    return chain;
-
-                }).then(function () {
+                chain = chain.then(function () {
                     FolderService.getFolder({path: indexFolder}).lastSync = new Date();
                     FolderService.save();
                     writeIndex(indexFolder);

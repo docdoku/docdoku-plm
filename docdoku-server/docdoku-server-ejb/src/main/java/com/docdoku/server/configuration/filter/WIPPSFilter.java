@@ -22,18 +22,20 @@
 package com.docdoku.server.configuration.filter;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A {@link com.docdoku.core.configuration.ProductConfigSpec} which selects the latest iteration (checkin or not)
+ * A {@link com.docdoku.core.configuration.ProductStructureFilter} implementation
+ * which selects the latest iteration (checked in or not).
  *
  * @author Morgan Guimard
  */
-public class WIPPSFilter extends PSFilter {
+public class WIPPSFilter implements ProductStructureFilter, Serializable {
 
     private User user;
     private boolean diverge = false;

@@ -22,9 +22,10 @@
 package com.docdoku.server.configuration.filter;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,11 +34,11 @@ import java.util.List;
  *
  * @author Morgan Guimard
  *
- * Check for cyclic assembly after part iteration update : must check on the wip and on the latest.
+ * Check for cyclic assembly after part iteration update: must check on the wip and on the latest.
  * We also need to walk every substitute branches.
  *
  */
-public class UpdatePartIterationPSFilter extends PSFilter {
+public class UpdatePartIterationPSFilter implements ProductStructureFilter, Serializable {
 
     private User user;
     private PartMasterKey rootKey;

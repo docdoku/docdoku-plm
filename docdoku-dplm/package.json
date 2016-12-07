@@ -5,7 +5,7 @@
   "author": "morgan.guimard@docdoku.com",
   "scripts": {
     "preinstall":"bower install && cd app && npm install",
-    "postinstall": "node -e \"var s='../../../docdoku-api-js',d='app/node_modules/docdoku-api-js',fs=require('fs');fs.exists(d,function(e){e||fs.symlinkSync(s,d,'dir')});\"",
+    "postinstall": "node -e \"var s='../../../docdoku-api-js/target/docdoku-plm-api/npm',d='app/node_modules/docdoku-plm-api',fs=require('fs');fs.exists(d,function(e){e||fs.symlinkSync(s,d,'dir')});\"",
     "prebuild": "npm install",
     "build": "grunt build"
   },

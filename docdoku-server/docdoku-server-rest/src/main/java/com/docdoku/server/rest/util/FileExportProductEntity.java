@@ -20,7 +20,7 @@
 
 package com.docdoku.server.rest.util;
 
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.ConfigurationItemKey;
 
 /**
@@ -29,7 +29,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 public class FileExportProductEntity {
 
     private ConfigurationItemKey configurationItemKey;
-    private PSFilter psFilter;
+    private ProductStructureFilter psFilter;
 
     private String serialNumber;
     private Integer baselineId;
@@ -41,11 +41,11 @@ public class FileExportProductEntity {
     public FileExportProductEntity() {
     }
 
-    public PSFilter getPsFilter() {
+    public ProductStructureFilter getPsFilter() {
         return psFilter;
     }
 
-    public void setPsFilter(PSFilter psFilter) {
+    public void setPsFilter(ProductStructureFilter psFilter) {
         this.psFilter = psFilter;
     }
 

@@ -21,7 +21,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.*;
-import com.docdoku.core.configuration.PSFilter;
+import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.configuration.ProductBaseline;
 import com.docdoku.core.configuration.ProductInstanceMaster;
 import com.docdoku.core.document.DocumentRevisionKey;
@@ -811,7 +811,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         PartRevision partRevision = productService.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
-        PSFilter filter = productService.getLatestCheckedInPSFilter(workspaceId);
+        ProductStructureFilter filter = productService.getLatestCheckedInPSFilter(workspaceId);
         VirtualInstanceCollection virtualInstanceCollection = new VirtualInstanceCollection(partRevision, filter);
         return Response.ok().entity(virtualInstanceCollection).build();
     }

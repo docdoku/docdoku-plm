@@ -57,16 +57,16 @@ public class PSFilterManagerBean implements IPSFilterManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PSFilter getBaselinePSFilter(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
+    public ProductStructureFilter getBaselinePSFilter(int baselineId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
         ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(em);
         ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
-        User user = userManager.checkWorkspaceReadAccess(productBaseline.getConfigurationItem().getWorkspaceId());
-        return new ProductBaselineConfigSpec(productBaseline, user);
+        //User user = userManager.checkWorkspaceReadAccess(productBaseline.getConfigurationItem().getWorkspaceId());
+        return new ProductBaselineConfigSpec(productBaseline);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PSFilter getProductInstanceConfigSpec(ConfigurationItemKey ciKey, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
+    public ProductStructureFilter getProductInstanceConfigSpec(ConfigurationItemKey ciKey, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         ProductInstanceMasterKey pimk = new ProductInstanceMasterKey(serialNumber, ciKey);
         ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(pimk);
@@ -76,7 +76,7 @@ public class PSFilterManagerBean implements IPSFilterManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PSFilter getPSFilter(ConfigurationItemKey ciKey, String filterType, boolean diverge) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
+    public ProductStructureFilter getPSFilter(ConfigurationItemKey ciKey, String filterType, boolean diverge) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, BaselineNotFoundException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
 
@@ -84,7 +84,7 @@ public class PSFilterManagerBean implements IPSFilterManagerLocal {
             return new WIPPSFilter(user);
         }
 
-        PSFilter filter;
+        ProductStructureFilter filter;
 
         switch (filterType) {
 
