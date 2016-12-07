@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "author": "",
-  "main":"lib/docdoku-api.js",
+  "main": "lib/docdoku-api.js",
   "directories": {
     "example": "example"
   },
   "scripts": {
-    "prebuild":"npm install",
+    "prebuild": "npm install",
     "build": "grunt build"
   },
   "devDependencies": {
@@ -17,6 +17,8 @@
     "grunt-browserify": "^5.0.0",
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-copy": "~0.5.0",
+    "grunt-md2html": "^0.3.1",
+    "grunt-text-replace": "^0.4.0",
     "load-grunt-tasks": "~0.3.0",
     "swagger-client": "^2.1.15",
     "yargs": "^4.7.1"
