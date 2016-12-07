@@ -69,8 +69,6 @@ public class DocumentBinaryResourceTest {
     @Mock
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
     @Mock
-    private IDocumentPostUploaderManagerLocal documentPostUploaderService;
-    @Mock
     private IShareManagerLocal shareService;
     @Mock
     private SessionContext ctx;

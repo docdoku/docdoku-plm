@@ -76,8 +76,6 @@ public class DocumentBinaryResource {
     @Inject
     private IDocumentResourceGetterManagerLocal documentResourceGetterService;
     @Inject
-    private IDocumentPostUploaderManagerLocal documentPostUploaderService;
-    @Inject
     private IShareManagerLocal shareService;
     @Inject
     private IPublicEntityManagerLocal publicEntityManager;
@@ -195,7 +193,6 @@ public class DocumentBinaryResource {
         OutputStream outputStream = dataManager.getBinaryResourceOutputStream(binaryResource);
         long length = BinaryResourceUpload.uploadBinary(outputStream, formPart);
         documentService.saveFileInDocument(docPK, fileName, length);
-        documentPostUploaderService.process(binaryResource);
         return fileName;
     }
 
