@@ -45,7 +45,7 @@ define({
     WORKSPACE_DELETING_TEXT:'Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
     WORKSPACE_INDEXING:'L\'indexations des données de l\'espace de travail est en cours. Un email de rapport sera envoyé à l\'administrateur à la fin de l\'opération.',
     INDEX_WORKSPACE:'Indexer les données',
-    INDEX_ALL_WORKSPACES:'Indexer tous les esapces de travail',
+    INDEX_ALL_WORKSPACES:'Indexer tous les espaces de travail',
     NO_TAGS_YET:'Vous devez avoir créé au moins un tag avant de pouvoir créer des notifications',
     INDEX_ALL_WORKSPACES_QUESTION:'Etes-vous sûr de vouloir indexer tous les espaces de travail ?',
     INDEX_ALL_WORKSPACES_TEXT:'Ceci peut prendre plusieurs minutes, vous serez notifié par email une fois l\'indexation terminée',
