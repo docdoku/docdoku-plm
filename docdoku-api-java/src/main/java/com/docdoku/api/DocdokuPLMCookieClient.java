@@ -21,6 +21,7 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
+import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.models.LoginRequestDTO;
 import com.docdoku.api.services.AuthApi;
@@ -65,11 +66,11 @@ public class DocdokuPLMCookieClient extends DocdokuPLMClient {
         loginRequest.setPassword(password);
 
         try {
-            AccountDTO account = new AuthApi(client).login(loginRequest);
-            LOGGER.log(Level.INFO, "Connected as  " + account.getLogin());
-            Map<String, List<String>> responseHeaders = client.getResponseHeaders();
-            System.out.println(responseHeaders);
+            ApiResponse<AccountDTO> response = new AuthApi(client).loginWithHttpInfo(loginRequest);
+            LOGGER.log(Level.INFO, "Connected as  " + response.getData().getLogin());
+            Map<String, List<String>> responseHeaders = response.getHeaders();
             List<String> strings = responseHeaders.get("Set-Cookie");
+
             if (strings != null && !strings.isEmpty()) {
                 cookie = strings.get(0);
                 createClient();
@@ -79,7 +80,7 @@ public class DocdokuPLMCookieClient extends DocdokuPLMClient {
             }
 
         } catch (ApiException e) {
-            LOGGER.log(Level.SEVERE, "Cannot connect to docdoku plm server http response code = " + client.getStatusCode());
+            LOGGER.log(Level.SEVERE, "Cannot connect to docdoku plm server http response code = " + e.getCode());
         }
     }
 

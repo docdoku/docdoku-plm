@@ -49,6 +49,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -126,7 +127,7 @@ public class DocumentBinaryResource {
     // TODO -> will simplify swagger json generation
     @GET
     @ApiOperation(value = "Download document file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),

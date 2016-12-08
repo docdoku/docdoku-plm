@@ -71,8 +71,6 @@ public class UploadDownloadConsistencyTest {
 
         List<String> downloadedEntries = getEntries(downloadedFile);
         Assert.assertTrue(new HashSet<>(originalEntries).equals(new HashSet<>(downloadedEntries)));
-
-
     }
 
     private List<String> getEntries(File file){

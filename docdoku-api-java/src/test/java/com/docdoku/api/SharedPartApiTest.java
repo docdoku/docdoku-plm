@@ -21,7 +21,9 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.*;
+import com.docdoku.api.models.PartCreationDTO;
+import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.models.SharedPartDTO;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.api.services.SharedApi;
@@ -29,8 +31,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class SharedPartApiTest {
@@ -55,8 +55,7 @@ public class SharedPartApiTest {
         try {
             sharedApi.getPublicSharedPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
         } catch (ApiException e) {
-            int statusCode = TestConfig.GUEST_CLIENT.getStatusCode();
-            Assert.assertEquals(403, statusCode);
+            Assert.assertEquals(403, e.getCode());
         }
 
         // Create a private share
@@ -91,8 +90,7 @@ public class SharedPartApiTest {
         try{
             sharedApi.getPublicSharedPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
         } catch (ApiException e){
-            int statusCode = TestConfig.GUEST_CLIENT.getStatusCode();
-            Assert.assertEquals(403, statusCode);
+            Assert.assertEquals(403, e.getCode());
         }
 
         // publish
@@ -109,8 +107,7 @@ public class SharedPartApiTest {
         try{
             sharedApi.getPublicSharedPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
         } catch (ApiException e){
-            int statusCode = TestConfig.GUEST_CLIENT.getStatusCode();
-            Assert.assertEquals(403, statusCode);
+            Assert.assertEquals(403, e.getCode());
         }
 
     }

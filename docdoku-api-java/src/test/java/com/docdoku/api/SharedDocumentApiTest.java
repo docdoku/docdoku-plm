@@ -33,8 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.UUID;
-
 @RunWith(JUnit4.class)
 public class SharedDocumentApiTest {
 
@@ -58,8 +56,7 @@ public class SharedDocumentApiTest {
         try {
             sharedApi.getPublicSharedDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
         } catch (ApiException e) {
-            int statusCode = TestConfig.GUEST_CLIENT.getStatusCode();
-            Assert.assertEquals(403, statusCode);
+            Assert.assertEquals(403, e.getCode());
         }
 
         // Create a private share
@@ -95,8 +92,7 @@ public class SharedDocumentApiTest {
         try{
             sharedApi.getPublicSharedDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
         } catch (ApiException e){
-            int statusCode = TestConfig.GUEST_CLIENT.getStatusCode();
-            Assert.assertEquals(403, statusCode);
+            Assert.assertEquals(403, e.getCode());
         }
 
         // publish
@@ -113,8 +109,7 @@ public class SharedDocumentApiTest {
         try{
             sharedApi.getPublicSharedDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
         } catch (ApiException e){
-            int statusCode = TestConfig.GUEST_CLIENT.getStatusCode();
-            Assert.assertEquals(403, statusCode);
+            Assert.assertEquals(403, e.getCode());
         }
     }
 

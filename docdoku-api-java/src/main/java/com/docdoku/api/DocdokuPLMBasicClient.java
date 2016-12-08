@@ -20,7 +20,7 @@
 
 package com.docdoku.api;
 
-import okhttp3.Credentials;
+import com.squareup.okhttp.Credentials;
 
 /**
  * This class helps to create the swagger client.

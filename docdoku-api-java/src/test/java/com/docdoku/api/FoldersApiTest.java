@@ -61,7 +61,7 @@ public class FoldersApiTest {
         try {
             foldersApi.getSubFolders(TestConfig.WORKSPACE, folderCompletePath);
         } catch (ApiException e) {
-            Assert.assertEquals(404, foldersApi.getApiClient().getStatusCode());
+            Assert.assertEquals(404, e.getCode());
         }
     }
 

@@ -22,14 +22,17 @@ package com.docdoku.api.models.utils;
 
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
+import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.client.Pair;
 import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.PartIterationDTO;
+import com.google.gson.reflect.TypeToken;
+import com.squareup.okhttp.Call;
 
-import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import java.io.*;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,13 +131,16 @@ public class UploadDownloadHelper {
         final String[] contentTypes = {};
         final String contentType = client.selectHeaderContentType(contentTypes);
         String[] authNames = new String[]{};
-        GenericType<File> returnType = new GenericType<File>() {
-        };
-        File file = client.invokeAPI(path, "GET", queryParams, null, headerParams, formParams, accept, contentType, authNames, returnType);
-        Map<String, List<String>> responseHeaders = client.getResponseHeaders();
+        headerParams.put("Content-Type", contentType);
+        headerParams.put("Accept", accept);
+        Type returnType = new TypeToken<File>(){}.getType();
+        Call post = client.buildCall(path, "GET", queryParams, null, headerParams, formParams, authNames, null);
+        ApiResponse<File> response = client.execute(post, returnType);
+        Map<String, List<String>> responseHeaders = response.getHeaders();
         List<String> encoding = responseHeaders.get("Content-Encoding");
 
-        return encoding != null && "gzip".equals(encoding.get(0)) ? uncompress(file) : file;
+        return encoding != null && "gzip".equals(encoding.get(0)) ? uncompress(response.getData()) : response.getData();
+
     }
 
     private static void upload(String path, File file, ApiClient client) throws ApiException {
@@ -146,8 +152,11 @@ public class UploadDownloadHelper {
         final String accept = client.selectHeaderAccept(accepts);
         final String[] contentTypes = {MediaType.MULTIPART_FORM_DATA};
         final String contentType = client.selectHeaderContentType(contentTypes);
+        headerParams.put("Content-Type", contentType);
+        headerParams.put("Accept", accept);
         String[] authNames = new String[]{};
-        client.invokeAPI(path, "POST", queryParams, file, headerParams, formParams, accept, contentType, authNames, null);
+        Call post = client.buildCall(path, "POST", queryParams, file, headerParams, formParams, authNames, null);
+        client.execute(post);
     }
 
     private static File uncompress(File file) {

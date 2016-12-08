@@ -66,8 +66,14 @@
         </dependency>
         <!-- An HTTP & HTTP/2 client for Android and Java applications -->
         <dependency>
-            <groupId>com.squareup.okhttp3</groupId>
+            <groupId>com.squareup.okhttp</groupId>
             <artifactId>okhttp</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.2.4</version>
         </dependency>
 
         <!-- Base64 encoding that works in both JVM and Android -->
@@ -134,7 +140,7 @@
                             <apiPackage>com.docdoku.api.services</apiPackage>
                             <invokerPackage>com.docdoku.api.client</invokerPackage>
                             <modelPackage>com.docdoku.api.models</modelPackage>
-                            <library>jersey2</library>
+                            <library>okhttp-gson</library>
                         </configuration>
                     </execution>
                 </executions>
