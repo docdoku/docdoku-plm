@@ -871,8 +871,7 @@ public class ProductResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
             @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
-            @ApiParam(required = true, value = "Complete path to checkout from") @QueryParam("path") String path,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Complete path to checkout from") @QueryParam("path") String path)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException,
             NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
@@ -922,8 +921,7 @@ public class ProductResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
             @ApiParam(required = false, value = "Config spec") @QueryParam("configSpec") String configSpecType,
-            @ApiParam(required = true, value = "Complete path to undo checkout from") @QueryParam("path") String path,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Complete path to undo checkout from") @QueryParam("path") String path)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException,
             NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {

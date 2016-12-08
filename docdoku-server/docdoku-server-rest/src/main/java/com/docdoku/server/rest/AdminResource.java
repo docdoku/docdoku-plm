@@ -233,8 +233,7 @@ public class AdminResource implements Serializable {
     })
     @Path("index/{workspaceId}")
     public Response indexWorkspace(
-            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-            @ApiParam(value = "Put content", name = "body") String body) {
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) {
         workspaceManager.synchronizeIndexer(workspaceId);
         return Response.status(Response.Status.ACCEPTED).build();
 
@@ -249,8 +248,7 @@ public class AdminResource implements Serializable {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Path("index-all")
-    public Response indexAllWorkspaces(
-            @ApiParam(name = "body", defaultValue = "") String body)
+    public Response indexAllWorkspaces()
             throws AccountNotFoundException {
         Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
         for (Workspace workspace : administratedWorkspaces) {
@@ -303,8 +301,7 @@ public class AdminResource implements Serializable {
     @Produces(MediaType.APPLICATION_JSON)
     public WorkspaceDTO enableWorkspace(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-            @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
-            @ApiParam(value = "Put content", name = "body") String body)
+            @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled)
             throws WorkspaceNotFoundException {
         Workspace workspace = workspaceManager.enableWorkspace(workspaceId, enabled);
         return mapper.map(workspace, WorkspaceDTO.class);
@@ -322,8 +319,7 @@ public class AdminResource implements Serializable {
     @Produces(MediaType.APPLICATION_JSON)
     public AccountDTO enableAccount(
             @ApiParam(value = "Workspace id", required = true) @PathParam("login") String login,
-            @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled,
-            @ApiParam(value = "Put content", name = "body") String body)
+            @ApiParam(value = "Enabled", required = true) @QueryParam("enabled") boolean enabled)
             throws WorkspaceNotFoundException, AccountNotFoundException, NotAllowedException {
         Account account = accountManager.enableAccount(login, enabled);
         return mapper.map(account, AccountDTO.class);

@@ -49,7 +49,7 @@
 
         })
 
-        .controller('AppCtrl', function ($scope, $location, $mdMedia, $mdDialog, $mdSidenav, $filter,
+        .controller('AppCtrl', function ($scope, $mdMedia, $mdDialog, $mdSidenav, $filter,
                                          AuthService, NotificationService, ConfigurationService, WorkspaceService, FolderService) {
 
             var configuration = ConfigurationService.configuration;

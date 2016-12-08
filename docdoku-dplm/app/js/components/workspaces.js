@@ -3,7 +3,7 @@
     'use strict';
 
     angular.module('dplm.services')
-        .service('WorkspaceService', function ($window, $log, $filter, $q, $location, DocdokuAPIService, DBService, RepositoryService) {
+        .service('WorkspaceService', function ($window, $log, $filter, $q, DocdokuAPIService, DBService, RepositoryService) {
 
             var _this = this;
             var fs = $window.require('fs');
@@ -21,7 +21,7 @@
 
             var checkInDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    documentApi.checkInDocument(document.workspaceId, document.documentMasterId, document.version, null,
+                    documentApi.checkInDocument(document.workspaceId, document.documentMasterId, document.version,
                         function (err, updatedItem, response) {
                             if (err) {
                                 return reject(err);
@@ -38,7 +38,7 @@
 
             var checkOutDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    documentApi.checkOutDocument(document.workspaceId, document.documentMasterId, document.version, null,
+                    documentApi.checkOutDocument(document.workspaceId, document.documentMasterId, document.version,
                         function (err, updatedItem, response) {
                             if (err) {
                                 return reject(err);
@@ -56,7 +56,7 @@
 
             var undoCheckOutDocument = function (document, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    documentApi.undoCheckOutDocument(document.workspaceId, document.documentMasterId, document.version, null,
+                    documentApi.undoCheckOutDocument(document.workspaceId, document.documentMasterId, document.version,
                         function (err, updatedItem, response) {
                             if (err) {
                                 return reject(err);
@@ -74,7 +74,7 @@
 
             var checkInPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    partApi.checkIn(part.workspaceId, part.number, part.version, null,
+                    partApi.checkIn(part.workspaceId, part.number, part.version,
                         function (err, updatedItem, response) {
                             if (err) {
                                 return reject(err);
@@ -91,7 +91,7 @@
 
             var checkOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    partApi.checkOut(part.workspaceId, part.number, part.version, null,
+                    partApi.checkOut(part.workspaceId, part.number, part.version,
                         function (err, updatedItem, response) {
                             if (err) {
                                 return reject(err);
@@ -108,7 +108,7 @@
 
             var undoCheckOutPart = function (part, indexFolder, path) {
                 return $q(function (resolve, reject) {
-                    partApi.undoCheckOut(part.workspaceId, part.number, part.version, null,
+                    partApi.undoCheckOut(part.workspaceId, part.number, part.version,
                         function (err, updatedItem, response) {
                             if (err) {
                                 return reject(err);

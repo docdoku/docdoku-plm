@@ -25,6 +25,7 @@
             var canCheckIn = $filter('canCheckIn');
             var canUndoCheckOut = $filter('canUndoCheckOut');
 
+
             var hasFilter = function (code) {
                 return $scope.filters.filter(function (filter) {
                         return filter.code === code && filter.value;

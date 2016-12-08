@@ -67,7 +67,7 @@ public class PartUndoCheckOutCommand extends BaseCommandLine {
         }
 
         PartApi partApi = new PartApi(client);
-        PartRevisionDTO pr = partApi.undoCheckOut(workspace, partNumber, revision, "");
+        PartRevisionDTO pr = partApi.undoCheckOut(workspace, partNumber, revision);
         PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
         output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutPart",user) + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration()+1 + " (" + workspace + ")");
 

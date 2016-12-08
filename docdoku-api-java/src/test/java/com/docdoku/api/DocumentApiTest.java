@@ -37,7 +37,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class DocumentApiTest {
@@ -58,21 +57,21 @@ public class DocumentApiTest {
         Assert.assertEquals(createdDocument.getDocumentMasterId(), document.getReference());
 
         // Check in
-        DocumentRevisionDTO checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        DocumentRevisionDTO checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertEquals(checkedInDocument.getDocumentMasterId(), document.getReference());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedInDocument).getIteration(), Integer.valueOf("1"));
 
         // Check out
-        DocumentRevisionDTO checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        DocumentRevisionDTO checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertEquals(checkedOutDocument.getDocumentMasterId(), document.getReference());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutDocument).getIteration(), Integer.valueOf("2"));
 
         // Undo check out
-        DocumentRevisionDTO undoCheckOutDocument = documentApi.undoCheckOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        DocumentRevisionDTO undoCheckOutDocument = documentApi.undoCheckOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertEquals(undoCheckOutDocument, checkedInDocument);
 
         // Check out
-        checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
 
         // Edit
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(checkedOutDocument);
@@ -86,15 +85,15 @@ public class DocumentApiTest {
         Assert.assertEquals(lastIteration, updatedIteration);
 
         // Check in
-        checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertNull(checkedInDocument.getCheckOutUser());
 
         // Release
-        DocumentRevisionDTO releasedDocument = documentApi.releaseDocumentRevision(TestConfig.WORKSPACE, checkedInDocument.getDocumentMasterId(), checkedInDocument.getVersion(), "");
+        DocumentRevisionDTO releasedDocument = documentApi.releaseDocumentRevision(TestConfig.WORKSPACE, checkedInDocument.getDocumentMasterId(), checkedInDocument.getVersion());
         Assert.assertEquals(releasedDocument.getStatus(), DocumentRevisionDTO.StatusEnum.RELEASED);
 
         // Mark as obsolete
-        DocumentRevisionDTO obsoleteDocument = documentApi.markDocumentRevisionAsObsolete(TestConfig.WORKSPACE, releasedDocument.getDocumentMasterId(), releasedDocument.getVersion(), "");
+        DocumentRevisionDTO obsoleteDocument = documentApi.markDocumentRevisionAsObsolete(TestConfig.WORKSPACE, releasedDocument.getDocumentMasterId(), releasedDocument.getVersion());
         Assert.assertEquals(obsoleteDocument.getStatus(), DocumentRevisionDTO.StatusEnum.OBSOLETE);
 
     }
@@ -145,7 +144,7 @@ public class DocumentApiTest {
         attribute.setValue(attrValue);
         lastIteration.getInstanceAttributes().add(attribute);
         documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
-        documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
+        documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A");
 
         String attributeSearchQuery = "TEXT:"+attrName+":"+attrValue;
 
@@ -288,7 +287,7 @@ public class DocumentApiTest {
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
         documentCreation.setReference(TestUtils.randomString());
         foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE+":"+folderName);
-        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
+        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A");
     }
 
     private DocumentRevisionDTO createDocumentWithAttributes(String attrName1, String attrName2, String attrValue) throws ApiException {
@@ -313,7 +312,7 @@ public class DocumentApiTest {
         instanceAttributes.add(attribute2);
 
         documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
-        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "");
+        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A");
     }
 
 

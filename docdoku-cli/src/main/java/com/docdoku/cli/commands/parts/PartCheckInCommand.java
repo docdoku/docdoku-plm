@@ -102,7 +102,7 @@ public class PartCheckInCommand extends BaseCommandLine {
 
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInPart",user)  + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
 
-        partApi.checkIn(workspace,partNumber,revision,"");
+        partApi.checkIn(workspace,partNumber,revision);
 
     }
 

@@ -11,7 +11,7 @@
         </md-button>
 
         <div layout="column">
-            <a aria-label="" href="#/workspace/{{workspaceId}}" class="md-primary">
+            <a aria-label="" href="#!/workspace/{{workspaceId}}" class="md-primary">
                 <md-tooltip>
                     {{'BROWSE_WORKSPACE'|translate}}
                 </md-tooltip>
@@ -35,7 +35,7 @@
 
                      ng-if="item.lastIteration.checkInDate">
                     <div>
-                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                        <a aria-label="" href="#!/workspace/{{item.workspaceId}}" class="md-primary">
                             {{ item.documentMasterId || item.number }} {{ item.version }}
                             {{item.lastIteration.iteration}}
                             <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
@@ -59,7 +59,7 @@
 
                      ng-if="item.lastIteration.modificationDate">
                     <div>
-                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                        <a aria-label="" href="#!/workspace/{{item.workspaceId}}" class="md-primary">
                             {{ item.documentMasterId || item.number }} {{ item.version }}
                             {{item.lastIteration.iteration}}
                             <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}
@@ -84,7 +84,7 @@
 
                      ng-if="item.checkOutDate">
                     <div>
-                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                        <a aria-label="" href="#!/workspace/{{item.workspaceId}}" class="md-primary">
                         {{ item.documentMasterId || item.number }} {{ item.version }} {{item.lastIteration.iteration}}
                         <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}</md-tooltip>
                         </a>
@@ -107,7 +107,7 @@
 
                      ng-if="item.lastIteration.creationDate && !item.lastIteration.modificationDate && !item.lastIteration.checkInDate && !item.checkOutDate ">
                     <div>
-                        <a aria-label="" href="#/workspace/{{item.workspaceId}}" class="md-primary">
+                        <a aria-label="" href="#!/workspace/{{item.workspaceId}}" class="md-primary">
                             {{ item.documentMasterId || item.number }} {{ item.version }}
                             {{item.lastIteration.iteration}}
                             <md-tooltip>{{item.lastIteration.iterationNote || item.lastIteration.revisionNote}}

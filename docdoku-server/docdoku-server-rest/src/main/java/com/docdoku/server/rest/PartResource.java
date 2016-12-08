@@ -327,8 +327,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(required = true, value = "Part iteration") @PathParam("partIteration") int iteration,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Part iteration") @PathParam("partIteration") int iteration)
             throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException,
             UserNotFoundException, PartIterationNotFoundException, AccessRightException,
             NotAllowedException, WorkspaceNotEnabledException {
@@ -361,8 +360,7 @@ public class PartResource {
     public PartRevisionDTO checkIn(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException,
             EntityConstraintException, UserNotActiveException {
 
@@ -385,8 +383,7 @@ public class PartResource {
     public PartRevisionDTO checkOut(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, EntityAlreadyExistsException, CreationException, AccessRightException,
             NotAllowedException, UserNotActiveException {
 
@@ -409,8 +406,7 @@ public class PartResource {
     public PartRevisionDTO undoCheckOut(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -502,8 +498,7 @@ public class PartResource {
     public PartRevisionDTO releasePartRevision(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -525,8 +520,7 @@ public class PartResource {
     public PartRevisionDTO markPartRevisionAsObsolete(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -646,8 +640,7 @@ public class PartResource {
     public Response publishPartRevision(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion), true);
@@ -668,8 +661,7 @@ public class PartResource {
     public Response unPublishPartRevision(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         productService.setPublicSharedPart(new PartRevisionKey(workspaceId, partNumber, partVersion), false);

@@ -94,9 +94,9 @@ public class TestUtils {
     public static void assertUserCanEditDocument(ApiClient client, DocumentRevisionDTO document, boolean expect) {
         DocumentApi documentApi = new DocumentApi(client);
         try {
-            documentApi.checkOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+            documentApi.checkOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
             Assert.assertTrue(expect);
-            documentApi.undoCheckOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+            documentApi.undoCheckOutDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
         } catch (ApiException e) {
             Assert.assertFalse(expect);
             Assert.assertEquals(403,e.getCode());
@@ -106,9 +106,9 @@ public class TestUtils {
     public static void assertUserCanEditPart(ApiClient client, PartRevisionDTO part, boolean expect) {
         PartApi partApi = new PartApi(client);
         try {
-            partApi.checkOut(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+            partApi.checkOut(part.getWorkspaceId(), part.getNumber(), part.getVersion());
             Assert.assertTrue(expect);
-            partApi.undoCheckOut(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+            partApi.undoCheckOut(part.getWorkspaceId(), part.getNumber(), part.getVersion());
         } catch (ApiException e) {
             Assert.assertFalse(expect);
             Assert.assertEquals(403,e.getCode());
@@ -184,7 +184,7 @@ public class TestUtils {
         document.setReference(TestUtils.randomString());
         document.setAcl(createACL(userEntries,groupEntries));
         DocumentRevisionDTO createdDocument = new FoldersApi(TestConfig.REGULAR_USER_CLIENT).createDocumentMasterInFolder(workspaceId, document, workspaceId);
-        return new DocumentApi(TestConfig.REGULAR_USER_CLIENT).checkInDocument(workspaceId, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        return new DocumentApi(TestConfig.REGULAR_USER_CLIENT).checkInDocument(workspaceId, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
     }
 
     public static PartRevisionDTO createPart(String workspaceId, List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries) throws ApiException {
@@ -192,7 +192,7 @@ public class TestUtils {
         part.setNumber(TestUtils.randomString());
         part.setAcl(createACL(userEntries,groupEntries));
         PartRevisionDTO createdPart = new PartsApi(TestConfig.REGULAR_USER_CLIENT).createNewPart(workspaceId, part);
-        return new PartApi(TestConfig.REGULAR_USER_CLIENT).checkIn(workspaceId, createdPart.getNumber(), createdPart.getVersion(), "");
+        return new PartApi(TestConfig.REGULAR_USER_CLIENT).checkIn(workspaceId, createdPart.getNumber(), createdPart.getVersion());
     }
 
     private static ACLDTO createACL(List<ACLEntryDTO> userEntries, List<ACLEntryDTO> groupEntries){

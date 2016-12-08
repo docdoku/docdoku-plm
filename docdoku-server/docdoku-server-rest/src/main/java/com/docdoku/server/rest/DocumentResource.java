@@ -124,8 +124,7 @@ public class DocumentResource {
     public DocumentRevisionDTO checkInDocument(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws NotAllowedException, EntityNotFoundException, ESServerException, AccessRightException, UserNotActiveException {
         DocumentRevision docR = documentService.checkInDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
@@ -147,8 +146,7 @@ public class DocumentResource {
     public DocumentRevisionDTO checkOutDocument(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, NotAllowedException, CreationException, AccessRightException,
             UserNotActiveException, EntityAlreadyExistsException {
 
@@ -173,8 +171,7 @@ public class DocumentResource {
     public DocumentRevisionDTO undoCheckOutDocument(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
         DocumentRevision docR = documentService.undoCheckOutDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
@@ -222,8 +219,7 @@ public class DocumentResource {
     public Response subscribeToIterationChangeEvent(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         documentService.subscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         return Response.noContent().build();
@@ -241,8 +237,7 @@ public class DocumentResource {
     public Response unSubscribeToIterationChangeEvent(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         documentService.unsubscribeToIterationChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         return Response.noContent().build();
@@ -260,8 +255,7 @@ public class DocumentResource {
     public Response subscribeToStateChangeEvent(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, NotAllowedException, UserNotActiveException {
         documentService.subscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         return Response.noContent().build();
@@ -279,8 +273,7 @@ public class DocumentResource {
     public Response unsubscribeToStateChangeEvent(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException {
         documentService.unsubscribeToStateChangeEvent(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         return Response.noContent().build();
@@ -410,8 +403,7 @@ public class DocumentResource {
     public DocumentRevisionDTO releaseDocumentRevision(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         DocumentRevisionKey revisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
@@ -433,8 +425,7 @@ public class DocumentResource {
     public DocumentRevisionDTO markDocumentRevisionAsObsolete(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         DocumentRevisionKey revisionKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
@@ -645,8 +636,7 @@ public class DocumentResource {
     public Response publishDocumentRevision(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
         documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), true);
         return Response.noContent().build();
@@ -665,8 +655,7 @@ public class DocumentResource {
     public Response unPublishDocumentRevision(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
-            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(name = "body", defaultValue = "") String body)
+            @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
         documentService.setDocumentPublicShared(new DocumentRevisionKey(workspaceId, documentId, documentVersion), false);
         return Response.noContent().build();

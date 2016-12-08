@@ -96,7 +96,7 @@ public class WorkflowApiTest {
         part.setWorkflowModelId(workflowModelReference);
         part.setRoleMapping(roleMapping);
         PartRevisionDTO newPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
-        partsApi.checkIn(TestConfig.WORKSPACE, newPart.getNumber(),newPart.getVersion(), "");
+        partsApi.checkIn(TestConfig.WORKSPACE, newPart.getNumber(),newPart.getVersion());
 
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(TestConfig.WORKSPACE, newPart.getWorkflow().getId());
         Assert.assertEquals(workflow,newPart.getWorkflow());
@@ -135,7 +135,7 @@ public class WorkflowApiTest {
         UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.REGULAR_USER_CLIENT);
 
         // Check in
-        documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion(), "");
+        documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
 
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(TestConfig.WORKSPACE, createdDocument.getWorkflow().getId());
         Assert.assertEquals(workflow,createdDocument.getWorkflow());

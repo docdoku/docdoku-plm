@@ -49,7 +49,7 @@ public class SharedPartApiTest {
         partCreationDTO.setName("PublicPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreationDTO);
-        part = partApi.checkIn(part.getWorkspaceId(),part.getNumber(),part.getVersion(),"");
+        part = partApi.checkIn(part.getWorkspaceId(),part.getNumber(),part.getVersion());
 
         // Try guest access (should fail)
         try {
@@ -84,7 +84,7 @@ public class SharedPartApiTest {
         partCreationDTO.setName("PublicPart");
 
         PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreationDTO);
-        part = partApi.checkIn(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+        part = partApi.checkIn(part.getWorkspaceId(), part.getNumber(), part.getVersion());
 
         // Try guest access (should fail)
         try{
@@ -94,14 +94,14 @@ public class SharedPartApiTest {
         }
 
         // publish
-        partApi.publishPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+        partApi.publishPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
 
         // Try guest access with part key
         PartRevisionDTO publicSharedPartRevision = sharedApi.getPublicSharedPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
         Assert.assertEquals(part.getNumber(), publicSharedPartRevision.getNumber());
 
         // un publish
-        partApi.unPublishPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+        partApi.unPublishPartRevision(part.getWorkspaceId(), part.getNumber(), part.getVersion());
 
         // Try guest access (should fail)
         try{

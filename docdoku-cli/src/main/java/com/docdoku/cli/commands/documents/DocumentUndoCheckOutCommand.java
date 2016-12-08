@@ -66,7 +66,7 @@ public class DocumentUndoCheckOutCommand extends BaseCommandLine {
         }
 
         DocumentApi documentApi = new DocumentApi(client);
-        DocumentRevisionDTO dr = documentApi.undoCheckOutDocument(workspace, id, revision,"");
+        DocumentRevisionDTO dr = documentApi.undoCheckOutDocument(workspace, id, revision);
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
 
         output.printInfo(LangHelper.getLocalizedMessage("UndoCheckoutDocument",user) + " : " + id + "-" + dr.getVersion() + "-" + di.getIteration()+1 + " (" + workspace + ")");

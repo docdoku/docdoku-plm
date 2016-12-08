@@ -32,7 +32,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class AdminApiTest {
@@ -47,9 +46,9 @@ public class AdminApiTest {
     public void enableAccountTest() throws ApiException {
         AdminApi adminApi = new AdminApi(TestConfig.ROOT_CLIENT);
         AccountDTO account = TestUtils.createAccount();
-        AccountDTO disabledAccount = adminApi.enableAccount(account.getLogin(), false, "");
+        AccountDTO disabledAccount = adminApi.enableAccount(account.getLogin(), false);
         Assert.assertFalse(disabledAccount.getEnabled());
-        AccountDTO enabledAccount = adminApi.enableAccount(account.getLogin(), true, "");
+        AccountDTO enabledAccount = adminApi.enableAccount(account.getLogin(), true);
         Assert.assertTrue(enabledAccount.getEnabled());
     }
 
@@ -63,10 +62,10 @@ public class AdminApiTest {
         workspace.setId(TestUtils.randomString());
         workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
 
-        WorkspaceDTO disabledWorkspace = adminApi.enableWorkspace(workspace.getId(), false, "");
+        WorkspaceDTO disabledWorkspace = adminApi.enableWorkspace(workspace.getId(), false);
         Assert.assertFalse(disabledWorkspace.getEnabled());
 
-        WorkspaceDTO enabledWorkspace = adminApi.enableWorkspace(workspace.getId(), true, "");
+        WorkspaceDTO enabledWorkspace = adminApi.enableWorkspace(workspace.getId(), true);
         Assert.assertTrue(enabledWorkspace.getEnabled());
 
         workspacesApi.deleteWorkspace(workspace.getId());

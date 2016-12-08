@@ -13,7 +13,7 @@
                 });
         })
 
-        .controller('FolderController', function ($scope, $location, $routeParams, $filter, $mdDialog, $q, $window,
+        .controller('FolderController', function ($scope, $routeParams, $filter, $mdDialog, $q, $window,
                                                   FolderService, DBService, RepositoryService, WorkspaceService, ConfigurationService, FileUtils) {
 
 

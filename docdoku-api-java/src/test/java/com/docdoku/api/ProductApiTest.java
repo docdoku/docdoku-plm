@@ -91,7 +91,7 @@ public class ProductApiTest {
         partApi.updatePartIteration(TestConfig.WORKSPACE, p1Number, "A", 1, i1);
 
         for (String partNumber : partNumbers) {
-            partApi.checkIn(TestConfig.WORKSPACE, partNumber, "A", "");
+            partApi.checkIn(TestConfig.WORKSPACE, partNumber, "A");
         }
 
 

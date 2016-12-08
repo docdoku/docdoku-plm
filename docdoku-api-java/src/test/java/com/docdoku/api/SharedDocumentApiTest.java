@@ -50,7 +50,7 @@ public class SharedDocumentApiTest {
         documentCreationDTO.setTitle("PublicDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreationDTO, TestConfig.WORKSPACE);
-        document = documentsApi.checkInDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+        document = documentsApi.checkInDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
 
         // Try guest access (should fail)
         try {
@@ -86,7 +86,7 @@ public class SharedDocumentApiTest {
         documentCreationDTO.setTitle("PublicDoc");
 
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreationDTO, TestConfig.WORKSPACE);
-        document = documentsApi.checkInDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+        document = documentsApi.checkInDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
 
         // Try guest access (should fail)
         try{
@@ -96,14 +96,14 @@ public class SharedDocumentApiTest {
         }
 
         // publish
-        documentApi.publishDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(),"");
+        documentApi.publishDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
 
         // Try guest access with document key
         DocumentRevisionDTO documentWithSharedEntity = sharedApi.getPublicSharedDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
         Assert.assertEquals(document.getDocumentMasterId(), documentWithSharedEntity.getDocumentMasterId());
 
         // un publish
-        documentApi.unPublishDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(), "");
+        documentApi.unPublishDocumentRevision(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
 
         // Try guest access (should fail)
         try{

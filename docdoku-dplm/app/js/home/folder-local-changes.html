@@ -4,11 +4,11 @@
     <div layout="column">
         <div layout="row" layout-align="start center">
             <md-button class="md-icon-button md-primary" aria-label="{{'SYNC'|translate}}"
-                       href="#/folder/{{folder.uuid}}">
+                       href="#!/folder/{{folder.uuid}}">
                 <i class="material-icons">folder_open</i>
             </md-button>
             <div layout="column">
-                <a aria-label="" href="#/folder/{{folder.uuid}}" class="md-primary">
+                <a aria-label="" href="#!/folder/{{folder.uuid}}" class="md-primary">
                     {{folder.path | fileShortName}}
                 </a>
                 <small>{{items.length}} {{'MODIFICATIONS' | translate }}</small>

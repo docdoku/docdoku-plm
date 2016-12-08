@@ -44,7 +44,7 @@ angular.module('dplm.menu', [])
                 return {
                     name: $filter('fileShortName')(folder.path),
                     type: 'link',
-                    url: '#/folder/' + folder.uuid,
+                    url: '#!/folder/' + folder.uuid,
                     folder: folder
                 };
             });
@@ -55,7 +55,7 @@ angular.module('dplm.menu', [])
                 return {
                     name: workspace,
                     type: 'link',
-                    url: '#/workspace/' + workspace
+                    url: '#!/workspace/' + workspace
                 };
             });
         };

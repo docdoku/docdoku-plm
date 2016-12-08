@@ -120,7 +120,7 @@ public class ProductStructureApiTest {
         lastIteration.setComponents(createLinks(currentLevelParts));
         lastIteration.setIterationNote(ITERATION_NOTE);
         partApi.updatePartIteration(parent.getWorkspaceId(), parent.getNumber(), parent.getVersion(), lastIteration.getIteration(), lastIteration);
-        partApi.checkIn(parent.getWorkspaceId(), parent.getNumber(), parent.getVersion(), "");
+        partApi.checkIn(parent.getWorkspaceId(), parent.getNumber(), parent.getVersion());
         partsInStructure.add(parent);
 
     }

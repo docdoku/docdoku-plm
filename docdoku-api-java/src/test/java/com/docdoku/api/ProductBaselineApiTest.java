@@ -183,7 +183,7 @@ public class ProductBaselineApiTest {
     }
 
     private static PartRevisionDTO checkInPart(PartRevisionDTO part) throws ApiException {
-        return partApi.checkIn(part.getWorkspaceId(), part.getNumber(), part.getVersion(), "");
+        return partApi.checkIn(part.getWorkspaceId(), part.getNumber(), part.getVersion());
     }
 
     private static void createParts() throws ApiException {

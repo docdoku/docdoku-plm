@@ -24,21 +24,32 @@ module.exports = function (grunt) {
         },
         md2html: {
             doc: {
-                options: {},
+                options: {
+                    layout: 'doc-assets/doc.layout.html'
+                },
                 files: [{
                     expand: true,
                     cwd: 'target/docdoku-plm-api/npm/docs/',
                     src: ['*.md'],
                     dest: 'target/docdoku-plm-api/site/docs/',
-                    ext: '.html'
-                },{
+                    ext: '.html',
+                    options: {
+                        layout: 'doc-assets/doc.layout.html'
+                    }
+                }]
+            },
+            index: {
+                options: {
+                    layout: 'doc-assets/index.layout.html'
+                },
+                files: [{
                     src: ['target/docdoku-plm-api/npm/README.md'],
                     dest: 'target/docdoku-plm-api/site/index.html'
                 }]
             }
         },
-        replace:{
-            mdLinks:{
+        replace: {
+            mdLinks: {
                 src: ['target/docdoku-plm-api/site/**/*.html'],
                 overwrite: true,
                 replacements: [{
@@ -46,11 +57,17 @@ module.exports = function (grunt) {
                     to: '.html'
                 }]
             }
+        },
+        copy:{
+            css:{
+                src: 'node_modules/github-markdown-css/github-markdown.css',
+                dest: 'target/docdoku-plm-api/site/style.css'
+            }
         }
 
     });
 
-    grunt.registerTask('build', ['clean', 'browserify:dist', 'md2html:doc', 'replace:mdLinks']);
+    grunt.registerTask('build', ['clean', 'browserify:dist', 'md2html:doc', 'md2html:index', 'copy:css','replace:mdLinks']);
 };
 
 

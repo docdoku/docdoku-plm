@@ -122,7 +122,7 @@ public class PartCheckOutCommand extends BaseCommandLine {
 
         if(pr.getCheckOutUser() == null) {
             try{
-                pr = partApi.checkOut(workspace, pPartNumber, pr.getVersion(),"");
+                pr = partApi.checkOut(workspace, pPartNumber, pr.getVersion());
                 pi = LastIterationHelper.getLastIteration(pr);
             }catch (Exception e){
                 output.printException(e);
