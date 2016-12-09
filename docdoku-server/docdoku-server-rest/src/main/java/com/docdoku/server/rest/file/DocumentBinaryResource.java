@@ -92,6 +92,9 @@ public class DocumentBinaryResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @Path("/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -123,8 +126,7 @@ public class DocumentBinaryResource {
         }
     }
 
-    // TODO split method using query params for uuid
-    // TODO -> will simplify swagger json generation
+    // TODO use uuid as QueryParam
     @GET
     @ApiOperation(value = "Download document file",
             response = File.class)
@@ -138,8 +140,8 @@ public class DocumentBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(
             @Context Request request,
-            @HeaderParam("Range") String range,
-            @HeaderParam("Referer") String referer,
+            @ApiParam(required = false, value = "Range")@HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "referer") @HeaderParam("Referer") String referer,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") final String documentId,
             @ApiParam(required = true, value = "Workspace version") @PathParam("version") final String version,

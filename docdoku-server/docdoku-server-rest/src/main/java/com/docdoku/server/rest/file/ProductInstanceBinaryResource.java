@@ -25,8 +25,8 @@ import com.docdoku.core.configuration.ProductInstanceIterationKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IPublicEntityManagerLocal;
 import com.docdoku.server.helpers.Streams;
@@ -48,6 +48,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,10 +56,9 @@ import java.net.URLEncoder;
 import java.text.Normalizer;
 import java.util.Collection;
 
-/*
- *
+/**
  * @author Asmae CHADID on 30/03/15.
- */
+ **/
 
 @RequestScoped
 @Api(hidden = true, value = "productInstanceBinary", description = "Operations about product instances files")
@@ -81,6 +81,9 @@ public class ProductInstanceBinaryResource {
     @POST
     @ApiOperation(value = "Upload product instance files",
             response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -122,7 +125,7 @@ public class ProductInstanceBinaryResource {
 
     @GET
     @ApiOperation(value = "Download product instance file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -132,7 +135,7 @@ public class ProductInstanceBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromProductInstance(
             @Context Request request,
-            @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
@@ -165,10 +168,14 @@ public class ProductInstanceBinaryResource {
 
     }
 
+/*
 
     @POST
     @ApiOperation(value = "Upload path data file",
             response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -183,11 +190,11 @@ public class ProductInstanceBinaryResource {
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
-            @ApiParam(required = true, value = "Path data id") @PathParam("pathDataId") int pathDataId)
+            @ApiParam(required = true, value = "PathDataMaster id") @PathParam("pathDataId") int pathDataId)
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException,
             EntityAlreadyExistsException, CreationException {
 
-        // TODO: determine if this WS is really used...
+        // TODO: determine if this WS is really used... ehhh
 
         try {
             String fileName = null;
@@ -207,16 +214,20 @@ public class ProductInstanceBinaryResource {
         }
 
     }
+*/
 
     @POST
     @ApiOperation(value = "Upload path data iteration file",
             response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("pathdata/{path}/iterations/{iteration}")
+    @Path("pathdata/{pathDataId}/iterations/{iteration}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Response uploadFilesToPathDataIteration(
@@ -225,7 +236,7 @@ public class ProductInstanceBinaryResource {
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
-            @ApiParam(required = true, value = "Complete path") @PathParam("path") int path)
+            @ApiParam(required = true, value = "PathDataMaster Id") @PathParam("pathDataId") int pathDataId)
             throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException,
             EntityAlreadyExistsException, CreationException {
 
@@ -234,7 +245,7 @@ public class ProductInstanceBinaryResource {
             Collection<Part> formParts = request.getParts();
 
             for (Part formPart : formParts) {
-                fileName = uploadAFileToPathDataIteration(workspaceId, formPart, configurationItemId, serialNumber, path, iteration);
+                fileName = uploadAFileToPathDataIteration(workspaceId, formPart, configurationItemId, serialNumber, pathDataId, iteration);
             }
 
             if (formParts.size() == 1) {
@@ -250,7 +261,7 @@ public class ProductInstanceBinaryResource {
 
     @GET
     @ApiOperation(value = "Download path data file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -260,7 +271,7 @@ public class ProductInstanceBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathData(
             @Context Request request,
-            @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
@@ -295,7 +306,7 @@ public class ProductInstanceBinaryResource {
 
     @GET
     @ApiOperation(value = "Download path data iteration file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -305,7 +316,7 @@ public class ProductInstanceBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadFileFromPathDataIteration(
             @Context Request request,
-            @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") final String serialNumber,
             @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") String pathDataId,

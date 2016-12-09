@@ -135,6 +135,10 @@ public class ProductInstanceMaster implements Serializable {
         return instanceOf.getId() + "-" + serialNumber;
     }
 
+    public String getConfigurationItemId(){
+        return instanceOf.getId();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

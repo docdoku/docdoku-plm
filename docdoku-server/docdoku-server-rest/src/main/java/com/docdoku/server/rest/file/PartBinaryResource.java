@@ -48,10 +48,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.Normalizer;
@@ -92,6 +89,9 @@ public class PartBinaryResource {
     @POST
     @ApiOperation(value = "Upload CAD file",
             response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -136,6 +136,9 @@ public class PartBinaryResource {
     @POST
     @ApiOperation(value = "Upload attached file",
             response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -182,7 +185,7 @@ public class PartBinaryResource {
     // Split on several methods because of Path conflict when we use regex
     @GET
     @ApiOperation(value = "Download direct part file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -209,7 +212,7 @@ public class PartBinaryResource {
 
     @GET
     @ApiOperation(value = "Download part file from uuid",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -238,7 +241,7 @@ public class PartBinaryResource {
 
     @GET
     @ApiOperation(value = "Download part file with subtype",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -267,7 +270,7 @@ public class PartBinaryResource {
 
     @GET
     @ApiOperation(value = "Download part file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),

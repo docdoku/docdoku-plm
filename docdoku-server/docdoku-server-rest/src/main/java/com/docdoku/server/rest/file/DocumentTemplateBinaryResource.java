@@ -50,6 +50,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -79,6 +80,9 @@ public class DocumentTemplateBinaryResource {
     @POST
     @ApiOperation(value = "Upload document template file",
             response = Response.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
+    })
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Upload success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -121,7 +125,7 @@ public class DocumentTemplateBinaryResource {
 
     @GET
     @ApiOperation(value = "Download document template file",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
             @ApiResponse(code = 401, message = "Unauthorized"),
@@ -132,7 +136,7 @@ public class DocumentTemplateBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentTemplateFile(
             @Context Request request,
-            @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Template id") @PathParam("templateId") final String templateId,
             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
