@@ -260,8 +260,7 @@ public class PartsResource {
 
     @POST
     @ApiOperation(value = "Run custom queries",
-            response = Response.class,
-            responseContainer = "List")
+            response = String.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of QueryDTOs. It can be an empty list."),
             @ApiResponse(code = 401, message = "Unauthorized"),
