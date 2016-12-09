@@ -20,6 +20,7 @@
 
 package com.docdoku.api;
 
+import com.docdoku.api.client.ApiCallback;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
@@ -37,6 +38,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(JUnit4.class)
 public class DocumentApiTest {
@@ -275,6 +279,38 @@ public class DocumentApiTest {
 
         documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, null, "NonExistingFolder");
         Assert.assertTrue(documentRevisions.isEmpty());
+
+    }
+
+    @Test
+    public void asyncDocumentCreationTest() throws ApiException, ExecutionException, InterruptedException {
+
+        CompletableFuture<DocumentRevisionDTO> future = new CompletableFuture<>();
+        DocumentCreationDTO document = new DocumentCreationDTO();
+        document.setReference(TestUtils.randomString());
+        foldersApi.createDocumentMasterInFolderAsync(TestConfig.WORKSPACE,
+                document, TestConfig.WORKSPACE, new ApiCallback<DocumentRevisionDTO>() {
+
+            @Override
+            public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                future.complete(null);
+            }
+
+            @Override
+            public void onSuccess(DocumentRevisionDTO result, int statusCode, Map<String, List<String>> responseHeaders) {
+                future.complete(result);
+            }
+
+            @Override
+            public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+            }
+
+            @Override
+            public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+            }
+        });
+
+        Assert.assertNotNull(future.get());
 
     }
 
