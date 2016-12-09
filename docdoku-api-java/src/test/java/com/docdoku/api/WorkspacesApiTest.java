@@ -45,7 +45,7 @@ public class WorkspacesApiTest {
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
         WorkspaceDTO createdWorkspace = workspacesApi.createWorkspace(workspace, TestConfig.LOGIN);
         workspace.setEnabled(createdWorkspace.getEnabled());
-        Assert.assertEquals(workspace,createdWorkspace);
+        Assert.assertEquals(workspace, createdWorkspace);
         workspacesApi.deleteWorkspace(workspaceId);
     }
 
@@ -73,7 +73,7 @@ public class WorkspacesApiTest {
         workspace.setDescription(newDescription);
         WorkspaceDTO updatedWorkspace = workspacesApi.updateWorkspace(workspace.getId(), workspace);
 
-        Assert.assertEquals(updatedWorkspace.getDescription(),newDescription);
+        Assert.assertEquals(updatedWorkspace.getDescription(), newDescription);
         Assert.assertEquals(updatedWorkspace, workspace);
 
         workspacesApi.deleteWorkspace(workspace.getId());
@@ -99,7 +99,7 @@ public class WorkspacesApiTest {
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
         workspacesApi.addUser(TestConfig.WORKSPACE, userToAdd, group.getId());
         List<UserDTO> usersInGroup = workspacesApi.getUsersInGroup(TestConfig.WORKSPACE, group.getId());
-        Assert.assertEquals(usersInGroup.stream().filter(userDTO -> userDTO.getLogin().equals(userToAdd.getLogin())).count(),1);
+        Assert.assertEquals(usersInGroup.stream().filter(userDTO -> userDTO.getLogin().equals(userToAdd.getLogin())).count(), 1);
     }
 
     @Test
@@ -128,7 +128,9 @@ public class WorkspacesApiTest {
         Assert.assertTrue(workspacesForConnectedUser.getAllWorkspaces().contains(createdWorkspace));
         Assert.assertTrue(!workspacesForConnectedUser.getAdministratedWorkspaces().contains(createdWorkspace));
 
-        ApiClient newAdminClient = new DocdokuPLMBasicClient(TestConfig.URL, userToAdd.getLogin(), TestConfig.PASSWORD, TestConfig.DEBUG).getClient();
+        ApiClient newAdminClient = DocdokuPLMClientFactory.createBasicClient(TestConfig.URL, userToAdd.getLogin(),
+                TestConfig.PASSWORD, TestConfig.DEBUG);
+
         new WorkspacesApi(newAdminClient).deleteWorkspace(workspaceId);
         Thread.sleep(2000);
 

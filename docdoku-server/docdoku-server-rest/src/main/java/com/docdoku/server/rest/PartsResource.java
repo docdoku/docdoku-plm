@@ -199,7 +199,19 @@ public class PartsResource {
     public Response searchPartRevisions(
             @Context UriInfo uri,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
+            @ApiParam(required = false, value = "Query") @QueryParam("q") String q,
+            @ApiParam(required = false, value = "Part number") @QueryParam("number") String number,
+            @ApiParam(required = false, value = "Part name") @QueryParam("name") String name,
+            @ApiParam(required = false, value = "Part version") @QueryParam("version") String version,
+            @ApiParam(required = false, value = "Part author") @QueryParam("author") String author,
+            @ApiParam(required = false, value = "Part type") @QueryParam("type") String type,
+            @ApiParam(required = false, value = "Part created from date") @QueryParam("createdFrom") String createdFrom,
+            @ApiParam(required = false, value = "Part created to date") @QueryParam("createdTo") String createdTo,
+            @ApiParam(required = false, value = "Part modified from date") @QueryParam("modifiedFrom") String modifiedFrom,
+            @ApiParam(required = false, value = "Part modified to date") @QueryParam("modifiedTo") String modifiedTo,
+            @ApiParam(required = false, value = "Part tags") @QueryParam("tags") String tags,
+            @ApiParam(required = false, value = "Part files content") @QueryParam("content") String content,
+            @ApiParam(required = false, value = "Part files attributes") @QueryParam("attributes") String attributes)
             throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());

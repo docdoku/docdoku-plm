@@ -74,8 +74,8 @@ public class PartUserGroupACLTest {
         UserDTO user2 = new UserDTO();
         user2.setLogin(account2.getLogin());
 
-        user1Client = new DocdokuPLMBasicClient(TestConfig.URL, account1.getLogin(), TestConfig.PASSWORD).getClient();
-        user2Client = new DocdokuPLMBasicClient(TestConfig.URL, account2.getLogin(), TestConfig.PASSWORD).getClient();
+        user1Client = DocdokuPLMClientFactory.createJWTClient(TestConfig.URL, account1.getLogin(), TestConfig.PASSWORD);
+        user2Client = DocdokuPLMClientFactory.createJWTClient(TestConfig.URL, account2.getLogin(), TestConfig.PASSWORD);
 
         workspacesApi.addUser(workspace.getId(), user1, group1.getId());
         workspacesApi.addUser(workspace.getId(), user2, group2.getId());

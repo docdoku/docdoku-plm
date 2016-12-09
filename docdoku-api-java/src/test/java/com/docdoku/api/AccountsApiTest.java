@@ -20,6 +20,7 @@
 
 package com.docdoku.api;
 
+import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.services.AccountsApi;
@@ -34,7 +35,8 @@ public class AccountsApiTest {
     @Test
     public void createAccountTest() throws ApiException {
         AccountDTO accountDTO = TestUtils.createAccount();
-        AccountDTO account = new AccountsApi(new DocdokuPLMBasicClient(TestConfig.URL, accountDTO.getLogin(), TestConfig.PASSWORD).getClient()).getAccount();
+        ApiClient accountClient = DocdokuPLMClientFactory.createBasicClient(TestConfig.URL, accountDTO.getLogin(), TestConfig.PASSWORD);
+        AccountDTO account = new AccountsApi(accountClient).getAccount();
         Assert.assertEquals(account.getLogin(), accountDTO.getLogin());
     }
 

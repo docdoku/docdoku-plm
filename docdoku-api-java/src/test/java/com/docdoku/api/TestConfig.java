@@ -24,7 +24,7 @@ import com.docdoku.api.client.ApiClient;
 
 /**
  * Config parser
- *
+ * <p>
  * Override any value from cli: -Denv.PARAM_NAME=PARAM_VALUE
  *
  * @Author Morgan Guimard
@@ -72,15 +72,11 @@ public class TestConfig {
     }
 
     private static void createClients() {
-
-        GUEST_CLIENT = new DocdokuPLMClient(URL, DEBUG).getClient();
-
-        BASIC_CLIENT = new DocdokuPLMBasicClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
-        COOKIE_CLIENT = new DocdokuPLMCookieClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
-        JWT_CLIENT = new DocdokuPLMJWTClient(URL, LOGIN, PASSWORD, DEBUG).getClient();
-
-        ROOT_CLIENT = new DocdokuPLMJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG).getClient();
+        GUEST_CLIENT = DocdokuPLMClientFactory.createClient(URL, DEBUG);
+        BASIC_CLIENT = DocdokuPLMClientFactory.createBasicClient(URL, LOGIN, PASSWORD, DEBUG);
+        COOKIE_CLIENT = DocdokuPLMClientFactory.createCookieClient(URL, LOGIN, PASSWORD, DEBUG);
+        JWT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, LOGIN, PASSWORD, DEBUG);
+        ROOT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG);
         REGULAR_USER_CLIENT = JWT_CLIENT;
-
     }
 }

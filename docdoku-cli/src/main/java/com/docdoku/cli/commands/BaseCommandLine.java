@@ -20,11 +20,11 @@
 
 package com.docdoku.cli.commands;
 
+import com.docdoku.api.DocdokuPLMClientFactory;
+import com.docdoku.api.client.ApiClient;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
 import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.services.DocdokuClientFactory;
-import com.docdoku.api.client.ApiClient;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
@@ -83,7 +83,7 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
         String apiBasePath = getServerURL().toString() + "/api";
 
-        client = DocdokuClientFactory.createClient(apiBasePath,user,password);
+        client = DocdokuPLMClientFactory.createBasicClient(apiBasePath, user, password);
 
         execImpl();
 

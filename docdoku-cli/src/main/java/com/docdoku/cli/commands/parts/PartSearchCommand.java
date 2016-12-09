@@ -44,7 +44,7 @@ public class PartSearchCommand extends BaseCommandLine {
     @Override
     public void execImpl() throws Exception {
         PartsApi partsApi = new PartsApi(client);
-        List<PartRevisionDTO> partRevisions = partsApi.searchPartRevisions(workspace, searchValue);
+        List<PartRevisionDTO> partRevisions = partsApi.searchPartRevisions(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null, null);
         output.printPartRevisions(partRevisions);
     }
 
