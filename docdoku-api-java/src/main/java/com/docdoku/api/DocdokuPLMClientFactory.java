@@ -77,7 +77,7 @@ public class DocdokuPLMClientFactory {
      * Create a jwt client, no debug
      **/
     public static ApiClient createJWTClient(String host, String login, String password) {
-        return createJWTClient(host, login, password);
+        return createJWTClient(host, login, password, false);
     }
 
     /**
