@@ -140,8 +140,9 @@ public class ProductInstanceBinaryApiTest {
     }
 
     private File downloadPathDataFile() throws ApiException {
-        return partTemplateBinaryApi.downloadFileFromProductInstance(TestConfig.WORKSPACE,
-                productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1, "attached-file.md",
+        return partTemplateBinaryApi.downloadFileFromPathData(TestConfig.WORKSPACE,
+                productInstance.getConfigurationItemId(), productInstance.getSerialNumber(),
+                pathDataMaster.getId(), "attached-file.md",
                 null, null, null);
     }
 }
