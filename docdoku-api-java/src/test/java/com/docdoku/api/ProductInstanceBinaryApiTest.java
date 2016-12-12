@@ -42,7 +42,7 @@ public class ProductInstanceBinaryApiTest {
 
     private static ProductInstanceMasterDTO productInstance;
     private static PathDataMasterDTO pathDataMaster;
-    private ProductInstanceBinaryApi partTemplateBinaryApi =
+    private ProductInstanceBinaryApi productInstanceBinaryApi =
             new ProductInstanceBinaryApi(TestConfig.REGULAR_USER_CLIENT);
 
     @BeforeClass
@@ -108,7 +108,7 @@ public class ProductInstanceBinaryApiTest {
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =
-                partTemplateBinaryApi.uploadFilesToProductInstanceIterationWithHttpInfo(TestConfig.WORKSPACE,
+                productInstanceBinaryApi.uploadFilesToProductInstanceIterationWithHttpInfo(TestConfig.WORKSPACE,
                         productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1, file);
 
         String location = response.getHeaders().get("Location").get(0);
@@ -118,7 +118,7 @@ public class ProductInstanceBinaryApiTest {
     }
 
     private File downloadAttachedFile() throws ApiException {
-        return partTemplateBinaryApi.downloadFileFromProductInstance(TestConfig.WORKSPACE,
+        return productInstanceBinaryApi.downloadFileFromProductInstance(TestConfig.WORKSPACE,
                 productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1, "attached-file.md",
                 null, null, null);
     }
@@ -129,7 +129,7 @@ public class ProductInstanceBinaryApiTest {
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =
-                partTemplateBinaryApi.uploadFilesToPathDataIterationWithHttpInfo(TestConfig.WORKSPACE,
+                productInstanceBinaryApi.uploadFilesToPathDataIterationWithHttpInfo(TestConfig.WORKSPACE,
                         productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1,
                         pathDataMaster.getId(), file);
 
@@ -140,9 +140,8 @@ public class ProductInstanceBinaryApiTest {
     }
 
     private File downloadPathDataFile() throws ApiException {
-        return partTemplateBinaryApi.downloadFileFromPathData(TestConfig.WORKSPACE,
-                productInstance.getConfigurationItemId(), productInstance.getSerialNumber(),
-                pathDataMaster.getId(), "attached-file.md",
+        return productInstanceBinaryApi.downloadFileFromPathDataIteration(TestConfig.WORKSPACE,
+                productInstance.getSerialNumber(), pathDataMaster.getId(), 1, "attached-file.md",
                 null, null, null);
     }
 }

@@ -24,7 +24,6 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
-import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.models.utils.WorkflowHelper;
 import com.docdoku.api.services.*;
 import org.junit.Assert;
@@ -51,6 +50,7 @@ public class WorkflowApiTest {
     private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
     private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
     private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
+    private  DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(TestConfig.REGULAR_USER_CLIENT);
 
 
     @Test
@@ -129,10 +129,12 @@ public class WorkflowApiTest {
         File file = new File(fileURL.getPath());
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(createdDocument);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, file);
-        DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
-        lastIteration = LastIterationHelper.getLastIteration(documentRevision);
-        UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.REGULAR_USER_CLIENT);
+
+        documentBinaryApi.uploadDocumentFiles(lastIteration.getWorkspaceId(), lastIteration.getDocumentMasterId(),
+                lastIteration.getVersion(), lastIteration.getIteration(), file);
+
+        documentBinaryApi.downloadDocumentFile(lastIteration.getWorkspaceId(), lastIteration.getDocumentMasterId(),
+                lastIteration.getVersion(), lastIteration.getIteration(), "attached-file.zip", "", null, null, null, null);
 
         // Check in
         documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
@@ -143,7 +145,7 @@ public class WorkflowApiTest {
         runAsserts(createdDocument.getWorkflow(), workflowModel);
         processTask(createdDocument.getWorkflow(), workflowModel);
 
-        documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertTrue("Task is refreshed on document getter", documentRevision.getWorkflow().getActivities().get(0).getTasks().get(0).getStatus().equals(TaskDTO.StatusEnum.APPROVED));
 
     }

@@ -168,54 +168,6 @@ public class ProductInstanceBinaryResource {
 
     }
 
-/*
-
-    @POST
-    @ApiOperation(value = "Upload path data file",
-            response = Response.class)
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "upload", paramType = "formData", dataType = "file", required = true)
-    })
-    @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Upload success"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @Path("pathdata/{pathDataId}")
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public Response uploadFilesToPathData(
-            @Context HttpServletRequest request,
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
-            @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
-            @ApiParam(required = true, value = "Product instance iteration") @PathParam("iteration") int iteration,
-            @ApiParam(required = true, value = "PathDataMaster id") @PathParam("pathDataId") int pathDataId)
-            throws EntityNotFoundException, UserNotActiveException, NotAllowedException, AccessRightException,
-            EntityAlreadyExistsException, CreationException {
-
-        // TODO: determine if this WS is really used... ehhh
-
-        try {
-            String fileName = null;
-            Collection<Part> formParts = request.getParts();
-
-            for (Part formPart : formParts) {
-                fileName = uploadAFileToPathData(workspaceId, formPart, configurationItemId, serialNumber, pathDataId, iteration);
-            }
-
-            if (formParts.size() == 1) {
-                return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
-            }
-            return Response.noContent().build();
-
-        } catch (IOException | ServletException | StorageException e) {
-            return BinaryResourceUpload.uploadError(e);
-        }
-
-    }
-*/
-
     @POST
     @ApiOperation(value = "Upload path data iteration file",
             response = Response.class)
@@ -273,7 +225,6 @@ public class ProductInstanceBinaryResource {
             @Context Request request,
             @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String configurationItemId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") final int pathDataId,
             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
@@ -319,7 +270,7 @@ public class ProductInstanceBinaryResource {
             @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Serial number") @PathParam("serialNumber") final String serialNumber,
-            @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") String pathDataId,
+            @ApiParam(required = true, value = "Path data master id") @PathParam("pathDataId") final int pathDataId,
             @ApiParam(required = true, value = "Path data iteration number") @PathParam("iteration") final int iteration,
             @ApiParam(required = true, value = "File name id") @PathParam("fileName") final String fileName,
             @ApiParam(required = false, value = "Type") @QueryParam("type") String type,

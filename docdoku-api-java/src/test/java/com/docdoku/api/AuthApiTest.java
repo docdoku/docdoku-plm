@@ -31,28 +31,30 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class AuthApiTest {
 
-    @Test
-    public void testUnsuccessfulLogin() {
+    private AuthApi authApi = new AuthApi(TestConfig.GUEST_CLIENT);
 
-        AuthApi authApi = new AuthApi(TestConfig.GUEST_CLIENT);
+    @Test
+    public void wrongPasswordTest() {
         LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
         loginRequestDTO.setLogin(TestConfig.LOGIN);
         loginRequestDTO.setPassword("wrongpassword");
         try {
             authApi.login(loginRequestDTO);
         } catch (ApiException e) {
-            System.out.println(e.getResponseHeaders());
-
-            Assert.assertEquals(e.getCode(), 403);
+            Assert.assertEquals(403, e.getCode());
         }
+    }
 
+    @Test
+    public void wrongLoginTest() {
+        LoginRequestDTO loginRequestDTO = new LoginRequestDTO();
         loginRequestDTO.setLogin("wronglogin");
         loginRequestDTO.setPassword("whatever");
+
         try {
             authApi.login(loginRequestDTO);
         } catch (ApiException e) {
-            System.out.println(e.getResponseHeaders());
-            Assert.assertEquals(e.getCode(),403);
+            Assert.assertEquals(403, e.getCode());
         }
     }
 

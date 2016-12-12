@@ -21,23 +21,16 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.BinaryResourceDTO;
 import com.docdoku.api.models.PartCreationDTO;
 import com.docdoku.api.models.PartIterationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
-import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
 @RunWith(JUnit4.class)
 public class PartApiTest {
@@ -99,52 +92,4 @@ public class PartApiTest {
 
     }
 
-
-    @Test
-    public void uploadDownloadAttachedFilesToPartTest() throws ApiException, IOException {
-
-        // Create a part
-        PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(TestUtils.randomString());
-        partCreation.setName("GeneratedPart");
-
-        PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
-        URL fileURL = PartApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
-        File file = new File(fileURL.getPath());
-
-        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(part);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration,TestConfig.REGULAR_USER_CLIENT,file);
-        part = partsApi.getPartRevision(TestConfig.WORKSPACE, part.getNumber(), part.getVersion());
-        lastIteration = LastIterationHelper.getLastIteration(part);
-        Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
-        BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
-        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.REGULAR_USER_CLIENT);
-        Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
-
-    }
-
-
-    @Test
-    public void uploadDownloadNativeCADFileToPartTest() throws ApiException, IOException {
-
-        // Create a part
-        PartCreationDTO partCreation = new PartCreationDTO();
-        partCreation.setNumber(TestUtils.randomString());
-        partCreation.setName("GeneratedPart");
-
-        PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreation);
-        URL fileURL = PartApiTest.class.getClassLoader().getResource("com/docdoku/api/native-cad.json");
-        File file = new File(fileURL.getPath());
-
-        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(part);
-        UploadDownloadHelper.uploadNativeCADFile(lastIteration,TestConfig.REGULAR_USER_CLIENT,file);
-        part = partsApi.getPartRevision(TestConfig.WORKSPACE, part.getNumber(), part.getVersion());
-        lastIteration = LastIterationHelper.getLastIteration(part);
-        BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
-        Assert.assertNotNull(nativeCADFile);
-
-        File downloadedFile = UploadDownloadHelper.downloadFile(nativeCADFile.getFullName(), TestConfig.REGULAR_USER_CLIENT);
-        Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
-
-    }
 }

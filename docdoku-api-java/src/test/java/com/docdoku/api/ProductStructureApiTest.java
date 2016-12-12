@@ -23,11 +23,7 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
-import com.docdoku.api.models.utils.UploadDownloadHelper;
-import com.docdoku.api.services.PartApi;
-import com.docdoku.api.services.PartsApi;
-import com.docdoku.api.services.ProductsApi;
-import com.docdoku.api.services.WorkspacesApi;
+import com.docdoku.api.services.*;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -46,6 +42,7 @@ public class ProductStructureApiTest {
     private static final WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
     private static final PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
     private static final ProductsApi productsApi = new ProductsApi(TestConfig.REGULAR_USER_CLIENT);
+    private static final PartBinaryApi partBinaryApi = new PartBinaryApi(TestConfig.REGULAR_USER_CLIENT);
 
     private final Integer LEVEL_MAX = 4;
     private final Integer MAX_PER_LEVEL = 3;
@@ -85,7 +82,7 @@ public class ProductStructureApiTest {
         Assert.assertEquals(fetchedProduct.getDesignItemNumber(), rootPart.getNumber());
         List<LeafDTO> leaves = productsApi.getFilteredInstances(product.getWorkspaceId(), product.getId(), "latest", "-1", false);
         Assert.assertFalse(leaves.isEmpty());
-        Assert.assertEquals(partsAsLeaves.size(),leaves.size());
+        Assert.assertEquals(partsAsLeaves.size(), leaves.size());
     }
 
     private void generateStructure() throws ApiException {
@@ -114,7 +111,8 @@ public class ProductStructureApiTest {
 
         } else {
             partsAsLeaves.add(lastIteration);
-            UploadDownloadHelper.uploadNativeCADFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, cadFile);
+            partBinaryApi.uploadNativeCADFile(lastIteration.getWorkspaceId(), lastIteration.getNumber(),
+                    lastIteration.getVersion(), lastIteration.getIteration(), cadFile);
         }
 
         lastIteration.setComponents(createLinks(currentLevelParts));
@@ -124,7 +122,6 @@ public class ProductStructureApiTest {
         partsInStructure.add(parent);
 
     }
-
 
     private List<PartUsageLinkDTO> createLinks(List<PartRevisionDTO> partRevisions) {
         List<PartUsageLinkDTO> components = new ArrayList<>();

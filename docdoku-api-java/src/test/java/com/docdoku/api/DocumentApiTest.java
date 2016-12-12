@@ -24,19 +24,15 @@ import com.docdoku.api.client.ApiCallback;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
-import com.docdoku.api.models.utils.UploadDownloadHelper;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -99,32 +95,6 @@ public class DocumentApiTest {
         // Mark as obsolete
         DocumentRevisionDTO obsoleteDocument = documentApi.markDocumentRevisionAsObsolete(TestConfig.WORKSPACE, releasedDocument.getDocumentMasterId(), releasedDocument.getVersion());
         Assert.assertEquals(obsoleteDocument.getStatus(), DocumentRevisionDTO.StatusEnum.OBSOLETE);
-
-    }
-
-    @Test
-    public void uploadDownloadAttachedFilesToDocumentTest() throws ApiException, IOException {
-
-        // Create a document
-        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
-        documentCreation.setReference(TestUtils.randomString());
-        documentCreation.setTitle("GeneratedDoc");
-
-        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
-
-        URL fileURL = DocumentApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
-        File file = new File(fileURL.getPath());
-
-        DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, file);
-
-        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion());
-
-        lastIteration = LastIterationHelper.getLastIteration(document);
-        Assert.assertFalse(lastIteration.getAttachedFiles().isEmpty());
-        BinaryResourceDTO binaryResourceDTO = lastIteration.getAttachedFiles().get(0);
-        File downloadedFile = UploadDownloadHelper.downloadFile(binaryResourceDTO.getFullName(), TestConfig.REGULAR_USER_CLIENT);
-        Assert.assertTrue(FileUtils.contentEquals(file, downloadedFile));
 
     }
 

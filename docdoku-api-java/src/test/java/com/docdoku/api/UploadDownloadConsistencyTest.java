@@ -25,8 +25,7 @@ import com.docdoku.api.models.DocumentCreationDTO;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
-import com.docdoku.api.models.utils.UploadDownloadHelper;
-import com.docdoku.api.services.DocumentApi;
+import com.docdoku.api.services.DocumentBinaryApi;
 import com.docdoku.api.services.FoldersApi;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,16 +35,18 @@ import org.junit.runners.JUnit4;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 @RunWith(JUnit4.class)
 public class UploadDownloadConsistencyTest {
 
-    private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
     private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-
+    private DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(TestConfig.REGULAR_USER_CLIENT);
 
     @Test
     public void uploadZipTest() throws ApiException, IOException {
@@ -61,19 +62,21 @@ public class UploadDownloadConsistencyTest {
         File file = new File(fileURL.getPath());
 
         List<String> originalEntries = getEntries(file);
-        Assert.assertEquals(1,originalEntries.size());
+        Assert.assertEquals(1, originalEntries.size());
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
-        UploadDownloadHelper.uploadAttachedFile(lastIteration, TestConfig.REGULAR_USER_CLIENT, file);
-        document = documentApi.getDocumentRevision(TestConfig.WORKSPACE, document.getDocumentMasterId(), document.getVersion());
-        lastIteration = LastIterationHelper.getLastIteration(document);
-        File downloadedFile = UploadDownloadHelper.downloadFile(lastIteration.getAttachedFiles().get(0).getFullName(), TestConfig.REGULAR_USER_CLIENT);
+
+        documentBinaryApi.uploadDocumentFiles(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion(),
+                lastIteration.getIteration(), file);
+
+        File downloadedFile = documentBinaryApi.downloadDocumentFile(document.getWorkspaceId(), document.getDocumentMasterId(),
+                document.getVersion(), lastIteration.getIteration(), "attached-file.zip", "", null, null, null, null);
 
         List<String> downloadedEntries = getEntries(downloadedFile);
         Assert.assertTrue(new HashSet<>(originalEntries).equals(new HashSet<>(downloadedEntries)));
     }
 
-    private List<String> getEntries(File file){
+    private List<String> getEntries(File file) {
         List<String> fileNames = new ArrayList<>();
         try (ZipFile zipFile = new ZipFile(file)) {
             Enumeration zipEntries = zipFile.entries();
