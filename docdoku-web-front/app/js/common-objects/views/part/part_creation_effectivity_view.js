@@ -46,7 +46,7 @@ define([
             this.$specificFields = this.$('#specificFields');
         },
 
-        bindDomFieldElements: function() {
+        bindDomFieldElements: function () {
             this.$inputProductId = this.$('#inputProductId');
             this.bindTypeahead();
             this.$inputStart = this.$('#inputStart');
@@ -54,7 +54,7 @@ define([
         },
 
         bindTypeahead: function () {
-            var context = this;
+            var self = this;
             var map = {};
             this.$inputProductId.typeahead({
                 source: function (query, process) {
@@ -68,39 +68,46 @@ define([
                         process(partNumbers);
                     });
                 },
-                updater: function(item) {
-                    context.$inputProductId.val(map[item].id);
+                updater: function (item) {
+                    self.$inputProductId.val(map[item].id);
                     return item;
                 }
             });
         },
 
-        onTypeEffectivityChange: function() {
+        onTypeEffectivityChange: function () {
             this.showTypeEffectivityFields();
         },
 
-        showTypeEffectivityFields: function() {
+        showTypeEffectivityFields: function () {
             var currentType = this.$inputEffectivityType.val();
             var fields = null;
-            switch(currentType) {
-              case this.Effectivity.getEffectivityTypeById('SERIALNUMBERBASEDEFFECTIVITY').id:
-                fields = effectivitySerialNumber;
-                break;
-              case this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id:
-                fields = effectivityDate;
-                break;
-              case this.Effectivity.getEffectivityTypeById('LOTBASEDEFFECTIVITY').id:
-                fields = effectivityLot;
-                break;
+            switch (currentType) {
+                case this.Effectivity.getEffectivityTypeById('SERIALNUMBERBASEDEFFECTIVITY').id:
+                    fields = effectivitySerialNumber;
+                    break;
+                case this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id:
+                    fields = effectivityDate;
+                    break;
+                case this.Effectivity.getEffectivityTypeById('LOTBASEDEFFECTIVITY').id:
+                    fields = effectivityLot;
+                    break;
             }
             this.$specificFields.html(Mustache.render(fields, {i18n: App.config.i18n}));
             this.bindDomFieldElements();
+            this.setConfigurationRequiredState();
+        },
+
+        setConfigurationRequiredState: function () {
+            var notRequiredTypes = ['DATEBASEDEFFECTIVITY'];
+            var isRequired = notRequiredTypes.indexOf(this.$inputEffectivityType.val()) === -1;
+            this.$inputProductId.attr('required', isRequired);
         },
 
         setTypeEffectivityOptions: function () {
-            var context = this;
+            var self = this;
             _.each(this.effectivityTypes, function (effectivity) {
-                context.$inputEffectivityType.append('<option value="' + effectivity.id + '">' + App.config.i18n[effectivity.name] + '</option>');
+                self.$inputEffectivityType.append('<option value="' + effectivity.id + '">' + App.config.i18n[effectivity.name] + '</option>');
             });
         },
 
@@ -108,15 +115,15 @@ define([
             this.$notifications.empty();
 
             this.effectivity = {
-              name: this.$inputEffectivityName.val(),
-              description: this.$inputEffectivityDescription.val(),
-              typeEffectivity: this.$inputEffectivityType.val()
+                name: this.$inputEffectivityName.val(),
+                description: this.$inputEffectivityDescription.val(),
+                typeEffectivity: this.$inputEffectivityType.val()
             };
 
             var currentType = this.$inputEffectivityType.val();
             var start, end;
 
-            switch(currentType) {
+            switch (currentType) {
                 case this.Effectivity.getEffectivityTypeById('SERIALNUMBERBASEDEFFECTIVITY').id:
                     start = 'startNumber';
                     end = 'endNumber';
@@ -131,11 +138,12 @@ define([
                     break;
             }
 
-            if(currentType !== this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id) {
-                this.effectivity.configurationItemKey = {
-                    id: this.$inputProductId.val(),
-                    workspace: App.config.workspaceId
-                };
+            this.effectivity.configurationItemKey = {
+                id: this.$inputProductId.val(),
+                workspace: App.config.workspaceId
+            };
+
+            if (currentType !== this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id) {
                 this.effectivity[start] = this.$inputStart.val();
                 this.effectivity[end] = this.$inputEnd.val();
             } else {
@@ -144,7 +152,7 @@ define([
             }
 
             this.Part = new Part({
-              partKey: this.selectedPart.getPartKey()
+                partKey: this.selectedPart.getPartKey()
             });
 
             this.createEffectivity();
@@ -154,15 +162,15 @@ define([
             return false;
         },
 
-        createEffectivity: function() {
-            var context = this;
-            this.Part.createEffectivity(this.effectivity).then(function(data) {
-                context.$notifications.append(new AlertView({
+        createEffectivity: function () {
+            var self = this;
+            this.Part.createEffectivity(this.effectivity).then(function (data) {
+                self.$notifications.append(new AlertView({
                     type: 'success',
                     message: App.config.i18n.CREATE_NEW_EFFECTIVITY_SUCCESS
                 }).render().$el);
-            }, function(error) {
-                context.$notifications.append(new AlertView({
+            }, function (error) {
+                self.$notifications.append(new AlertView({
                     type: 'error',
                     message: error ? error.responseText : App.config.CREATE_NEW_EFFECTIVITY_ERROR
                 }).render().$el);

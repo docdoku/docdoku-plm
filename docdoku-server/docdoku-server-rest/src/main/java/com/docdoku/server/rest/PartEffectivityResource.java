@@ -26,9 +26,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IEffectivityManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.server.rest.dto.EffectivityDTO;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
@@ -60,7 +58,8 @@ public class PartEffectivityResource {
 
     private Mapper mapper;
 
-    public PartEffectivityResource() { }
+    public PartEffectivityResource() {
+    }
 
     @PostConstruct
     public void init() {
@@ -68,7 +67,13 @@ public class PartEffectivityResource {
     }
 
     @POST
-    @ApiOperation(value = "Create an Effectivity for a PartRevision", response = EffectivityDTO.class)
+    @ApiOperation(value = "Create an Effectivity for a PartRevision",
+            response = EffectivityDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of created effectivity"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public EffectivityDTO createEffectivity(
             @ApiParam(required = true, value = "Effectivity to create") EffectivityDTO effectivity,
@@ -76,67 +81,70 @@ public class PartEffectivityResource {
             @ApiParam(required = true, value = "Part revision number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part revision version") @PathParam("partVersion") String partVersion)
             throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotEnabledException, EffectivityAlreadyExistsException, CreationException, ConfigurationItemNotFoundException {
-        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
+
         TypeEffectivity typeEffectivity = effectivity.getTypeEffectivity();
         Effectivity createdEffectivity = null;
-        EffectivityDTO returnedEffectivityDTO = null;
+        EffectivityDTO returnedEffectivityDTO;
 
-        if(typeEffectivity.equals(TypeEffectivity.DATEBASEDEFFECTIVITY)) {
+        ConfigurationItemKey configurationItemKey = effectivity.getConfigurationItemKey();
+        String productId = configurationItemKey != null ? configurationItemKey.getId() : null;
+
+        if (typeEffectivity.equals(TypeEffectivity.DATEBASEDEFFECTIVITY)) {
             createdEffectivity = effectivityManager.createDateBasedEffectivity(
-                    partRevision, effectivity.getName(), effectivity.getDescription(), effectivity.getStartDate(), effectivity.getEndDate());
-        } else {
-            ConfigurationItem configurationItem = productManager.getConfigurationItem(effectivity.getConfigurationItemKey());
-            if (typeEffectivity.equals(TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY)) {
-                createdEffectivity = effectivityManager.createSerialNumberBasedEffectivity(
-                        partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartNumber(),
-                        effectivity.getEndNumber());
-            } else if (typeEffectivity.equals(TypeEffectivity.LOTBASEDEFFECTIVITY)) {
-                createdEffectivity = effectivityManager.createLotBasedEffectivity(
-                        partRevision, effectivity.getName(), effectivity.getDescription(), configurationItem, effectivity.getStartLotId(),
-                        effectivity.getEndLotId());
-            }
+                    workspaceId, partNumber, partVersion, effectivity.getName(), effectivity.getDescription(), productId, effectivity.getStartDate(), effectivity.getEndDate());
+        } else if (typeEffectivity.equals(TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY)) {
+            createdEffectivity = effectivityManager.createSerialNumberBasedEffectivity(
+                    workspaceId, partNumber, partVersion, effectivity.getName(), effectivity.getDescription(), productId, effectivity.getStartNumber(),
+                    effectivity.getEndNumber());
+        } else if (typeEffectivity.equals(TypeEffectivity.LOTBASEDEFFECTIVITY)) {
+            createdEffectivity = effectivityManager.createLotBasedEffectivity(
+                    workspaceId, partNumber, partVersion, effectivity.getName(), effectivity.getDescription(), productId, effectivity.getStartLotId(),
+                    effectivity.getEndLotId());
         }
 
         returnedEffectivityDTO = mapper.map(createdEffectivity, EffectivityDTO.class);
-        if(!createdEffectivity.getClass().equals(DateBasedEffectivity.class)) {
-            returnedEffectivityDTO.setConfigurationItemKey(effectivity.getConfigurationItemKey());
-        }
+        returnedEffectivityDTO.setConfigurationItemKey(configurationItemKey);
+
         returnedEffectivityDTO.setTypeEffectivity(effectivity.getTypeEffectivity());
         return returnedEffectivityDTO;
     }
 
     @GET
-    @ApiOperation(value = "Get effectivities of a PartRevision", response = EffectivityDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Get effectivities of a PartRevision",
+            response = EffectivityDTO.class,
+            responseContainer = "List")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of effectivities. It can be an empty list"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Produces(MediaType.APPLICATION_JSON)
     public Response getEffectivities(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part revision number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part revision version") @PathParam("partVersion") String partVersion)
             throws UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+
         PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
+
         Set<Effectivity> effectivitySet = partRevision.getEffectivities();
         List<EffectivityDTO> effectivityDTOs = new ArrayList<>();
 
-        for(Effectivity effectivity : effectivitySet) {
-            EffectivityDTO current = null;
-            TypeEffectivity typeEffectivity = null;
+        for (Effectivity effectivity : effectivitySet) {
 
-            if(effectivity.getClass().equals(SerialNumberBasedEffectivity.class)) {
-                current = mapper.map((SerialNumberBasedEffectivity) effectivity, EffectivityDTO.class);
-                typeEffectivity = TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY;
-            } else if(effectivity.getClass().equals(DateBasedEffectivity.class)) {
-                current = mapper.map((DateBasedEffectivity) effectivity, EffectivityDTO.class);
-                typeEffectivity = TypeEffectivity.DATEBASEDEFFECTIVITY;
-            } else if(effectivity.getClass().equals(LotBasedEffectivity.class)) {
-                current = mapper.map((LotBasedEffectivity) effectivity, EffectivityDTO.class);
-                typeEffectivity = TypeEffectivity.LOTBASEDEFFECTIVITY;
+            EffectivityDTO effectivityDTO = mapper.map(effectivity, EffectivityDTO.class);
+            ConfigurationItem configurationItem = effectivity.getConfigurationItem();
+            effectivityDTO.setConfigurationItemKey(configurationItem != null ? configurationItem.getKey() : null);
+
+            if (effectivity.getClass().equals(SerialNumberBasedEffectivity.class)) {
+                effectivityDTO.setTypeEffectivity(TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY);
+            } else if (effectivity.getClass().equals(DateBasedEffectivity.class)) {
+                effectivityDTO.setTypeEffectivity(TypeEffectivity.DATEBASEDEFFECTIVITY);
+            } else if (effectivity.getClass().equals(LotBasedEffectivity.class)) {
+                effectivityDTO.setTypeEffectivity(TypeEffectivity.LOTBASEDEFFECTIVITY);
             }
 
-            current.setTypeEffectivity(typeEffectivity);
-            if(!effectivity.getClass().equals(DateBasedEffectivity.class)) {
-                current.setConfigurationItemKey(effectivity.getConfigurationItem().getKey());
-            }
-            effectivityDTOs.add(current);
+            effectivityDTOs.add(effectivityDTO);
         }
 
         return Response.ok(new GenericEntity<List<EffectivityDTO>>(effectivityDTOs) {
@@ -144,7 +152,13 @@ public class PartEffectivityResource {
     }
 
     @DELETE
-    @ApiOperation(value = "Delete workspace", response = Response.class)
+    @ApiOperation(value = "Delete effectivity from part revision",
+            response = Response.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Successful deletion of effectivity"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
     @Path("{effectivityId}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteEffectivity(
@@ -154,10 +168,8 @@ public class PartEffectivityResource {
             @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId)
             throws EffectivityNotFoundException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, UserNotFoundException,
             AccessRightException, WorkspaceNotEnabledException {
-        PartRevision partRevision = productManager.getPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
-
-        effectivityManager.deleteEffectivity(partRevision, effectivityId);
-        return Response.ok().build();
+        effectivityManager.deleteEffectivity(workspaceId, partNumber, partVersion, effectivityId);
+        return Response.noContent().build();
     }
 
 }

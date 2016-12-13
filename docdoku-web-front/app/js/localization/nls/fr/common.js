@@ -196,6 +196,7 @@ define({
 	EDIT_PRODUCT_INSTANCE: 'Modifier l\'exemplaire',
 	EDIT_REQUEST: 'Editer la demande de modification',
     EDITION_ERROR:'Une erreur est survenue pendant l\'édition',
+    EFFECTIVITY: 'Effectivité',
     EFFECTIVITY_DATE: 'Datée',
     EFFECTIVITY_DESCRIPTION: 'Description de l\'effectivité',
     EFFECTIVITY_END_DATE: 'Date de fin',

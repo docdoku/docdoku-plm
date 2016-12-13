@@ -21,42 +21,40 @@ define([
         },
 
         render:function(){
-            var context = this;
 
-            var effectivityType = context.Effectivity.getEffectivityTypeById(context.effectivity.typeEffectivity);
-            var start, end, productId;
+            var effectivityType = this.Effectivity.getEffectivityTypeById(this.effectivity.typeEffectivity);
+            var productKey = this.effectivity.configurationItemKey;
+            var productId = productKey ? productKey.id : null;
+            var start, end;
 
-            switch(context.effectivity.typeEffectivity) {
-                case context.Effectivity.getEffectivityTypeById('SERIALNUMBERBASEDEFFECTIVITY').id:
-                    start = context.effectivity.startNumber;
-                    end = context.effectivity.endNumber;
-                    productId = context.effectivity.configurationItemKey.id;
+            switch(this.effectivity.typeEffectivity) {
+                case this.Effectivity.getEffectivityTypeById('SERIALNUMBERBASEDEFFECTIVITY').id:
+                    start = this.effectivity.startNumber;
+                    end = this.effectivity.endNumber;
                     break;
-                case context.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id:
-                    start = moment(context.effectivity.startDate).format('YYYY-MM-DD');
-                    end = moment(context.effectivity.endDate).format('YYYY-MM-DD');
-                    productId = null;
+                case this.Effectivity.getEffectivityTypeById('DATEBASEDEFFECTIVITY').id:
+                    start = moment(this.effectivity.startDate).format('YYYY-MM-DD');
+                    end = this.effectivity.endDate ? moment(this.effectivity.endDate).format('YYYY-MM-DD') : null;
                     break;
-                case context.Effectivity.getEffectivityTypeById('LOTBASEDEFFECTIVITY').id:
-                    start = context.effectivity.startLotId;
-                    end = context.effectivity.endLotId;
-                    productId = context.effectivity.configurationItemKey.id;
+                case this.Effectivity.getEffectivityTypeById('LOTBASEDEFFECTIVITY').id:
+                    start = this.effectivity.startLotId;
+                    end = this.effectivity.endLotId;
                     break;
             }
 
             this.$el.append(Mustache.render(template, {
                 i18n: App.config.i18n,
                 workspaceId: App.config.workspaceId,
-                effectivityId: context.effectivity.id,
-                name: context.effectivity.name,
+                effectivityId: this.effectivity.id,
+                name: this.effectivity.name,
                 product: productId,
-                description: context.effectivity.description,
+                description: this.effectivity.description,
                 type: App.config.i18n[effectivityType.name],
                 start: start,
                 end: end
             }));
 
-            this.$effectivity = this.$('#effectivity-' + context.effectivity.id);
+            this.$effectivity = this.$('#effectivity-' + this.effectivity.id);
             this.$btnUpdate = this.$effectivity.find('.effectivity-update-link');
             this.$btnDelete = this.$effectivity.find('.effectivity-remove-link');
             return this;

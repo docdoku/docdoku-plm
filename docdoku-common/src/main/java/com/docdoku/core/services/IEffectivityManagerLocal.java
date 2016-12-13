@@ -20,10 +20,7 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.exceptions.CreationException;
-import com.docdoku.core.exceptions.EffectivityAlreadyExistsException;
-import com.docdoku.core.exceptions.EffectivityNotFoundException;
-import com.docdoku.core.exceptions.UpdateException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 
 import java.util.Date;
@@ -33,16 +30,21 @@ import java.util.Date;
  */
 public interface IEffectivityManagerLocal {
 
-    SerialNumberBasedEffectivity createSerialNumberBasedEffectivity(PartRevision pPartRevision, String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartNumber, String pEndNumber) throws EffectivityAlreadyExistsException, CreationException;
-    DateBasedEffectivity createDateBasedEffectivity(PartRevision pPartRevision, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityAlreadyExistsException, CreationException;
-    LotBasedEffectivity createLotBasedEffectivity(PartRevision pPartRevision, String pName, String pDescription, ConfigurationItem pConfigurationItem, String pStartLotId, String pEndLotId) throws EffectivityAlreadyExistsException, CreationException;
+    SerialNumberBasedEffectivity createSerialNumberBasedEffectivity(String workspaceId, String partNumber, String version, String pName, String pDescription, String pConfigurationItemId, String pStartNumber, String pEndNumber) throws EffectivityAlreadyExistsException, CreationException, ConfigurationItemNotFoundException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, PartRevisionNotFoundException, UserNotActiveException;
 
-    Effectivity getEffectivity(int pId) throws EffectivityNotFoundException;
+    DateBasedEffectivity createDateBasedEffectivity(String workspaceId, String partNumber, String version, String pName, String pDescription, String pConfigurationItemId, Date pStartDate, Date pEndDate) throws EffectivityAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, PartRevisionNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException;
 
-    Effectivity updateEffectivity(int pId, String pName, String pDescription) throws EffectivityNotFoundException;
-    SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException, UpdateException;
-    DateBasedEffectivity updateDateBasedEffectivity(int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException, UpdateException;
-    LotBasedEffectivity updateLotBasedEffectivity(int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws EffectivityNotFoundException, UpdateException;
+    LotBasedEffectivity createLotBasedEffectivity(String workspaceId, String partNumber, String version, String pName, String pDescription,  String pConfigurationItemId, String pStartLotId, String pEndLotId) throws EffectivityAlreadyExistsException, CreationException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, ConfigurationItemNotFoundException, PartRevisionNotFoundException, UserNotActiveException;
 
-    void deleteEffectivity(PartRevision pPartRevision, int pId) throws EffectivityNotFoundException;
+    Effectivity getEffectivity(String workspaceId, int pId) throws EffectivityNotFoundException, UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
+
+    Effectivity updateEffectivity(String workspaceId, int pId, String pName, String pDescription) throws EffectivityNotFoundException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException;
+
+    SerialNumberBasedEffectivity updateSerialNumberBasedEffectivity(String workspaceId, int pId, String pName, String pDescription, String pStartNumber, String pEndNumber) throws EffectivityNotFoundException, UpdateException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, CreationException;
+
+    DateBasedEffectivity updateDateBasedEffectivity(String workspaceId, int pId, String pName, String pDescription, Date pStartDate, Date pEndDate) throws EffectivityNotFoundException, UpdateException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, CreationException;
+
+    LotBasedEffectivity updateLotBasedEffectivity(String workspaceId, int pId, String pName, String pDescription, String pStartLotId, String pEndLotId) throws UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, CreationException, EffectivityNotFoundException;
+
+    void deleteEffectivity(String workspaceId, String partNumber, String version, int pId) throws EffectivityNotFoundException, UserNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccessRightException, PartRevisionNotFoundException, UserNotActiveException;
 }

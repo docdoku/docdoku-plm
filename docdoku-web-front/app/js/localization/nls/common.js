@@ -196,6 +196,7 @@ define({
 		EDIT_PRODUCT_INSTANCE: 'Edit the deliverable',
 		EDIT_REQUEST: 'Edit the request',
         EDITION_ERROR:'An error occurred while the edition',
+        EFFECTIVITY: 'Effectivity',
         EFFECTIVITY_DATE: 'Date based',
         EFFECTIVITY_DESCRIPTION: 'Effectivity description',
         EFFECTIVITY_END_DATE: 'End date',

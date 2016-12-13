@@ -40,7 +40,7 @@ import java.io.Serializable;
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Effectivity.removeEffectivitiesFromConfigurationItem", query = "DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId"),
-
+    @NamedQuery(name = "Effectivity.findPartRevisionHolder", query = "SELECT p FROM PartRevision p, Effectivity e WHERE e member of p.effectivities AND e.id = :effectivityId")
 })
 
 public abstract class Effectivity implements Serializable {

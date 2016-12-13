@@ -110,8 +110,7 @@ public class ProductResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
-        String wksId = Tools.stripTrailingSlash(workspaceId);
-        List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
+        List<ConfigurationItem> cis = productService.getConfigurationItems(workspaceId);
         ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
 
         for (int i = 0; i < cis.size(); i++) {
@@ -127,27 +126,25 @@ public class ProductResource {
     }
 
     @GET
-    @ApiOperation(value = "Search configuration items", response = ConfigurationItemDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Search configuration items",
+            response = ConfigurationItemDTO.class,
+            responseContainer = "List")
     @Path("numbers")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response searchConfigurationItemId(@ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-                                              @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
+    public Response searchConfigurationItemId(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Query") @QueryParam("q") String q)
             throws UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException, WorkspaceNotFoundException {
 
-        String wksId = Tools.stripTrailingSlash(workspaceId);
-        List<ConfigurationItem> cis = productService.getConfigurationItems(wksId);
-        List<ConfigurationItemDTO> ciDTOs = new ArrayList<>();
+        List<ConfigurationItem> configurationItems = productService.searchConfigurationItems(workspaceId, q);
 
-        for(int i=0; i<cis.size() && ciDTOs.size() < 8; i++) {
-            ConfigurationItem ci = cis.get(i);
+        List<ConfigurationItemDTO> configurationItemDTOs = new ArrayList<>();
 
-            if(ci.getId().contains(q)) {
-                ciDTOs.add(new ConfigurationItemDTO(mapper.map(ci.getAuthor(), UserDTO.class), ci.getId(), ci.getWorkspaceId(),
-                        ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion()));
-            }
+        for (ConfigurationItem configurationItem : configurationItems) {
+            configurationItemDTOs.add(mapper.map(configurationItem, ConfigurationItemDTO.class));
         }
 
-        return Response.ok(new GenericEntity<List<ConfigurationItemDTO>>(ciDTOs) {
+        return Response.ok(new GenericEntity<List<ConfigurationItemDTO>>(configurationItemDTOs) {
         }).build();
     }
 
@@ -734,13 +731,13 @@ public class ProductResource {
             List<PartLink> targetPath = productService.decodePath(ciKey, pathToPathLink.getTargetPath());
 
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
@@ -804,7 +801,7 @@ public class ProductResource {
         List<PartLink> path = productService.decodePath(ciKey, pathAsString);
         List<LightPartLinkDTO> lightPartLinkDTOs = new ArrayList<>();
         for (PartLink partLink : path) {
-            LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+            LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
             lightPartLinkDTOs.add(lightPartLinkDTO);
         }
         return Response.ok(new GenericEntity<List<LightPartLinkDTO>>((List<LightPartLinkDTO>) lightPartLinkDTOs) {
@@ -925,7 +922,7 @@ public class ProductResource {
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             ConfigurationItemNotFoundException, PartMasterNotFoundException, EntityConstraintException,
             NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
-        
+
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         CascadeResult cascadeResult = cascadeActionService.cascadeUndocheckout(ciKey, path);
         return Response.ok(cascadeResult).build();
@@ -1075,13 +1072,13 @@ public class ProductResource {
 
             List<LightPartLinkDTO> sourceLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : sourcePath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 sourceLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
-                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId());
+                LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 

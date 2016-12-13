@@ -126,6 +126,9 @@ public class WorkspaceResource {
     private WorkspaceMembershipResource workspaceMemberships;
 
     @Inject
+    private EffectivityResource effectivities;
+
+    @Inject
     private IDocumentManagerLocal documentService;
 
     @Inject
@@ -895,6 +898,12 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/attributes")
     public AttributesResource attributes() {
         return attributes;
+    }
+
+    @ApiOperation(value = "EffectivityResource")
+    @Path("/{workspaceId}/effectivities")
+    public EffectivityResource effectivities() {
+        return effectivities;
     }
 
 }

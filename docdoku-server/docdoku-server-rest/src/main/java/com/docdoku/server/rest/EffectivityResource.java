@@ -20,8 +20,7 @@
 
 package com.docdoku.server.rest;
 
-import com.docdoku.core.exceptions.EffectivityNotFoundException;
-import com.docdoku.core.exceptions.UpdateException;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IEffectivityManagerLocal;
@@ -41,10 +40,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 @RequestScoped
-@Api(value = "effectivity", description = "Operations about effectivity")
-@Path("effectivities")
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@Api(hidden = true, value = "effectivity", description = "Operations about effectivities")
+@DeclareRoles(UserGroupMapping.REGULAR_USER_ROLE_ID)
+@RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class EffectivityResource {
 
     @Inject
@@ -73,8 +71,12 @@ public class EffectivityResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public EffectivityDTO getEffectivity(
-            @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId) throws EffectivityNotFoundException {
-        Effectivity effectivity = effectivityManager.getEffectivity(effectivityId);
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId)
+            throws EffectivityNotFoundException, UserNotFoundException, WorkspaceNotFoundException,
+            UserNotActiveException, WorkspaceNotEnabledException {
+
+        Effectivity effectivity = effectivityManager.getEffectivity(workspaceId, effectivityId);
         EffectivityDTO effectivityDTO = mapper.map(effectivity, EffectivityDTO.class);
 
         TypeEffectivity typeEffectivity = null;
@@ -86,9 +88,10 @@ public class EffectivityResource {
             typeEffectivity = TypeEffectivity.LOTBASEDEFFECTIVITY;
         }
         effectivityDTO.setTypeEffectivity(typeEffectivity);
-        if (!effectivity.getClass().equals(DateBasedEffectivity.class)) {
-            effectivityDTO.setConfigurationItemKey(effectivity.getConfigurationItem().getKey());
-        }
+
+        ConfigurationItem configurationItem = effectivity.getConfigurationItem();
+        effectivityDTO.setConfigurationItemKey(configurationItem != null ? configurationItem.getKey() : null);
+
         return effectivityDTO;
     }
 
@@ -102,30 +105,36 @@ public class EffectivityResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateEffectivity(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Effectivity id") @PathParam("effectivityId") int effectivityId,
-            @ApiParam(required = true, value = "Effectivity values to update") EffectivityDTO effectivityDTO) throws EffectivityNotFoundException, UpdateException {
+            @ApiParam(required = true, value = "Effectivity values to update") EffectivityDTO effectivityDTO)
+            throws EffectivityNotFoundException, UpdateException, UserNotFoundException, WorkspaceNotFoundException,
+            WorkspaceNotEnabledException, AccessRightException, CreationException {
+
         Effectivity effectivity;
         if (effectivityDTO.getTypeEffectivity().equals(TypeEffectivity.SERIALNUMBERBASEDEFFECTIVITY)) {
-            effectivity = effectivityManager.updateSerialNumberBasedEffectivity(effectivityId,
+            effectivity = effectivityManager.updateSerialNumberBasedEffectivity(workspaceId, effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     effectivityDTO.getStartNumber(), effectivityDTO.getEndNumber());
         } else if (effectivityDTO.getTypeEffectivity().equals(TypeEffectivity.DATEBASEDEFFECTIVITY)) {
-            effectivity = effectivityManager.updateDateBasedEffectivity(effectivityId,
+            effectivity = effectivityManager.updateDateBasedEffectivity(workspaceId, effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     effectivityDTO.getStartDate(), effectivityDTO.getEndDate());
         } else if (effectivityDTO.getTypeEffectivity().equals(TypeEffectivity.LOTBASEDEFFECTIVITY)) {
-            effectivity = effectivityManager.updateLotBasedEffectivity(effectivityId,
+            effectivity = effectivityManager.updateLotBasedEffectivity(workspaceId, effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription(),
                     effectivityDTO.getStartLotId(), effectivityDTO.getEndLotId());
         } else {
-            effectivity = effectivityManager.updateEffectivity(effectivityId,
+            effectivity = effectivityManager.updateEffectivity(workspaceId, effectivityId,
                     effectivityDTO.getName(), effectivityDTO.getDescription());
         }
+
         EffectivityDTO returnedEffectivityDTO = mapper.map(effectivity, EffectivityDTO.class);
         returnedEffectivityDTO.setTypeEffectivity(effectivityDTO.getTypeEffectivity());
-        if (!effectivity.getClass().equals(DateBasedEffectivity.class)) {
-            returnedEffectivityDTO.setConfigurationItemKey(effectivity.getConfigurationItem().getKey());
-        }
+
+        ConfigurationItem configurationItem = effectivity.getConfigurationItem();
+        returnedEffectivityDTO.setConfigurationItemKey(configurationItem != null ? configurationItem.getKey() : null);
+
         return Response.ok(returnedEffectivityDTO).build();
     }
 

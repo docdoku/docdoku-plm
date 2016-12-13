@@ -26,75 +26,74 @@ define([
         },
 
         render:function(){
-            var context = this;
+            var self = this;
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n, editMode: this.options.editMode}));
 
-            this.$components = this.$('.components');
             this.$effectivities = this.$('.effectivities');
             this.$notifications = this.options.notifications;
 
             this.model.getEffectivities().then(function(data) {
-                context.model.effectivities = data;
-                context.effectivities = data;
-                context.onSuccessfulLoad();
+                self.model.effectivities = data;
+                self.effectivities = data;
+                self.onSuccessfulLoad();
             });
 
             return this;
         },
 
         onSuccessfulLoad: function() {
-            var context = this;
+            var self = this;
             this.effectivityViews = [];
             this.$effectivities.empty();
             _(this.effectivities).each(function(effectivity) {
                 var partEffectivityView = new PartEffectivityView({
                     el: '.effectivities',
                     effectivity: effectivity,
-                    model: context.model
+                    model: self.model
                 }).render();
                 partEffectivityView.$btnUpdate.click(function(e) {
-                    context.onButtonUpdate(partEffectivityView);
+                    self.onButtonUpdate(partEffectivityView);
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
                 });
                 partEffectivityView.$btnDelete.click(function(e) {
-                    context.onButtonDelete(partEffectivityView);
+                    self.onButtonDelete(partEffectivityView);
                     e.preventDefault();
                     e.stopPropagation();
                     return false;
                 });
-                context.effectivityViews.push(partEffectivityView);
+                self.effectivityViews.push(partEffectivityView);
             });
         },
 
         onButtonUpdate: function(partEffectivityView) {
-            var context = this;
+            var self = this;
             this.partUpdateEffectivityView = new PartUpdateEffectivityView({
                 model: this.model,
                 productId: this.productId,
                 effectivity: partEffectivityView.options.effectivity,
                 updateCallback: function() {
-                    context.render();
+                    self.render();
                 }
             }).render();
             this.partUpdateEffectivityView.openModal();
         },
 
         onButtonDelete: function(partEffectivityView) {
-            var context = this;
+            var self = this;
             bootbox.confirm(App.config.i18n.CONFIRM_DELETE_PART_EFFECTIVITY,
                 App.config.i18n.CANCEL,
                 App.config.i18n.CONFIRM,
                 function (result) {
                     if (result) {
-                        context.options.model.deleteEffectivity(partEffectivityView.effectivity.id).then(function() {
-                            context.effectivityViews = _.without(context.effectivityViews, partEffectivityView);
-                            context.$(partEffectivityView.getIdSelector()).remove();
-                            context.onSuccessNotification(context.options.model, App.config.i18n.PART_EFFECTIVITY_DELETE_SUCCESS);
+                        self.options.model.deleteEffectivity(partEffectivityView.effectivity.id).then(function() {
+                            self.effectivityViews = _.without(self.effectivityViews, partEffectivityView);
+                            self.$(partEffectivityView.getIdSelector()).remove();
+                            self.onSuccessNotification(self.options.model, App.config.i18n.PART_EFFECTIVITY_DELETE_SUCCESS);
                         }, function(error) {
-                            context.onError(context.options.model, error);
+                            self.onError(self.options.model, error);
                         });
                     }
                 });
