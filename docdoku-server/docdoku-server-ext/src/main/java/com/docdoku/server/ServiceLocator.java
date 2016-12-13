@@ -31,9 +31,12 @@ import javax.naming.NamingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * The ServiceLocator class helps to inject EJB services outside injection context
+ */
 @ApplicationScoped
 public class ServiceLocator {
+
     private static final String STORAGE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/BinaryStorageManagerBean!com.docdoku.core.services.IBinaryStorageManagerLocal";
     private static final String PRODUCT_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean!com.docdoku.core.services.IProductManagerLocal";
     private static final String PRODUCT_INSTANCE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean!com.docdoku.core.services.IProductInstanceManagerLocal";
@@ -49,12 +52,11 @@ public class ServiceLocator {
     private Context context;
 
     @PostConstruct
-    private void init(){
-        try{
+    private void init() {
+        try {
             context = new InitialContext();
-        }
-        catch (NamingException e) {
-            LOGGER.log(Level.SEVERE,e.getMessage(),e);
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 

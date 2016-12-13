@@ -23,15 +23,25 @@ package com.docdoku.server.converters.utils;
 
 import java.io.*;
 
+/**
+ * This ConverterUtils class expose util methods around files conversion
+ */
 public class ConverterUtils {
 
     private ConverterUtils() {
     }
 
+    /**
+     * Returns input stream content as String.
+     * Use it to get info and error messages from process output
+     *
+     * @param is an InputStream
+     * @return the representation as String
+     */
     public static String getOutput(InputStream is) throws IOException {
         StringBuilder output = new StringBuilder();
         String line;
-        try(InputStreamReader isr = new InputStreamReader(is,"UTF-8");BufferedReader br = new BufferedReader(isr)) {
+        try (InputStreamReader isr = new InputStreamReader(is, "UTF-8"); BufferedReader br = new BufferedReader(isr)) {
             while ((line = br.readLine()) != null) {
                 output.append(line).append("\n");
             }

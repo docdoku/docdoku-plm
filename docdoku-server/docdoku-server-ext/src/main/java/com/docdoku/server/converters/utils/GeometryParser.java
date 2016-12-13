@@ -32,40 +32,50 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * This GeometryParser class allows to compute geometric data for given file
+ * It relies on docdoku-node-server to get the data.
+ */
 public class GeometryParser {
 
-    private static final String CONF_PROPERTIES="/com/docdoku/server/converters/utils/conf.properties";
+    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/utils/conf.properties";
     private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(GeometryParser.class.getName());
 
     private GeometryParser() {
     }
 
+    /**
+     * Computes the bounding box of given 3D file
+     *
+     * @param file the file to compute
+     * @return an array of double representing the bounding box min and max values
+     */
     public static double[] calculateBox(File file) {
 
         String result = "";
         String nodeServerUrl = "";
 
-        try (InputStream inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES)){
+        try (InputStream inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES)) {
 
             CONF.load(inputStream);
 
             nodeServerUrl = CONF.getProperty("nodeServerUrl");
 
-            URL url = new URL(nodeServerUrl+"/box");
+            URL url = new URL(nodeServerUrl + "/box");
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("POST");
             con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-            JsonObjectBuilder body = Json.createObjectBuilder().add("filename",file.getAbsolutePath());
+            JsonObjectBuilder body = Json.createObjectBuilder().add("filename", file.getAbsolutePath());
             con.setDoOutput(true);
             OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
             wr.write(body.build().toString());
             wr.flush();
             wr.close();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(),"UTF-8"));
+            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
             String inputLine;
             StringBuilder response = new StringBuilder();
 
@@ -91,15 +101,12 @@ public class GeometryParser {
                     max.getJsonNumber("z").doubleValue()
             };
 
-        }
-        catch (ConnectException e){
-            LOGGER.log(Level.WARNING, "Communication with server failed. Is it listening on '"+nodeServerUrl+"' ?");
-        }
-        catch (IOException e){
+        } catch (ConnectException e) {
+            LOGGER.log(Level.WARNING, "Communication with docdoku-node-server failed. Is it listening on '" + nodeServerUrl + "' ?");
+        } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
-        }
-        catch(JsonException e) {
-            LOGGER.log(Level.SEVERE, "Cannot parse program output : \n "+  result  , e);
+        } catch (JsonException e) {
+            LOGGER.log(Level.SEVERE, "Cannot parse program output : \n " + result, e);
         }
 
         return new double[6];

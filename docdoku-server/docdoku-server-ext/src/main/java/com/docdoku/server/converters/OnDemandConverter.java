@@ -28,8 +28,40 @@ import com.docdoku.core.product.PartIteration;
 import java.io.InputStream;
 import java.util.Locale;
 
+/**
+ * OnDemandConverter plugin interface
+ * Extension point for attached files conversion
+ */
 public interface OnDemandConverter {
+
+    /**
+     * Determine if plugin is able to convert given resource in given output format
+     *
+     * @param outputFormat   the output format
+     * @param binaryResource the resource to convert
+     * @return true if plugin can handle the conversion, false otherwise
+     */
     boolean canConvert(String outputFormat, BinaryResource binaryResource);
-    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration docI, Locale locale) throws ConvertedResourceException;
+
+    /**
+     * Get the converted resource in given output format for a document iteration
+     *
+     * @param outputFormat      the output format
+     * @param binaryResource    the resource to convert
+     * @param documentIteration the document iteration concerned
+     * @param locale            the locale to use for conversion
+     * @return the converted resource input stream
+     */
+    InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, DocumentIteration documentIteration, Locale locale) throws ConvertedResourceException;
+
+    /**
+     * Get the converted resource in given output format for a part iteration
+     *
+     * @param outputFormat   the output format
+     * @param binaryResource the resource to convert
+     * @param partIteration  the part iteration concerned
+     * @param locale         the locale to use for conversion
+     * @return the converted resource input stream
+     */
     InputStream getConvertedResource(String outputFormat, BinaryResource binaryResource, PartIteration partIteration, Locale locale) throws ConvertedResourceException;
 }

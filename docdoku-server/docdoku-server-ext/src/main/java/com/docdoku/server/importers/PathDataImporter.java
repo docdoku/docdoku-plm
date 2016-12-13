@@ -24,8 +24,26 @@ import com.docdoku.core.product.ImportResult;
 
 import java.io.File;
 
+/**
+ * PathDataImporter plugin interface
+ */
 public interface PathDataImporter {
-
-    ImportResult importFile(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate);
+    /**
+     * Determine if plugin is able to import the given file format
+     *
+     * @param importFileName   the file name
+     * @return true if plugin can handle the import, false otherwise
+     */
     boolean canImportFile(String importFileName);
+    /**
+     * Import the file and make requested changes
+     *
+     * @param workspaceId the workspace concerned by the import
+     * @param file the file to import
+     * @param revisionNote a revision note to apply on parts changed
+     * @param autoFreezeAfterUpdate todo
+     * @param permissiveUpdate todo
+     * @return an import result object
+     */
+    ImportResult importFile(String workspaceId, File file, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate);
 }

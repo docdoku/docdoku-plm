@@ -26,7 +26,29 @@ import com.docdoku.server.converters.utils.ConversionResult;
 
 import java.io.File;
 
+/**
+ * CADConverter plugin interface
+ * Extension point for 3D files conversion
+ */
+
 public interface CADConverter {
+    /**
+     * Convert the given file to obj
+     *
+     * @param partToConvert the part iteration concerned
+     * @param cadFile       the 3D file to convert
+     * @param tempDir       a given temporary directory for plugin operations (soon deprecated)
+     * @return the conversion result
+     * @throws Exception Note: plugins should handle errors and add them in the ConversionResult object
+     */
+    // TODO : remove tempDir
     ConversionResult convert(PartIteration partToConvert, BinaryResource cadFile, File tempDir) throws Exception;
+
+    /**
+     * Determine if plugin is able to convert given extension to obj files
+     *
+     * @param cadFileExtension the extension of the cadFile
+     * @return true if plugin can handle the conversion, false otherwise
+     */
     boolean canConvertToOBJ(String cadFileExtension);
 }

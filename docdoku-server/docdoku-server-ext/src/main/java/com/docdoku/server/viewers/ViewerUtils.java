@@ -32,27 +32,48 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * The ViewerUtils class expose helper methods around HTML viewers
+ */
 public class ViewerUtils {
 
-    private ViewerUtils(){
-
+    private ViewerUtils() {
     }
 
+    /**
+     * Returns the complete path for a BinaryResource
+     *
+     * @param binaryResource the binary resource to get URI from
+     * @param uuid           an optional token for shared entities
+     * @return the complete uri of the resource
+     */
     public static String getURI(BinaryResource binaryResource, String uuid) {
-        if(uuid == null){
+        if (uuid == null) {
             return "/api/files/" + binaryResource.getFullName();
-        }else{
+        } else {
             return "/api/files/" + binaryResource.getFullName() + "/uuid/" + uuid;
         }
     }
 
+    /**
+     * Compile and return an html container for a viewer
+     *
+     * @param storageManager Storage service
+     * @param binaryResource the resource to render
+     * @param uuid optional token for shared entities
+     * @param viewer the compiled viewer
+     * @param pdf true if resource can be rendered as pdf
+     *
+     * @return the compiled template
+     * @throws IOException when mustache.execute fails
+     */
     public static String getViewerTemplate(IBinaryStorageManagerLocal storageManager, BinaryResource binaryResource, String uuid, String viewer, boolean pdf) throws IOException {
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/viewer_template.mustache");
         Map<String, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(binaryResource, uuid));
-        if(pdf) {
-            scopes.put("pdfUri", ViewerUtils.getURI(binaryResource, uuid)+"?output=pdf");
+        if (pdf) {
+            scopes.put("pdfUri", ViewerUtils.getURI(binaryResource, uuid) + "?output=pdf");
         }
 
         String externalURL = storageManager.getExternalStorageURI(binaryResource);

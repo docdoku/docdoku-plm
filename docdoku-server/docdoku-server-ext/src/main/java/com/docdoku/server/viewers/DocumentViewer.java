@@ -22,6 +22,9 @@ package com.docdoku.server.viewers;
 
 import com.docdoku.core.common.BinaryResource;
 
+/**
+ * DocumentViewer plugin interface
+ */
 public interface DocumentViewer {
     boolean canRenderViewerTemplate(BinaryResource binaryResource);
     String renderHtmlForViewer(BinaryResource binaryResource, String uuid) throws Exception;

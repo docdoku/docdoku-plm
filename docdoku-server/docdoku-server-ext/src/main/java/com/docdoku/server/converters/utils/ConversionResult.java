@@ -24,28 +24,54 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This ConversionResult class represents the conversion status done by a CADConverter plugin.
+ * <p>
+ * It holds the converted file and its materials.
+ */
+// TODO replace java.io.File with java.io.InputStream (usage in EJBs)
 public class ConversionResult {
 
+    /**
+     * The converted file for succeed conversions
+     */
     private File convertedFile;
+    /**
+     * The list of materials files if any
+     */
     private List<File> materials = new ArrayList<>();
+    /**
+     * The output of conversion program
+     */
     private String stdOutput;
+    /**
+     * The error output of conversion program
+     */
     private String errorOutput;
 
+    /**
+     * Default constructor
+     */
+    public ConversionResult() {
+    }
 
+    /**
+     * Constructor with converted file
+     *
+     * @param convertedFile the converted file
+     */
     public ConversionResult(File convertedFile) {
         this.convertedFile = convertedFile;
     }
 
+    /**
+     * Constructor with converted file and materials
+     *
+     * @param convertedFile the converted file
+     */
     public ConversionResult(File convertedFile, List<File> materials) {
         this.convertedFile = convertedFile;
         this.materials = materials;
-    }
-
-    public ConversionResult(File convertedFile, List<File> materials, String stdOutput, String errorOutput) {
-        this.convertedFile = convertedFile;
-        this.materials = materials;
-        this.stdOutput = stdOutput;
-        this.errorOutput = errorOutput;
     }
 
     public File getConvertedFile() {
