@@ -21,9 +21,7 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.PartCreationDTO;
-import com.docdoku.api.models.PartIterationDTO;
-import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
@@ -31,6 +29,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 public class PartApiTest {
@@ -51,17 +52,17 @@ public class PartApiTest {
 
         // Check in
         PartRevisionDTO checkedInPart = partApi.checkIn(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
-        Assert.assertEquals(checkedInPart.getNumber(),part.getNumber());
+        Assert.assertEquals(checkedInPart.getNumber(), part.getNumber());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedInPart).getIteration(), Integer.valueOf("1"));
 
         // Check out
         PartRevisionDTO checkedOutPart = partApi.checkOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
-        Assert.assertEquals(checkedOutPart.getNumber(),part.getNumber());
-        Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutPart).getIteration(),Integer.valueOf("2"));
+        Assert.assertEquals(checkedOutPart.getNumber(), part.getNumber());
+        Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutPart).getIteration(), Integer.valueOf("2"));
 
         // Undo check out
-        PartRevisionDTO undoCheckOutPart= partApi.undoCheckOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
-        Assert.assertEquals(undoCheckOutPart,checkedInPart);
+        PartRevisionDTO undoCheckOutPart = partApi.undoCheckOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
+        Assert.assertEquals(undoCheckOutPart, checkedInPart);
 
         // Check out
         checkedOutPart = partApi.checkOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
@@ -76,7 +77,7 @@ public class PartApiTest {
         PartIterationDTO updatedIteration = LastIterationHelper.getLastIteration(updatedPartRevision);
         Assert.assertNotNull(updatedIteration.getModificationDate());
         lastIteration.setModificationDate(updatedIteration.getModificationDate());
-        Assert.assertEquals(lastIteration,updatedIteration);
+        Assert.assertEquals(lastIteration, updatedIteration);
 
         // Check in
         checkedInPart = partApi.checkIn(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
@@ -89,6 +90,42 @@ public class PartApiTest {
         // Mark as obsolete
         PartRevisionDTO obsoletePart = partApi.markPartRevisionAsObsolete(TestConfig.WORKSPACE, releasedPart.getNumber(), releasedPart.getVersion());
         Assert.assertEquals(obsoletePart.getStatus(), PartRevisionDTO.StatusEnum.OBSOLETE);
+
+    }
+
+    @Test
+    public void customAssemblyUnitTest() throws ApiException {
+
+        // Create 2 parts
+        PartCreationDTO part = new PartCreationDTO();
+        part.setNumber(TestUtils.randomString());
+        PartRevisionDTO P1 = partsApi.createNewPart(TestConfig.WORKSPACE, part);
+
+        part.setNumber(TestUtils.randomString());
+        PartRevisionDTO P2 = partsApi.createNewPart(TestConfig.WORKSPACE, part);
+
+        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(P1);
+        List<PartUsageLinkDTO> components = new ArrayList<>();
+
+        PartUsageLinkDTO link = new PartUsageLinkDTO();
+        ComponentDTO c2 = new ComponentDTO();
+        link.setUnit("foo");
+        link.setAmount(42.1337);
+        c2.setNumber(P2.getNumber());
+
+        link.setReferenceDescription("Link P1 => P2");
+        link.setComponent(c2);
+        components.add(link);
+
+        lastIteration.setComponents(components);
+
+
+        PartRevisionDTO updatedPart = partsApi.updatePartIteration(P1.getWorkspaceId(), P1.getNumber(), P1.getVersion(), lastIteration.getIteration(), lastIteration);
+        // Assert same unit
+        PartIterationDTO updatedPartLastIteration = LastIterationHelper.getLastIteration(updatedPart);
+        PartUsageLinkDTO fetchedLink = updatedPartLastIteration.getComponents().get(0);
+        Assert.assertNotNull(fetchedLink);
+        Assert.assertEquals("foo",fetchedLink.getUnit());
 
     }
 
