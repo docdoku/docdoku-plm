@@ -29,6 +29,7 @@ import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.callback.CallerPrincipalCallback;
 import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +50,7 @@ public class SessionSAM extends CustomSAM {
     public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
 
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
-        LOGGER.log(Level.INFO, "Validating request @"+request.getMethod() +" " + request.getRequestURI());
+        LOGGER.log(Level.INFO, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
 
         String login = (String) request.getSession().getAttribute("login");
         String groups = (String) request.getSession().getAttribute("groups");
@@ -70,8 +71,14 @@ public class SessionSAM extends CustomSAM {
     @Override
     public boolean canHandle(MessageInfo messageInfo) {
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
-        String login = (String) request.getSession().getAttribute("login");
-        String groups = (String) request.getSession().getAttribute("groups");
+        HttpSession session = request.getSession(false);
+
+        if(session == null){
+            return false;
+        }
+
+        String login = (String) session.getAttribute("login");
+        String groups = (String) session.getAttribute("groups");
         return login != null && !login.isEmpty() && groups != null && !groups.isEmpty();
     }
 }
