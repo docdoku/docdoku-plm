@@ -20,7 +20,6 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 
@@ -30,7 +29,8 @@ import com.docdoku.core.exceptions.*;
  */
 public interface IOrganizationManagerLocal {
 
-    Organization getOrganizationOfAccount(String pLogin);
+    Organization getOrganizationOfAccount(String pLogin) throws AccountNotFoundException, OrganizationNotFoundException;
+    Organization getMyOrganization() throws AccountNotFoundException, OrganizationNotFoundException;
     Organization createOrganization(String pName, String pDescription) throws OrganizationAlreadyExistsException, CreationException, NotAllowedException, AccountNotFoundException;
     void deleteOrganization(String pName) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException;
     void updateOrganization(Organization pOrganization) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException;

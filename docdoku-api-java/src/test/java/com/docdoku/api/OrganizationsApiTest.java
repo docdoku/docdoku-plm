@@ -13,7 +13,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class OrganizationsApiTest {
@@ -23,7 +22,7 @@ public class OrganizationsApiTest {
     @BeforeClass
     public static void initOrganization() throws ApiException {
         OrganizationDTO oldOrganization = organizationsApi.getOrganization();
-        if(oldOrganization.getName() != null) {
+        if (oldOrganization.getName() != null) {
             organizationsApi.deleteOrganization();
         }
         OrganizationDTO organization = TestUtils.createOrganization();
@@ -37,7 +36,7 @@ public class OrganizationsApiTest {
         OrganizationDTO organization = organizationsApi.getOrganization();
         organization.setName(newName);
         OrganizationDTO updatedOrganization = organizationsApi.updateOrganization(organization);
-        Assert.assertEquals(newName,updatedOrganization.getName());
+        Assert.assertEquals(newName, updatedOrganization.getName());
         Assert.assertEquals(organization, updatedOrganization);
     }
 
@@ -69,7 +68,7 @@ public class OrganizationsApiTest {
     private void moveMemberDownTest() throws ApiException {
         UserDTO firstUser = new UserDTO();
         firstUser.setLogin(TestConfig.LOGIN);
-        organizationsApi.moveMemberDown(firstUser);
+        organizationsApi.moveMember(firstUser, "down");
         List<AccountDTO> membersOfOrganization = organizationsApi.getMembers();
         Assert.assertEquals(membersOfOrganization.get(1).getLogin(), TestConfig.LOGIN);
     }
@@ -77,7 +76,7 @@ public class OrganizationsApiTest {
     private void moveMemberUpTest() throws ApiException {
         UserDTO firstUser = new UserDTO();
         firstUser.setLogin(TestConfig.LOGIN);
-        organizationsApi.moveMemberUp(firstUser);
+        organizationsApi.moveMember(firstUser, "up");
         List<AccountDTO> membersOfOrganization = organizationsApi.getMembers();
         Assert.assertEquals(membersOfOrganization.get(0).getLogin(), TestConfig.LOGIN);
     }

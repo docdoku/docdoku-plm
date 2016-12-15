@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global define,App*/
 define(['backbone', 'common-objects/models/document_baseline'],
     function (Backbone, ProductBaseline, DocumentBaseline) {
         'use strict';

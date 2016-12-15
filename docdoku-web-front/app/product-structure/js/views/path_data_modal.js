@@ -95,10 +95,10 @@ define([
             },
             initAndOpenModal: function () {
 
-                var url = App.config.contextPath + '/api/workspaces/'
-                    + App.config.workspaceId + '/product-instances/'
-                    + App.config.productId + '/instances/'
-                    + this.serialNumber + '/pathdata/' + this.path;
+                var url = App.config.contextPath + '/api/workspaces/' +
+                    App.config.workspaceId + '/product-instances/' +
+                    App.config.productId + '/instances/' +
+                    this.serialNumber + '/pathdata/' + this.path;
 
                 var self = this;
 
@@ -139,9 +139,9 @@ define([
                 var partLinks = this.model.getPartLinks();
                 var $pathDescription = this.$('.path-description');
                 _.each(partLinks, function (partLink) {
-                    var text =  partLink.name + ' < ' + partLink.number + ' >';
-                    if(partLink.referenceDescription){
-                        text+=' ('+partLink.referenceDescription+')';
+                    var text = partLink.name + ' < ' + partLink.number + ' >';
+                    if (partLink.referenceDescription) {
+                        text += ' (' + partLink.referenceDescription + ')';
                     }
                     $pathDescription.append(text + ' <i class="fa fa-long-arrow-right"> ');
                 });
@@ -225,10 +225,10 @@ define([
                         this.iteration.setIterationNote(this.$('.description-input').val());
 
                         //POST
-                        var creationURL = App.config.contextPath + '/api/workspaces/'
-                            + App.config.workspaceId + '/product-instances/'
-                            + App.config.productId  + '/instances/' + this.serialNumber
-                            + '/pathdata/' + this.iteration.getPath() + '/new';
+                        var creationURL = App.config.contextPath + '/api/workspaces/' +
+                            App.config.workspaceId + '/product-instances/' +
+                            App.config.productId + '/instances/' + this.serialNumber +
+                            '/pathdata/' + this.iteration.getPath() + '/new';
 
                         $.ajax({
                             type: 'POST',
@@ -274,11 +274,11 @@ define([
                 });
 
                 //PUT
-                var updateURL = App.config.contextPath + '/api/workspaces/'
-                    + App.config.workspaceId + '/product-instances/'
-                    + App.config.productId + '/instances/'
-                    + this.serialNumber + '/pathdata/'
-                    + this.iteration.getId() + '/iterations/' + this.iteration.getIteration();
+                var updateURL = App.config.contextPath + '/api/workspaces/' +
+                    App.config.workspaceId + '/product-instances/' +
+                    App.config.productId + '/instances/' +
+                    this.serialNumber + '/pathdata/' +
+                    this.iteration.getId() + '/iterations/' + this.iteration.getIteration();
                 $.ajax({
                     type: 'PUT',
                     url: updateURL,
@@ -312,10 +312,10 @@ define([
                 });
 
                 //POST
-                var url = App.config.contextPath + '/api/workspaces/'
-                    + App.config.workspaceId + '/product-instances/'
-                    + App.config.productId + '/instances/'
-                    + this.serialNumber + '/pathdata/' + this.iteration.getId();
+                var url = App.config.contextPath + '/api/workspaces/' +
+                    App.config.workspaceId + '/product-instances/' +
+                    App.config.productId + '/instances/' +
+                    this.serialNumber + '/pathdata/' + this.iteration.getId();
                 var self = this;
                 $.ajax({
                     type: 'POST',

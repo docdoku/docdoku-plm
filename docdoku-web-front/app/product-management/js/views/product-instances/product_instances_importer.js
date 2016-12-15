@@ -10,7 +10,7 @@ define([
     'text!templates/product-instances/product_instances_import_modal.html',
     'text!templates/product-instances/product_instances_import_form.html',
     'common-objects/views/part/import_status_view'
-], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView,modalTemplate, template, ImportStatusView) {
+], function (Backbone, Mustache, unorm, ModalView, AttachedFile, FileView, AlertView, modalTemplate, template, ImportStatusView) {
     'use strict';
     var ProductInstanceImportView = Backbone.View.extend({
 
@@ -20,16 +20,16 @@ define([
         tagName: 'div',
         className: 'attachedFiles idle',
 
-        events:{
-            'click form button.cancel-upload-btn':'cancelButtonClicked',
-            'change form input.upload-btn':'fileSelectHandler',
-            'dragover .droppable':'fileDragHover',
-            'dragleave .droppable':'fileDragHover',
-            'drop .droppable':'fileDropHandler',
+        events: {
+            'click form button.cancel-upload-btn': 'cancelButtonClicked',
+            'change form input.upload-btn': 'fileSelectHandler',
+            'dragover .droppable': 'fileDragHover',
+            'dragleave .droppable': 'fileDragHover',
+            'drop .droppable': 'fileDropHandler',
             'click .import-preview-button': 'showPreview',
             'click .back-button': 'backToForm',
-            'click .import-button':'formSubmit',
-            'hidden.bs.modal .modal.importer-view':'deleteImportStatus'
+            'click .import-button': 'formSubmit',
+            'hidden.bs.modal .modal.importer-view': 'deleteImportStatus'
         },
 
         initialize: function () {
@@ -91,7 +91,7 @@ define([
             this.$el.find('#import-contain').append(Mustache.render(template, {
                 importForm: this.importForm,
                 importPreview: this.importPreview,
-                freeze:this.freeze,
+                freeze: this.freeze,
                 permissive: this.permissive,
                 revisionNote: this.revisionNote,
                 i18n: App.config.i18n
@@ -107,7 +107,7 @@ define([
             this.$el.find('#import-contain').html(Mustache.render(template, {
                 importForm: this.importForm,
                 importPreview: this.importPreview,
-                freeze:this.freeze,
+                freeze: this.freeze,
                 permissive: this.permissive,
                 revisionNote: this.revisionNote,
                 i18n: App.config.i18n,
@@ -116,8 +116,12 @@ define([
             this.bindDomElements();
 
             this.$('#revision_text_part').val(this.revisionNote);
-            if(this.freeze){ this.$('#freeze-checkbox').prop('checked', true); }
-            if(this.permissive){ this.$('#permissive_update_product_instance-checkbox').prop('checked', true); }
+            if (this.freeze) {
+                this.$('#freeze-checkbox').prop('checked', true);
+            }
+            if (this.permissive) {
+                this.$('#permissive_update_product_instance-checkbox').prop('checked', true);
+            }
 
             return this;
         },
@@ -149,12 +153,12 @@ define([
             this.notifications = this.$('div.notifications');
         },
 
-        showPreview: function(){
+        showPreview: function () {
             this.freeze = this.$('#freeze-checkbox').is(':checked');
             this.permissive = this.$('#permissive_update_product_instance-checkbox').is(':checked');
             this.revisionNote = this.$('#revision_text_product').val().trim();
 
-            this.options = this.freeze || this.permissive || this.revisionNote!== '';
+            this.options = this.freeze || this.permissive || this.revisionNote !== '';
 
             this.importForm = false;
             this.importPreview = true;
@@ -168,8 +172,8 @@ define([
 
             if (this.file) {
 
-                var baseUrl = App.config.contextPath + '/api/workspaces/'
-                    + App.config.workspaceId + '/product-instances/import';
+                var baseUrl = App.config.contextPath + '/api/workspaces/' +
+                    App.config.workspaceId + '/product-instances/import';
 
                 var params = {
                     autoFreezeAfterUpdate: this.freeze,
@@ -188,7 +192,7 @@ define([
                 formdata.append('upload', this.file);
                 xhr.send(formdata);
 
-            } else if(!this.file){
+            } else if (!this.file) {
                 this.printNotifications('error', App.config.i18n.NO_FILE_TO_IMPORT);
             }
 
@@ -196,7 +200,7 @@ define([
             return false;
         },
 
-        fetchImports:function(){
+        fetchImports: function () {
             var _this = this;
             this.removeSubviews();
             _this.$('.import-status-views').empty();
@@ -224,7 +228,7 @@ define([
             this.notifications.text('');
         },
 
-        removeSubviews: function(){
+        removeSubviews: function () {
             _(this.importStatusViews).invoke('remove');
             this.importStatusViews = [];
         },
@@ -248,8 +252,8 @@ define([
             this.loadNewFile(this.file);
         },
 
-        deleteImportStatus: function (){
-            _.each(this.importStatusViews, function(importSV){
+        deleteImportStatus: function () {
+            _.each(this.importStatusViews, function (importSV) {
                 importSV.deleteImport();
             });
         }

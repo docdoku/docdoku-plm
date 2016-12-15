@@ -67,7 +67,7 @@ define([
             return false;
         },
 
-        moveMemberUp:function(e){
+        moveMemberUp:function(){
             var usersChecked = this.$('tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
             if(usersChecked.length === 1) {
                 var userLogin = usersChecked[0].dataset.login;
@@ -76,7 +76,7 @@ define([
             }
         },
 
-        moveMemberDown:function(e){
+        moveMemberDown:function(){
             var usersChecked = this.$('tbody > tr > td:nth-child(1) > input[type="checkbox"]:checked');
             if(usersChecked.length === 1) {
                 var userLogin = usersChecked[0].dataset.login;

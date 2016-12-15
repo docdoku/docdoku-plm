@@ -38,42 +38,39 @@ public class OrganizationDAO {
     private Locale mLocale;
 
     public OrganizationDAO(Locale pLocale, EntityManager pEM) {
-        em=pEM;
-        mLocale=pLocale;
+        em = pEM;
+        mLocale = pLocale;
     }
 
     public OrganizationDAO(EntityManager pEM) {
-        em=pEM;
-        mLocale=Locale.getDefault();
+        em = pEM;
+        mLocale = Locale.getDefault();
     }
 
 
-    public Organization findOrganizationOfAccount(String login) {
-        Account account = em.getReference(Account.class, login);
-        Organization organization = null;
+    public Organization findOrganizationOfAccount(Account account) throws OrganizationNotFoundException {
         try {
-            organization = em.createNamedQuery("Organization.ofAccount", Organization.class)
+            return em.createNamedQuery("Organization.ofAccount", Organization.class)
                     .setParameter("account", account).getSingleResult();
-        }catch (NoResultException ex){
-            //null will be returned
+        } catch (NoResultException ex) {
+            throw new OrganizationNotFoundException(mLocale, account.getLogin());
         }
-        return organization;
     }
 
-    public void updateOrganization(Organization pOrganization){
+    public void updateOrganization(Organization pOrganization) {
         em.merge(pOrganization);
     }
-    
+
     public void createOrganization(Organization pOrganization) throws OrganizationAlreadyExistsException, CreationException {
-        try{
+        try {
             //the EntityExistsException is thrown only when flush occurs
-            if(pOrganization.getName().trim().equals(""))
+            if (pOrganization.getName().trim().equals(""))
                 throw new CreationException(mLocale);
             em.persist(pOrganization);
             em.flush();
-        }catch(EntityExistsException pEEEx){
+        } catch (EntityExistsException pEEEx) {
             throw new OrganizationAlreadyExistsException(mLocale, pOrganization);
-        }catch(PersistenceException pPEx){
+        } catch (PersistenceException pPEx) {
             //EntityExistsException is case sensitive
             //whereas MySQL is not thus PersistenceException could be
             //thrown instead of EntityExistsException
@@ -85,9 +82,9 @@ public class OrganizationDAO {
         em.remove(pOrganization);
         em.flush();
     }
-    
+
     public Organization loadOrganization(String pName) throws OrganizationNotFoundException {
-        Organization organization=em.find(Organization.class,pName);
+        Organization organization = em.find(Organization.class, pName);
         if (organization == null) {
             throw new OrganizationNotFoundException(mLocale, pName);
         } else {

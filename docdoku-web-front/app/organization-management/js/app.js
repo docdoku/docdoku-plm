@@ -9,59 +9,50 @@ define([
     'views/organization-edit',
     'views/organization-members'
 ], function (Backbone, Mustache, template, Organization, OrganizationManagementHome, OrganizationCreate, OrganizationEdit, OrganizationMembers) {
-	'use strict';
+    'use strict';
 
     var AppView = Backbone.View.extend({
 
         el: '#content',
 
         events: {
-            'click .organization-management':'navigateOrganizationManagement'
+            'click .organization-management': 'navigateOrganizationManagement'
         },
 
         render: function () {
             this.$el.html(Mustache.render(template, {
-                i18n:App.config.i18n
+                i18n: App.config.i18n
             })).show();
             this.$notifications = this.$('.notifications');
             return this;
         },
 
-        navigateOrganizationManagement:function(){
+        navigateOrganizationManagement: function () {
             window.location.hash = '#/';
         },
 
-        organizationManagementHome: function() {
+        organizationManagementHome: function () {
             var view = new OrganizationManagementHome();
             view.render();
             this.$('#organization-management-content').html(view.render().el);
         },
 
-        organizationCreate: function() {
+        organizationCreate: function () {
             var view = new OrganizationCreate();
             view.render();
             this.$('#organization-management-content').html(view.render().el);
         },
 
-        organizationEdit: function() {
+        organizationEdit: function () {
             var view = new OrganizationEdit();
             view.render();
             this.$('#organization-management-content').html(view.render().el);
         },
 
-        organizationMembers: function() {
+        organizationMembers: function () {
             var view = new OrganizationMembers();
             view.render();
             this.$('#organization-management-content').html(view.render().el);
-        },
-
-        onError:function(err){
-            if(err.status === 404){
-                this.$el.html(new NotFoundView().render(err).$el);
-            }
-            else if(err.status === 403 || err.status === 401){
-                window.location.href = App.config.contextPath + '/?denied=true&originURL=' + encodeURIComponent(window.location.pathname + window.location.hash);
-            }
         }
 
     });

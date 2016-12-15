@@ -24,6 +24,7 @@ import com.docdoku.core.common.Organization;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IOrganizationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
@@ -51,6 +52,9 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
     private IUserManagerLocal userManager;
 
     @Inject
+    private IContextManagerLocal contextManagerLocal;
+
+    @Inject
     private IAccountManagerLocal accountManager;
 
     private static final Logger LOGGER = Logger.getLogger(OrganizationManagerBean.class.getName());
@@ -70,25 +74,39 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public Organization getOrganizationOfAccount(String pLogin) {
-        OrganizationDAO organizationDAO = new OrganizationDAO(em);
-        return organizationDAO.findOrganizationOfAccount(pLogin);
+    public Organization getOrganizationOfAccount(String pLogin) throws AccountNotFoundException, OrganizationNotFoundException {
+        Account account = accountManager.getMyAccount();
+        Locale locale = new Locale(account.getLanguage());
+
+        OrganizationDAO organizationDAO = new OrganizationDAO(locale, em);
+        return organizationDAO.findOrganizationOfAccount(account);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Organization getMyOrganization() throws AccountNotFoundException, OrganizationNotFoundException {
+        String login = contextManagerLocal.getCallerPrincipalLogin();
+        return getOrganizationOfAccount(login);
 
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
     public Organization createOrganization(String pName, String pDescription) throws AccountNotFoundException, OrganizationAlreadyExistsException, CreationException, NotAllowedException {
+
         Account me = accountManager.getMyAccount();
         OrganizationDAO organizationDAO = new OrganizationDAO(new Locale(me.getLanguage()), em);
-        Organization ownerOrg=organizationDAO.findOrganizationOfAccount(me.getLogin());
-        if (ownerOrg == null) {
+
+        try {
+            // Will throw an exception if account already have an organization
+            organizationDAO.findOrganizationOfAccount(me);
+            throw new NotAllowedException(new Locale(me.getLanguage()), "NotAllowedException11");
+        } catch (OrganizationNotFoundException e) {
+            // No organization for account, allowed to creat it
             Organization organization = new Organization(pName, me, pDescription);
             organizationDAO.createOrganization(organization);
             organization.addMember(me);
             return organization;
-        } else {
-            throw new NotAllowedException(new Locale(me.getLanguage()), "NotAllowedException11");
         }
     }
 
@@ -109,10 +127,10 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
         OrganizationDAO organizationDAO = new OrganizationDAO(em);
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
         Account account = accountManager.checkAdmin(organization);
-        Locale locale=new Locale(account.getLanguage());
+        Locale locale = new Locale(account.getLanguage());
 
         Account accountToAdd = new AccountDAO(locale, em).loadAccount(pLogin);
-        Organization accountToAddOrg=organizationDAO.findOrganizationOfAccount(pLogin);
+        Organization accountToAddOrg = organizationDAO.findOrganizationOfAccount(accountToAdd);
         if (accountToAddOrg != null) {
             throw new NotAllowedException(locale, "NotAllowedException12");
         } else {
@@ -127,7 +145,7 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
         Organization organization = organizationDAO.loadOrganization(pOrganizationName);
 
         Account account = accountManager.checkAdmin(organization);
-        Locale locale=new Locale(account.getLanguage());
+        Locale locale = new Locale(account.getLanguage());
 
         AccountDAO accountDAO = new AccountDAO(locale, em);
         for (String login : pLogins) {

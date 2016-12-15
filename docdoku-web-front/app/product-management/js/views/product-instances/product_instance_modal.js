@@ -146,7 +146,7 @@ define([
         drawSubstitutesChoice: function (data) {
             this.$substitutes.append(Mustache.render(pathTemplate, {
                 i18n: App.config.i18n,
-                partLinks:data.partLinks
+                partLinks: data.partLinks
             }));
             this.$substitutes.find('.well i.fa-long-arrow-right').last().remove();
         },
@@ -154,7 +154,7 @@ define([
         drawOptionalsChoice: function (data) {
             this.$optionals.append(Mustache.render(pathTemplate, {
                 i18n: App.config.i18n,
-                partLinks:data.partLinks
+                partLinks: data.partLinks
             }));
             this.$optionals.find('.well i.fa-long-arrow-right').last().remove();
         },
@@ -189,11 +189,13 @@ define([
         getExistingPathToPath: function () {
             var self = this;
             _.each(this.iteration.getPathToPathLinks(), function (pathToPathLink) {
-                var pathToPathLinkItem = new PathToPathLinkItemView({model: {
-                    pathToPath: pathToPathLink,
-                    serialNumber: self.model.getSerialNumber(),
-                    productId: self.productId
-                }}).render();
+                var pathToPathLinkItem = new PathToPathLinkItemView({
+                    model: {
+                        pathToPath: pathToPathLink,
+                        serialNumber: self.model.getSerialNumber(),
+                        productId: self.productId
+                    }
+                }).render();
                 self.$('#path-to-path-links').append(pathToPathLinkItem.el);
             });
 
@@ -237,37 +239,37 @@ define([
 
                 var html = $(Mustache.render(pathTemplate, {
                     i18n: App.config.i18n,
-                    partLinks:path.partLinks,
+                    partLinks: path.partLinks,
                     editMode: self.editMode
                 }));
 
-                html.find('button.close').click({fullPath: self.getFullPath(path)},self.removePathData);
+                html.find('button.close').click({fullPath: self.getFullPath(path)}, self.removePathData);
                 html.find('i.fa-long-arrow-right').last().remove();
                 pathsHtml.push(html);
             });
             pathDataList.html(pathsHtml);
         },
 
-        getFullPath: function(path) {
+        getFullPath: function (path) {
             var fullPath = '';
-            _.each(path.partLinks, function(partLink) {
+            _.each(path.partLinks, function (partLink) {
                 fullPath += partLink.fullId + '-';
             });
-            return fullPath.substr(0,fullPath.length-1);
+            return fullPath.substr(0, fullPath.length - 1);
         },
 
-        removePathData: function(event) {
+        removePathData: function (event) {
             var self = this;
             var fullPath = event.data.fullPath;
             var pathData = _.findWhere(this.iteration.getPathData(), {path: fullPath});
             $.ajax({
-                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/'+self.model.getConfigurationItemId()+'/product-instances/' + self.model.getSerialNumber()+'/pathdata/'+pathData.id,
+                url: App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/products/' + self.model.getConfigurationItemId() + '/product-instances/' + self.model.getSerialNumber() + '/pathdata/' + pathData.id,
                 type: 'DELETE',
-                error: function(error, type) {
-                    self.onError(type,error);
+                error: function (error, type) {
+                    self.onError(type, error);
                 },
-                success : function() {
-                    self.model.fetch().success(function() {
+                success: function () {
+                    self.model.fetch().success(function () {
                         self.iteration = self.model.getIterations().get(self.iteration.getIteration());
                         self.initPathDataView();
                     });
@@ -326,10 +328,10 @@ define([
             //Do the rebase
             var selectedBaselineId = this.$('.rebase-baseline-select').val();
 
-            var url = App.config.contextPath + '/api/workspaces/'
-                + App.config.workspaceId + '/product-instances/'
-                + this.productId + '/instances/'
-                + this.model.getSerialNumber() + '/rebase';
+            var url = App.config.contextPath + '/api/workspaces/' +
+                App.config.workspaceId + '/product-instances/' +
+                this.productId + '/instances/' +
+                this.model.getSerialNumber() + '/rebase';
 
             $.ajax({
                 type: 'PUT',
@@ -347,14 +349,14 @@ define([
                         self.onRebaseSuccess();
                     });
                 },
-                error: function (errorMessage,type) {
-                    self.onError(type,errorMessage);
+                error: function (errorMessage, type) {
+                    self.onError(type, errorMessage);
                 }
             });
 
         },
 
-        onRebaseSuccess:function(){
+        onRebaseSuccess: function () {
             this.$notifications.append(new AlertView({
                 type: 'success',
                 message: App.config.i18n.REBASE_SUCCESS

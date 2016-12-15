@@ -85,7 +85,10 @@ define([
         render: function () {
 
             this.isQueryBuilderDisplayed = false;
-            this.$el.html(Mustache.render(template, {i18n: App.config.i18n, filter: this.options.filter}, this.partials));
+            this.$el.html(Mustache.render(template, {
+                i18n: App.config.i18n,
+                filter: this.options.filter
+            }, this.partials));
             this.bindDomElements();
 
             this.tagsButton.show();
@@ -192,9 +195,9 @@ define([
             partCreationView.openModal();
         },
 
-        newEffectivity: function() {
+        newEffectivity: function () {
             var partCreationEffectivityView = new PartCreationEffectivityView({
-              selectedPart: this.partListView.getSelectedPart()
+                selectedPart: this.partListView.getSelectedPart()
             });
             partCreationEffectivityView.openModal();
         },

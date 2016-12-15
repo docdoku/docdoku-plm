@@ -40,8 +40,10 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -75,18 +77,13 @@ public class OrganizationResource {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval of OrganizationDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 404, message = "No organization for authenticated account"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
     public OrganizationDTO getOrganization()
-            throws AccountNotFoundException {
-
-        Organization organization = getOrganizationOfCurrentUser();
-
-        // TODO : send 404 or a null value if no organization found, never send empty DTO
-        if (organization == null)
-            return new OrganizationDTO();
-
+            throws AccountNotFoundException, OrganizationNotFoundException {
+        Organization organization = organizationManager.getMyOrganization();
         return mapper.map(organization, OrganizationDTO.class);
     }
 
@@ -121,7 +118,7 @@ public class OrganizationResource {
             @ApiParam(required = true, value = "Updated organization") OrganizationDTO organizationDTO)
             throws AccountNotFoundException, AccessRightException, OrganizationNotFoundException {
 
-        Organization organization = getOrganizationOfCurrentUser();
+        Organization organization = organizationManager.getMyOrganization();
         organization.setDescription(organizationDTO.getDescription());
         organizationManager.updateOrganization(organization);
         return organizationDTO;
@@ -139,7 +136,7 @@ public class OrganizationResource {
     public Response deleteOrganization()
             throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
 
-        Organization organization = getOrganizationOfCurrentUser();
+        Organization organization = organizationManager.getMyOrganization();
         organizationManager.deleteOrganization(organization.getName());
         return Response.noContent().build();
     }
@@ -155,23 +152,23 @@ public class OrganizationResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public AccountDTO[] getMembers()
+    public Response getMembers()
             throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
 
-        Organization organization = getOrganizationOfCurrentUser();
+        Organization organization = organizationManager.getMyOrganization();
         List<Account> accounts = organization.getMembers();
-        AccountDTO[] dtos = new AccountDTO[accounts.size()];
+        List<AccountDTO> accountsDTOs = new ArrayList<>();
 
-        for (int i = 0; i < accounts.size(); i++) {
-            dtos[i] = mapper.map(accounts.get(i), AccountDTO.class);
+        for (Account account : accounts) {
+            accountsDTOs.add(mapper.map(account, AccountDTO.class));
         }
 
-        return dtos;
+        return Response.ok(new GenericEntity<List<AccountDTO>>((List<AccountDTO>) accountsDTOs) {
+        }).build();
     }
 
     @PUT
-    // TODO : change this path, don't use two static paths parts.
-    @Path("members/add-user")
+    @Path("add-member")
     @ApiOperation(value = "Add a member to the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
@@ -184,7 +181,7 @@ public class OrganizationResource {
             @ApiParam(required = true, value = "User to add") UserDTO userDTO)
             throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
 
-        Organization organization = getOrganizationOfCurrentUser();
+        Organization organization = organizationManager.getMyOrganization();
         Account member = accountManager.getAccount(userDTO.getLogin());
         organization.addMember(member);
         organizationManager.updateOrganization(organization);
@@ -192,8 +189,7 @@ public class OrganizationResource {
     }
 
     @PUT
-    // TODO : change this path, don't use two static paths parts.
-    @Path("members/remove-user")
+    @Path("remove-member")
     @ApiOperation(value = "Remove a member to the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
@@ -203,29 +199,21 @@ public class OrganizationResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeMember(
-            @ApiParam(required = true, value = "User to remove") UserDTO userDTO) {
+            @ApiParam(required = true, value = "User to remove") UserDTO userDTO)
+            throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
 
-        try {
-            Organization organization = getOrganizationOfCurrentUser();
-            Account member = accountManager.getAccount(userDTO.getLogin());
-            organization.removeMember(member);
-            organizationManager.updateOrganization(organization);
-            return Response.noContent().build();
 
-            // TODO remove catch blocks and let exception mappers do the job
-        } catch (AccessRightException e) {
-            return Response.status(Response.Status.FORBIDDEN).build();
-        } catch (AccountNotFoundException e) {
-            return Response.status(Response.Status.NO_CONTENT).build();
-        } catch (OrganizationNotFoundException e) {
-            return Response.status(Response.Status.NO_CONTENT).build();
-        }
+        Organization organization = organizationManager.getMyOrganization();
+        Account member = accountManager.getAccount(userDTO.getLogin());
+        organization.removeMember(member);
+        organizationManager.updateOrganization(organization);
+        return Response.noContent().build();
+
     }
 
     @PUT
-    // TODO : change this path, don't use two static paths parts.
-    @Path("members/move-up")
-    @ApiOperation(value = "Move a member up in the authenticated user's organization",
+    @Path("move-member")
+    @ApiOperation(value = "Move a member up or down in the authenticated user's organization",
             response = Response.class)
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Successful member moved operation"),
@@ -233,49 +221,40 @@ public class OrganizationResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response moveMemberUp(@ApiParam(required = true, value = "User to move up") UserDTO userDTO) throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
-        Organization organization = getOrganizationOfCurrentUser();
-        Account member = accountManager.getAccount(userDTO.getLogin());
+    public Response moveMember(
+            @ApiParam(required = true, value = "User to move up") UserDTO userDTO,
+            @ApiParam(required = true, value = "Direction (up/down)") @QueryParam("direction") String direction)
+            throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
+
+        if ("up".equals(direction)) {
+            moveMemberUp(userDTO.getLogin());
+        } else if ("down".equals(direction)) {
+            moveMemberDown(userDTO.getLogin());
+        } else {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
+
+        return Response.noContent().build();
+    }
+
+    private void moveMemberUp(String login) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
+        Organization organization = organizationManager.getMyOrganization();
+        Account member = accountManager.getAccount(login);
         List<Account> members = organization.getMembers();
         int i = members.indexOf(member);
         if (i > 0) {
             Collections.swap(members, i - 1, i);
             organizationManager.updateOrganization(organization);
         }
-        return Response.noContent().build();
     }
-
-    //TODO : refactor to one method with the one above, with query param "up/down"
-    @PUT
-    // TODO : change this path, don't use two static paths parts.
-    @Path("members/move-down")
-    @ApiOperation(value = "Move a member down in the authenticated user's organization",
-            response = Response.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Successful member moved operation"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response moveMemberDown(
-            @ApiParam(required = true, value = "User to move down") UserDTO userDTO)
-            throws AccountNotFoundException, OrganizationNotFoundException, AccessRightException {
-
-        Organization organization = getOrganizationOfCurrentUser();
-        Account member = accountManager.getAccount(userDTO.getLogin());
+    private void moveMemberDown(String login) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
+        Organization organization = organizationManager.getMyOrganization();
+        Account member = accountManager.getAccount(login);
         List<Account> members = organization.getMembers();
         int i = members.indexOf(member);
         if (i > -1 && i < members.size() - 1) {
             Collections.swap(members, i + 1, i);
             organizationManager.updateOrganization(organization);
         }
-        return Response.noContent().build();
     }
-
-
-    private Organization getOrganizationOfCurrentUser() throws AccountNotFoundException {
-        Account account = accountManager.getMyAccount();
-        return organizationManager.getOrganizationOfAccount(account.getLogin());
-    }
-
 }

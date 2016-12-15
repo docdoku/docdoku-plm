@@ -2,9 +2,10 @@
 define([
     'backbone',
     'mustache',
+    'moment',
     'common-objects/models/effectivity',
     'text!common-objects/templates/part/part_effectivity.html'
-], function (Backbone, Mustache, Effectivity, template) {
+], function (Backbone, Mustache, moment, Effectivity, template) {
 
     'use strict';
 

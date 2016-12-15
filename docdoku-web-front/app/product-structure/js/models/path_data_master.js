@@ -21,11 +21,11 @@ define(['backbone',
         },
 
         url: function () {
-            return App.config.contextPath + '/api/workspaces/'
-                + App.config.workspaceId + '/product-instances/'
-                + App.config.productId + '/instances/'
-                + this.serialNumber + '/pathdata/'
-                + this.getPath();
+            return App.config.contextPath + '/api/workspaces/' +
+                App.config.workspaceId + '/product-instances/' +
+                App.config.productId + '/instances/' +
+                this.serialNumber + '/pathdata/' +
+                this.getPath();
         },
 
         parse: function (data) {
@@ -45,10 +45,10 @@ define(['backbone',
             return this.iterations;
         },
 
-        getPartAttributes:function(){
+        getPartAttributes: function () {
             return this.get('partAttributes');
         },
-        getPartAttributeTemplates:function(){
+        getPartAttributeTemplates: function () {
             return this.get('partAttributeTemplates');
         },
         getLastIteration: function () {

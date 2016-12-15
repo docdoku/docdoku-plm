@@ -88,20 +88,20 @@ define(['backbone'], function (Backbone) {
         },
 
         getUploadBaseUrl: function () {
-            return App.config.contextPath + '/api/files/'
-                + App.config.workspaceId + '/product-instances/'
-                + this.getSerialNumber() + '/' + App.config.productId
-                + '/pathdata/' + this.getId()
-                + '/iterations/' + this.getIteration() + '/';
+            return App.config.contextPath + '/api/files/' +
+                App.config.workspaceId + '/product-instances/' +
+                this.getSerialNumber() + '/' + App.config.productId +
+                '/pathdata/' + this.getId() +
+                '/iterations/' + this.getIteration() + '/';
         },
 
         getDeleteBaseUrl: function () {
-            return App.config.contextPath + '/api/workspaces/'
-                + App.config.workspaceId + '/product-instances/'
-                + App.config.productId + '/instances/'
-                + this.getSerialNumber() + '/pathdata/'
-                + this.getId() + '/iterations/'
-                + this.getIteration();
+            return App.config.contextPath + '/api/workspaces/' +
+                App.config.workspaceId + '/product-instances/' +
+                App.config.productId + '/instances/' +
+                this.getSerialNumber() + '/pathdata/' +
+                this.getId() + '/iterations/' +
+                this.getIteration();
         }
 
     });

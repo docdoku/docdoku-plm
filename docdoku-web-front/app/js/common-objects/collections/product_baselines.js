@@ -1,4 +1,4 @@
-/*global $,define,App*/
+/*global define,App*/
 define(['backbone', 'common-objects/models/product_baseline'],
     function (Backbone, ProductBaseline) {
         'use strict';
@@ -10,8 +10,8 @@ define(['backbone', 'common-objects/models/product_baseline'],
 
             url: function () {
                 if (this.productId) {
-                    return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-baselines/'
-                        + this.productId + '/baselines';
+                    return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId +
+                        '/product-baselines/' + this.productId + '/baselines';
                 }
                 return App.config.contextPath + '/api/workspaces/' + App.config.workspaceId + '/product-baselines';
             },

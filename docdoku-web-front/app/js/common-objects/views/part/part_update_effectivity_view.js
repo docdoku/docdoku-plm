@@ -2,6 +2,7 @@
 define([
     'backbone',
     'mustache',
+    'moment',
     'text!common-objects/templates/part/part_creation_effectivity_view.html',
     'text!common-objects/templates/part/part_effectivity_serial_number.html',
     'text!common-objects/templates/part/part_effectivity_date.html',
@@ -9,7 +10,7 @@ define([
     'common-objects/models/part',
     'common-objects/models/effectivity',
     'common-objects/views/alert'
-], function (Backbone, Mustache, template, effectivitySerialNumber, effectivityDate, effectivityLot, Part, Effectivity, AlertView) {
+], function (Backbone, Mustache, moment, template, effectivitySerialNumber, effectivityDate, effectivityLot, Part, Effectivity, AlertView) {
     'use strict';
     var PartCreationView = Backbone.View.extend({
 
@@ -157,7 +158,7 @@ define([
 
         updateEffectivity: function () {
             var self = this;
-            this.Effectivity.updateEffectivity(this.effectivity.id, this.updatedEffectivity).then(function (data) {
+            this.Effectivity.updateEffectivity(this.effectivity.id, this.updatedEffectivity).then(function () {
                 self.$notifications.append(new AlertView({
                     type: 'success',
                     message: App.config.i18n.UPDATE_EFFECTIVITY_SUCCESS

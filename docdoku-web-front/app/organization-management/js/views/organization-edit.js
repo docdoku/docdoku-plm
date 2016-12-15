@@ -1,4 +1,4 @@
-/*global define,App*/
+/*global define,App,bootbox*/
 define([
     'backbone',
     'mustache',
@@ -47,13 +47,11 @@ define([
         },
 
         onSubmit: function(e) {
-            var name = this.$('#organization-name').val();
             var description = this.$('#description').val();
 
             Organization.updateOrganization({
                 name:App.config.organization.name,
-                description:description,
-                owner_login:App.config.login
+                description:description
             }).then(this.onUpdateSucceed.bind(this), this.onError.bind(this));
 
             e.preventDefault();

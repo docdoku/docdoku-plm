@@ -44,7 +44,7 @@ define(['backbone'], function (Backbone) {
     Organization.addMember = function(user) {
         return $.ajax({
             type: 'PUT',
-            url: App.config.contextPath + '/api/organizations/members/add-user',
+            url: App.config.contextPath + '/api/organizations/add-member',
             data: JSON.stringify(user),
             contentType: 'application/json; charset=utf-8'
         });
@@ -53,7 +53,7 @@ define(['backbone'], function (Backbone) {
     Organization.removeMember = function(user) {
         return $.ajax({
             type: 'PUT',
-            url: App.config.contextPath + '/api/organizations/members/remove-user',
+            url: App.config.contextPath + '/api/organizations/remove-member',
             data: JSON.stringify(user),
             contentType: 'application/json; charset=utf-8'
         });
@@ -70,7 +70,7 @@ define(['backbone'], function (Backbone) {
     Organization.moveMemberUp = function(user) {
         return $.ajax({
             type: 'PUT',
-            url: App.config.contextPath + '/api/organizations/members/move-up',
+            url: App.config.contextPath + '/api/organizations/move-member?direction=up',
             data: JSON.stringify(user),
             contentType: 'application/json; charset=utf-8'
         });
@@ -79,7 +79,7 @@ define(['backbone'], function (Backbone) {
     Organization.moveMemberDown = function(user) {
         return $.ajax({
             type: 'PUT',
-            url: App.config.contextPath + '/api/organizations/members/move-down',
+            url: App.config.contextPath + '/api/organizations/move-member?direction=down',
             data: JSON.stringify(user),
             contentType: 'application/json; charset=utf-8'
         });

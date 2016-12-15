@@ -3,58 +3,58 @@ define([
     'backbone',
     'common-objects/utils/date',
     'common-objects/utils/acl-checker'
-], function (Backbone,date, ACLChecker) {
+], function (Backbone, date, ACLChecker) {
     'use strict';
     var Configuration = Backbone.Model.extend({
         urlRoot: function () {
             if (this.configurationItemId) {
-                return App.config.contextPath + '/api/workspaces/'
-                    + App.config.workspaceId + '/product-configurations/' + this.configurationItemId + '/configurations';
+                return App.config.contextPath + '/api/workspaces/' +
+                    App.config.workspaceId + '/product-configurations/' + this.configurationItemId + '/configurations';
             }
-            return App.config.contextPath + '/api/workspaces/'
-                + App.config.workspaceId + '/product-configurations';
+            return App.config.contextPath + '/api/workspaces/' +
+                App.config.workspaceId + '/product-configurations';
         },
         initialize: function () {
             _.bindAll(this);
             this.configurationItemId = this.get('configurationItemId');
         },
-        getId:function(){
+        getId: function () {
             return this.get('id');
         },
-        getName:function(){
+        getName: function () {
             return this.get('name');
         },
-        getAuthor:function(){
+        getAuthor: function () {
             return this.get('author').name;
         },
-        setName:function(name){
-            this.set('name',name);
+        setName: function (name) {
+            this.set('name', name);
         },
 
-        getConfigurationItemId:function(){
+        getConfigurationItemId: function () {
             return this.get('configurationItemId');
         },
 
-        getDescription:function(){
+        getDescription: function () {
             return this.get('description');
         },
 
-        setDescription:function(description){
-            this.set('description',description);
+        setDescription: function (description) {
+            this.set('description', description);
         },
 
-        getSubstitutesParts:function(){
+        getSubstitutesParts: function () {
             return this.get('substitutesParts');
         },
-        getOptionalsParts:function(){
+        getOptionalsParts: function () {
             return this.get('optionalsParts');
         },
 
-        getCreationDate:function(){
+        getCreationDate: function () {
             return this.get('creationDate');
         },
 
-        getFormattedCreationDate:function(){
+        getFormattedCreationDate: function () {
             return date.formatTimestamp(
                 App.config.i18n._DATE_FORMAT,
                 this.getCreationDate()

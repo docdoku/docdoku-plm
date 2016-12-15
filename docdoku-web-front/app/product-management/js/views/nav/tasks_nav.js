@@ -31,7 +31,7 @@ define([
         showContent: function (filter) {
             this.setActive();
             this.cleanView();
-            var filter = filter || 'all';
+            filter = filter || 'all';
             this.partContentView = new PartContentView({filter: filter});
             var collection = new TaskPartsCollection();
             collection.setFilterStatus(filter);

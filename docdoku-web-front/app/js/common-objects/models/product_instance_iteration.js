@@ -16,10 +16,10 @@ define(['backbone'
 
         urlRoot: function () {
             if (this.getConfigurationItemId) {
-                return App.config.contextPath + '/api/workspaces/'
-                    + App.config.workspaceId + '/product-instances/'
-                    + this.getConfigurationItemId() + '/instances/'
-                    + this.getSerialNumber() + '/iterations/';
+                return App.config.contextPath + '/api/workspaces/' +
+                    App.config.workspaceId + '/product-instances/' +
+                    this.getConfigurationItemId() + '/instances/' +
+                    this.getSerialNumber() + '/iterations/';
             } else {
                 return this.prototype.urlRoot();
             }
@@ -29,7 +29,8 @@ define(['backbone'
 
         },
         getBaseName: function () {
-            return App.config.workspaceId + '/product-instances/' + this.getSerialNumber() + '/' + this.getConfigurationItemId() + '/iterations/' + this.getIteration() + '/';
+            return App.config.workspaceId + '/product-instances/' + this.getSerialNumber() +
+                '/' + this.getConfigurationItemId() + '/iterations/' + this.getIteration() + '/';
         },
         getSerialNumber: function () {
             return this.get('serialNumber');
@@ -61,7 +62,7 @@ define(['backbone'
         getUpdateAuthorName: function () {
             return this.get('updateAuthorName');
         },
-        getCreationDate: function() {
+        getCreationDate: function () {
             return this.get('creationDate');
         },
         getModificationDate: function () {

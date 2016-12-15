@@ -3,9 +3,8 @@ define([
     'backbone',
     'mustache',
     'text!common-objects/templates/time_zone.html',
-    'moment',
     'common-objects/utils/date'
-], function (Backbone, Mustache, template, moment, date) {
+], function (Backbone, Mustache, template, date) {
     'use strict';
     var TimeZoneView = Backbone.View.extend({
         events: {
@@ -19,13 +18,13 @@ define([
         render: function () {
             this.$el.html(Mustache.render(template, {
                 i18n: App.config.i18n,
-                dates:this.dates
+                dates: this.dates
             }));
             this.$modal = this.$('#timezone_modal');
             return this;
         },
 
-        setTimestamp:function(timestamp){
+        setTimestamp: function (timestamp) {
             this.dates = date.getMainZonesDates(timestamp);
             return this;
         },
