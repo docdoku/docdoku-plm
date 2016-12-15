@@ -21,19 +21,26 @@
 package com.docdoku.server.rest.util;
 
 /**
+ * This class holds the context for a document baseline export
+ * See {link com.docdoku.server.rest.writer.DocumentBaselineFileExportMessageBodyWriter} for response implementation
+ *
  * @author Elisabel Généreux on 21/09/16.
  */
+public class DocumentBaselineFileExport {
 
-// TODO : this seems to be used as a DTO class. Rename and move it to DTO package. Add annotations
-
-public class FileExportDocumentEntity {
+    /**
+     * The workspace concerned
+     */
     private String workspaceId;
+    /**
+     * The baseline identifier
+     */
     private Integer baselineId;
 
-    public FileExportDocumentEntity() {
+    public DocumentBaselineFileExport() {
     }
 
-    public FileExportDocumentEntity(String workspaceId, Integer baselineId) {
+    public DocumentBaselineFileExport(String workspaceId, Integer baselineId) {
         this.workspaceId = workspaceId;
         this.baselineId = baselineId;
     }

@@ -29,7 +29,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.server.rest.util.FileExportProductEntity;
+import com.docdoku.server.rest.util.ProductFileExport;
 import com.docdoku.server.rest.util.FileExportTools;
 
 import javax.inject.Inject;
@@ -52,9 +52,9 @@ import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
 @Provider
-public class FileExportProductMessageBodyWriter implements MessageBodyWriter<FileExportProductEntity> {
+public class ProductFileExportMessageBodyWriter implements MessageBodyWriter<ProductFileExport> {
 
-    private static final Logger LOGGER = Logger.getLogger(FileExportProductMessageBodyWriter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ProductFileExportMessageBodyWriter.class.getName());
     @Inject
     private IBinaryStorageManagerLocal storageManager;
     @Inject
@@ -64,27 +64,27 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return type.equals(FileExportProductEntity.class);
+        return type.equals(ProductFileExport.class);
     }
 
     @Override
-    public long getSize(FileExportProductEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(ProductFileExport productFileExport, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
         return -1;
     }
 
     @Override
-    public void writeTo(FileExportProductEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
+    public void writeTo(ProductFileExport productFileExport, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream) throws IOException, WebApplicationException {
 
         ZipOutputStream zs = new ZipOutputStream(outputStream);
 
         try {
 
-            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(fileExportEntity.getBaselineId(), fileExportEntity.getConfigurationItemKey().getWorkspace(), fileExportEntity.getConfigurationItemKey(), fileExportEntity.getPsFilter(), fileExportEntity.isExportNativeCADFile(), fileExportEntity.isExportDocumentLinks());
+            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(productFileExport.getBaselineId(), productFileExport.getConfigurationItemKey().getWorkspace(), productFileExport.getConfigurationItemKey(), productFileExport.getPsFilter(), productFileExport.isExportNativeCADFile(), productFileExport.isExportDocumentLinks());
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
             List<String> baselinedSourcesName = new ArrayList<>();
 
-            if (fileExportEntity.isExportDocumentLinks() && fileExportEntity.getBaselineId() != null) {
-                List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(fileExportEntity.getBaselineId());
+            if (productFileExport.isExportDocumentLinks() && productFileExport.getBaselineId() != null) {
+                List<BinaryResource> baselinedSources = productService.getBinaryResourceFromBaseline(productFileExport.getBaselineId());
 
                 for (BinaryResource binaryResource : baselinedSources) {
                     String[] parts = binaryResource.getFullName().split("/");
@@ -104,8 +104,8 @@ public class FileExportProductMessageBodyWriter implements MessageBodyWriter<Fil
                 }
             }
 
-            if (fileExportEntity.getSerialNumber() != null) {
-                addProductInstanceDataToZip(zs, fileExportEntity.getConfigurationItemKey(), fileExportEntity.getSerialNumber(), baselinedSourcesName);
+            if (productFileExport.getSerialNumber() != null) {
+                addProductInstanceDataToZip(zs, productFileExport.getConfigurationItemKey(), productFileExport.getSerialNumber(), baselinedSourcesName);
             }
 
         } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ConfigurationItemNotFoundException |

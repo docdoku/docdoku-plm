@@ -25,7 +25,7 @@ import com.docdoku.core.configuration.BaselinedDocumentBinaryResourceCollection;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IDocumentBaselineManagerLocal;
-import com.docdoku.server.rest.util.FileExportDocumentEntity;
+import com.docdoku.server.rest.util.DocumentBaselineFileExport;
 import com.docdoku.server.rest.util.FileExportTools;
 
 import javax.inject.Inject;
@@ -45,9 +45,9 @@ import java.util.logging.Logger;
 import java.util.zip.ZipOutputStream;
 
 @Provider
-public class FileExportDocumentMessageBodyWriter implements MessageBodyWriter<FileExportDocumentEntity> {
+public class DocumentBaselineFileExportMessageBodyWriter implements MessageBodyWriter<DocumentBaselineFileExport> {
 
-    private static final Logger LOGGER = Logger.getLogger(FileExportDocumentMessageBodyWriter.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocumentBaselineFileExportMessageBodyWriter.class.getName());
     @Inject
     private IBinaryStorageManagerLocal storageManager;
     @Inject
@@ -55,22 +55,22 @@ public class FileExportDocumentMessageBodyWriter implements MessageBodyWriter<Fi
 
     @Override
     public boolean isWriteable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
-        return type.equals(FileExportDocumentEntity.class);
+        return type.equals(DocumentBaselineFileExport.class);
     }
 
     @Override
-    public long getSize(FileExportDocumentEntity fileExportDocumentEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
+    public long getSize(DocumentBaselineFileExport documentBaselineFileExport, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
         return -1;
     }
 
     @Override
-    public void writeTo(FileExportDocumentEntity fileExportEntity, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream)
+    public void writeTo(DocumentBaselineFileExport documentBaselineFileExport, Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> multivaluedMap, OutputStream outputStream)
             throws IOException, WebApplicationException {
 
         ZipOutputStream zs = new ZipOutputStream(outputStream);
 
         try {
-            List<BaselinedDocumentBinaryResourceCollection> binaryResourceCollections = documentBaselineService.getBinaryResourcesFromBaseline(fileExportEntity.getWorkspaceId(), fileExportEntity.getBaselineId());
+            List<BaselinedDocumentBinaryResourceCollection> binaryResourceCollections = documentBaselineService.getBinaryResourcesFromBaseline(documentBaselineFileExport.getWorkspaceId(), documentBaselineFileExport.getBaselineId());
             for (BaselinedDocumentBinaryResourceCollection collection : binaryResourceCollections) {
                 for (BinaryResource binaryResource : collection.getAttachedFiles()) {
                     addToZip(collection, binaryResource, zs);

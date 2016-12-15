@@ -24,9 +24,12 @@ import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.ConfigurationItemKey;
 
 /**
+ * This class holds the context for a product export
+ * See {link com.docdoku.server.rest.writer.DocumentBaselineFileExportMessageBodyWriter} for response implementation
+ *
  * @author morgan on 29/04/15.
  */
-public class FileExportProductEntity {
+public class ProductFileExport {
 
     private ConfigurationItemKey configurationItemKey;
     private ProductStructureFilter psFilter;
@@ -38,7 +41,7 @@ public class FileExportProductEntity {
     private boolean exportDocumentLinks;
 
 
-    public FileExportProductEntity() {
+    public ProductFileExport() {
     }
 
     public ProductStructureFilter getPsFilter() {

@@ -29,7 +29,7 @@ import com.docdoku.core.services.IDocumentBaselineManagerLocal;
 import com.docdoku.server.rest.dto.baseline.BaselinedDocumentDTO;
 import com.docdoku.server.rest.dto.baseline.DocumentBaselineDTO;
 import com.docdoku.server.rest.util.FileDownloadTools;
-import com.docdoku.server.rest.util.FileExportDocumentEntity;
+import com.docdoku.server.rest.util.DocumentBaselineFileExport;
 import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -43,6 +43,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -219,12 +220,11 @@ public class DocumentBaselinesResource {
         return mapper.map(documentBaseline, DocumentBaselineDTO.class);
     }
 
-    // TODO : test this class in API. This method will trigger a file download, generated API should be able to retrieve it.
     @GET
     @ApiOperation(value = "Export files",
-            response = Response.class)
+            response = File.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful export, trigger a download as download file"),
+            @ApiResponse(code = 200, message = "Successful files export, download a zipped file containing requested files."),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -234,7 +234,7 @@ public class DocumentBaselinesResource {
             @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws BaselineNotFoundException, WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
 
-        FileExportDocumentEntity fileExportEntity = new FileExportDocumentEntity(workspaceId, baselineId);
+        DocumentBaselineFileExport documentBaselineFileExport = new DocumentBaselineFileExport(workspaceId, baselineId);
 
         DocumentBaseline documentBaseline = documentBaselineService.getBaselineLight(workspaceId, baselineId);
         String fileName = FileDownloadTools.getFileName(documentBaseline.getName() + "-export", "zip");
@@ -243,7 +243,7 @@ public class DocumentBaselinesResource {
         return Response.ok()
                 .header("Content-Type", "application/download")
                 .header("Content-Disposition", contentDisposition)
-                .entity(fileExportEntity).build();
+                .entity(documentBaselineFileExport).build();
     }
 
 

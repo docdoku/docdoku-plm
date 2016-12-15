@@ -41,7 +41,7 @@ import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
 import com.docdoku.server.rest.util.FileDownloadTools;
-import com.docdoku.server.rest.util.FileExportProductEntity;
+import com.docdoku.server.rest.util.ProductFileExport;
 import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
@@ -593,24 +593,24 @@ public class ProductResource {
             configSpecType = "wip";
         }
 
-        FileExportProductEntity fileExportEntity = new FileExportProductEntity();
+        ProductFileExport productFileExport = new ProductFileExport();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ProductStructureFilter psFilter = psFilterService.getPSFilter(ciKey, configSpecType, false);
 
-        fileExportEntity.setPsFilter(psFilter);
-        fileExportEntity.setConfigurationItemKey(ciKey);
+        productFileExport.setPsFilter(psFilter);
+        productFileExport.setConfigurationItemKey(ciKey);
 
-        fileExportEntity.setExportNativeCADFile(exportNativeCADFiles);
-        fileExportEntity.setExportDocumentLinks(exportDocumentLinks);
+        productFileExport.setExportNativeCADFile(exportNativeCADFiles);
+        productFileExport.setExportDocumentLinks(exportDocumentLinks);
 
         if (configSpecType.startsWith("pi-")) {
             String serialNumber = configSpecType.substring(3);
-            fileExportEntity.setSerialNumber(serialNumber);
-            fileExportEntity.setBaselineId(productService.loadProductBaselineForProductInstanceMaster(ciKey, serialNumber).getId());
+            productFileExport.setSerialNumber(serialNumber);
+            productFileExport.setBaselineId(productService.loadProductBaselineForProductInstanceMaster(ciKey, serialNumber).getId());
 
         } else if (!"wip".equals(configSpecType) && !"latest".equals(configSpecType) && !"released".equals(configSpecType)) {
             try {
-                fileExportEntity.setBaselineId(Integer.parseInt(configSpecType));
+                productFileExport.setBaselineId(Integer.parseInt(configSpecType));
             } catch (NumberFormatException e) {
                 LOGGER.log(Level.FINEST, null, e);
             }
@@ -622,7 +622,7 @@ public class ProductResource {
         return Response.ok()
                 .header("Content-Type", "application/download")
                 .header("Content-Disposition", contentDisposition)
-                .entity(fileExportEntity).build();
+                .entity(productFileExport).build();
     }
 
     @POST
