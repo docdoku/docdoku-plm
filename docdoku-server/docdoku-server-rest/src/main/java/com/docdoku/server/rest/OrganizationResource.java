@@ -75,16 +75,20 @@ public class OrganizationResource {
     @ApiOperation(value = "Get organization for authenticated user",
             response = OrganizationDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of OrganizationDTO"),
+            @ApiResponse(code = 200, message = "Successful retrieval of OrganizationDTO. It may be a null object"),
             @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 404, message = "No organization for authenticated account"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
     public OrganizationDTO getOrganization()
-            throws AccountNotFoundException, OrganizationNotFoundException {
-        Organization organization = organizationManager.getMyOrganization();
-        return mapper.map(organization, OrganizationDTO.class);
+            throws AccountNotFoundException {
+
+        try {
+            Organization organization = organizationManager.getMyOrganization();
+            return mapper.map(organization, OrganizationDTO.class);
+        } catch (OrganizationNotFoundException e) {
+            return null;
+        }
     }
 
     @POST
@@ -247,6 +251,7 @@ public class OrganizationResource {
             organizationManager.updateOrganization(organization);
         }
     }
+
     private void moveMemberDown(String login) throws OrganizationNotFoundException, AccountNotFoundException, AccessRightException {
         Organization organization = organizationManager.getMyOrganization();
         Account member = accountManager.getAccount(login);

@@ -87,7 +87,6 @@ public class OrganizationManagerBean implements IOrganizationManagerLocal {
     public Organization getMyOrganization() throws AccountNotFoundException, OrganizationNotFoundException {
         String login = contextManagerLocal.getCallerPrincipalLogin();
         return getOrganizationOfAccount(login);
-
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})

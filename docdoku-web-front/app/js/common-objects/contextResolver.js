@@ -96,7 +96,7 @@ define([
 
     ContextResolver.prototype.resolveOrganization = function () {
         return Organization.getOrganization().then(function (organization) {
-            App.config.organization = organization;
+            App.config.organization = organization || {};
         }, onError);
     };
 
