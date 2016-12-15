@@ -13,16 +13,27 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RunWith(JUnit4.class)
 public class OrganizationsApiTest {
 
     private final static OrganizationsApi organizationsApi = new OrganizationsApi(TestConfig.REGULAR_USER_CLIENT);
+    private final static Logger LOGGER = Logger.getLogger(OrganizationsApiTest.class.getName());
 
     @BeforeClass
     public static void initOrganization() throws ApiException {
-        OrganizationDTO oldOrganization = organizationsApi.getOrganization();
-        if (oldOrganization.getName() != null) {
+
+        OrganizationDTO oldOrganization = null;
+
+        try {
+            oldOrganization = organizationsApi.getOrganization();
+        } catch (ApiException e) {
+            LOGGER.log(Level.INFO, "Organization not existing");
+        }
+
+        if (oldOrganization != null) {
             organizationsApi.deleteOrganization();
         }
         OrganizationDTO organization = TestUtils.createOrganization();
@@ -92,9 +103,14 @@ public class OrganizationsApiTest {
 
     @AfterClass
     public static void deleteOrganization() throws ApiException {
+
         organizationsApi.deleteOrganization();
-        OrganizationDTO organization = organizationsApi.getOrganization();
-        Assert.assertNull(organization.getName());
+
+        try {
+            organizationsApi.getOrganization();
+        } catch (ApiException e) {
+            Assert.assertEquals(404, e.getCode());
+        }
     }
 
 }
