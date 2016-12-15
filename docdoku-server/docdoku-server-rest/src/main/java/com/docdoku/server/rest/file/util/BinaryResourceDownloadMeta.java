@@ -168,10 +168,10 @@ public class BinaryResourceDownloadMeta {
     /**
      * Get the Content disposition for this file
      *
-     * @return Http Response content disposition
+     * @return Http response 'Content-Disposition' header value
      */
-    // Todo check if we can have unencoding contentDisposition
-    // Todo check accept request
+    // Todo check if we can have decoding contentDisposition
+    // Todo : check accept header in request
     public String getContentDisposition() {
         String fileName = FileDownloadTools.getFileName(fullName, outputFormat);
         return FileDownloadTools.getContentDisposition(downloadType, fileName);

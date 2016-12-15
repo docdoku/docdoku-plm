@@ -103,7 +103,7 @@ public class ChangeIssue extends ChangeItem {
         this.initiator = initiator;
     }
 
-    public void setInitiator(String initiator) {                                                                        // TODO Find utility of this attribute
+    public void setInitiator(String initiator) {
         this.initiator = initiator;
     }
 

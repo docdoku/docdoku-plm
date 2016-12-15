@@ -39,9 +39,6 @@ public class ListOfValuesDTO implements Serializable {
     @ApiModelProperty(value = "LOV name")
     private String name;
 
-    // todo : find usage
-    private WorkspaceDTO workspace;
-
     @ApiModelProperty(value = "LOV values")
     private List<NameValuePairDTO> values;
 
@@ -75,14 +72,6 @@ public class ListOfValuesDTO implements Serializable {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public WorkspaceDTO getWorkspace() {
-        return workspace;
-    }
-
-    public void setWorkspace(WorkspaceDTO workspace) {
-        this.workspace = workspace;
     }
 
     public List<NameValuePairDTO> getValues() {
