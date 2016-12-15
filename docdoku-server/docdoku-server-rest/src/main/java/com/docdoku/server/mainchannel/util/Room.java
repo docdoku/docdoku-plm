@@ -174,8 +174,8 @@ public class Room {
         }
 
         if (userSession != null && userSession.equals(userSession1)) {
-            // Todo check why this if always true
-            if (userSession1 != null) {
+            // User session 2 becomes user session 1
+            if (userSession2 != null) {
                 userSession1 = userSession2;
                 userSession2 = null;
             } else {
