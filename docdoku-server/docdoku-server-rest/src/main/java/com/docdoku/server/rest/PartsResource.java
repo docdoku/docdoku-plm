@@ -316,7 +316,35 @@ public class PartsResource {
         }
     }
 
-    // TODO : set the right response class, and use it from genrated API
+    @GET
+    @Path("{partNumber}/latest-revision")
+    @ApiOperation(value = "Get part latest revision",
+            response = PartRevisionDTO.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of PartRevisionDTO"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLatestPartRevision(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
+            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber)
+            throws EntityNotFoundException, AccessRightException, UserNotActiveException {
+
+        PartMasterKey masterKey = new PartMasterKey(workspaceId, partNumber);
+        PartMaster partMaster = productService.getPartMaster(masterKey);
+        PartRevision partRevision = partMaster.getLastRevision();
+
+        if (productService.canAccess(partRevision.getKey())) {
+            PartRevisionDTO partRevisionDTO = Tools.mapPartRevisionToPartDTO(partRevision);
+            return Response.ok(partRevisionDTO).build();
+        }
+
+        return Response.status(Response.Status.FORBIDDEN).build();
+
+    }
+
+    // TODO : set the right response class, and use it from generated API
     @POST
     @ApiOperation(value = "Export custom query",
             response = Response.class)
@@ -343,7 +371,7 @@ public class PartsResource {
         return export(workspaceId, query, request, exportType, locale);
     }
 
-    // TODO : set the right response class, and use it from genrated API
+    // TODO : set the right response class, and use it from generated API
     @GET
     @ApiOperation(value = "Export existing query",
             response = Response.class)
@@ -710,7 +738,7 @@ public class PartsResource {
         ExcelGenerator excelGenerator = new ExcelGenerator();
         String contentType = "application/vnd.ms-excel";
         String contentDisposition = "attachment; filename=export_parts.xls";
-        Response.ResponseBuilder responseBuilder = Response.ok((Object) excelGenerator.generateXLSResponse(queryResult, locale, baseURL));
+        Response.ResponseBuilder responseBuilder = Response.ok(excelGenerator.generateXLSResponse(queryResult, locale, baseURL));
         responseBuilder
                 .header("Content-Type", contentType)
                 .header("Content-Disposition", contentDisposition);
