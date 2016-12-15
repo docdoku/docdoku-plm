@@ -20,12 +20,12 @@
 
 package com.docdoku.cli.commands.parts;
 
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.services.PartsApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
-import com.docdoku.api.client.ApiException;
-import com.docdoku.api.models.PartRevisionDTO;
-import com.docdoku.api.services.PartApi;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -33,21 +33,20 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
  * @author Florent Garin
  */
 public class PartStatusCommand extends BaseCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to get a status ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
+    @Option(metaVar = "<revision>", name = "-r", aliases = "--revision", usage = "specify revision of the part to get a status ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private String revision;
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to get a status; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<cadfile>]", index=0, usage = "specify the cad file of the part to get a status")
+    @Argument(metaVar = "[<cadfile>]", index = 0, usage = "specify the cad file of the part to get a status")
     private File cadFile;
 
-    @Option(name="-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
     private long lastModified;
@@ -56,20 +55,20 @@ public class PartStatusCommand extends BaseCommandLine {
     public void execImpl() throws Exception {
         try {
 
-            if(partNumber==null || revision==null || workspace==null){
+            if (partNumber == null || revision == null || workspace == null) {
                 loadMetadata();
             }
 
-            if(revision == null){
-                // TODO get part master service ???
+            PartsApi partsApi = new PartsApi(client);
+            PartRevisionDTO partRevision;
 
-                // PartMaster pm = productS.getPartMaster(new PartMasterKey(workspace, partNumber));
-                // output.printPartMaster(pm, lastModified);
-            }else{
-                PartApi partApi = new PartApi(client);
-                PartRevisionDTO partRevision = partApi.getPartRevision(workspace, partNumber, revision);
-                output.printPartRevision(partRevision, lastModified);
+            if (revision == null) {
+                partRevision = partsApi.getLatestPartRevision(workspace, partNumber);
+            } else {
+                partRevision = partsApi.getPartRevision(workspace, partNumber, revision);
             }
+
+            output.printPartRevision(partRevision, lastModified);
 
         } catch (ApiException e) {
             MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
@@ -79,8 +78,8 @@ public class PartStatusCommand extends BaseCommandLine {
     }
 
     private void loadMetadata() throws IOException {
-        if(cadFile==null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
+        if (cadFile == null) {
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1", user));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
         String filePath = cadFile.getAbsolutePath();
@@ -88,15 +87,15 @@ public class PartStatusCommand extends BaseCommandLine {
         workspace = meta.getWorkspace(filePath);
         lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(partNumber==null || strRevision==null || workspace == null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
+        if (partNumber == null || strRevision == null || workspace == null) {
+            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2", user));
         }
         revision = strRevision;
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartStatusCommandDescription",user);
+        return LangHelper.getLocalizedMessage("PartStatusCommandDescription", user);
     }
 
 }
