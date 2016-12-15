@@ -508,7 +508,7 @@ define([
 
         },
 
-        onSuccessfulLoad: function () {
+        onSuccess: function () {
             this.model.fetch().success(function () {
                 this.iteration = this.model.getLastIteration();
                 this.iterations = this.model.getIterations();
