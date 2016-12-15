@@ -234,8 +234,6 @@ public class DocumentRevisionDAO {
     }
 
     public List<DocumentRevision> getDocumentRevisionsFiltered(User user, String workspaceId, int start, int pMaxResults) {
-        // Todo check group access right
-
         int maxResults = (pMaxResults<1) ? pMaxResults : MAX_RESULTS;
 
         String excludedFolders = workspaceId + "/~%";
