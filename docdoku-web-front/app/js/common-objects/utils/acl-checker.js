@@ -34,7 +34,7 @@ define([], function () {
                 });
             });
 
-            if (groupAccess.length) {
+            if (groupAccess && groupAccess.length) {
                 permission = _.sortBy(groupAccess,self.accessPriority)[0].value;
             }
 
