@@ -24,15 +24,18 @@ import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.services.DocumentApi;
+import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Arrays;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 public class DocumentUserGroupACLTest {
@@ -204,7 +207,7 @@ public class DocumentUserGroupACLTest {
         TestUtils.assertUserCanEditDocument(user2Client, document, true);
 
         // Create documents read-only for group2
-        document =  TestUtils.createDocument(workspace.getId(),
+        document = TestUtils.createDocument(workspace.getId(),
                 null, Arrays.asList(group1ReadOnly, group2Forbidden));
 
         TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
@@ -214,7 +217,7 @@ public class DocumentUserGroupACLTest {
         TestUtils.assertUserCanEditDocument(user2Client, document, false);
 
         // Create documents read-only for group1 & group2
-        document =  TestUtils.createDocument(workspace.getId(),
+        document = TestUtils.createDocument(workspace.getId(),
                 null, Arrays.asList(group1ReadOnly, group2ReadOnly));
         TestUtils.assertUserCanRetrieveDocument(user1Client, document, true);
         TestUtils.assertUserCanRetrieveDocument(user2Client, document, true);
@@ -226,7 +229,19 @@ public class DocumentUserGroupACLTest {
 
     @AfterClass
     public static void deleteWorkspace() throws ApiException {
+
+        assertDocumentsRetrieval(user1Client);
+        assertDocumentsRetrieval(user2Client);
+
         workspacesApi.deleteWorkspace(workspace.getId());
+    }
+
+    private static void assertDocumentsRetrieval(ApiClient client) throws ApiException {
+        DocumentsApi documentsApi = new DocumentsApi(client);
+        int documentsInWorkspaceCount = documentsApi.getDocumentsInWorkspaceCount(workspace.getId()).getCount();
+        List<DocumentRevisionDTO> documentsInWorkspace = documentsApi.getDocumentsInWorkspace(workspace.getId(), 0, documentsInWorkspaceCount);
+        Assert.assertFalse(documentsInWorkspace.isEmpty());
+        Assert.assertEquals(documentsInWorkspaceCount, documentsInWorkspace.size());
     }
 
 
