@@ -1,6 +1,5 @@
 #product_nav_list {
-
-    min-width: 500px;
+    margin-left: 16px;
 
     &.displayComment {
         .fa-quote-right {
@@ -9,11 +8,11 @@
     }
 
     .fa-quote-right {
-        color: green;
+        color: @input-state-success;
         opacity: 0.5;
     }
     .fa-refresh {
-        color: green;
+        color: @input-state-success;
     }
 
     .fa-arrows-h {
@@ -34,8 +33,8 @@
         font-weight: bold;
         cursor: pointer;
         line-height: 18px;
-        color: #434C64;
-        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+        color: @text-color;
+        text-shadow: @text-color-shadow;
         padding-top: 6px;
 
         img.loader {
@@ -50,12 +49,11 @@
         }
 
         .product_title {
-
-            padding-left: 5px;
-            padding-right: 2px;
+            border-radius: 8px;
+            padding: 2px 8px;
 
             &.active {
-                background-color: #CFD7E4;
+                background-color: @background-color-strong;
             }
 
         }
@@ -74,16 +72,16 @@
 
         li {
             margin-left: 0px;
-            width: 100%;
+            white-space: nowrap;
 
             a {
                 display: inline-block;
                 cursor: pointer;
 
                 label {
-                    color: #434C64;
+                    color: @text-color;
                     font-size: 12px;
-                    text-shadow: 0px 1px 0px white;
+                    text-shadow: @text-color-shadow;
                 }
 
                 i {
@@ -98,7 +96,7 @@
                     margin: 0;
 
                     &:hover {
-                        background-color: #CFD7E4;
+                        background-color: @background-color-strong;
                     }
 
                 }
@@ -106,15 +104,15 @@
 
             &.resultPath {
                 > a > label {
-                    background: #fc6;
+                    background: @text-highlight-color;
                 }
             }
 
             &.active {
                 > a > label {
-                    text-shadow: 0px 1px 0px white;
-                    color: #434C64;
-                    background-color: #CFD7E4;
+                    text-shadow: @text-color-shadow;
+                    color: @text-color;
+                    background-color: @background-color-strong;
                 }
             }
 
@@ -130,7 +128,7 @@
             &.nav-header {
                 margin-top: 0px;
                 > label {
-                    color: #999;
+                    color: @text-light-color;
                     font-weight: bold;
                     font-size: 11px;
                 }
@@ -159,23 +157,23 @@
         }
 
         i.fa-pencil {
-            color: #f89406;
+            color: @input-state-warning;
         }
 
         i.fa-lock {
-            color: #ee5f5b;
+            color: @input-state-danger;
         }
 
         i.fa-check {
-            color: #51a351;
+            color: @input-state-success;
         }
 
         i.fa-exclamation {
-            color: #ee5f5b;
+            color: @input-state-danger;
         }
 
         i.fa-key {
-            color: red;
+            color: @input-state-danger;
         }
 
         i.fa-lock,

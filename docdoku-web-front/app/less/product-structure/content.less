@@ -8,17 +8,13 @@
     width: 85%;
     height: 100%;
     overflow-y: auto;
-    //background: white;
     position: absolute;
     right: 0;
     top: 0;
     z-index: 0;
-    /*
-      -webkit-box-shadow: 0px 1px 3px #9b9b9b;
-      box-shadow: 0px 1px 3px #9b9b9b;*/
 
     button.active {
-        color: white;
+        color: @text-invert-color;
     }
 
     #dmu_container {
@@ -35,18 +31,15 @@
             display: block;
             text-align: center;
             font-size: 18px;
-            text-shadow: 1px 1px 1px #fff;
-            color: #555;
+            text-shadow: 1@text-light-color-shadow;
+            color: @text-light-color;
         }
     }
 
     #side_controls_container {
         top: 0;
         right: 0;
-        background: #f5f5f5;
-
-        /* -webkit-box-shadow: 0px 2px 3px #9b9b9b;
-         box-shadow: 0px 2px 3px #9b9b9b;*/
+        background: @menu-color;
         position: absolute;
         width: 15%;
         height: 100%;
@@ -63,14 +56,14 @@
 
         .nav-header {
             padding: 4px 0 0 0;
-            border-top: 1px solid rgba(155, 155, 155, 0.35);
+            border-top: @border-light;
             margin-bottom: 4px;
         }
 
         div.side_control_group {
             margin: 0 0 10px 0;
             position: relative;
-            color: #62697B;
+            color: @text-light-color;
         }
 
         div.cut_plan_control {
@@ -104,11 +97,10 @@
             -webkit-appearance: none;
             -webkit-border-radius: 0px;
             outline: none;
-            /*box-shadow: 0 0 3px #9b9b9b;*/
-            background: #f9f9f9;
+            background: @background-color;
             cursor: pointer;
             &:hover {
-                background: #eee;
+                background: @background-color-light;
             }
         }
 
@@ -116,7 +108,7 @@
         input#slider-cut-plan::-webkit-slider-thumb,
         input#slider-clipping::-webkit-slider-thumb {
             -webkit-appearance: none;
-            background-image: linear-gradient(to bottom, #7a99c1, #2c4361);
+            background: @plm-primary-color;
             width: 10px;
             height: 18px;
         }
@@ -131,28 +123,28 @@
         i {
             cursor: pointer;
             &:hover {
-                color: #333;
+                color: @text-color;
             }
         }
     }
 
     td.modification_notification {
         i.fa-exclamation {
-            color: #ee5f5b;
+            color: @input-state-danger;
         }
     }
 
     td.part_number {
         i.fa-pencil {
-            color: #f89406;
+            color: @input-state-warning;
         }
 
         i.fa-lock {
-            color: #ee5f5b;
+            color: @input-state-danger;
         }
 
         i.fa-check {
-            color: #51a351;
+            color: @input-state-success;
         }
     }
 

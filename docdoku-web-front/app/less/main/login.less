@@ -20,6 +20,7 @@
     background: radial-gradient(center top, #e2e7ef 0%, #abbacd 100%);
     border: 1px solid #ccc;
 }
+
 #demo-scene {
     order: 2;
     flex: 1 0 200px;
@@ -36,28 +37,27 @@
     flex: 1 0 200px;
     box-sizing: border-box;
 
-    background-color: white;
+    background-color: @background-color-light;
     line-height: 51px;
     h3 {
         text-align: center;
         font-size: 20px;
-        color: #434C64;
+        color: @text-color;
         i {
             margin-right: 10px;
             margin-top: -2px;
         }
     }
 
-
-    &.put-right{
-        order:3;
+    &.put-right {
+        order: 3;
         float: right;
         margin: 0;
         padding: 20px 44px;
-        .notifications{
+        .notifications {
             .alert {
                 line-height: normal;
-                h4{
+                h4 {
                     display: none;
                 }
                 margin-bottom: 12px;
@@ -69,15 +69,14 @@
         }
     }
 
-
-    &.put-above{
+    &.put-above {
         order: 1;
         flex: 1 0 100%;
         padding: 0 20px;
-        .notifications{
+        .notifications {
             .alert {
                 line-height: normal;
-                h4{
+                h4 {
                     display: none;
                 }
                 margin-bottom: 12px;
@@ -89,20 +88,20 @@
         }
     }
 
-    .form-inputs{
+    .form-inputs {
         display: flex;
         flex-wrap: wrap;
-        >p{
+        > p {
             flex: 1 0 200px;
             box-sizing: border-box;
-            /* background: #e0ddd5; */
-            color: #171e42;
+            color: @text-strong-color;
             padding: 0;
             margin-left: 10px;
             margin-top: 0px;
         }
     }
 }
+
 #login_form,
 #recovery_form {
 
@@ -110,40 +109,43 @@
     margin-bottom: 0px;
     text-align: left;
     label {
-        color: #5B6B80;
+        color: @text-light-color;
     }
     input[type="text"],
-    input[type="password"]{
+    input[type="password"] {
         width: 250px;
     }
 }
-#recovery_form{
+
+#recovery_form {
     h4 {
         font-size: 16px;
-        color: #434C64;
+        color: @text-light-color;
     }
 }
-#account_creation_form{
+
+#account_creation_form {
     text-align: left;
-    h3{
+    h3 {
         text-align: left;
     }
     h4 {
         font-size: 16px;
-        color: #434C64;
+        color: @text-light-color;
     }
-    .terms-of-service{
+    .terms-of-service {
         float: right;
         width: 200px;
         line-height: 16px;
     }
-    .account-form-buttons{
-        input,a{
+    .account-form-buttons {
+        input, a {
             margin-top: 30px;
             margin-right: 10px;
         }
     }
 }
+
 .form_button_container {
     float: right;
     margin-bottom: 15px;
@@ -157,17 +159,21 @@
         padding-left: 0;
         width: 100%;
     }
+
     #login_form,
     #recovery_form {
         text-align: center;
     }
+
     .form_button_container {
         float: none;
     }
+
     #demo-scene {
         width: 100%;
     }
 }
+
 #detail_presentation {
     margin: 0px auto;
     max-width: 1520px;
@@ -181,12 +187,12 @@
         height: 196px;
         width: 280px;
         box-shadow: none;
-        border-top: 1px solid #cccccc;
+        border-top: @border-light;
         padding: 19px 50px;
 
         h2 {
             line-height: 18px;
-            color: #0088cc;
+            color: @link-color;
             font-size: 18px;
             margin-top: 0px;
         }
@@ -195,7 +201,7 @@
             font-size: 12px;
             margin-top: 0;
             margin-bottom: 5px;
-            color: #999;
+            color: @text-light-color;
         }
         ul {
             margin-bottom: 0;
@@ -206,7 +212,7 @@
                 font-size: 13px;
                 margin-top: 8px;
                 margin-bottom: 5px;
-                color: #666;
+                color: @text-light-color;
                 font-weight: normal;
                 em {
                     font-weight: 500;
@@ -216,7 +222,7 @@
         }
         p {
             margin: 15px 0 0 0;
-            color: #666;
+            color: @text-light-color;
             font-style: italic;
         }
         > div {
@@ -233,24 +239,27 @@
         max-width: 760px;
     }
 }
+
 @media (max-width: 878px) {
     #detail_presentation {
         max-width: 600px;
     }
+
     #detail_presentation .well {
         padding: 19px 10px;
     }
 }
+
 @media (max-width: 624px) {
     #detail_presentation {
         max-width: 300px;
     }
+
     #detail_presentation .well {
         padding: 19px 10px;
         height: auto;
     }
 }
-
 
 #footer {
     border: none;
@@ -263,6 +272,6 @@
         font-size: 0.8em;
     }
     a {
-        color: #0061c0;
+        color: @link-color;
     }
 }

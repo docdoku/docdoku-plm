@@ -1,7 +1,7 @@
 .LifecycleModalTab {
     &-historyContent {
         a:not(.active) {
-            color: #333;
+            color: @text-color;
         }
     }
 }
@@ -112,11 +112,11 @@
                 }
 
                 i.fa-times:hover {
-                    color: #F00;
+                    color: @input-state-danger;
                 }
 
                 i.fa-check:hover {
-                    color: #33ae24;
+                    color: @input-state-success;
                 }
 
                 h5 {
@@ -136,7 +136,7 @@
 
                     margin-top: 10px;
                     display: none;
-                    border-top: 1px solid #aaaaaa;
+                    border-top: @border-dashed-light;
 
                     &.toggled {
                         display: block;
@@ -152,7 +152,7 @@
 
                     margin-top: 10px;
                     display: none;
-                    border-top: 1px solid #aaaaaa;
+                    border-top: @border-dashed-light;
 
                     &.toggled {
                         display: block;
@@ -181,7 +181,7 @@
                         }
 
                         .lifecycle-activities-canvas {
-                            border: 1px solid #b5b5b5;
+                            border: @border-dashed-light;
                             cursor: crosshair;
 
                             &:active {

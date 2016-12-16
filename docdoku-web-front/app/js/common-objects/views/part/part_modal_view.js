@@ -80,7 +80,7 @@ define([
         },
 
         activateFileTab: function(){
-            this.activateTab(3);
+            this.activateTab(4);
         },
 
         activateNotificationsTab: function(){

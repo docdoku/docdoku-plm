@@ -1,26 +1,22 @@
 #collaborative_view {
     .CollaborativeRoom {
         border-radius: 3px;
-        /*box-shadow: 0px 1px 5px #9b9b9b;*/
         max-width: 100%;
 
         &-title {
             min-height: 18px;
             margin: 0;
             background: @plm-primary-color;
-            /* .gradient(#5b779b,#7a99c1,#2c4361);
-             background-image: linear-gradient(to bottom, #7a99c1, #2c4361);
-             background-repeat: repeat-x;*/
-            color: white;
+            color: @text-invert-color;
             font-size: 1em;
-            text-shadow: #555555 0px -1px 0px;
+            text-shadow: @text-invert-color-shadow;
         }
 
         &-exitBtn {
             float: right;
             margin: 2px 5px;
             &:hover {
-                color: @grayLight;
+                color: @text-very-light-color;
                 cursor: pointer;
             }
         }
@@ -36,7 +32,7 @@
         padding: 2px 5px 0 5px;
 
         &:hover {
-            background-color: rgba(118, 188, 255, 0.48);
+            background-color: @input-state-default-hover;
         }
 
         &.master {
@@ -52,15 +48,15 @@
             font-size: 0.8em;
             vertical-align: baseline;
             line-height: 18px;
-            color: grey;
+            color: @text-light-color;
         }
 
         .collaborative_give_hand,
         .collaborative_kick,
         .collaborative_withdraw_invitation {
-            color: @linkColor;
+            color: @link-color;
             &:hover {
-                color: @linkColorHover;
+                color: @link-color-hover;
                 cursor: pointer;
             }
         }

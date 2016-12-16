@@ -1,4 +1,14 @@
-.workspace-group-container {
+#organization-management-content {
+    width: 85%;
+    height: 100%;
+    overflow: auto;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+}
+
+.home-organization-list-container {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -6,11 +16,32 @@
     align-items: stretch;
     align-content: flex-start;
 
-    .well-large.workspace-group {
+    .well-large.home-organization {
+        margin: 3px;
+        padding: 0 8px 4px 10px;
+        width: 24%;
+        border: @border-strong;
+        background-color: @background-color-light;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+        border-radius: 0;
+    }
+
+}
+
+.organization-group-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+    align-content: flex-start;
+
+    .well-large.organization-group {
 
         margin: 3px;
         padding: 0 8px 4px 10px;
-        border: @border-light;
+        border: @border-strong;
         background-color: @background-color-light;
         -webkit-border-radius: 0;
         -moz-border-radius: 0;
@@ -51,34 +82,4 @@
             color: @input-state-danger;
         }
     }
-}
-
-.readonly-switch {
-    display: block;
-    white-space: nowrap;
-    label {
-        padding-left: 12px;
-        padding-right: 12px;
-    }
-}
-
-.actions {
-    .move-users-container {
-        position: relative;
-        .dropdown-menu {
-            width: 100%;
-            text-align: left;
-        }
-    }
-    input[type="checkbox"] {
-        margin-top: 0;
-        margin-left: 4px;
-    }
-    select {
-        width: auto;
-    }
-}
-
-.no-membership td:not(:last-child) {
-    text-decoration: line-through;
 }

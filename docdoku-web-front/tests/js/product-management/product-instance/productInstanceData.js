@@ -124,8 +124,9 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     /**
      * Check for icon in PS
      */
+    // #path_-1 > a > label > i.fa.fa-asterisk
     casper.then(function waitForPathDataIcon() {
-        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li >  i.fa-asterisk', function iconShown() {
+        return this.waitForSelector('#product_nav_list_container > ul > li > .treeview > ul > li > a  > label > i.fa-asterisk', function iconShown() {
             this.test.assert(true, 'Should refresh the treeview and show the path data icon');
         }, function fail() {
             this.capture('screenshot/product-instance/ModalNotClosing.png');
@@ -134,8 +135,8 @@ casper.test.begin('Product instance data path tests suite', 22, function product
     });
 
     /**
-    * click on the checkbox from the bom
-    */
+     * click on the checkbox from the bom
+     */
     casper.then(function waitForBOM() {
         return this.waitForSelector('.selectable-part-checkbox', function loadDataButton() {
             this.click('.selectable-part-checkbox');

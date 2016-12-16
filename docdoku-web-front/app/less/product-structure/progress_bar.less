@@ -1,19 +1,12 @@
 #progress_bar_container {
-
-    background-image: -webkit-linear-gradient(left, #f5f5f5 0%, #f9f9f9 100%);
-    background-image: -o-linear-gradient(left, #f5f5f5 0%, #f9f9f9 100%);
-    background-image: linear-gradient(to right, #f5f5f5 0%, #f9f9f9 100%);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', endColorstr='#fff9f9f9', GradientType=1);
-
+    background: @menu-color;
     margin: 15px 0 0 0;
     float: right;
     width: 15%;
     height: 20px;
 
     .bar {
-        background-color: #7A99C1;
+        background-color: @plm-secondary-color;
         width: 0;
     }
-
 }

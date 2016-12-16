@@ -19,7 +19,7 @@ casper.test.begin('Path to path link creation tests suite', 8, function pathToPa
      */
 
     casper.then(function waitTree() {
-        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed() {
+        return this.waitForSelector('#product_nav_list_container > ul > li > .treeview > ul > li', function treeDisplayed() {
             this.test.assert(true, 'Tree is displayed');
         }, function fail() {
             this.capture('screenshot/pathToPathLinkCreation/waitTree-error.png');

@@ -12,6 +12,7 @@ app/visualization/main.css
 app/change-management/main.css
 app/workspace-management/main.css
 app/account-management/main.css
+app/organization-management/main.css
 app/documents/main.css
 app/parts/main.css
 app/main/main.css

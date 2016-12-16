@@ -1,7 +1,7 @@
 #shortcuts {
     margin-bottom: 5px;
     a {
-        color: #62697B;
+        color: @text-light-color;
         font-size: 12px;
     }
 }
@@ -19,14 +19,14 @@
             min-width: 10px;
             text-align: center;
             font-family: Monaco, "Liberation Mono", Courier, monospace;
-            background: #555555;
-            color: #EEE;
+            background: @background-color-strong;
+            color: @text-invert-color;
             border-radius: 2px;
-            text-shadow: 1px 1px 0 #000;
+            text-shadow: @text-invert-color-shadow;
 
             em {
                 padding: 0 4px;
-                color: #999;
+                color: @text-light-color;
                 font-style: normal;
                 font-weight: normal;
                 font-size: 11px;
@@ -39,7 +39,7 @@
         dd {
             display: inline;
             margin: 0 0 0 5px;
-            color: #666;
+            color: @text-light-color;
         }
 
     }

@@ -9,13 +9,13 @@
             margin: 0 3px;
             font-size: 15px;
             line-height: 18px;
-            color: black;
-            text-shadow: 0 1px 0 white;
+            color: @text-strong-color;
+            text-shadow: 0 1px 0 @text-invert-color;
             opacity: 0.2;
 
             &:hover {
                 text-decoration: none;
-                color: #9d261d;
+                color: @input-state-danger;
                 opacity: 1;
             }
 
@@ -51,12 +51,12 @@
 
         .required-message{
             display: none;
-            color:#9c5d5d;
+            color:@input-state-danger;
             margin:0 0 0 2px;
         }
 
         &.invalid{
-            border-color: #9c5d5d;
+            border-color: @input-state-danger;
             .required-message{
                 display: block;
             }

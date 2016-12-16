@@ -1,22 +1,26 @@
 html, body {
     height: 100%;
     width: 100%; // required for firefox
-    background-color:@background-color;
+    background-color: @background-color;
     margin: 0;
     padding: 0;
     font-size: 13px;
-    color:#323A45;
+    color: @text-color;
 }
 
-a:hover {
-    cursor: pointer;
+a {
+    color: @link-color;
+    &:hover {
+        color: @link-color-hover;
+        cursor: pointer;
+    }
 }
 
 input:focus:invalid,
 textarea:focus:invalid,
 select:focus:invalid {
-    color: @errorText;
-    background-color: @errorBackground;
+    color: @input-state-danger;
+    background-color: @background-color;
 }
 
 [class^="icon-"] {
@@ -35,16 +39,16 @@ a.is-connected-user {
 .fa-user.user-online,
 .fa-globe.participant-online,
 .fa-graduation-cap.master {
-    color: #4ca300;
+    color: @input-state-success;
 }
 
 .fa-user.user-offline {
-    color: #708090;
+    color: @input-state-disabled;
 }
 
 .fa-graduation-cap.no-master,
 .fa-globe.participant-offline {
-    color: #A30400;
+    color: @input-state-danger;
 }
 
 .hidden {
@@ -62,20 +66,20 @@ a.is-connected-user {
 #header .dropdown-menu > .active > a,
 #header .dropdown-menu > .active > a:hover,
 #header .dropdown-menu > .active > a:focus {
-    background:  @plm-secondary-color;
+    background: @plm-secondary-color;
 }
 
 #header .dropdown-menu > .disabled > a,
 #header .dropdown-menu > .disabled > a:hover,
 #header .dropdown-menu > .disabled > a:focus {
-    color: #999999;
+    color: @input-state-disabled;
 }
 
-.margin{
+.margin {
     margin: 20px;
 }
 
 #header .offline-menu a {
-    color: white;
+    color: @text-invert-color;
     text-shadow: none;
 }

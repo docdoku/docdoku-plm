@@ -51,38 +51,37 @@ div.linked-items-view {
             padding: 6px 4px 2px 4px;
             margin: 0 12px 12px 0;
             display: inline-block;
-            //background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, #f5f5f5 15px, #f5f5f5 25px);
 
             &.priorityColor-LOW {
-                background-color: #5cb85c;
-                color: white;
+                background-color: @priority-low;
+                color: @text-invert-color;
             }
             &.priorityColor-MEDIUM {
-                background-color: #5bc0de;
-                color: white;
+                background-color: @priority-medium;
+                color: @text-invert-color;
             }
             &.priorityColor-HIGH {
-                background-color: #f0ad4e;
-                color: white;
+                background-color: @priority-high;
+                color: @text-invert-color;
             }
             &.priorityColor-EMERGENCY {
-                background-color: #d9534f;
-                color: white;
+                background-color: @priority-emergency;
+                color: @text-invert-color;
             }
 
             .delete-linked-item {
                 font-size: 15px;
-                color: #333;
+                color: @text-color;
                 opacity: 0.2;
 
                 &:hover {
                     text-decoration: none;
                     opacity: 0.8;
-                    color: #333;
+                    color: @text-color;
                 }
             }
             .edit-linked-item-comment {
-                color: #333;
+                color: @text-color;
                 opacity: 0.8;
             }
 
@@ -102,16 +101,16 @@ div.linked-items-view {
             span.comment {
                 display: block;
                 font-style: italic;
-                color: #333;
+                color: @text-color;
                 opacity: 0.8;
             }
 
             i.delete-comment {
-                color: #ff5622;
+                color: @input-state-danger;
             }
 
             i.validate-comment {
-                color: #33ae24;
+                color: @input-state-success;
             }
 
             &.edition {

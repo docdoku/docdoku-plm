@@ -3,7 +3,7 @@
         margin-bottom: 12px;
     }
     .sortable-handler {
-        opacity: 0.2;
+        color:@text-very-light-color;
         cursor: move;
     }
 
@@ -19,14 +19,12 @@
         float: right;
         font-size: 15px;
         line-height: 18px;
-        color: black;
+        color: @text-very-light-color;
         text-shadow: 0 1px 0 white;
-        opacity: 0.2;
 
         &:hover {
             text-decoration: none;
-            color: #F00;
-            opacity: 1;
+            color: @input-state-danger;
         }
     }
 
@@ -54,7 +52,7 @@
             }
         }
         &.highlight {
-            border: 1px dashed #0088cc;
+            border: 1px dashed @link-color;
         }
     }
     .controls.boolean {
@@ -151,7 +149,7 @@ div.attribute-edit {
     }
     div.stroke {
 
-        color: red;
+        color: @input-state-danger;
 
         div.type {
             width: @leftWidth;

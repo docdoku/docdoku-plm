@@ -1,11 +1,11 @@
 .acl-info, .document-acl-info, .part-acl-info, .template-acl-info, .workflow-acl-info {
     i {
         &.read-only {
-            color: #ffb600;
+            color: @acl-read-only;
         }
 
         &.full-access {
-            color: #388052;
+            color: @acl-full-access;
         }
     }
 }
@@ -54,13 +54,13 @@
                 }
 
                 &[value="FORBIDDEN"] + label > i {
-                    color: #ff675b;
+                    color: @acl-forbidden;
                 }
                 &[value="READ_ONLY"] + label > i {
-                    color: #ffb600;
+                    color: @acl-read-only;
                 }
                 &[value="FULL_ACCESS"] + label > i {
-                    color: #388052;
+                    color: @acl-full-access;
                 }
             }
 

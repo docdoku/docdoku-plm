@@ -14,7 +14,7 @@ ul.baselines-list {
         a {
             &.stroke {
                 text-decoration: line-through;
-                color: red;
+                color: @input-state-danger;
             }
         }
 
@@ -44,7 +44,7 @@ ul.baselined-documents {
 
 div#tab-docs-choice {
     div.warning-multiple {
-        color: #f89406;
+        color: @input-state-warning;
     }
 }
 
@@ -57,18 +57,17 @@ div.baselined-document {
     }
     a.delete-document {
         font-size: 15px;
-        color: #333;
-        opacity: 0.2;
+        color: @text-very-light-color;
 
         &:hover {
             opacity: 0.8;
-            color: #333;
+            color: @input-state-danger;
         }
     }
     a.fa-check {
-        color: #51a351;
+        color: @input-state-success;
     }
     a.fa-frown-o {
-        color: #f89406;
+        color: @input-state-warning;
     }
 }

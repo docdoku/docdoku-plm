@@ -1,6 +1,5 @@
 #webrtc_module {
     background: rgba(0, 0, 0, 0.8);
-    /*box-shadow: 0 0 5px #9B9B9B;*/
     position: absolute;
     width: 0;
     height: 0;
@@ -35,14 +34,14 @@
 
 #webrtc_module > #webrtc_module_header > h3#webrtc_module_title {
     margin: 0;
-    color: white;
+    color: @text-invert-color;
     text-align: center;
 }
 
 #webrtc_module > #webrtc_module_header > h3#webrtc_module_controls {
     font-size: 16px;
     position: absolute;
-    color: white;
+    color: @text-invert-color;
     top: 0;
     cursor: pointer;
     left: 15px;
@@ -65,7 +64,7 @@
 
 #webrtc_module > #webrtc_module_body > #webrtc_call_state {
     height: 6%;
-    color: white;
+    color: @text-invert-color;
 }
 
 #webrtc_module.webrtc_minimized > #webrtc_module_body > #webrtc_call_state,
@@ -92,7 +91,6 @@
     padding: 0;
     background-color: rgba(0, 0, 0, 0.6);
     border-radius: 6px;
-    /*box-shadow: 0 0 3px #666;*/
     overflow: hidden;
 }
 
@@ -123,7 +121,6 @@
     width: 20%;
     height: 25%;
     background-color: rgba(0, 0, 0, 0.6);
-    /*box-shadow: 0 0 3px #666;*/
     cursor: move;
     border-radius: 6px;
     opacity: 0;

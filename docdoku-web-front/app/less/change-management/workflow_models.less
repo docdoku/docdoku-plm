@@ -4,7 +4,7 @@ input#workflow-name {
 }
 
 input#workflow-name:invalid {
-    background-color: #ffffff;
+    background-color: @background-color-light;
 }
 
 button#copy-workflow {
@@ -29,12 +29,11 @@ div#workflow-editor {
 
     div#start, div#end {
         margin: 2px 8px;
-       /* border-radius: 4px;*/
-        border: 2px solid #999;
+        border: 2px solid @plm-primary-hover-color;
         height: 68px;
-        background-color: #999;
+        background-color: @plm-primary-color;
         font-size: 20px;
-        color: #5A5A5A;
+        color: @text-invert-color;
 
         i {
             width: 18px;
@@ -62,13 +61,10 @@ div#workflow-editor {
         margin: 2px 8px;
         width: 38px;
         height: 72px;
-        border: 2px solid #999;
-        background-color: #999;
+        border: 2px solid @plm-primary-color;
+        background-color: @plm-primary-color;
         font-size: 20px;
-        color: #5A5A5A;
-        /*
-        border-radius: 4px;
-        */
+        color: @text-invert-color;
     }
 
     button {
@@ -84,13 +80,6 @@ div#workflow-editor {
         margin: 0;
         list-style: none;
 
-        li.activity-section-placeholder {
-            border: 1px dashed red;
-            width: 50px;
-            height: 50px;
-            display: block;
-        }
-
         li.activity-section {
             text-align: center;
 
@@ -100,11 +89,10 @@ div#workflow-editor {
 
                 div.activity-topbar {
                     position: relative;
-                    border: 2px solid #999;
+                    border: 2px solid @plm-primary-hover-color;
                     margin: 0px 0px 8px 0px;
                     text-align: left;
-                    background-color: #999;
-                    //border-radius: 4px;
+                    background-color: @plm-primary-color;
                     cursor: move;
 
                     button.switch-activity {
@@ -120,7 +108,7 @@ div#workflow-editor {
                     span.activity-type {
                         margin: 2px;
                         line-height: 34px;
-                        color: white;
+                        color: @text-invert-color;
                     }
 
                     button.delete-activity {
@@ -129,13 +117,12 @@ div#workflow-editor {
                         position: absolute;
                         width: 32px;
                         height: 32px;
-                        color: #5A5A5A;
+                        color: @text-invert-color;
                         font-size: 16px;
                     }
 
                     input.activity-state {
                         margin: 0px auto;
-                        //border-radius: 4px;
                         text-align: center;
                         padding: 4px 0px;
                         display: block;
@@ -150,7 +137,9 @@ div#workflow-editor {
                         i {
                             float: left;
                             margin: 10px 2px 2px 8px;
+                            color: @text-invert-color;
                         }
+
                         select.relaunchActivitySelector {
                             width: 80%;
                             float: left;
@@ -158,25 +147,24 @@ div#workflow-editor {
                             background: transparent;
                             border: none;
                             outline: none;
-                            color: white;
+                            color: @text-invert-color;
                             option {
-                                background: #999;
+                                background: @background-color-light;
+                                color: @text-color;
                             }
                         }
                     }
                 }
 
                 button.add-task {
-                    /*box-shadow: 0px 0px 2px #3F5F99;*/
-                    background-color: #659FD8;
+                    background-color: @plm-secondary-color;
                     display: block;
                     margin: 0px auto 0px auto;
                     padding: 10px 0px;
                     width: 38px;
                     height: 38px;
                     font-size: 20px;
-                    color: #25598F;
-                   // border-radius: 4px;
+                    color: @text-invert-color;
                 }
 
                 ul.task-list {
@@ -188,14 +176,12 @@ div#workflow-editor {
                         padding: 0px 8px 8px 0px;
 
                         div.task {
-                            border: 1px solid #ccc;
+                            border: @border-dashed-light;
                             text-align: left;
-                            background-color: white;
-                            /*box-shadow: 0px 0px 2px #3F5F99;*/
-                           // border-radius: 4px;
+                            background-color: @background-color-light;
 
                             &.fold {
-                                background-color: #659FD8;
+                                background-color: @plm-secondary-color;
 
                                 div.task-topbar {
                                     background-color: transparent;
@@ -209,7 +195,7 @@ div#workflow-editor {
                                         width: 32px;
                                         padding: 10px 0 8px 0;
                                         cursor: move;
-                                        color: #25598F;
+                                        color: @text-invert-color;
                                         font-size: 17px;
                                         text-align: center;
                                     }
@@ -227,7 +213,7 @@ div#workflow-editor {
                                         display: inline-block;
                                         cursor: pointer;
                                         box-shadow: none;
-                                        color: white;
+                                        color: @text-invert-color;
                                         padding: 2px 6px 2px 0;
                                         margin: 0;
                                     }
@@ -248,9 +234,10 @@ div#workflow-editor {
                                     height: 38px;
                                     width: 32px;
                                     float: left;
-                                    color: #25598F;
+                                    color: @text-invert-color;
                                     padding: 0;
                                     font-size: 15px;
+
                                 }
 
                                 p.task-name {
@@ -262,17 +249,15 @@ div#workflow-editor {
                                     width: 146px;
                                     font-weight: bold;
                                     margin: 2px 0 2px 2px;
-                                    border-color: rgba(0, 0, 0, 0.45);
-                                    background-color: rgba(255, 255, 255, 0.9);
+                                    border: @border-dashed-light;
+                                    background-color: @background-color;
                                 }
                             }
 
                             div.task-topbar {
                                 height: 38px;
                                 text-align: left;
-                                background-color: #659FD8;
-                               // border-radius: 4px 4px 0px 0px;
-
+                                background-color: @plm-secondary-color;
                                 input.task-name {
                                     height: 24px;
                                     font-weight: bold;
@@ -284,7 +269,7 @@ div#workflow-editor {
                                 > label {
                                     font-size: 12px;
                                     font-weight: bold;
-                                    color: #659FD8;
+                                    color: @plm-secondary-color;
                                     line-height: 25px;
                                     margin: 4px 4px 0px 4px;
                                 }
@@ -297,10 +282,7 @@ div#workflow-editor {
                                     width: 188px;
                                     padding: 3px 0 3px 0;
                                     margin: 0 4px 4px 4px;
-                                    border: 1px solid #cccccc;
-                                   /* -webkit-border-radius: 4px;
-                                    -moz-border-radius: 4px;
-                                    border-radius: 4px;*/
+                                    border: @border-dashed-light;
                                 }
 
                                 > select {
@@ -314,6 +296,7 @@ div#workflow-editor {
                                     height: 22px;
                                     margin-right: 4px;
                                     text-align: center;
+                                    color: @plm-primary-color;
                                 }
 
                                 .new-role, .role-select {
@@ -338,7 +321,7 @@ div#workflow-editor {
                                 float: right;
                                 width: 32px;
                                 height: 38px;
-                                color: #25598F;
+                                color: @text-invert-color;
                                 font-size: 15px;
                             }
                         }
@@ -375,7 +358,7 @@ div#workflow-editor {
                     div.activity-topbar {
 
                         label.tasksToComplete {
-                            color: white;
+                            color: @text-invert-color;
                             width: 65px;
                             display: inline-block;
                             margin: 4px 0px 2px 2px;

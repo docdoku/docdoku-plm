@@ -9,7 +9,7 @@
 }
 
 .treeview ul {
-    background-color: white;
+    background-color: @background-color-light;
     margin-top: 4px;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .treeview a.selected {
-    background-color: #eee;
+    background-color: @input-state-default-hover;
 }
 
 #treecontrol {
@@ -43,7 +43,7 @@
 }
 
 .treeview .hover {
-    color: red;
+    color: @input-state-danger;
     cursor: pointer;
 }
 
@@ -115,7 +115,7 @@
 
         .description {
             display: table;
-            color: #434C64;
+            color: @text-color;
             font-style: italic;
             font-weight: 200 !important;
             font-size: smaller;

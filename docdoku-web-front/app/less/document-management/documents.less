@@ -3,32 +3,32 @@
     td {
         a.dochandle {
             font-size: 14px;
-            color: #aaa;
-            text-shadow: 0 1px 0 white;
+            color: @text-very-light-color;
+            text-shadow: 0 1px 0 @text-invert-color;
 
             &:hover {
-                color: #555;
+                color: @text-light-color;
                 cursor: move;
                 text-decoration: none;
             }
         }
 
         &.doc-ref > a {
-            color: #62697B;
+            color: @text-light-color;
             &:hover {
                 text-decoration: none;
-                color: #333;
+                color: @text-color;
             }
         }
     }
 
     tr.moving {
         a.dochandle {
-            color: #555;
+            color: @text-light-color;
         }
 
         td.doc-ref > a {
-            color: #333;
+            color: @text-color;
         }
     }
 }

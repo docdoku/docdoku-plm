@@ -1,33 +1,105 @@
+// Texts
+@base-font-size: 13px;
+@base-line-height: 18px;
+
+@text-strong-color: #121821;
+@text-strong-color-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+
+@text-color: #323A45;
+@text-color-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+
+@text-light-color: #62697B;
+@text-light-color-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+
+@text-very-light-color: #b3bcc4;
+@text-very-light-color-shadow: 0 -1px 0 rgba(0, 0, 0, 0.10);
+
+@text-invert-color: #ffffff;
+@text-invert-color-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+
+@text-highlight-color: #fff148;
+
+// Main colors
+@plm-primary-color: #1A658A;
+@plm-primary-hover-color: #255578;
+@plm-secondary-color: #3a87ad;
+@plm-secondary-hover-color: #336b8f;
+@background-color-strong: #c0c5c7;
+@background-color: #E3E8EA;
+@background-color-light: #ffffff;
+
+// Borders
+@border-light: 1px solid #cccccc;
+@border-light-double: 2px solid #cccccc;
+@border-dashed-light: 1px dashed #a1a0a0;
+@border-dashed-light-double: 2px dashed #a1a0a0;
+@border-strong: 1px solid #717070;
+@border-strong-double: 2px solid #717070;
+
+// Links color
+@link-color: #0088cc;
+@link-color-hover: darken(@link-color, 15%);
+
 // Navbar
-@navbarBackground: #213251;
-@navbarBackgroundHighlight: lighten(@navbarBackground, 20%);
+@navbar-background-color: #213251;
+@navbar-background-color-highlight: lighten(@navbar-background-color, 20%);
+@navbar-link-color-active: rgba(255, 255, 255, 0.8);
+@navbar-link-background-active: transparent;
+@nav-background: #F3F5FB;
+@navbar-brand-color: #ffffff;
+@nav-header-color: #999999;
 
-@navbarLinkColorActive: rgba(255, 255, 255, 0.8);
-@navbarLinkBackgroundActive: transparent;
-
-@navBackground: #F3F5FB;
-@navbarBrandColor: #ffffff;
+// Tables
+@table-header-background: @plm-secondary-color;
+@table-border: 1px solid rgba(63, 95, 153, 0.24);
+@table-row-border: 1px solid #dddddd;
+@table-row-odd: #f5f5f5;
+@table-row-odd-hover: #eeeeee;
+@table-row-even: #fffff;
+@table-row-even-hover: #eeeeee;
 
 // Actionbar
-@actionBarBackground: #F4F4F4;
+@action-bar-background: #F4F4F4;
 
-// Font Size
-@baseFontSize: 13px;
-@baseLineHeight: 18px;
-
-/*
-// Default colors
-@plm-primary-color: #1A658A;
-@plm-primary-hover-color: #255578;
-@plm-secondary-color: #3a87ad;
-@background-color: #E3E8EA;
+// Menu
 @menu-color: #f5f5f5;
-*/
+@menu-color-hover: #cccccc;
+@menu-drop-item: #62c462;
+@menu-alpha: rgba(245, 245, 245, 0.7);
 
-@plm-primary-color: #1A658A;
-@plm-primary-hover-color: #255578;
-@plm-secondary-color: #3a87ad;
-@background-color: #E3E8EA;
-@menu-color: #f5f5f5;
+// Inputs states
+@input-state-default: #f5f5f5;
+@input-state-default-hover: #ededed;
+@input-state-disabled: #708090;
+@input-state-disabled-hover: #5f6e7e;
+@input-state-danger: #ee5f5b;
+@input-state-danger-hover: #bd362f;
+@input-state-success: #62c462;
+@input-state-success-hover: #51a351;
+@input-state-warning: #f89406;
+@input-state-warning-hover: #e28206;
+@input-state-info: #49afcd;
+@input-state-info-hover: #48a8c5;
+@input-state-primary: #49afcd;
+@input-state-primary-hover: #48a8c5;
+@input-state-custom: #1A658A;
+@input-state-custom-hover: #255578;
 
+// Acl states
+@acl-forbidden: #ee5f5b;
+@acl-read-only: #f89406;
+@acl-full-access: #62c462;
 
+// Priorities states
+@priority-low: #62c462;
+@priority-medium: #49afcd;
+@priority-high: #f89406;
+@priority-emergency: #ee5f5b;
+
+// Scrollbars
+@scroll-bar-increment-decrement: #e2e7ef;
+@scroll-bar-track-piece: #e2e7ef;
+@scroll-bar-thumb-background: rgba(100, 100, 100, 0.4);
+@scroll-bar-thumb-hover-background: rgba(150, 150, 150, 0.6);
+@scroll-bar-thumb-hover: rgba(100, 100, 100, 0.7);
+@scroll-bar-thumb-active: rgba(70, 70, 70, 0.8);

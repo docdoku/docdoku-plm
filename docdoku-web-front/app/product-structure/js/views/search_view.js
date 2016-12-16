@@ -2,12 +2,12 @@
 define([
     'backbone',
     'mustache',
-    'text!templates/nav_list_action_bar.html',
+    'text!templates/nav_list_search_bar.html',
     'collections/result_path_collection'
 ], function (Backbone, Mustache, template, ResultPathCollection) {
 	'use strict';
     var SearchView = Backbone.View.extend({
-        el: '#nav_list_action_bar',
+        el: '#nav_list_search_bar',
 
         events: {
             'submit form#nav_list_search': 'onSearchSubmit'

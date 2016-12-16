@@ -18,10 +18,12 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * Assert the tree is collapsed (1 node)
      */
 
+    var treeSelector = '#product_nav_list_container > ul > li > .treeview > ul > li';
+
     casper.then(function waitTree() {
-        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li', function treeDisplayed() {
+        return this.waitForSelector(treeSelector, function treeDisplayed() {
             this.test.assert(true, 'Tree is displayed');
-            this.test.assertSelectorHasText('#product_nav_list_container > .treeview > ul > li > a > label', products.part1.name + ' < ' + products.part1.number + '-A-2 > (1)', 'The first node is correctly named');
+            this.test.assertSelectorHasText(treeSelector + ' > a > label', products.part1.name + ' < ' + products.part1.number + '-A-2 > (1)', 'The first node is correctly named');
         }, function fail() {
             this.capture('screenshot/assembly/waitTree-error.png');
             this.test.assert(false, 'Product tree can not be found');
@@ -33,7 +35,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      */
 
     casper.then(function clickRootNode() {
-        this.click('#product_nav_list_container > .treeview > ul > li > a > label');
+        this.click(treeSelector + ' > a > label');
     });
 
     /**
@@ -82,8 +84,8 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * Expand the root node
      */
     casper.then(function openStructureInTree() {
-        this.click('#product_nav_list_container > .treeview > ul > li > .hitarea');
-        return this.waitForSelector('#product_nav_list_container > .treeview > ul > li > ul > li', function childNodesDisplayed() {
+        this.click(treeSelector + ' > .hitarea');
+        return this.waitForSelector(treeSelector + ' > ul > li', function childNodesDisplayed() {
             this.test.assert(true, 'Child nodes are shown');
         }, function fail() {
             this.capture('screenshot/assembly/openStructureInTree-error.png');
@@ -95,7 +97,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      * Count child nodes
      * */
     casper.then(function countChildNodesInTree() {
-        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li ', 4, '4 child nodes displayed');
+        this.test.assertElementCount(treeSelector + ' > ul > li ', 4, '4 child nodes displayed');
     });
 
     /**
@@ -103,7 +105,7 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      */
 
     casper.then(function clickRootNode() {
-        this.click('#product_nav_list_container > .treeview > ul > li > ul > li:first-child > a > label');
+        this.click(treeSelector + ' > ul > li:first-child > a > label');
     });
 
     /**
@@ -124,16 +126,16 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      */
 
     casper.then(function checkRootNode() {
-        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > .load-3D:not(:checked)', 'Checkbox is unchecked');
-        this.click('#product_nav_list_container > .treeview > ul > li > .load-3D');
-        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > .load-3D:checked', 'Checkbox is now checked');
+        this.test.assertExists(treeSelector + ' > .load-3D:not(:checked)', 'Checkbox is unchecked');
+        this.click(treeSelector + ' > .load-3D');
+        this.test.assertExists(treeSelector + ' > .load-3D:checked', 'Checkbox is now checked');
     });
 
     /**
      * Count child nodes checked
      * */
     casper.then(function countChildNodesCheckedInTree() {
-        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > .load-3D:checked', 4, '4 child nodes checked');
+        this.test.assertElementCount(treeSelector + ' > ul > li  > .load-3D:checked', 4, '4 child nodes checked');
     });
 
     /**
@@ -141,15 +143,15 @@ casper.test.begin('Bom inspection tests suite', 13, function bomInspectionTestsS
      */
 
     casper.then(function unCheckRootNode() {
-        this.click('#product_nav_list_container > .treeview > ul > li > .load-3D');
-        this.test.assertExists('#product_nav_list_container > .treeview > ul > li > .load-3D:not(:checked)', 'Checkbox is now unchecked');
+        this.click(treeSelector + ' > .load-3D');
+        this.test.assertExists(treeSelector + ' > .load-3D:not(:checked)', 'Checkbox is now unchecked');
     });
 
     /**
      * Count child nodes checked
      * */
     casper.then(function countChildNodesUnCheckedInTree() {
-        this.test.assertElementCount('#product_nav_list_container > .treeview > ul > li > ul > li  > .load-3D:not(:checked)', 4, '4 child nodes are now unchecked');
+        this.test.assertElementCount(treeSelector + ' > ul > li  > .load-3D:not(:checked)', 4, '4 child nodes are now unchecked');
     });
 
 

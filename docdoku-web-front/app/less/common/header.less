@@ -5,7 +5,6 @@
         left: 0;
         z-index: 1030;
         min-height: 40px;
-        //  margin-bottom: 0;
         border-width: 0;
         opacity: 0;
         -webkit-transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
@@ -15,7 +14,6 @@
         transition: opacity .15s cubic-bezier(.17,.67,.83,.67);
         &.loaded {
             opacity: 1;
-            //box-shadow:0px 1px 3px #9b9b9b;
         }
     }
 
@@ -26,11 +24,7 @@
             right: 5px;
 
             &.btn-navbar {
-                /*
-                .gradient(#2b426a, #1a273f, #375487);
-                background-image: linear-gradient(top, #1a273f, #375487);
-                border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);*/
-                background-color: #3f5f99;
+                background-color: @plm-secondary-color;
 
             }
         }
@@ -49,8 +43,9 @@
         padding: 0px 20px 0px;
         font-size: 20px;
         font-weight: 200;
-        color: #ffffff;
+        color: @text-invert-color;
         text-shadow: 0 1px 0 #3f5f99;
+        text-shadow: 0 1px 0 @plm-secondary-hover-color;
 
         &-logo {
             float: left;
@@ -70,10 +65,7 @@
 
     .HeaderContent {
         background: @plm-primary-color;
-
-        /* .gradient(#334d7c, #213251, #3f5f99);
-         background-image: linear-gradient(top, #213251, #3f5f99);*/
-        border-bottom: 1px solid #0f1726;
+        border-bottom: 1px solid @text-strong-color;
     }
 
     .HeaderFluidContent {
@@ -83,8 +75,8 @@
     .nav {
         > .dropdown {
             > .dropdown-toggle {
-                color: rgba(255, 255, 255, 1);
-                text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+                color: @text-invert-color;
+                text-shadow: 0 -1px 0 @text-strong-color;
             }
         }
     }
@@ -154,7 +146,7 @@
         .nav-collapse {
             .dropdown-menu {
                 a {
-                    color: white;
+                    color: @text-invert-color;
                 }
             }
 
@@ -197,7 +189,7 @@
         }
 
         .BreadcrumbMenuList {
-            color: white;
+            color: @text-invert-color;
             &-sectionTitle {
                 display: none;
             }
@@ -216,11 +208,11 @@
                 width: calc(~"100% - 155px");
                 height: 18px;
                 padding: 9px 15px;
-                color: white;
+                color: @text-invert-color;
                 line-height: 18px;
 
                 i {
-                    color: rgba(255, 255, 255, 0.5);
+                    color: @text-light-color;
                 }
             }
 

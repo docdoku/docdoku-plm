@@ -82,6 +82,19 @@
     line-height: 20px;
 }
 
+.has-switch label {
+    text-align: center;
+    margin-top: -1px;
+    margin-bottom: -1px;
+    z-index: 100;
+    width: 34%;
+    border-left: @border-light;
+    border-right: @border-light;
+    color: @text-color;
+    text-shadow: none;
+    background: @menu-color;
+}
+
 .has-switch span.switch-mini,
 .has-switch label.switch-mini {
     padding-bottom: 4px;
@@ -106,37 +119,18 @@
     line-height: normal;
 }
 
-.has-switch label {
-    text-align: center;
-    margin-top: -1px;
-    margin-bottom: -1px;
-    z-index: 100;
-    width: 34%;
-    border-left: 1px solid #bbbbbb;
-    border-right: 1px solid #bbbbbb;
-    color: #ffffff;
-    text-shadow: none;
-    background: #f5f5f5;
-}
-
 .has-switch label:hover,
 .has-switch label:active,
 .has-switch label.active,
 .has-switch label.disabled,
 .has-switch label[disabled] {
-    color: #ffffff;
-    background-color: #e6e6e6;
-    *background-color: #d9d9d9;
-}
-
-.has-switch label:active,
-.has-switch label.active {
-    background-color: #cccccc \9;
+    color: @text-very-light-color;
+    background-color: @background-color;
 }
 
 .has-switch label i {
-    color: #000;
-    text-shadow: 0 1px 0 #fff;
+    color: @text-color;
+    text-shadow: 0 1px 0 @background-color-light;
     line-height: 18px;
     pointer-events: none;
 }
@@ -157,9 +151,9 @@
 }
 
 .has-switch span.switch-right {
-    color: #333333;
-    text-shadow:none;
-    background: #f0f0f0;
+    color: @text-color;
+    text-shadow: none;
+    background: @background-color;
 }
 
 .has-switch span.switch-right:hover,
@@ -167,21 +161,20 @@
 .has-switch span.switch-right.active,
 .has-switch span.switch-right.disabled,
 .has-switch span.switch-right[disabled] {
-    color: #333333;
-    background-color: #ffffff;
-    *background-color: #f2f2f2;
+    color: @text-color;
+    background-color: @background-color-light;
 }
 
 .has-switch span.switch-right:active,
 .has-switch span.switch-right.active {
-    background-color: #e6e6e6 \9;
+    background-color: @background-color;
 }
 
 .has-switch span.switch-primary,
 .has-switch span.switch-left {
-    color: #ffffff;
+    color: @text-invert-color;
     text-shadow: none;
-    background: #005fcc;
+    background: @plm-primary-color;
 }
 
 .has-switch span.switch-primary:hover,
@@ -194,22 +187,21 @@
 .has-switch span.switch-left.disabled,
 .has-switch span.switch-primary[disabled],
 .has-switch span.switch-left[disabled] {
-    color: #ffffff;
-    background-color: #0088cc;
-    *background-color: #0077b3;
+    color: @text-invert-color;
+    background-color: @plm-primary-hover-color;
 }
 
 .has-switch span.switch-primary:active,
 .has-switch span.switch-left:active,
 .has-switch span.switch-primary.active,
 .has-switch span.switch-left.active {
-    background-color: #006699 \9;
+    background-color: @plm-primary-color;
 }
 
 .has-switch span.switch-info {
-    color: #ffffff;
+    color: @text-invert-color;
     text-shadow: none;
-    background: #41a7c5;
+    background: @input-state-info;
 }
 
 .has-switch span.switch-info:hover,
@@ -217,20 +209,14 @@
 .has-switch span.switch-info.active,
 .has-switch span.switch-info.disabled,
 .has-switch span.switch-info[disabled] {
-    color: #ffffff;
-    background-color: #5bc0de;
-    *background-color: #46b8da;
-}
-
-.has-switch span.switch-info:active,
-.has-switch span.switch-info.active {
-    background-color: #31b0d5 \9;
+    color: @text-invert-color;
+    background-color: @input-state-info-hover;
 }
 
 .has-switch span.switch-success {
-    color: #ffffff;
+    color: @text-invert-color;
     text-shadow: none;
-    background: #58b058;
+    background: @input-state-success;
 }
 
 .has-switch span.switch-success:hover,
@@ -238,20 +224,19 @@
 .has-switch span.switch-success.active,
 .has-switch span.switch-success.disabled,
 .has-switch span.switch-success[disabled] {
-    color: #ffffff;
-    background-color: #62c462;
-    *background-color: #4fbd4f;
+    color: @text-invert-color;
+    background-color: @input-state-success-hover;
 }
 
 .has-switch span.switch-success:active,
 .has-switch span.switch-success.active {
-    background-color: #42b142 \9;
+    background-color: @input-state-success;
 }
 
 .has-switch span.switch-warning {
-    color: #ffffff;
-    text-shadow:none;
-    background: #f9a123;
+    color: @text-invert-color;
+    text-shadow: none;
+    background: @input-state-warning;
 }
 
 .has-switch span.switch-warning:hover,
@@ -259,20 +244,19 @@
 .has-switch span.switch-warning.active,
 .has-switch span.switch-warning.disabled,
 .has-switch span.switch-warning[disabled] {
-    color: #ffffff;
-    background-color: #fbb450;
-    *background-color: #faa937;
+    color: @text-invert-color;
+    background-color: @input-state-warning-hover;
 }
 
 .has-switch span.switch-warning:active,
 .has-switch span.switch-warning.active {
-    background-color: #fa9f1e \9;
+    background-color: @input-state-warning;
 }
 
 .has-switch span.switch-danger {
-    color: #ffffff;
+    color: @text-invert-color;
     text-shadow: none;
-    background: #d14641;
+    background: @input-state-danger;
 }
 
 .has-switch span.switch-danger:hover,
@@ -280,12 +264,11 @@
 .has-switch span.switch-danger.active,
 .has-switch span.switch-danger.disabled,
 .has-switch span.switch-danger[disabled] {
-    color: #ffffff;
-    background-color: #ee5f5b;
-    *background-color: #ec4844;
+    color: @text-invert-color;
+    background-color: @input-state-danger-hover;
 }
 
 .has-switch span.switch-danger:active,
 .has-switch span.switch-danger.active {
-    background-color: #e9322d \9;
+    background: @input-state-danger;
 }

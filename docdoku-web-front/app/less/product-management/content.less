@@ -7,38 +7,35 @@
     top: 0;
     z-index: 0;
 
-    /*-webkit-box-shadow: 0px 1px 3px #9b9b9b;
-    box-shadow: 0px 1px 3px #9b9b9b;*/
-
     td {
         a.parthandle {
             font-size: 14px;
-            color: #aaa;
-            text-shadow: 0 1px 0 white;
+            color: @text-very-light-color;
+            text-shadow: @text-very-light-color-shadow;
 
             &:hover {
-                color: #555;
+                color: @text-light-color;
                 cursor: move;
                 text-decoration: none;
             }
         }
 
         &.part_number > a {
-            color: #62697B;
+            color: @text-light-color;
             &:hover {
                 text-decoration: none;
-                color: #333;
+                color: @text-color;
             }
         }
     }
 
     tr.moving {
         a.parthandle {
-            color: #555;
+            color: @text-light-color;
         }
 
         td.part_number > a {
-            color: #333;
+            color: @text-color;
         }
     }
 
@@ -46,28 +43,28 @@
         i {
             cursor: pointer;
             &:hover {
-                color: #333;
+                color: @text-color;
             }
         }
     }
 
     td.modification_notification {
         i.fa-exclamation {
-            color: #ee5f5b;
+            color: @input-state-danger;
         }
     }
 
     td.part_number {
         i.fa-pencil {
-            color: #f89406;
+            color: @input-state-warning;
         }
 
         i.fa-lock {
-            color: #ee5f5b;
+            color: @input-state-danger;
         }
 
         i.fa-check {
-            color: #51a351;
+            color: @input-state-success;
         }
     }
 

@@ -1,11 +1,10 @@
 // Override bootsrap switch colors
 
 .has-switch.custom-switch span.switch-custom-off {
-    color: #ffffff;
-    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-    background: #6785aa;
-    border-color: #7a99c1 #7a99c1 #4c72a3;
-    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: @text-invert-color;
+    text-shadow: @text-invert-color-shadow;
+    background: @input-state-custom;
+    border: @border-light;
 }
 
 .has-switch.custom-switch span.switch-custom-off:hover,
@@ -13,20 +12,19 @@
 .has-switch.custom-switch span.switch-custom-off.active,
 .has-switch.custom-switch span.switch-custom-off.disabled,
 .has-switch.custom-switch span.switch-custom-off[disabled] {
-    color: #ffffff;
-    background-color: #7a99c1;
-    *background-color: #698cb9;
+    color: @text-invert-color;
+    background-color: @input-state-custom-hover;
 }
 
 .has-switch.custom-switch span.switch-custom-off:active,
 .has-switch.custom-switch span.switch-custom-off.active {
-    background-color: #577eb1 \9;
+    background-color: @input-state-custom;
 }
 
 .has-switch.custom-switch span.switch-custom-on {
-    color: #ffffff;
+    color: @text-invert-color;
     text-shadow: none;
-    background: @plm-secondary-color;
+    background: @input-state-custom;
 }
 
 .has-switch.custom-switch span.switch-custom-on:hover,
@@ -34,22 +32,21 @@
 .has-switch.custom-switch span.switch-custom-on.active,
 .has-switch.custom-switch span.switch-custom-on.disabled,
 .has-switch.custom-switch span.switch-custom-on[disabled] {
-    color: #ffffff;
-    background-color: #2c4361;
-    *background-color: #24374f;
+    color: @text-invert-color;
+    background-color: @input-state-custom-hover;
 }
 
 .has-switch.custom-switch span.switch-custom-on:active,
 .has-switch.custom-switch span.switch-custom-on.active {
-    background-color: #1c2b3e \9;
+    background-color: @input-state-custom;
 }
 
-.btn{
+.btn {
 
     padding: 4px 12px;
     font-size: 13px;
 
-    &.btn-primary{
+    &.btn-primary {
         background: @plm-primary-color;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
             background: @plm-primary-hover-color;
@@ -57,47 +54,48 @@
     }
 
     &.btn-custom {
-        color: white;
-        background: #3a87ad;
+        color: @text-invert-color;
+        background: @plm-secondary-color;
         text-shadow: none;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
-            background: #336b8f;
+            background: @plm-secondary-hover-color;
         }
     }
 
-    &.btn-default{
-        background: #F5F5F5;
+    &.btn-default {
+        background: @input-state-default;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
-            background: #ededed;
+            background: @input-state-default-hover;
         }
     }
 
-    &.btn-danger{
-        background: #bd362f;
+    &.btn-danger {
+        background: @input-state-danger;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
-            background: #ab352e;
+            background: @input-state-danger-hover;
         }
     }
 
-    &.btn-success{
-        background: #51a351;
+    &.btn-success {
+        background: @input-state-success;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
-            background: #478d47;
+            background: @input-state-success-hover;
         }
     }
-    &.btn-warning{
-        background: #f89406;
+    &.btn-warning {
+        background: @input-state-warning;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
-            background: #e28206;
+            background: @input-state-warning-hover;
         }
     }
-    &.btn-info{
-        background: #49afcd;
+    &.btn-info {
+        background: @input-state-info;
         &:hover, &:active, &.active, &.disabled, &[disabled] {
-            background: #48a8c5;
+            background: @input-state-info-hover;
         }
     }
 }
+
 .actions {
 
     .btn-group > .btn {

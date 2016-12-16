@@ -1,18 +1,41 @@
-<div id="product-menu">
+<div class="module-menu" id="product-menu">
     <div id="product-menu-inner">
         <div id="product_nav_list_container">
+
             <ul class="nav well">
-                <li class="nav-header">{{i18n.PRODUCT}} : {{productId}}</li>
+                <li class="nav-header nav-header-bigger">{{productId}}</li>
+
+                <li class="nav-header">{{i18n.PRODUCT_VIEW}}</li>
+                <li>
+                    <div id="config_spec_container"></div>
+                </li>
             </ul>
 
-            <div id="nav_list_action_bar"></div>
-            <div id="config_spec_container"></div>
+            <ul class="nav well">
+                <li class="nav-header">{{i18n.PRODUCT_STRUCTURE}}</li>
+                <li>
+                <li>
+                    <div id="nav_list_search_bar"></div>
 
-            <nav class="nav nav-list treeview" id="product_nav_list">
-                <div id='product_title'><span class="product_title">{{productId}}</span><a><i title="{{i18n.REFRESH_TREE}}" class="fa fa-refresh"></i></a><a><i title="{{i18n.DISPLAY_COMMENTS}}" class="fa fa-quote-right"></i></a>
-                    <img class="loader"src="{{contextPath}}/images/product-loader.gif"/>
-                </div>
-            </nav>
+                    <div id="diverge-selector">
+                        <a class="toggle_substitutes">{{i18n.SHOW_SUBSTITUTES}}</a>
+                    </div>
+
+                    <nav class="nav nav-list treeview" id="product_nav_list">
+                        <div id='product_title'>
+                            <span class="product_title">{{productId}}</span>
+                            <a>
+                                <i title="{{i18n.REFRESH_TREE}}" class="fa fa-refresh"></i>
+                            </a>
+                            <a>
+                                <i title="{{i18n.DISPLAY_COMMENTS}}" class="fa fa-quote-right"></i>
+                            </a>
+                            <img class="loader" src="{{contextPath}}/images/product-loader.gif"/>
+                        </div>
+                    </nav>
+                </li>
+            </ul>
+
         </div>
 
     </div>
@@ -24,8 +47,8 @@
 
         <div class="mode-controls btn-group" data-toggle="buttons-radio" id="top_buttons">
             <button class="btn btn-custom" id="bom_view_btn" title="{{i18n.BOM_VIEW}}"><i class="fa fa-sitemap"></i>
-            <button class="btn btn-custom active" id="scene_view_btn" title="{{i18n.SCENE_VIEW}}"><i
-                class="fa fa-video-camera"></i></button>
+                <button class="btn btn-custom active" id="scene_view_btn" title="{{i18n.SCENE_VIEW}}"><i
+                    class="fa fa-video-camera"></i></button>
             </button>
         </div>
 

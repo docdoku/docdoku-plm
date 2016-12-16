@@ -2,6 +2,7 @@
 define([
     'backbone',
     'mustache',
+    'text!templates/content.html',
     'views/search_view',
     'views/parts_tree_view',
     'views/bom_view',
@@ -22,13 +23,12 @@ define([
     'dmu/SceneManager',
     'dmu/collaborativeController',
     'dmu/InstancesManager',
-    'text!templates/content.html',
     'common-objects/models/part',
     'views/path_data_modal',
     'views/path_to_path_link_modal',
     'common-objects/views/alert',
     'common-objects/log'
-], function (Backbone, Mustache, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, template, Part, PathDataModalView, PathToPathLinkModalView, AlertView, Logger) {
+], function (Backbone, Mustache, template, SearchView, PartsTreeView, BomView, CollaborativeView, PartMetadataView, PartInstanceView, ExportSceneModalView, ControlNavigationView, ControlModesView, ControlTransformView, ControlMarkersView, ControlLayersView, ControlOptionsView, ControlClippingView, ControlExplodeView, ControlMeasureView, BaselineSelectView, SceneManager, CollaborativeController, InstancesManager, Part, PathDataModalView, PathToPathLinkModalView, AlertView, Logger) {
 
     'use strict';
 
@@ -41,13 +41,14 @@ define([
             'click #export_scene_btn': 'exportScene',
             'click #fullscreen_scene_btn': 'fullScreenScene',
             'click #path_data_btn': 'openPathDataModal',
-            'click #path_to_path_link_btn' : 'openPathToPathLinkModal'
+            'click #path_to_path_link_btn': 'openPathToPathLinkModal',
+            'click .toggle_substitutes': 'toggleSubstitutes'
         },
 
         inBomMode: false,
 
         initialize: function () {
-
+            this.showSubstitutes = false;
         },
 
         render: function () {
@@ -100,8 +101,8 @@ define([
             return this;
         },
 
-        initDebugShortcut:function(){
-            var k = [191,68,69, 66, 85, 71], // :debug or /debug on macosx
+        initDebugShortcut: function () {
+            var k = [191, 68, 69, 66, 85, 71], // :debug or /debug on macosx
                 n = 0;
             $(document).keydown(function (e) {
                 if (e.keyCode === k[n++]) {
@@ -117,7 +118,7 @@ define([
             });
         },
 
-        initModules:function(){
+        initModules: function () {
 
             App.searchView = new SearchView().render();
             App.partsTreeView = new PartsTreeView({resultPathCollection: App.searchView.collection}).render();
@@ -128,7 +129,7 @@ define([
 
             this.listenEvents();
 
-            App.partsTreeView.once('collection:fetched',function(){
+            App.partsTreeView.once('collection:fetched', function () {
                 App.appView.trigger('app:ready');
             });
 
@@ -146,6 +147,7 @@ define([
             this.pathToPathLinkButton = this.$('#path_to_path_link_btn');
             this.bomControls = this.$('.bom-controls');
             this.dmuControls = this.$('.dmu-controls');
+            this.$toggleSubstitutes = this.$('.toggle_substitutes');
             App.$ControlsContainer = this.$('#side_controls_container');
             App.$SceneContainer = this.$('#scene_container');
         },
@@ -168,15 +170,19 @@ define([
         },
 
         bomMode: function () {
-            this.$contentContainer.attr('class', 'bom-mode');
-            this.$productMenu.attr('class', 'bom-mode');
+            this.$contentContainer.addClass('bom-mode');
+            this.$contentContainer.removeClass('scene-mode');
+            this.$productMenu.addClass('bom-mode');
+            this.$productMenu.removeClass('scene-mode');
             this.bomModeButton.addClass('active');
             this.sceneModeButton.removeClass('active');
         },
 
         sceneMode: function () {
-            this.$contentContainer.attr('class', 'scene-mode');
-            this.$productMenu.attr('class', 'scene-mode');
+            this.$contentContainer.addClass('scene-mode');
+            this.$contentContainer.removeClass('bom-mode');
+            this.$productMenu.addClass('scene-mode');
+            this.$productMenu.removeClass('bom-mode');
             this.bomModeButton.removeClass('active');
             this.sceneModeButton.addClass('active');
             App.sceneManager.onContainerShown();
@@ -189,30 +195,30 @@ define([
             Backbone.Events.on('part:saved', this.refreshTree, this);
             Backbone.Events.on('path:selected', this.updateDisplayPathToPathLinkButton, this);
             Backbone.Events.on('path-data:clicked', this.onPathDataClicked, this);
-            this.listenTo(App.bomView,'checkbox:change',App.partsTreeView.uncheckAll);
-            this.listenTo(App.bomView.bomHeaderView,'alert',this.alert);
+            this.listenTo(App.bomView, 'checkbox:change', App.partsTreeView.uncheckAll);
+            this.listenTo(App.bomView.bomHeaderView, 'alert', this.alert);
         },
 
-        alert: function(params) {
+        alert: function (params) {
             this.$('.notifications').first().append(new AlertView(params).render().$el);
         },
 
-        updateDisplayPathToPathLinkButton: function(pathSelected){
+        updateDisplayPathToPathLinkButton: function (pathSelected) {
 
             App.bomView.uncheckAll(pathSelected);
             this.pathSelected = pathSelected;
 
             if (pathSelected.length === 2) {
-                if(pathSelected[0].isSubstituteOf(pathSelected[1]) || pathSelected[1].isSubstituteOf(pathSelected[0])){
+                if (pathSelected[0].isSubstituteOf(pathSelected[1]) || pathSelected[1].isSubstituteOf(pathSelected[0])) {
                     this.pathToPathLinkButton.hide();
-                }else{
+                } else {
                     this.pathToPathLinkButton.show();
                 }
             } else {
                 this.pathToPathLinkButton.hide();
             }
 
-            if(App.baselineSelectView.isSerialNumberSelected()){
+            if (App.baselineSelectView.isSerialNumberSelected()) {
                 if (pathSelected.length === 1) {
                     this.pathDataModalButton.show();
                     this.checkedComponent = pathSelected[0];
@@ -227,12 +233,12 @@ define([
 
         },
 
-        openPathToPathLinkModal:function(){
+        openPathToPathLinkModal: function () {
             var pathToPathLinkModal = new PathToPathLinkModalView({
-                pathSelected : this.pathSelected,
-                productId : App.config.productId,
-                serialNumber : App.baselineSelectView.isSerialNumberSelected() ? App.config.productConfigSpec.substring(3) : null,
-                baselineId : App.baselineSelectView.isBaselineSelected() ? App.config.productConfigSpec : null
+                pathSelected: this.pathSelected,
+                productId: App.config.productId,
+                serialNumber: App.baselineSelectView.isSerialNumberSelected() ? App.config.productConfigSpec.substring(3) : null,
+                baselineId: App.baselineSelectView.isBaselineSelected() ? App.config.productConfigSpec : null
             }).render();
             window.document.body.appendChild(pathToPathLinkModal.el);
             pathToPathLinkModal.openModal();
@@ -308,17 +314,17 @@ define([
             esmv.openModal();
         },
 
-        openPathDataModal:function(){
+        openPathDataModal: function () {
             var pathDataModal = new PathDataModalView({
                 serialNumber: App.config.productConfigSpec.substr(3),
-                path : this.checkedComponent.getEncodedPath()
+                path: this.checkedComponent.getEncodedPath()
             });
             window.document.body.appendChild(pathDataModal.el);
             pathDataModal.initAndOpenModal();
-            this.listenTo(pathDataModal,'path-data:created',this.refreshTree.bind(this));
+            this.listenTo(pathDataModal, 'path-data:created', this.refreshTree.bind(this));
         },
 
-        onPathDataClicked:function(pathSelected){
+        onPathDataClicked: function (pathSelected) {
             this.checkedComponent = pathSelected;
             this.openPathDataModal();
         },
@@ -349,9 +355,9 @@ define([
         setConfigSpec: function (configSpec) {
             App.config.productConfigSpec = configSpec || App.config.productConfigSpec;
 
-            if(App.collaborativeView.roomKey){
+            if (App.collaborativeView.roomKey) {
                 App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec + '/room/' + App.collaborativeView.roomKey, {trigger: false});
-            }else{
+            } else {
                 App.router.navigate(App.config.workspaceId + '/' + App.config.productId + '/config-spec/' + App.config.productConfigSpec + '/bom', {trigger: false});
             }
 
@@ -359,6 +365,13 @@ define([
             App.instancesManager.clear();
             App.partsTreeView.refreshAll();
             this.updateBom();
+        },
+
+        toggleSubstitutes: function () {
+            this.showSubstitutes = !this.showSubstitutes;
+            this.$toggleSubstitutes.html(this.showSubstitutes ? App.config.i18n.HIDE_SUBSTITUTES : App.config.i18n.SHOW_SUBSTITUTES);
+            App.config.diverge = !App.config.diverge;
+            this.onConfigSpecChange(App.config.productConfigSpec);
         },
 
         onObjectSelected: function (object) {

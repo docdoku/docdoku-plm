@@ -9,40 +9,39 @@
         max-height: 202px;
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        /*box-shadow: 0px 0px 3px #9b9b9b;*/
         width: 100%;
         margin-top: 10px;
 
         ul {
 
             text-align: left;
-            color: #434C64;
+            color: @text-color;
             margin: 0;
             padding: 0;
-            background-color: white;
+            background-color: @background-color-light;
             -webkit-font-smoothing: antialiased;
             font-smoothing: antialiased;
 
             li {
 
-                border-bottom: 1px solid #ccc;
-                color: #999;
+                border-bottom: @border-light;
+                color: @text-light-color;
                 margin: 0px;
                 position: relative;
                 height: 18px;
                 line-height: 18px;
                 padding: 5px 45px 5px 40px;
                 list-style-type: none;
-                background: #fff;
+                background: @background-color-light;
 
                 &:nth-child(odd) {
                     background: @tableBackgroundAccent;
                 }
 
                 &:hover {
-                    background: #eee;
+                    background: @background-color;
                     .fa-times {
-                        opacity: 0.6;
+                        color: @text-very-light-color;
                     }
                 }
 
@@ -66,7 +65,7 @@
                 }
 
                 &.shown {
-                    color: #434C64;
+                    color: @text-color;
                     i.start {
                         opacity: 1;
                     }
@@ -107,8 +106,7 @@
                     border: 0;
                     outline: none;
                     color: inherit;
-                    border: 1px solid #999;
-                    /*box-shadow: inset 0 -1px 5px 0 rgba(0, 0, 0, 0.2);*/
+                    border: @border-light;
                     -webkit-box-sizing: border-box;
                     box-sizing: border-box;
                     -webkit-font-smoothing: antialiased;

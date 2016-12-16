@@ -6,19 +6,18 @@
 
     a {
         font-size: 15px;
-        color: black;
-        text-shadow: 0 1px 0 white;
-        opacity: 0.2;
+        color: @text-very-light-color;
+        text-shadow: 0 1px 0 @text-invert-color;
 
         &:hover {
             text-decoration: none;
-            color: #F00;
+            color: @input-state-danger;
             opacity: 1;
         }
     }
 
     span {
-        color: #08C;
+        color: @link-color;
         margin-left: 3px;
     }
 }

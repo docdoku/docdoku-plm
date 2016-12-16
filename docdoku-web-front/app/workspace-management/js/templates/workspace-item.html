@@ -28,12 +28,12 @@
     <li>
         {{#administrated}}
         <a href="#/workspace/{{workspace.id}}/users">
-            {{/administrated}}
-            {{i18n.USERS}}
-            {{#administrated}}
-        </a>
-        (<span class="users-count"></span>)
         {{/administrated}}
+            {{i18n.USERS}}
+        {{#administrated}}
+        </a>
+        {{/administrated}}
+        (<span class="users-count"></span>)
     </li>
     <li>
         {{^isAdmin}}

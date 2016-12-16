@@ -44,20 +44,19 @@
         &.part-substitute-link {
             width: 86%;
             display: inline-block;
-            border: 1px dashed #a1a0a0;
-            background-color: rgba(237, 237, 237, 0.61);
+            border: @border-dashed-light;
+            background-color: @input-state-default;
             margin: 0 22px;
         }
 
         &:hover {
-            background-color: rgba(193, 193, 193, 0.61);
+            background-color: @input-state-default-hover;
             cursor: pointer;
         }
 
         &.selected {
             opacity: 1;
-            background-color: rgba(193, 193, 193, 0.61);
-            border: 2px dashed #ACACAC;
+            border: @border-dashed-light-double;
             box-shadow: none;
         }
 
@@ -73,13 +72,13 @@
             font-size: 20px;
             font-weight: bold;
             line-height: 18px;
-            color: #000000;
-            text-shadow: 0 1px 0 #ffffff;
+            color: @text-strong-color;
+            text-shadow: 0 1px 0 @text-invert-color;
             opacity: 0.2;
 
             &:hover {
                 text-decoration: none;
-                color: #F00;
+                color: @input-state-danger;
                 opacity: 1;
                 cursor: hand;
             }
@@ -224,7 +223,7 @@
 
     .tooltip {
         position: relative;
-        color: rgba(0, 0, 0, 0.4);
+        color: @text-strong-color;
         margin-right: 5px;
         font-size: 14px;
         text-decoration: none;
@@ -232,11 +231,10 @@
     }
 
     .tooltip:hover:after {
-        background: #333;
-        background: rgba(0, 0, 0, .8);
+        background: @text-color;
         border-radius: 5px;
         bottom: 26px;
-        color: #fff;
+        color: @text-invert-color;
         content: attr(data-tooltip);
         left: 20%;
         padding: 5px 15px;

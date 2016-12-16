@@ -42,6 +42,7 @@ module.exports = {
             'build-module:main',
             'build-module:accountManagement',
             'build-module:workspaceManagement',
+            'build-module:organizationManagement',
             'build-module:download',
             'build-module:documents',
             'build-module:parts',
