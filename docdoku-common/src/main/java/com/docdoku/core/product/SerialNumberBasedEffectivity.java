@@ -40,7 +40,6 @@ public class SerialNumberBasedEffectivity extends Effectivity{
     /**
      * The serial number of the first item that the effectivity applies to.
      */
-    @Column(nullable = false)
     private String startNumber;
     
     /**

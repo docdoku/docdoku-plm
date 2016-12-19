@@ -41,7 +41,6 @@ public class LotBasedEffectivity extends Effectivity{
      * The identification of the first batch of items
      * that the effectivity applies to.
      */
-    @Column(nullable = false)
     private String startLotId;
     
 
