@@ -21,10 +21,7 @@
 
 package com.docdoku.core.product;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -42,6 +39,7 @@ public class DateBasedEffectivity extends Effectivity{
     /**
      * The date and/or time when the effectivity starts.
      */
+    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date startDate;
     
