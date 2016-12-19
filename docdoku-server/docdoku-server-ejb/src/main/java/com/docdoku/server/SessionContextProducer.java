@@ -1,6 +1,6 @@
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2015 DocDoku SARL
+ * Copyright 2006 - 2017 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
@@ -19,7 +19,7 @@
  */
 /*
  * DocDoku, Professional Open Source
- * Copyright 2006 - 2015 DocDoku SARL
+ * Copyright 2006 - 2017 DocDoku SARL
  *
  * This file is part of DocDokuPLM.
  *
