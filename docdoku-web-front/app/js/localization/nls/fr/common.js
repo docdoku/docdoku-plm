@@ -197,7 +197,7 @@ define({
 	EDIT_REQUEST: 'Editer la demande de modification',
     EDITION_ERROR:'Une erreur est survenue pendant l\'édition',
     EFFECTIVITY: 'Effectivité',
-    EFFECTIVITY_DATE: 'Datée',
+    EFFECTIVITY_DATE: 'Date',
     EFFECTIVITY_DESCRIPTION: 'Description de l\'effectivité',
     EFFECTIVITY_END_DATE: 'Date de fin',
     EFFECTIVITY_END_LOT_ID: 'Lot de fin',
