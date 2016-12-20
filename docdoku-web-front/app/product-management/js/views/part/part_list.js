@@ -165,7 +165,7 @@ define([
         onOnePartSelected: function () {
             var partSelected = this.getSelectedPart();
             this.trigger('delete-button:display', true);
-            this.trigger('effectivity-button:display', !partSelected.isReleased() && !partSelected.isObsolete());
+            this.trigger('effectivity-button:display', partSelected.isReleased() && !partSelected.isObsolete());
             this.trigger('checkout-group:display', !partSelected.isReleased() && !partSelected.isObsolete());
             this.trigger('acl-edit-button:display', partSelected ? (App.config.workspaceAdmin || partSelected.getAuthorLogin() === App.config.login) : false);
             this.trigger('new-version-button:display', !partSelected.isCheckout());
