@@ -184,6 +184,10 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         if (document != null) {
             DocumentRevision docR = document.getDocumentRevision();
 
+            if (user.isAdministrator()) {
+                return binaryResource;
+            }
+
             if (isACLGrantReadAccess(user, docR)) {
                 if ((isInAnotherUserHomeFolder(user, docR) || isCheckoutByAnotherUser(user, docR)) && docR.getLastIteration().equals(document)) {
                     throw new NotAllowedException(new Locale(user.getLanguage()), "NotAllowedException34");
@@ -213,9 +217,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     public String[] getFolders(String pCompletePath) throws WorkspaceNotFoundException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(Folder.parseWorkspaceId(pCompletePath));
 
-        Folder folder = em.find(Folder.class,pCompletePath);
-        if(folder == null){
-            throw new FolderNotFoundException(new Locale(user.getLanguage()),pCompletePath);
+        Folder folder = em.find(Folder.class, pCompletePath);
+        if (folder == null) {
+            throw new FolderNotFoundException(new Locale(user.getLanguage()), pCompletePath);
         }
 
         Folder[] subFolders = new FolderDAO(new Locale(user.getLanguage()), em).getSubFolders(pCompletePath);
@@ -574,7 +578,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.size(); i++) {
-            if(attributesLocked) {
+            if (attributesLocked) {
                 pAttributeTemplates.get(i).setLocked(attributesLocked);
             }
             attrs.add(pAttributeTemplates.get(i));
@@ -585,7 +589,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             }
         }
 
-        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+        if (!AttributesConsistencyUtils.isTemplateAttributesValid(attrs, attributesLocked)) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeTemplates(attrs);
@@ -700,7 +704,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             }
         }
 
-        Collection<Task> runningTasks=null;
+        Collection<Task> runningTasks = null;
         if (pWorkflowModelId != null) {
 
             UserDAO userDAO = new UserDAO(locale, em);
@@ -712,9 +716,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 String roleName = pair.getKey();
                 Collection<String> userLogins = pair.getValue();
                 Role role = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder), roleName));
-                Set<User> users=new HashSet<>();
+                Set<User> users = new HashSet<>();
                 roleUserMap.put(role, users);
-                for(String login:userLogins) {
+                for (String login : userLogins) {
                     User u = userDAO.loadUser(new UserKey(Folder.parseWorkspaceId(pParentFolder), login));
                     users.add(u);
                 }
@@ -725,9 +729,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 String roleName = pair.getKey();
                 Collection<String> groupIds = pair.getValue();
                 Role role = roleDAO.loadRole(new RoleKey(Folder.parseWorkspaceId(pParentFolder), roleName));
-                Set<UserGroup> groups=new HashSet<>();
+                Set<UserGroup> groups = new HashSet<>();
                 roleGroupMap.put(role, groups);
-                for(String groupId:groupIds) {
+                for (String groupId : groupIds) {
                     UserGroup g = groupDAO.loadUserGroup(new UserGroupKey(Folder.parseWorkspaceId(pParentFolder), groupId));
                     groups.add(g);
                 }
@@ -737,9 +741,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             Workflow workflow = workflowModel.createWorkflow(roleUserMap, roleGroupMap);
             docR.setWorkflow(workflow);
 
-            for(Task task : workflow.getTasks()){
-                if(!task.hasPotentialWorker()){
-                    throw new NotAllowedException(locale,"NotAllowedException56");
+            for (Task task : workflow.getTasks()) {
+                if (!task.hasPotentialWorker()) {
+                    throw new NotAllowedException(locale, "NotAllowedException56");
                 }
             }
 
@@ -752,7 +756,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
 
-        if(aclUserEntries != null && !aclUserEntries.isEmpty() || aclGroupEntries != null &&  !aclGroupEntries.isEmpty()){
+        if (aclUserEntries != null && !aclUserEntries.isEmpty() || aclGroupEntries != null && !aclGroupEntries.isEmpty()) {
             ACL acl = new ACLFactory(em).createACL(user.getWorkspace().getId(), aclUserEntries, aclGroupEntries);
             docR.setACL(acl);
         }
@@ -766,7 +770,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         newDoc.setCreationDate(now);
         new DocumentRevisionDAO(locale, em).createDocR(docR);
 
-        if(runningTasks!=null) {
+        if (runningTasks != null) {
             mailer.sendApproval(runningTasks, docR);
         }
         return docR;
@@ -810,7 +814,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 lovAttr.setLov(lovDAO.loadLOV(lovKey));
             }
         }
-        if(!AttributesConsistencyUtils.isTemplateAttributesValid(attrs,attributesLocked)) {
+        if (!AttributesConsistencyUtils.isTemplateAttributesValid(attrs, attributesLocked)) {
             throw new NotAllowedException(locale, "NotAllowedException59");
         }
         template.setAttributeTemplates(attrs);
@@ -851,7 +855,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
             DocumentIteration lastCheckedInIteration = docR.getLastCheckedInIteration();
 
-            if(null != lastCheckedInIteration) {
+            if (null != lastCheckedInIteration) {
                 esIndexer.index(lastCheckedInIteration);
             }
 
@@ -983,8 +987,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             for (DocumentIteration documentIteration : docR.getDocumentIterations()) {
                 esIndexer.index(documentIteration);
             }
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("pTags argument must not be null");
         }
         return docR;
@@ -1077,7 +1080,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 gcmNotifier.sendIterationNotification(gcmAccounts, docR);
             }
 
-           esIndexer.index(lastIteration);
+            esIndexer.index(lastIteration);
 
             return docR;
         } else {
@@ -1099,7 +1102,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             throw new NotAllowedException(userLocale, "NotAllowedException21");
 
         } else {
-            return doFolderDeletion(folder,userLocale);
+            return doFolderDeletion(folder, userLocale);
         }
     }
 
@@ -1160,12 +1163,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             for (DocumentRevision docR : docRs) {
                 pks[i++] = docR.getKey();
                 DocumentIteration lastCheckedInIteration = docR.getLastCheckedInIteration();
-                if(null != lastCheckedInIteration){
+                if (null != lastCheckedInIteration) {
                     lastCheckedInIterations.add(lastCheckedInIteration);
                 }
             }
 
-            if(!lastCheckedInIterations.isEmpty()) {
+            if (!lastCheckedInIterations.isEmpty()) {
                 esIndexer.indexMultiple(lastCheckedInIterations);
             }
 
@@ -1202,10 +1205,10 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
                 throw new EntityConstraintException(locale, "EntityConstraintException18");
             }
-            if(!documentLinkDAO.getInverseProductInstanceIteration(documentRevision).isEmpty()){
+            if (!documentLinkDAO.getInverseProductInstanceIteration(documentRevision).isEmpty()) {
                 throw new EntityConstraintException(locale, "EntityConstraintException19");
             }
-            if(!documentLinkDAO.getInversefindPathData(documentRevision).isEmpty()){
+            if (!documentLinkDAO.getInversefindPathData(documentRevision).isEmpty()) {
                 throw new EntityConstraintException(locale, "EntityConstraintException20");
             }
 
@@ -1300,12 +1303,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        try{
+        try {
 
             binDAO.loadBinaryResource(file.getNewFullName(pNewName));
             throw new FileAlreadyExistsException(userLocale, pNewName);
 
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
 
             DocumentIteration document = binDAO.getDocumentHolder(file);
             DocumentRevision docR = document.getDocumentRevision();
@@ -1360,10 +1363,10 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         BinaryResourceDAO binDAO = new BinaryResourceDAO(userLocale, em);
         BinaryResource file = binDAO.loadBinaryResource(pFullName);
 
-        try{
+        try {
             binDAO.loadBinaryResource(file.getNewFullName(pNewName));
             throw new FileAlreadyExistsException(userLocale, pNewName);
-        }catch(FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             DocumentMasterTemplate template = binDAO.getDocumentTemplateHolder(file);
 
             checkDocumentTemplateWriteAccess(template, user);
@@ -1394,7 +1397,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         if (isCheckoutByUser(user, docR) && docR.getLastIteration().getKey().equals(iKey)) {
             DocumentIteration doc = docR.getLastIteration();
 
-            if(pLinkKeys != null) {
+            if (pLinkKeys != null) {
                 Set<DocumentLink> currentLinks = new HashSet<>(doc.getLinkedDocuments());
 
                 for (DocumentLink link : currentLinks) {
@@ -1415,8 +1418,8 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
             if (pAttributes != null) {
                 List<InstanceAttribute> currentAttrs = doc.getInstanceAttributes();
-                boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes,docR.isAttributesLocked(),currentAttrs);
-                if(!valid) {
+                boolean valid = AttributesConsistencyUtils.hasValidChange(pAttributes, docR.isAttributesLocked(), currentAttrs);
+                if (!valid) {
                     throw new NotAllowedException(userLocale, "NotAllowedException59");
                 }
                 doc.setInstanceAttributes(pAttributes);
@@ -1491,7 +1494,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             firstIte.setInstanceAttributes(attrs);
         }
 
-        Collection<Task> runningTasks=null;
+        Collection<Task> runningTasks = null;
         if (pWorkflowModelId != null) {
 
             UserDAO userDAO = new UserDAO(locale, em);
@@ -1503,9 +1506,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 String roleName = pair.getKey();
                 Collection<String> userLogins = pair.getValue();
                 Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), roleName));
-                Set<User> users=new HashSet<>();
+                Set<User> users = new HashSet<>();
                 roleUserMap.put(role, users);
-                for(String login:userLogins) {
+                for (String login : userLogins) {
                     User u = userDAO.loadUser(new UserKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), login));
                     users.add(u);
                 }
@@ -1516,21 +1519,21 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 String roleName = pair.getKey();
                 Collection<String> groupIds = pair.getValue();
                 Role role = roleDAO.loadRole(new RoleKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), roleName));
-                Set<UserGroup> groups=new HashSet<>();
+                Set<UserGroup> groups = new HashSet<>();
                 roleGroupMap.put(role, groups);
-                for(String groupId:groupIds) {
+                for (String groupId : groupIds) {
                     UserGroup g = groupDAO.loadUserGroup(new UserGroupKey(pOriginalDocRPK.getDocumentMaster().getWorkspace(), groupId));
                     groups.add(g);
                 }
             }
 
             WorkflowModel workflowModel = new WorkflowModelDAO(locale, em).loadWorkflowModel(new WorkflowModelKey(user.getWorkspaceId(), pWorkflowModelId));
-            Workflow workflow = workflowModel.createWorkflow(roleUserMap,roleGroupMap);
+            Workflow workflow = workflowModel.createWorkflow(roleUserMap, roleGroupMap);
             docR.setWorkflow(workflow);
 
-            for(Task task : workflow.getTasks()){
-                if(!task.hasPotentialWorker()){
-                    throw new NotAllowedException(locale,"NotAllowedException56");
+            for (Task task : workflow.getTasks()) {
+                if (!task.hasPotentialWorker()) {
+                    throw new NotAllowedException(locale, "NotAllowedException56");
                 }
             }
 
@@ -1543,7 +1546,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         docR.setTitle(pTitle);
         docR.setDescription(pDescription);
 
-        if(aclUserEntries != null && !aclUserEntries.isEmpty() || aclGroupEntries != null && !aclGroupEntries.isEmpty()){
+        if (aclUserEntries != null && !aclUserEntries.isEmpty() || aclGroupEntries != null && !aclGroupEntries.isEmpty()) {
             ACLFactory aclFactory = new ACLFactory(em);
             ACL acl = aclFactory.createACL(docR.getWorkspaceId(), aclUserEntries, aclGroupEntries);
             docR.setACL(acl);
@@ -1559,7 +1562,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         docRDAO.createDocR(docR);
 
-        if(runningTasks!=null) {
+        if (runningTasks != null) {
             mailer.sendApproval(runningTasks, docR);
         }
 
@@ -1759,7 +1762,6 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     public void createDocumentLog(DocumentLog log) {
         em.persist(log);
     }
-
 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

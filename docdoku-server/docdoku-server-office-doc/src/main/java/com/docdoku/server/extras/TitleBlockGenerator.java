@@ -35,7 +35,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,9 +42,9 @@ import java.util.logging.Logger;
 
 /**
  * @author Morgan Guimard
- *
- * This class define the default pdf generation for both part and document.
- * This behaviour can be overridden:
+ *         <p>
+ *         This class define the default pdf generation for both part and document.
+ *         This behaviour can be overridden:
  * @see com.docdoku.server.extras.PartTitleBlockGenerator
  * @see com.docdoku.server.extras.DocumentTitleBlockGenerator
  */
@@ -64,19 +63,20 @@ public abstract class TitleBlockGenerator {
     protected static final String BASE_NAME = "com.docdoku.server.viewers.localization.TitleBlockGenerator";
 
     protected static final Logger LOGGER = Logger.getLogger(TitleBlockGenerator.class.getName());
-    static{
+
+    static {
         try {
             BaseFont normal = BaseFont.createFont("com/docdoku/server/viewers/fonts/DejaVuSans.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
-            BaseFont bold = BaseFont.createFont("com/docdoku/server/viewers/fonts/DejaVuSans-Bold.ttf",  BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+            BaseFont bold = BaseFont.createFont("com/docdoku/server/viewers/fonts/DejaVuSans-Bold.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             NORMAL_12 = new Font(normal, 12, Font.NORMAL);
             BOLD_12 = new Font(bold, 12, Font.BOLD);
             BOLD_18 = new Font(bold, 18, Font.BOLD);
         } catch (DocumentException | IOException e) {
-            LOGGER.log(Level.SEVERE,null,e);
+            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 
-    protected String title ;
+    protected String title;
     protected String subject;
     protected String authorName;
     protected String version;
@@ -97,7 +97,7 @@ public abstract class TitleBlockGenerator {
         preface.add(new Paragraph(title, BOLD_18));
         addEmptyLine(preface, 1);
 
-        if(!description.isEmpty()){
+        if (description != null && !description.isEmpty()) {
             preface.add(new Paragraph(description, NORMAL_12));
         }
 
@@ -115,12 +115,12 @@ public abstract class TitleBlockGenerator {
 
         PdfPCell cell;
 
-        cell = new PdfPCell(new Phrase(authorName,NORMAL_12));
+        cell = new PdfPCell(new Phrase(authorName, NORMAL_12));
         cell.setBorder(Rectangle.NO_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_LEFT);
         table.addCell(cell);
 
-        cell = new PdfPCell(new Phrase(creationDate,NORMAL_12));
+        cell = new PdfPCell(new Phrase(creationDate, NORMAL_12));
         cell.setBorder(Rectangle.NO_BORDER);
         cell.setHorizontalAlignment(Element.ALIGN_RIGHT);
         table.addCell(cell);
@@ -130,38 +130,38 @@ public abstract class TitleBlockGenerator {
         addEmptyLine(preface, 1);
 
         preface.add(new Paragraph(bundle.getString("iteration"), BOLD_12));
-        addEmptyLine(preface,1);
+        addEmptyLine(preface, 1);
 
         PdfPTable iterationTable = new PdfPTable(5);
         iterationTable.setWidthPercentage(TABLE_PERCENT_WIDTH);
 
         // Table header
-        cell = new PdfPCell(new Phrase(bundle.getString("iteration.version"),BOLD_12));
+        cell = new PdfPCell(new Phrase(bundle.getString("iteration.version"), BOLD_12));
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(bundle.getString("iteration.iteration"),BOLD_12));
+        cell = new PdfPCell(new Phrase(bundle.getString("iteration.iteration"), BOLD_12));
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(bundle.getString("iteration.date"),BOLD_12));
+        cell = new PdfPCell(new Phrase(bundle.getString("iteration.date"), BOLD_12));
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(bundle.getString("iteration.author"),BOLD_12));
+        cell = new PdfPCell(new Phrase(bundle.getString("iteration.author"), BOLD_12));
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(bundle.getString("iteration.Notes"),BOLD_12));
+        cell = new PdfPCell(new Phrase(bundle.getString("iteration.Notes"), BOLD_12));
         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
         iterationTable.addCell(cell);
 
         // Table body
-        cell = new PdfPCell(new Phrase(version,NORMAL_12));
+        cell = new PdfPCell(new Phrase(version, NORMAL_12));
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(currentIteration,NORMAL_12));
+        cell = new PdfPCell(new Phrase(currentIteration, NORMAL_12));
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(iterationDate,NORMAL_12));
+        cell = new PdfPCell(new Phrase(iterationDate, NORMAL_12));
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(authorName,NORMAL_12));
+        cell = new PdfPCell(new Phrase(authorName, NORMAL_12));
         iterationTable.addCell(cell);
-        cell = new PdfPCell(new Phrase(revisionNote,NORMAL_12));
+        cell = new PdfPCell(new Phrase(revisionNote, NORMAL_12));
         iterationTable.addCell(cell);
 
         preface.add(iterationTable);
@@ -170,75 +170,75 @@ public abstract class TitleBlockGenerator {
     public void generateAttribute(Paragraph preface, ResourceBundle bundle) {
 
 
-            // Table title
-            preface.add(new Paragraph(bundle.getString("attributes"), BOLD_12));
-            addEmptyLine(preface,1);
+        // Table title
+        preface.add(new Paragraph(bundle.getString("attributes"), BOLD_12));
+        addEmptyLine(preface, 1);
 
-            PdfPTable attributesTable = new PdfPTable(2);
-            attributesTable.setWidthPercentage(100f);
+        PdfPTable attributesTable = new PdfPTable(2);
+        attributesTable.setWidthPercentage(100f);
 
-            // Table head
-            PdfPCell cell = new PdfPCell(new Phrase(bundle.getString("attributes.name"),BOLD_12));
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        // Table head
+        PdfPCell cell = new PdfPCell(new Phrase(bundle.getString("attributes.name"), BOLD_12));
+        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        attributesTable.addCell(cell);
+        cell = new PdfPCell(new Phrase(bundle.getString("attributes.value"), BOLD_12));
+        cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+        attributesTable.addCell(cell);
+
+        // Table body
+
+        for (InstanceAttribute attr : instanceAttributes) {
+            cell = new PdfPCell(new Phrase(attr.getName(), NORMAL_12));
             attributesTable.addCell(cell);
-            cell = new PdfPCell(new Phrase(bundle.getString("attributes.value"),BOLD_12));
-            cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
+            Object value = attr.getValue();
+            cell = new PdfPCell(new Phrase(value != null ? String.valueOf(value) : "", NORMAL_12));
             attributesTable.addCell(cell);
+        }
 
-            // Table body
-
-            for (InstanceAttribute attr : instanceAttributes) {
-                cell = new PdfPCell(new Phrase(attr.getName(), NORMAL_12));
-                attributesTable.addCell(cell);
-                Object value = attr.getValue();
-                cell = new PdfPCell(new Phrase(value != null ? String.valueOf(value) : "", NORMAL_12));
-                attributesTable.addCell(cell);
-            }
-
-            preface.add(attributesTable);
+        preface.add(attributesTable);
 
     }
 
-    private void generateLyfeCycleState(Paragraph preface, ResourceBundle bundle) {
+    private void generateLifeCycleState(Paragraph preface, ResourceBundle bundle) {
         // Table title
         preface.add(new Paragraph(bundle.getString("lifecycle") + " : " + lifeCycleState, BOLD_12));
-        addEmptyLine(preface,1);
+        addEmptyLine(preface, 1);
 
         PdfPTable lifeCycleTable = new PdfPTable(5);
         lifeCycleTable.setWidthPercentage(100f);
         PdfPCell cell;
-        for(Activity activity : workflow.getActivities()){
+        for (Activity activity : workflow.getActivities()) {
 
-            boolean headerRendered = false ;
+            boolean headerRendered = false;
 
-            for(Task task : activity.getTasks()){
+            for (Task task : activity.getTasks()) {
 
                 if (task.isApproved() || task.isRejected()) {
 
-                    if(!headerRendered){
+                    if (!headerRendered) {
                         // Table head
-                        cell = new PdfPCell(new Phrase(activity.getLifeCycleState(),BOLD_12));
+                        cell = new PdfPCell(new Phrase(activity.getLifeCycleState(), BOLD_12));
                         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         cell.setColspan(5);
                         lifeCycleTable.addCell(cell);
 
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.task"),BOLD_12));
+                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.task"), BOLD_12));
                         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         lifeCycleTable.addCell(cell);
 
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.date"),BOLD_12));
+                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.date"), BOLD_12));
                         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         lifeCycleTable.addCell(cell);
 
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.author"),BOLD_12));
+                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.author"), BOLD_12));
                         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         lifeCycleTable.addCell(cell);
 
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.comments"),BOLD_12));
+                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.comments"), BOLD_12));
                         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         lifeCycleTable.addCell(cell);
 
-                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.signature"),BOLD_12));
+                        cell = new PdfPCell(new Phrase(bundle.getString("lifecycle.signature"), BOLD_12));
                         cell.setBackgroundColor(BaseColor.LIGHT_GRAY);
                         lifeCycleTable.addCell(cell);
 
@@ -246,14 +246,14 @@ public abstract class TitleBlockGenerator {
                     }
 
                     // Table body
-                    cell = new PdfPCell(new Phrase(task.getTitle(),NORMAL_12));
+                    cell = new PdfPCell(new Phrase(task.getTitle(), NORMAL_12));
                     lifeCycleTable.addCell(cell);
 
                     SimpleDateFormat simpleFormat = new SimpleDateFormat(bundle.getString("date.format"));
                     cell = new PdfPCell(new Phrase(simpleFormat.format(task.getClosureDate()), NORMAL_12));
                     lifeCycleTable.addCell(cell);
 
-                    String workerName = task.getWorker()!=null?task.getWorker().getName():"";
+                    String workerName = task.getWorker() != null ? task.getWorker().getName() : "";
                     cell = new PdfPCell(new Phrase(workerName, NORMAL_12));
                     lifeCycleTable.addCell(cell);
 
@@ -264,11 +264,11 @@ public abstract class TitleBlockGenerator {
                         try {
                             byte[] imageByte;
                             int indexOfFirstComma = task.getSignature().indexOf(",");
-                            String base64 = task.getSignature().substring(indexOfFirstComma+1,task.getSignature().length());
+                            String base64 = task.getSignature().substring(indexOfFirstComma + 1, task.getSignature().length());
                             imageByte = DatatypeConverter.parseBase64Binary(base64);
                             Image image = Image.getInstance(imageByte);
                             image.setCompressionLevel(Image.ORIGINAL_NONE);
-                            image.scaleToFit(SIGNATURE_SIZE_W,SIGNATURE_SIZE_H);
+                            image.scaleToFit(SIGNATURE_SIZE_W, SIGNATURE_SIZE_H);
                             cell = new PdfPCell(image);
                             lifeCycleTable.addCell(cell);
                         } catch (Exception e) {
@@ -305,15 +305,15 @@ public abstract class TitleBlockGenerator {
 
         // Main paragraph
         Paragraph preface = new Paragraph();
-        generateHeader(preface,bundle);
-        generateTable(preface,bundle);
-        addEmptyLine(preface,1);
-        if(!instanceAttributes.isEmpty()){
-            generateAttribute(preface,bundle);
-            addEmptyLine(preface,1);
+        generateHeader(preface, bundle);
+        generateTable(preface, bundle);
+        addEmptyLine(preface, 1);
+        if (!instanceAttributes.isEmpty()) {
+            generateAttribute(preface, bundle);
+            addEmptyLine(preface, 1);
         }
-        if(workflow != null){
-            generateLyfeCycleState(preface,bundle);
+        if (workflow != null) {
+            generateLifeCycleState(preface, bundle);
         }
 
         document.add(preface);
@@ -326,19 +326,19 @@ public abstract class TitleBlockGenerator {
 
         // Merge the pdf generated with the pdf given in the input stream
         //TODO: use PdfStamper to insert into the existing pdf.
-        return mergePdfDocuments(new FileInputStream(blockTitleFile),inputStream);
+        return mergePdfDocuments(new FileInputStream(blockTitleFile), inputStream);
 
     }
 
     /*
     * Merge two pdf from input streams
     * */
-    public static InputStream mergePdfDocuments(InputStream input1, InputStream input2){
+    public static InputStream mergePdfDocuments(InputStream input1, InputStream input2) {
 
         try {
             File tmpDir = Files.createTempDirectory("docdoku-").toFile();
             File tmpCopyFile = new File(tmpDir, TEMP_FILE_NAME);
-            InputStream[] files = { input1, input2 };
+            InputStream[] files = {input1, input2};
 
             Document doc = new Document();
             PdfCopy copy = new PdfCopy(doc, new FileOutputStream(tmpCopyFile));
@@ -360,8 +360,7 @@ public abstract class TitleBlockGenerator {
             tmpDir.deleteOnExit();
 
             return new FileInputStream(tmpCopyFile);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             LOGGER.log(Level.INFO, null, e);
         }
 
@@ -372,7 +371,7 @@ public abstract class TitleBlockGenerator {
     * Generate a block title pdf page and add it to the pdf given in the input stream
     * */
     public static InputStream addBlockTitleToPDF(InputStream inputStream, DocumentIteration docI, Locale pLocale) throws IOException, DocumentException {
-        DocumentTitleBlockGenerator documentTitleBlockGenerator = new DocumentTitleBlockGenerator(inputStream,docI,pLocale);
+        DocumentTitleBlockGenerator documentTitleBlockGenerator = new DocumentTitleBlockGenerator(inputStream, docI, pLocale);
         return documentTitleBlockGenerator.generateBlockTitleToPDF(inputStream);
     }
 
@@ -389,11 +388,11 @@ public abstract class TitleBlockGenerator {
     }
 
     protected void addMetaData(Document document) {
-        document.addTitle(title);
-        document.addSubject(subject);
-        document.addKeywords(keywords);
-        document.addAuthor(authorName);
-        document.addCreator(authorName);
+        document.addTitle(title != null ? title : "");
+        document.addSubject(subject != null ? subject : "");
+        document.addKeywords(keywords != null ? keywords : "");
+        document.addAuthor(authorName != null ? authorName : "");
+        document.addCreator(authorName != null ? authorName : "");
     }
 
 

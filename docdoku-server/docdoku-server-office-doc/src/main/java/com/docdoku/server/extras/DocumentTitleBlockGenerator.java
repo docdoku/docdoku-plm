@@ -28,13 +28,13 @@ import java.util.ResourceBundle;
 
 /**
  * @author kelto on 05/01/16.
- *
- * This class should be used to override the default Pdf generation for document.
+ *         <p>
+ *         This class should be used to override the default Pdf generation for document.
  * @see com.docdoku.server.extras.TitleBlockGenerator
  */
 class DocumentTitleBlockGenerator extends TitleBlockGenerator {
 
-    DocumentTitleBlockGenerator(InputStream inputStream,DocumentIteration documentIteration, Locale locale) {
+    DocumentTitleBlockGenerator(InputStream inputStream, DocumentIteration documentIteration, Locale locale) {
         pLocale = locale;
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         SimpleDateFormat dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
