@@ -254,7 +254,6 @@
         <module>docdoku-api-js</module>
         <module>docdoku-cli</module>
         <module>docdoku-dplm</module>
-        <module>docdoku-web-front</module>
     </modules>
     <build>
         <pluginManagement>
