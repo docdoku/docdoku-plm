@@ -68,7 +68,7 @@ public class TestConfig {
         EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
         LANGUAGE = System.getProperty("language") != null ? System.getProperty("language") : "en";
         TIMEZONE = System.getProperty("timezone") != null ? System.getProperty("timezone") : "CET";
-        DEBUG = System.getProperty("debug") != null ? Boolean.parseBoolean(System.getProperty("debug")) : false;
+        DEBUG = System.getProperty("debug") != null && Boolean.parseBoolean(System.getProperty("debug"));
     }
 
     private static void createClients() {
