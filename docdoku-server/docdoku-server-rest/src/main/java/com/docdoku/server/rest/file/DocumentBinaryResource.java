@@ -58,7 +58,6 @@ import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -171,12 +170,7 @@ public class DocumentBinaryResource {
 
         } else {
             // Check access right
-            boolean regularUser = contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID);
-            if (regularUser) {
-                LOGGER.log(Level.INFO, "loul");
-            }
             DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
-
             if (!canAccess(docIK)) {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
