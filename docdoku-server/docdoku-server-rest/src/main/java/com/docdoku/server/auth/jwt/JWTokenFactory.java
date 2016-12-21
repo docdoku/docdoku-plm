@@ -82,7 +82,7 @@ public class JWTokenFactory {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
             subject = jwtClaims.getSubject();
         } catch (InvalidJwtException | MalformedClaimException e) {
-            LOGGER.log(Level.SEVERE, null, e);
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
 
         if (subject != null && !subject.isEmpty()) {

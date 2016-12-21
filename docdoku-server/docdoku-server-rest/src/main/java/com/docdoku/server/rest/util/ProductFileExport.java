@@ -25,7 +25,7 @@ import com.docdoku.core.product.ConfigurationItemKey;
 
 /**
  * This class holds the context for a product export
- * See {link com.docdoku.server.rest.writer.DocumentBaselineFileExportMessageBodyWriter} for response implementation
+ * See {link com.docdoku.server.rest.writers.DocumentBaselineFileExportMessageBodyWriter} for response implementation
  *
  * @author morgan on 29/04/15.
  */

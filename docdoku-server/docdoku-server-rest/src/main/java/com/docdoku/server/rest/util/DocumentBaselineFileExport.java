@@ -22,7 +22,7 @@ package com.docdoku.server.rest.util;
 
 /**
  * This class holds the context for a document baseline export
- * See {link com.docdoku.server.rest.writer.DocumentBaselineFileExportMessageBodyWriter} for response implementation
+ * See {link com.docdoku.server.rest.writers.DocumentBaselineFileExportMessageBodyWriter} for response implementation
  *
  * @author Elisabel Généreux on 21/09/16.
  */
