@@ -187,7 +187,7 @@ public class CollaborativeRoomTest {
     public void shouldSaveCommands(){
         //Given
         String msg = "{  \n" +
-                "   \"messageBroadcast\":{  \n" +
+                "   \"broadcastMessage\":{  \n" +
                 "      \"cameraInfos\":{  \n" +
                 "         \"target\":{  \n" +
                 "            \"x\":0,\n" +
@@ -221,12 +221,12 @@ public class CollaborativeRoomTest {
 
 
         JsonObject jsObj = Json.createReader(new StringReader(msg)).readObject();
-        JsonObject messageBroadcast = jsObj.containsKey("messageBroadcast")?jsObj.getJsonObject("messageBroadcast"):null;
+        JsonObject broadcastMessage = jsObj.containsKey("broadcastMessage")?jsObj.getJsonObject("broadcastMessage"):null;
 
         JsonObjectBuilder b = Json.createObjectBuilder()
                 .add("type","COLLABORATIVE_COMMANDS")
                 .add("key","key-12545695-7859-458")
-                .add("messageBroadcast",messageBroadcast)
+                .add("broadcastMessage",broadcastMessage)
                 .add("remoteUser", "slave1");
 
 
@@ -237,7 +237,7 @@ public class CollaborativeRoomTest {
         room.addSlave(slave1);
         room.addSlave(slave2);
 
-        JsonObject commands = collaborativeMessage.getJsonObject("messageBroadcast");
+        JsonObject commands = collaborativeMessage.getJsonObject("broadcastMessage");
         room.saveCommand(commands);
         Assert.assertTrue(room.getCommands().entrySet().size() == 1);
     }

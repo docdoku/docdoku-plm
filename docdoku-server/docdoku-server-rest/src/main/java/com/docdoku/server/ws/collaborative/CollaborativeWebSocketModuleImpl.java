@@ -281,9 +281,9 @@ public class CollaborativeWebSocketModuleImpl implements WebSocketModule {
     private void onCollaborativeInviteMessage(String sender, Session session, WebSocketMessage webSocketMessage) {
 
         String invitedUser = webSocketMessage.getString("remoteUser");
-        JsonObject messageBroadcast = webSocketMessage.getJsonObject("messageBroadcast");
-        String context = messageBroadcast.getString("context");
-        String url = messageBroadcast.getString("url");
+        JsonObject broadcastMessage = webSocketMessage.getJsonObject("broadcastMessage");
+        String context = broadcastMessage.getString("context");
+        String url = broadcastMessage.getString("url");
 
         CollaborativeRoom room = CollaborativeRoom.getByKeyName(webSocketMessage.getString("key"));
 
@@ -344,11 +344,11 @@ public class CollaborativeWebSocketModuleImpl implements WebSocketModule {
         webSocketSessionsManager.send(session, message);
     }
 
-    private WebSocketMessage createMessage(String type, String key, JsonValue messageBroadcast, String remoteUser) {
+    private WebSocketMessage createMessage(String type, String key, JsonValue broadcastMessage, String remoteUser) {
         JsonObjectBuilder b = Json.createObjectBuilder()
                 .add("type", type)
                 .add("key", key)
-                .add("messageBroadcast", messageBroadcast)
+                .add("broadcastMessage", broadcastMessage)
                 .add("remoteUser", remoteUser);
 
         return new WebSocketMessage(b.build());

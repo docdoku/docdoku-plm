@@ -57,7 +57,7 @@ public class ChatWebSocketModuleImpl implements WebSocketModule {
         String sender = webSocketSessionsManager.getHolder(session);
         String remoteUser = webSocketMessage.getString("remoteUser");
 
-        if(!webSocketSessionsManager.isAllowedToReachUser(sender,remoteUser)){
+        if (!webSocketSessionsManager.isAllowedToReachUser(sender, remoteUser)) {
             // Maybe send 403 ?
             return;
         }
@@ -68,26 +68,29 @@ public class ChatWebSocketModuleImpl implements WebSocketModule {
         if (!webSocketSessionsManager.hasSessions(remoteUser)) {
             // Tell the sender the remote is offline
             WebSocketMessage messageForSender = createMessage(CHAT_MESSAGE, remoteUser, "", "", context, CHAT_MESSAGE_UNREACHABLE);
-            webSocketSessionsManager.send(session,messageForSender);
+            webSocketSessionsManager.send(session, messageForSender);
         } else {
-            WebSocketMessage messageForSender = createMessage(CHAT_MESSAGE_ACK,remoteUser,sender,message,context, "");
-            WebSocketMessage messageForRemoteUser = createMessage(CHAT_MESSAGE,sender,remoteUser,message,context,"");
+            WebSocketMessage messageForSender = createMessage(CHAT_MESSAGE_ACK, remoteUser, sender, message, context, "");
+            WebSocketMessage messageForRemoteUser = createMessage(CHAT_MESSAGE, sender, remoteUser, message, context, "");
             // Broadcast to both sender/remoteUser the message on each opened sessions
             webSocketSessionsManager.broadcast(sender, messageForSender);
             webSocketSessionsManager.broadcast(remoteUser, messageForRemoteUser);
         }
     }
 
-    private WebSocketMessage createMessage(String type, String remoteUser, String sender, String message, String context, String error){
+    private WebSocketMessage createMessage(String type, String remoteUser, String sender, String message, String context, String error) {
 
         JsonObjectBuilder b = Json.createObjectBuilder()
-                .add("type",type)
+                .add("type", type)
                 .add("remoteUser", remoteUser)
-                .add("sender",sender)
-                .add("message", message)
-                .add("context",context);
+                .add("sender", sender)
+                .add("message", message);
 
-        if(error!=null && !error.isEmpty()) {
+        if (null != context) {
+            b.add("context", context);
+        }
+
+        if (error != null) {
             b.add("error", error);
         }
 
