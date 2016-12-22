@@ -71,7 +71,7 @@ public class ChatWebSocketModuleImpl implements WebSocketModule {
             webSocketSessionsManager.send(session, messageForSender);
         } else {
             WebSocketMessage messageForSender = createMessage(CHAT_MESSAGE_ACK, remoteUser, sender, message, context, "");
-            WebSocketMessage messageForRemoteUser = createMessage(CHAT_MESSAGE, sender, remoteUser, message, context, "");
+            WebSocketMessage messageForRemoteUser = createMessage(CHAT_MESSAGE, sender, sender, message, context, "");
             // Broadcast to both sender/remoteUser the message on each opened sessions
             webSocketSessionsManager.broadcast(sender, messageForSender);
             webSocketSessionsManager.broadcast(remoteUser, messageForRemoteUser);
