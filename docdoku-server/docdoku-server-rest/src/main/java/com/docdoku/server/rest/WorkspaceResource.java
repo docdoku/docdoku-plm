@@ -599,22 +599,8 @@ public class WorkspaceResource {
 
         StatsOverviewDTO statsOverviewDTO = new StatsOverviewDTO();
 
-        boolean admin;
-
-        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            admin = true;
-        } else {
-            User user = userManager.checkWorkspaceReadAccess(workspaceId);
-            admin = user.isAdministrator();
-        }
-
-        if (admin) {
-            statsOverviewDTO.setDocuments(documentService.getTotalNumberOfDocuments(workspaceId));
-            statsOverviewDTO.setParts(productService.getTotalNumberOfParts(workspaceId));
-        } else {
-            statsOverviewDTO.setDocuments(documentService.getDocumentsInWorkspaceCount(workspaceId));
-            statsOverviewDTO.setParts(productService.getPartsInWorkspaceCount(workspaceId));
-        }
+        statsOverviewDTO.setDocuments(documentService.getDocumentsInWorkspaceCount(workspaceId));
+        statsOverviewDTO.setParts(productService.getPartsInWorkspaceCount(workspaceId));
 
         statsOverviewDTO.setUsers(userManager.getUsers(workspaceId).length);
         statsOverviewDTO.setProducts(productService.getConfigurationItems(workspaceId).size());

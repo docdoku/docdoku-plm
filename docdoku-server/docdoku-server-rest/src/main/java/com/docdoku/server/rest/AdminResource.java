@@ -154,14 +154,14 @@ public class AdminResource implements Serializable {
     })
     @Produces(MediaType.APPLICATION_JSON)
     public JsonObject getDocumentsStats()
-            throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException {
+            throws AccountNotFoundException, WorkspaceNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         JsonObjectBuilder docStats = Json.createObjectBuilder();
 
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for (Workspace workspace : allWorkspaces) {
-            int documentsCount = documentService.getTotalNumberOfDocuments(workspace.getId());
+            int documentsCount = documentService.getDocumentsInWorkspaceCount(workspace.getId());
             docStats.add(workspace.getId(), documentsCount);
         }
 
@@ -215,7 +215,7 @@ public class AdminResource implements Serializable {
         Workspace[] allWorkspaces = userManager.getAdministratedWorkspaces();
 
         for (Workspace workspace : allWorkspaces) {
-            int productsCount = productService.getTotalNumberOfParts(workspace.getId());
+            int productsCount = productService.getPartsInWorkspaceCount(workspace.getId());
             partsStats.add(workspace.getId(), productsCount);
         }
 

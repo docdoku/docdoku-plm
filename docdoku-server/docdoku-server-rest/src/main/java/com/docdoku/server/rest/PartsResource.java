@@ -151,7 +151,7 @@ public class PartsResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
-        return new CountDTO(productService.getTotalNumberOfParts(Tools.stripTrailingSlash(workspaceId)));
+        return new CountDTO(productService.getPartsInWorkspaceCount(Tools.stripTrailingSlash(workspaceId)));
     }
 
     @GET

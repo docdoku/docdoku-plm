@@ -2033,23 +2033,25 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public int getPartsInWorkspaceCount(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
-        User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-        return new PartRevisionDAO(new Locale(user.getLanguage()), em).getPartRevisionCountFiltered(user, pWorkspaceId);
-    }
+    public int getPartsInWorkspaceCount(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException, AccountNotFoundException {
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public int getTotalNumberOfParts(String pWorkspaceId) throws AccessRightException, WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
-        Locale locale;
-        if (!contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
-            locale = new Locale(user.getLanguage());
+        int count;
+
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            Account adminAccount = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
+            Locale locale = new Locale(adminAccount.getLanguage());
+            count = new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
         } else {
-            locale = Locale.getDefault();
+            User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
+            Locale locale = new Locale(user.getLanguage());
+            if(user.isAdministrator()){
+                count = new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
+            }else{
+                count = new PartRevisionDAO(locale, em).getPartRevisionCountFiltered(user, pWorkspaceId);
+            }
         }
-        //TODO: count only part you can see
-        return new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
+
+        return count;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

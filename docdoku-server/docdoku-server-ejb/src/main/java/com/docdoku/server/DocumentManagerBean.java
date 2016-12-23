@@ -420,17 +420,25 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
-        User user = userManager.checkWorkspaceReadAccess(workspaceId);
-        return new DocumentRevisionDAO(new Locale(user.getLanguage()), em).getDocumentRevisionsCountFiltered(user, workspaceId);
-    }
+    public int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccountNotFoundException {
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public int getTotalNumberOfDocuments(String pWorkspaceId) throws WorkspaceNotFoundException, AccessRightException, AccountNotFoundException {
-        Account account = userManager.checkAdmin(pWorkspaceId);
-        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(new Locale(account.getLanguage()), em);
-        return documentRevisionDAO.getTotalNumberOfDocuments(pWorkspaceId);
+        int count;
+
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            Account adminAccount = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
+            Locale locale = new Locale(adminAccount.getLanguage());
+            count = new DocumentRevisionDAO(locale, em).getTotalNumberOfDocuments(workspaceId);
+        } else {
+            User user = userManager.checkWorkspaceReadAccess(workspaceId);
+            Locale locale = new Locale(user.getLanguage());
+            if (user.isAdministrator()) {
+                count = new DocumentRevisionDAO(locale, em).getTotalNumberOfDocuments(workspaceId);
+            } else {
+                count = new DocumentRevisionDAO(locale, em).getDocumentRevisionsCountFiltered(user, workspaceId);
+            }
+        }
+
+        return count;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
