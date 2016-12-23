@@ -83,7 +83,7 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
         String apiBasePath = getServerURL().toString() + "/api";
 
-        client = DocdokuPLMClientFactory.createBasicClient(apiBasePath, user, password);
+        client = DocdokuPLMClientFactory.createJWTClient(apiBasePath, user, password);
 
         execImpl();
 
