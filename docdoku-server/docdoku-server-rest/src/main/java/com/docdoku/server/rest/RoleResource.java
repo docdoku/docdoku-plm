@@ -38,6 +38,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
@@ -82,19 +83,19 @@ public class RoleResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInWorkspace(
+    public Response getRolesInWorkspace(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRoles(workspaceId);
-        RoleDTO[] rolesDTO = new RoleDTO[roles.length];
+        List<RoleDTO> rolesDTO = new ArrayList<>();
 
-        for (int i = 0; i < roles.length; i++) {
-            rolesDTO[i] = mapRoleToDTO(roles[i]);
+        for (Role role :roles) {
+            rolesDTO.add(mapRoleToDTO(role));
         }
 
-        // TODO: return Response instead of RoleDTO[]
-        return rolesDTO;
+        return Response.ok(new GenericEntity<List<RoleDTO>>((List<RoleDTO>) rolesDTO) {
+        }).build();
     }
 
     @GET
@@ -108,19 +109,20 @@ public class RoleResource {
     })
     @Path("inuse")
     @Produces(MediaType.APPLICATION_JSON)
-    public RoleDTO[] getRolesInUseInWorkspace(
+    public Response getRolesInUseInWorkspace(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException, UserNotActiveException {
 
         Role[] roles = roleService.getRolesInUse(workspaceId);
-        RoleDTO[] rolesDTO = new RoleDTO[roles.length];
+        List<RoleDTO> rolesDTO = new ArrayList<>();
 
-        for (int i = 0; i < roles.length; i++) {
-            rolesDTO[i] = mapRoleToDTO(roles[i]);
+        for (Role role :roles) {
+            rolesDTO.add(mapRoleToDTO(role));
         }
 
-        // TODO: return Response instead of RoleDTO[]
-        return rolesDTO;
+        return Response.ok(new GenericEntity<List<RoleDTO>>((List<RoleDTO>) rolesDTO) {
+        }).build();
+
     }
 
 
