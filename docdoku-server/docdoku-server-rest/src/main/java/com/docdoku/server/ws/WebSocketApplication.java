@@ -30,6 +30,7 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -75,14 +76,14 @@ public class WebSocketApplication {
     @OnError
     public void error(Session session, Throwable error) {
         LOGGER.log(Level.SEVERE, "WebSocket error", error);
-        closeSession(session);
+        unTrackSession(session);
     }
 
     @OnClose
     public void close(Session session, CloseReason reason) {
         LOGGER.log(Level.FINE, "WebSocket closed with message '" +
                 reason.getReasonPhrase() + "' and code " + reason.getCloseCode());
-        closeSession(session);
+        unTrackSession(session);
     }
 
     @OnOpen
@@ -131,8 +132,9 @@ public class WebSocketApplication {
         }
 
         // Authentication failed, close socket
-        unAuthenticatedSessions.remove(session);
         closeSession(session);
+        unTrackSession(session);
+
     }
 
     private WebSocketModule selectModule(WebSocketMessage webSocketMessage){
@@ -144,8 +146,15 @@ public class WebSocketApplication {
         return null;
     }
 
+    private void closeSession(Session session){
+        try {
+            session.close();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
+    }
 
-    private void closeSession(Session session) {
+    private void unTrackSession(Session session) {
         if(unAuthenticatedSessions.contains(session)){
             unAuthenticatedSessions.remove(session);
         }else {
