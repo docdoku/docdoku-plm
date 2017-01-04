@@ -50,7 +50,7 @@ public class SessionSAM extends CustomSAM {
     public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
 
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
-        LOGGER.log(Level.INFO, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
+        LOGGER.log(Level.FINE, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
 
         String login = (String) request.getSession().getAttribute("login");
         String groups = (String) request.getSession().getAttribute("groups");
