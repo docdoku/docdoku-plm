@@ -5,17 +5,6 @@ Commons Codec      - Apache License Version 2.0, January 2004 - http://www.apach
 Lucene             - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Apache POI         - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 JODConverter       - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
-mustache.js        - The MIT License - http://opensource.org/licenses/mit-license.php
-LESSCSS            - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
-Modernizr          - The MIT License - http://opensource.org/licenses/mit-license.php
-jQuery             - The MIT License - http://opensource.org/licenses/mit-license.php
-Three.js           - The MIT License - http://opensource.org/licenses/mit-license.php
-Underscore.js      - The MIT License - http://opensource.org/licenses/mit-license.php
-Buzz               - The MIT License - http://opensource.org/licenses/mit-license.php
-RequireJS          - The MIT License - http://opensource.org/licenses/mit-license.php
-Backbone.js        - The MIT License - http://opensource.org/licenses/mit-license.php
-bootstrap-switch   - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
-dataTables         - BSD license 3-Clause http://opensource.org/licenses/BSD-3-Clause
 OkHttp             - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 mustache.java      - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Guava              - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
@@ -30,15 +19,3 @@ Jackson FasterXML  - Apache License Version 2.0, January 2004 - http://www.apach
 Swagger            - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Brsanthu MigBase64 - BSD license 3-Clause http://opensource.org/licenses/BSD-3-Clause
 Underscore         - The MIT License - http://opensource.org/licenses/mit-license.php
-Moment             - The MIT License - http://opensource.org/licenses/mit-license.php
-Lodash             - The MIT License - http://opensource.org/licenses/mit-license.php
-Fontawesome        - SIL OFL 1.1 - http://scripts.sil.org/OFL
-Bootbox            - The MIT License - http://opensource.org/licenses/mit-license.php
-Tweenjs            - The MIT License - http://opensource.org/licenses/mit-license.php
-Unorm              - The MIT License - http://opensource.org/licenses/mit-license.php
-BuzzJS             - The MIT License - http://opensource.org/licenses/mit-license.php
-AsyncJS            - The MIT License - http://opensource.org/licenses/mit-license.php
-SelectizeJS        - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
-Datatables         - The MIT License - http://opensource.org/licenses/mit-license.php
-dateformat         - The MIT License - http://opensource.org/licenses/mit-license.php
-dat.gui            - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
