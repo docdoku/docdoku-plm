@@ -20,9 +20,8 @@
 
 package com.docdoku.server.rest.file.util;
 
-import com.docdoku.core.util.FileIO;
-import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.InterruptedStreamException;
+import com.google.common.io.ByteStreams;
 
 import javax.ws.rs.core.StreamingOutput;
 import java.io.IOException;
@@ -57,18 +56,23 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
 
     private void copy(final InputStream input, OutputStream output, long start, long length) throws InterruptedStreamException {
         // Slice the input stream considering offset and length
-        try (InputStream in=input) {
-            in.skip(start);
-            byte[] data = new byte[1024*8];
-            long remaining = length;
-            int nr;
-            while (remaining > 0) {
-                nr = in.read(data);
-                if (nr < 0) {
-                    break;
+        try (InputStream in = input) {
+            if (length > 0) {
+                in.skip(start);
+                byte[] data = new byte[1024 * 8];
+                long remaining = length;
+                int nr;
+                while (remaining > 0) {
+                    nr = in.read(data);
+                    if (nr < 0) {
+                        break;
+                    }
+                    remaining -= nr;
+                    output.write(data, 0, nr);
                 }
-                remaining -= nr;
-                output.write(data, 0, nr);
+            }
+            else{
+                ByteStreams.copy(in, output);
             }
         } catch (IOException e) {
             // may be caused by a client side cancel

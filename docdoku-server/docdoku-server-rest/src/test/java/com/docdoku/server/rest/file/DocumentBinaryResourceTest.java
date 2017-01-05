@@ -67,7 +67,7 @@ public class DocumentBinaryResourceTest {
     @Mock
     private IDocumentManagerLocal documentService;
     @Mock
-    private IOnDemandConverterManagerLocal binaryResourceGetterService;
+    private IOnDemandConverterManagerLocal onDemandConverterManager;
     @Mock
     private IShareManagerLocal shareService;
     @Mock

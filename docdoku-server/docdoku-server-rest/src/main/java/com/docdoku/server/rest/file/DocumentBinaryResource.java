@@ -67,6 +67,7 @@ import java.util.logging.Logger;
 public class DocumentBinaryResource {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
+
     @Inject
     private IBinaryStorageManagerLocal storageManager;
     @Inject
@@ -74,7 +75,7 @@ public class DocumentBinaryResource {
     @Inject
     private IContextManagerLocal contextManager;
     @Inject
-    private IOnDemandConverterManagerLocal binaryResourceGetterService;
+    private IOnDemandConverterManagerLocal onDemandConverterManager;
     @Inject
     private IShareManagerLocal shareService;
     @Inject
@@ -116,6 +117,7 @@ public class DocumentBinaryResource {
             }
 
             if (formParts.size() == 1) {
+                // todo prevent NPE for filename
                 return BinaryResourceUpload.tryToRespondCreated(request.getRequestURI() + URLEncoder.encode(fileName, "UTF-8"));
             }
             return Response.noContent().build();
@@ -139,7 +141,7 @@ public class DocumentBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(
             @Context Request request,
-            @ApiParam(required = false, value = "Range")@HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
             @ApiParam(required = false, value = "referer") @HeaderParam("Referer") String referer,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") final String documentId,
@@ -177,7 +179,36 @@ public class DocumentBinaryResource {
 
             fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
         }
-        return downloadDocumentFile(request, range, fullName, type, output);
+
+        BinaryResource binaryResource = getBinaryResource(fullName);
+        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
+
+        // Check cache precondition
+        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
+        if (rb != null) {
+            return rb.build();
+        }
+
+        InputStream binaryContentInputStream = null;
+
+        try {
+
+            if (output != null && !output.isEmpty()) {
+                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
+                if(range == null || range.isEmpty()) {
+                    binaryResourceDownloadMeta.setLength(0);
+                }
+            } else {
+                binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
+            }
+
+            return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
+
+        } catch (StorageException | FileConversionException e) {
+            Streams.close(binaryContentInputStream);
+            return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
+        }
+
     }
 
     private String uploadAFile(Part formPart, DocumentIterationKey docPK)
@@ -192,30 +223,6 @@ public class DocumentBinaryResource {
         return fileName;
     }
 
-    private Response downloadDocumentFile(Request request, String range, String fullName, String type, String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException {
-        BinaryResource binaryResource = getBinaryResource(fullName);
-        BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
-        // Check cache precondition
-        Response.ResponseBuilder rb = request.evaluatePreconditions(binaryResourceDownloadMeta.getLastModified(), binaryResourceDownloadMeta.getETag());
-        if (rb != null) {
-            return rb.build();
-        }
-
-        InputStream binaryContentInputStream = null;
-        try {
-            if (output != null && !output.isEmpty()) {
-                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
-            } else {
-                binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
-            }
-            return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
-        } catch (StorageException | FileConversionException e) {
-            Streams.close(binaryContentInputStream);
-            return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
-        }
-    }
-
     /**
      * Try to convert a binary resource to a specific format
      *
@@ -227,7 +234,7 @@ public class DocumentBinaryResource {
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-                return binaryResourceGetterService.getDocumentConvertedResource(outputFormat, binaryResource);
+                return onDemandConverterManager.getDocumentConvertedResource(outputFormat, binaryResource);
             } else {
                 return publicEntityManager.getDocumentConvertedResource(outputFormat, binaryResource);
             }
