@@ -19,12 +19,31 @@
  */
 package com.docdoku.server;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.annotation.PostConstruct;
+import javax.ejb.Asynchronous;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
-import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
+import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.Tools;
@@ -32,21 +51,6 @@ import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.utils.ConversionResult;
 import com.docdoku.server.converters.utils.GeometryParser;
 import com.docdoku.server.dao.PartIterationDAO;
-import java.nio.file.Files;
-
-import javax.ejb.Asynchronous;
-import javax.ejb.Stateless;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.*;
-import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 /**
  * CAD File converter
@@ -59,9 +63,7 @@ public class ConverterBean implements IConverterManagerLocal {
     @PersistenceContext
     private EntityManager em;
 
-    @Inject
-    @Any
-    private Instance<CADConverter> converters;
+    private List<CADConverter> converters;
 
     @Inject
     private IProductManagerLocal productService;
@@ -74,177 +76,189 @@ public class ConverterBean implements IConverterManagerLocal {
     private static final Logger LOGGER = Logger.getLogger(ConverterBean.class.getName());
 
     static {
-        try (InputStream inputStream = ConverterBean.class.getResourceAsStream(CONF_PROPERTIES)){
-            CONF.load(inputStream);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
+	try (InputStream inputStream = ConverterBean.class.getResourceAsStream(CONF_PROPERTIES)) {
+	    CONF.load(inputStream);
+	} catch (IOException e) {
+	    LOGGER.log(Level.SEVERE, null, e);
+	}
+    }
+
+    @PostConstruct
+    void init() {
+	// add external converters
+	converters.addAll(BeanLocator.search(CADConverter.class));
     }
 
     @Override
     @Asynchronous
     @CADConvert
-    public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception{
+    public void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadBinaryResource) throws Exception {
 
-        boolean succeed = false;
+	boolean succeed = false;
 
-        File tempDir = Files.createTempDirectory("docdoku-").toFile();
+	File tempDir = Files.createTempDirectory("docdoku-").toFile();
 
-        String ext = FileIO.getExtension(cadBinaryResource.getName());
+	String ext = FileIO.getExtension(cadBinaryResource.getName());
 
-        CADConverter selectedConverter = null;
+	CADConverter selectedConverter = null;
 
-        for (CADConverter converter : converters) {
-            if (converter.canConvertToOBJ(ext)) {
-                selectedConverter = converter;
-                break;
-            }
-        }
+	for (CADConverter converter : converters) {
+	    if (converter.canConvertToOBJ(ext)) {
+		selectedConverter = converter;
+		break;
+	    }
+	}
 
-        if (selectedConverter != null) {
+	if (selectedConverter != null) {
 
-            PartIterationDAO partIDAO = new PartIterationDAO(em);
-            PartIteration  partI = partIDAO.loadPartI(pPartIPK);
-            ConversionResult conversionResult = selectedConverter.convert(partI, cadBinaryResource, tempDir);
+	    PartIterationDAO partIDAO = new PartIterationDAO(em);
+	    PartIteration partI = partIDAO.loadPartI(pPartIPK);
+	    ConversionResult conversionResult = selectedConverter.convert(partI, cadBinaryResource, tempDir);
 
-            if (conversionResult != null && conversionResult.getConvertedFile() != null) {
+	    if (conversionResult != null && conversionResult.getConvertedFile() != null) {
 
-                File convertedFile = conversionResult.getConvertedFile();
+		File convertedFile = conversionResult.getConvertedFile();
 
-                double[] box = GeometryParser.calculateBox(convertedFile);
+		double[] box = GeometryParser.calculateBox(convertedFile);
 
-                //succeed = decimate(pPartIPK, convertedFile, tempDir, box);
+		// succeed = decimate(pPartIPK, convertedFile, tempDir, box);
 
-                // Copy the converted file if decimation failed, ignore decimated files
-                if(!succeed){
-                    saveGeometryFile(pPartIPK, 0, convertedFile, box);
-                    succeed = true;
-                }
+		// Copy the converted file if decimation failed, ignore
+		// decimated files
+		if (!succeed) {
+		    saveGeometryFile(pPartIPK, 0, convertedFile, box);
+		    succeed = true;
+		}
 
-            }else{
-                LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName());
-            }
+	    } else {
+		LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName());
+	    }
 
-            List<File> materials = conversionResult.getMaterials();
+	    List<File> materials = conversionResult.getMaterials();
 
-            for(File material:materials){
-                saveAttachedFile(pPartIPK,material);
-            }
+	    for (File material : materials) {
+		saveAttachedFile(pPartIPK, material);
+	    }
 
+	} else {
+	    LOGGER.log(Level.WARNING, "No CAD converter able to handle " + cadBinaryResource.getName());
+	}
 
-        } else {
-            LOGGER.log(Level.WARNING, "No CAD converter able to handle " + cadBinaryResource.getName());
-        }
+	FileIO.rmDir(tempDir);
 
-        FileIO.rmDir(tempDir);
-        
-        if(!succeed){
-            throw new Exception("Conversion Failed");
-        }
+	if (!succeed) {
+	    throw new Exception("Conversion Failed");
+	}
     }
 
     private boolean decimate(PartIterationKey pPartIPK, File file, File tempDir, double[] box) {
 
-        String decimater = CONF.getProperty("decimater");
+	String decimater = CONF.getProperty("decimater");
 
-        File executable = new File(decimater);
+	File executable = new File(decimater);
 
-        if(!executable.exists()){
-            LOGGER.log(Level.SEVERE, "Cannot decimate file \""+file.getName()+"\", decimater \""+decimater+"\" is not available");
-            return false;
-        }
+	if (!executable.exists()) {
+	    LOGGER.log(Level.SEVERE, "Cannot decimate file \"" + file.getName() + "\", decimater \"" + decimater
+		    + "\" is not available");
+	    return false;
+	}
 
-        if(!executable.canExecute()){
-            LOGGER.log(Level.SEVERE, "Cannot decimate file \""+file.getName()+"\", decimater \""+decimater+"\" has no execution rights");
-            return false;
-        }
+	if (!executable.canExecute()) {
+	    LOGGER.log(Level.SEVERE, "Cannot decimate file \"" + file.getName() + "\", decimater \"" + decimater
+		    + "\" has no execution rights");
+	    return false;
+	}
 
-        boolean decimateSucceed = false;
+	boolean decimateSucceed = false;
 
-        try {
-            String[] args = {decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath(), "1", "0.6", "0.2"};
-            ProcessBuilder pb = new ProcessBuilder(args);
-            Process proc = pb.start();
+	try {
+	    String[] args = { decimater, "-i", file.getAbsolutePath(), "-o", tempDir.getAbsolutePath(), "1", "0.6",
+		    "0.2" };
+	    ProcessBuilder pb = new ProcessBuilder(args);
+	    Process proc = pb.start();
 
-            StringBuilder output = new StringBuilder();
-            String line;
-            // Read buffer
-            try(InputStreamReader isr = new InputStreamReader(proc.getInputStream(),"UTF-8");BufferedReader br = new BufferedReader(isr)){
-                while ((line = br.readLine()) != null){
-                    output.append(line).append("\n");
-                }
-            }
+	    StringBuilder output = new StringBuilder();
+	    String line;
+	    // Read buffer
+	    try (InputStreamReader isr = new InputStreamReader(proc.getInputStream(), "UTF-8");
+		    BufferedReader br = new BufferedReader(isr)) {
+		while ((line = br.readLine()) != null) {
+		    output.append(line).append("\n");
+		}
+	    }
 
-            proc.waitFor();
+	    proc.waitFor();
 
-            if (proc.exitValue() == 0) {
-                String baseName = Tools.unAccent(tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName()));
-                saveGeometryFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
-                saveGeometryFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
-                saveGeometryFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
-                decimateSucceed = true;
-            } else {
-                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
-            }
+	    if (proc.exitValue() == 0) {
+		String baseName = Tools
+			.unAccent(tempDir.getAbsolutePath() + "/" + FileIO.getFileNameWithoutExtension(file.getName()));
+		saveGeometryFile(pPartIPK, 0, new File(baseName + "100.obj"), box);
+		saveGeometryFile(pPartIPK, 1, new File(baseName + "60.obj"), box);
+		saveGeometryFile(pPartIPK, 2, new File(baseName + "20.obj"), box);
+		decimateSucceed = true;
+	    } else {
+		LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
+	    }
 
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Decimation failed for " + file.getAbsolutePath(), e);
-        }
-        
-        return decimateSucceed;
+	} catch (Exception e) {
+	    LOGGER.log(Level.SEVERE, "Decimation failed for " + file.getAbsolutePath(), e);
+	}
+
+	return decimateSucceed;
     }
 
     private void saveGeometryFile(PartIterationKey partIPK, int quality, File file, double[] box) {
 
-        if(!file.exists()){
-            return;
-        }
+	if (!file.exists()) {
+	    return;
+	}
 
-        OutputStream os = null;
+	OutputStream os = null;
 
-        try {
-            Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality, file.length(), box);
-            os = storageManager.getBinaryResourceOutputStream(lod);
-            Files.copy(file.toPath(), os);
-            LOGGER.log(Level.INFO, "Decimation and save done");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
-        } finally {
-            try {
-                if(os != null){
-                    os.close();
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE,null, e);
-            }
-        }
+	try {
+	    Geometry lod = (Geometry) productService.saveGeometryInPartIteration(partIPK, file.getName(), quality,
+		    file.length(), box);
+	    os = storageManager.getBinaryResourceOutputStream(lod);
+	    Files.copy(file.toPath(), os);
+	    LOGGER.log(Level.INFO, "Decimation and save done");
+	} catch (Exception e) {
+	    LOGGER.log(Level.SEVERE, "Cannot save geometry to part iteration", e);
+	} finally {
+	    try {
+		if (os != null) {
+		    os.close();
+		}
+	    } catch (IOException e) {
+		LOGGER.log(Level.SEVERE, null, e);
+	    }
+	}
     }
 
     private void saveAttachedFile(PartIterationKey partIPK, File file) {
 
-        if(!file.exists()){
-            return;
-        }
+	if (!file.exists()) {
+	    return;
+	}
 
-        OutputStream os = null;
+	OutputStream os = null;
 
-        try {
-            BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, file.getName(), "attachedfiles" ,file.length());
-            os = storageManager.getBinaryResourceOutputStream(binaryResource);
-            Files.copy(file.toPath(), os);
-            LOGGER.log(Level.INFO, "Attached file copied");
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Cannot save attached file to part iteration", e);
-        } finally {
-            try {
-                if(os != null){
-                    os.close();
-                }
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE,null, e);
-            }
-        }
+	try {
+	    BinaryResource binaryResource = productService.saveFileInPartIteration(partIPK, file.getName(),
+		    "attachedfiles", file.length());
+	    os = storageManager.getBinaryResourceOutputStream(binaryResource);
+	    Files.copy(file.toPath(), os);
+	    LOGGER.log(Level.INFO, "Attached file copied");
+	} catch (Exception e) {
+	    LOGGER.log(Level.SEVERE, "Cannot save attached file to part iteration", e);
+	} finally {
+	    try {
+		if (os != null) {
+		    os.close();
+		}
+	    } catch (IOException e) {
+		LOGGER.log(Level.SEVERE, null, e);
+	    }
+	}
     }
-
 
 }
