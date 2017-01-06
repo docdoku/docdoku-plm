@@ -13,7 +13,6 @@
     <modules>
         <module>docdoku-server-ext</module>
         <module>docdoku-server-converter-step</module>
-        <module>docdoku-server-converter-dae</module>
         <module>docdoku-server-converter-obj</module>
         <module>docdoku-server-converter-all</module>
         <module>docdoku-server-converter-ifc</module>
