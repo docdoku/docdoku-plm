@@ -73,30 +73,25 @@ public class TitleBlockWriter {
     }
 
     public byte[] createTitleBlock() throws IOException {
-        writeTitle();
+
+        // Title + main information
         writeEntityInfo();
-        drawLightHorizontalSeparator();
-        writeDescription();
-        drawHorizontalSeparator();
+
+        // Attribute list
         writeAttributes();
+
+        // Workflow
         writeLifeCycleState();
+
         return documentToByteArray(document);
     }
 
-    private void writeTitle() throws IOException {
+    private void writeEntityInfo() throws IOException {
+
         Paragraph titleParagraph = new Paragraph();
         titleParagraph.addText(data.getTitle(), DOCUMENT_TITLE_SIZE, TEXT_BOLD_FONT);
         document.add(titleParagraph, new VerticalLayoutHint(Alignment.Left, 0, 0, 0, TITLE_MARGIN_BOTTOM));
-    }
 
-    private void writeDescription() throws IOException {
-        Paragraph descriptionParagraph = new Paragraph();
-        descriptionParagraph.addText(data.getDescription(), TEXT_SIZE, TEXT_ITALIC_FONT);
-        document.add(descriptionParagraph);
-    }
-
-
-    private void writeEntityInfo() throws IOException {
         Paragraph paragraph = new Paragraph();
         paragraph.addText(data.getBundleString("original.author"), TEXT_SIZE, TEXT_BOLD_FONT);
         space(paragraph);
@@ -114,34 +109,54 @@ public class TitleBlockWriter {
         space(paragraph);
         paragraph.addText(data.getIterationDate(), TEXT_SIZE, TEXT_REGULAR_FONT);
         breakLine(paragraph);
-        paragraph.addText(data.getBundleString("iteration.note"), TEXT_SIZE, TEXT_BOLD_FONT);
-        space(paragraph);
-        paragraph.addText(data.getRevisionNote(), TEXT_SIZE, TEXT_REGULAR_FONT);
+
+        String revisionNote = data.getRevisionNote();
+
+        if (revisionNote != null) {
+            paragraph.addText(data.getBundleString("iteration.note"), TEXT_SIZE, TEXT_BOLD_FONT);
+            space(paragraph);
+            paragraph.addText(revisionNote, TEXT_SIZE, TEXT_REGULAR_FONT);
+        }
+
         document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0, 0, 5));
+
+        drawLightHorizontalSeparator();
+
+        Paragraph descriptionParagraph = new Paragraph();
+        descriptionParagraph.addText(data.getDescription(), TEXT_SIZE, TEXT_ITALIC_FONT);
+        document.add(descriptionParagraph);
+
     }
 
 
     private void writeAttributes() throws IOException {
 
-        Paragraph mapTitle = new Paragraph();
-        mapTitle.addText(data.getBundleString("attributes"), TITLE_MAP_SIZE, TEXT_BOLD_FONT);
-        breakLine(mapTitle);
-        document.add(mapTitle, new VerticalLayoutHint(Alignment.Left, 0, 0, 0, MAP_TITLE_MARGIN_BOTTOM));
-
-
-        InstanceAttribute headerAttribute = new InstanceTextAttribute(
-                data.getBundleString("attributes.name"),
-                data.getBundleString("attributes.value"),
-                false
-        );
-
-        writeAttribute(headerAttribute, true);
-
         List<InstanceAttribute> instanceAttributes = data.getInstanceAttributes();
 
-        for (InstanceAttribute attr : instanceAttributes) {
-            writeAttribute(attr, false);
+        if (!instanceAttributes.isEmpty()) {
+
+            resetLayout();
+            drawHorizontalSeparator();
+
+            Paragraph mapTitle = new Paragraph();
+            mapTitle.addText(data.getBundleString("attributes"), TITLE_MAP_SIZE, TEXT_BOLD_FONT);
+            breakLine(mapTitle);
+
+            document.add(mapTitle, new VerticalLayoutHint(Alignment.Left, 0, 0, 0, MAP_TITLE_MARGIN_BOTTOM));
+
+            InstanceAttribute headerAttribute = new InstanceTextAttribute(
+                    data.getBundleString("attributes.name"),
+                    data.getBundleString("attributes.value"),
+                    false
+            );
+
+            writeAttribute(headerAttribute, true);
+
+            for (InstanceAttribute attr : instanceAttributes) {
+                writeAttribute(attr, false);
+            }
         }
+
     }
 
     private void writeAttribute(InstanceAttribute attr, boolean isHeaderRow) throws IOException {
