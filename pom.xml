@@ -31,6 +31,7 @@
         <jackson-version>2.4.2</jackson-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencyManagement>
         <dependencies>
             <!-- JEE 7 -->
@@ -100,13 +101,18 @@
                 <version>1.0.0</version>
             </dependency>
 
-            <!-- itextpdf -->
+            <!-- pdfbox-->
             <dependency>
-                <groupId>com.itextpdf</groupId>
-                <artifactId>itextpdf</artifactId>
-                <version>5.5.2</version>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>2.0.3</version>
             </dependency>
-
+            <!-- pdfbox layout-->
+            <dependency>
+                <groupId>com.github.ralfstuckert.pdfbox-layout</groupId>
+                <artifactId>pdfbox2-layout</artifactId>
+                <version>0.8.1</version>
+            </dependency>
 
             <!-- Test -->
             <dependency>

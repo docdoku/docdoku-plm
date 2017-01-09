@@ -31,7 +31,6 @@ import com.docdoku.server.InternalService;
 import com.docdoku.server.converters.OnDemandConverter;
 import com.docdoku.server.extras.TitleBlockGenerator;
 import com.google.common.io.ByteStreams;
-import com.itextpdf.text.DocumentException;
 
 import javax.inject.Inject;
 import java.io.IOException;
@@ -72,7 +71,6 @@ public class OfficeOnDemandConverter implements OnDemandConverter {
             InputStream inputStream = null;
 
             if ("pdf".equals(outputFormat)) {
-
                 inputStream = getPdfConvertedResource(binaryResource);
             }
 
@@ -82,7 +80,7 @@ public class OfficeOnDemandConverter implements OnDemandConverter {
             }
 
             return inputStream;
-        } catch (StorageException | DocumentException | IOException e) {
+        } catch (StorageException | IOException e) {
             throw new ConvertedResourceException(locale, e);
         }
     }
@@ -101,7 +99,7 @@ public class OfficeOnDemandConverter implements OnDemandConverter {
             }
 
             return inputStream;
-        } catch (StorageException | DocumentException | IOException e) {
+        } catch (StorageException | IOException e) {
             throw new ConvertedResourceException(locale, e);
         }
     }
