@@ -120,11 +120,14 @@ public class TitleBlockWriter {
 
         document.add(paragraph, new VerticalLayoutHint(Alignment.Left, 0, 0, 0, 5));
 
-        drawLightHorizontalSeparator();
+        String description = data.getDescription();
 
-        Paragraph descriptionParagraph = new Paragraph();
-        descriptionParagraph.addText(data.getDescription(), TEXT_SIZE, TEXT_ITALIC_FONT);
-        document.add(descriptionParagraph);
+        if(description != null && !description.isEmpty()){
+            drawLightHorizontalSeparator();
+            Paragraph descriptionParagraph = new Paragraph();
+            descriptionParagraph.addText(description, TEXT_SIZE, TEXT_ITALIC_FONT);
+            document.add(descriptionParagraph);
+        }
 
     }
 
