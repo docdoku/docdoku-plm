@@ -32,6 +32,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.core.util.DateUtils;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.helpers.LangHelper;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -44,7 +45,6 @@ import org.dozer.Mapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,9 +55,6 @@ import java.util.logging.Logger;
 public class ExcelGenerator {
 
     private static final Logger LOGGER = Logger.getLogger(ExcelGenerator.class.getName());
-
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-    private SimpleDateFormat attributeDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
     public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
@@ -240,16 +237,20 @@ public class ExcelGenerator {
                     data.add(sType != null ? sType : "");
                     break;
                 case QueryField.PART_REVISION_MODIFICATION_DATE:
-                    data.add((lastIteration != null && lastIteration.getModificationDate() != null) ? simpleDateFormat.format(lastIteration.getModificationDate()) : "");
+                    data.add((lastIteration != null && lastIteration.getModificationDate() != null) ?
+                            DateUtils.format(lastIteration.getModificationDate()) : "");
                     break;
                 case QueryField.PART_REVISION_CREATION_DATE:
-                    data.add((part.getCreationDate() != null) ? simpleDateFormat.format(part.getCreationDate()) : "");
+                    data.add((part.getCreationDate() != null) ?
+                            DateUtils.format(part.getCreationDate()) : "");
                     break;
                 case QueryField.PART_REVISION_CHECKOUT_DATE:
-                    data.add((part.getCheckOutDate() != null) ? simpleDateFormat.format(part.getCheckOutDate()) : "");
+                    data.add((part.getCheckOutDate() != null) ?
+                            DateUtils.format(part.getCheckOutDate()) : "");
                     break;
                 case QueryField.PART_REVISION_CHECKIN_DATE:
-                    data.add((lastCheckedInIteration != null && lastCheckedInIteration.getCheckInDate() != null) ? simpleDateFormat.format(lastCheckedInIteration.getCheckInDate()) : "");
+                    data.add((lastCheckedInIteration != null && lastCheckedInIteration.getCheckInDate() != null)
+                            ? DateUtils.format(lastCheckedInIteration.getCheckInDate()) : "");
                     break;
                 case QueryField.PART_REVISION_VERSION:
                     data.add(part.getVersion() != null ? part.getVersion() : "");
@@ -317,7 +318,8 @@ public class ExcelGenerator {
 
                                         attributeValue = attribute.getValue() + "";
                                         if (attrDTO.getType() == InstanceAttributeDTO.Type.DATE) {
-                                            attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
+                                            attributeValue = attribute.getValue() != null ?
+                                                    DateUtils.format((Date) attribute.getValue()) : "";
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
@@ -349,7 +351,8 @@ public class ExcelGenerator {
 
                                         attributeValue = attribute.getValue() + "";
                                         if (attrDTO.getType() == InstanceAttributeDTO.Type.DATE) {
-                                            attributeValue = attribute.getValue() != null ? attributeDateFormat.format(attribute.getValue()) : "";
+                                            attributeValue = attribute.getValue() != null ?
+                                                    DateUtils.format((Date) attribute.getValue()) : "";
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }

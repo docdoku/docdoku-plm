@@ -28,11 +28,11 @@ import com.docdoku.core.product.*;
 import com.docdoku.core.query.Query;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryRule;
+import com.docdoku.core.util.DateUtils;
 
 import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -385,13 +385,10 @@ public class QueryDAO {
                 break;
             case "date":
                 try {
-                    //TODO: this formatting is already done by other method, should be refactored.
-                    //TODO: the pattern for the date format should be declared somewhere.
-                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    df.setTimeZone(TimeZone.getTimeZone("UTC"));
+
                     List<Date> temp = new ArrayList<>();
                     for (String string : values) {
-                        temp.add(df.parse(string));
+                        temp.add(DateUtils.parse(string));
                     }
                     operands = temp;
                 } catch (ParseException e) {

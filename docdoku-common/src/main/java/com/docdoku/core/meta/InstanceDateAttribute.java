@@ -20,13 +20,12 @@
 
 package com.docdoku.core.meta;
 
+import com.docdoku.core.util.DateUtils;
+
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Defines a date type custom attribute of a document, part, product and other objects.
@@ -62,12 +61,7 @@ public class InstanceDateAttribute extends InstanceAttribute{
             return true;
         }else if(pValue instanceof String){
             try {
-                //TODO: could use DateAdpater instead
-                TimeZone tz = TimeZone.getTimeZone("UTC");
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                df.setTimeZone(tz);
-                Date date = df.parse((String) pValue);
-                dateValue = date;
+                dateValue = DateUtils.parse((String) pValue);
                 return true;
             } catch (ParseException pe) {
                 try {

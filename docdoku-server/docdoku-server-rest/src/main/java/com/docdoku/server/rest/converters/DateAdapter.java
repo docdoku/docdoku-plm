@@ -20,43 +20,35 @@
 
 package com.docdoku.server.rest.converters;
 
-/**
- * Created by Charles Fallourd on 01/06/15.
- */
+
+import com.docdoku.core.util.DateUtils;
 
 import javax.ws.rs.ext.ParamConverter;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-
+/**
+ * Created by Charles Fallourd on 01/06/15.
+ */
 public class DateAdapter extends XmlAdapter<String, Date> implements ParamConverter<Date> {
 
 
     private static final Logger LOGGER = Logger.getLogger(DateAdapter.class.getName());
 
-    private final static String PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-    private final static SimpleDateFormat DF = new SimpleDateFormat(PATTERN);
-
-    static {
-        DF.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
     public String marshal(Date date) {
         if (date == null) {
             return null;
         }
-        return DF.format(date);
+        return DateUtils.format(date);
     }
 
     public Date unmarshal(String dateString) {
         Date d = null;
         try {
-            d = DF.parse(dateString);
+            d = DateUtils.parse(dateString);
         } catch (ParseException e) {
             LOGGER.log(Level.SEVERE, "Error unmarshalling date", e);
         }
