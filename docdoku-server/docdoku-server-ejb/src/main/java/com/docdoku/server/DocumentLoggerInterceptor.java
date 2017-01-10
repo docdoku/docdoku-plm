@@ -19,29 +19,21 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.log.DocumentLog;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IDocumentManagerLocal;
-import com.docdoku.server.dao.BinaryResourceDAO;
 
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @LogDocument
 @Interceptor
-public class DocumentLoggerInterceptor implements Serializable{
-
-    @Inject
-    private EntityManagerProducer emf;
+public class DocumentLoggerInterceptor implements Serializable {
 
     @Inject
     private IDocumentManagerLocal documentManager;
@@ -50,38 +42,24 @@ public class DocumentLoggerInterceptor implements Serializable{
     private IContextManagerLocal contextManager;
 
     private static final Logger LOGGER = Logger.getLogger(DocumentLoggerInterceptor.class.getName());
-    private static final String EVENT = "DOWNLOAD";
+    private static final String DOWNLOAD_EVENT = "DOWNLOAD";
 
     @AroundInvoke
     public Object log(InvocationContext ctx) throws Exception {
 
         Object result = ctx.proceed();
 
-        try {
-            if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)
-                    && ctx.getParameters() != null && ctx.getParameters().length > 0 && ctx.getParameters()[0] instanceof String) {
-                String fullName = (String) ctx.getParameters()[0];
-                String userLogin = contextManager.getCallerPrincipalLogin();
+        Object[] parameters = ctx.getParameters();
+        boolean isRoleAllowed = contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID);
 
-                BinaryResourceDAO binDAO = new BinaryResourceDAO(emf.create());
-                BinaryResource file = binDAO.loadBinaryResource(fullName);
-                DocumentIteration document = binDAO.getDocumentHolder(file);
-
-                if (document != null) {
-                    DocumentLog log = new DocumentLog();
-                    log.setUserLogin(userLogin);
-                    log.setLogDate(new Date());
-                    log.setDocumentWorkspaceId(document.getWorkspaceId());
-                    log.setDocumentId(document.getId());
-                    log.setDocumentVersion(document.getVersion());
-                    log.setDocumentIteration(document.getIteration());
-                    log.setEvent(EVENT);
-                    log.setInfo(fullName);
-                    documentManager.createDocumentLog(log);
-                }
+        if (isRoleAllowed && parameters != null && parameters.length > 0 && parameters[0] instanceof String) {
+            // Not reliable condition, should be reviewed
+            String fullName = (String) parameters[0];
+            try {
+                documentManager.logDocument(fullName, DOWNLOAD_EVENT);
+            } catch (Exception ex) {
+                LOGGER.log(Level.SEVERE, null, ex);
             }
-        } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, null, ex);
         }
 
         return result;

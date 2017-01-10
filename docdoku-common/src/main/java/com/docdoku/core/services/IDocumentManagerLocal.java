@@ -209,4 +209,5 @@ public interface IDocumentManagerLocal {
     DocumentRevision releaseDocumentRevision(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException;
     DocumentRevision markDocumentRevisionAsObsolete(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException;
 
+    void logDocument(String fullName, String event) throws FileNotFoundException;
 }
