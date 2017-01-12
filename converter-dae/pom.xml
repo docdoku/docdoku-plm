@@ -11,4 +11,5 @@
       <module>converter-dae-ear</module>
       <module>converter-dae-ejb</module>
   </modules>
+  <name>Converter for COLLADA files</name>
 </project>
