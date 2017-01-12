@@ -23,8 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.annotation.Resource;
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -40,6 +40,9 @@ import javax.rmi.PortableRemoteObject;
 class BeanLocator {
 
     private static final Logger LOGGER = Logger.getLogger(BeanLocator.class.getName());
+    
+    @Resource(lookup="java:global")
+    Context ctx;
 
     /**
      * Search for EJBs implementing a given business interface in the naming
@@ -51,11 +54,10 @@ class BeanLocator {
      * @return the list of EJBs implementing the given interface.
      * @throws NamingException
      */
-    static <T> List<T> search(Class<T> type) {
+    <T> List<T> search(Class<T> type) {
 	List<T> result = new ArrayList<>();
 	try {
-	    Context ctx = new InitialContext();
-	    result.addAll(search(type, (Context) ctx.lookup("java:global")));
+	    result.addAll(search(type, ctx));
 	} catch (NamingException e) {
 	    LOGGER.severe("");
 	}
@@ -75,7 +77,7 @@ class BeanLocator {
      * @throws NamingException
      */
     @SuppressWarnings("unchecked") // Cause : Generic Type Erasure
-    static <T> List<T> search(Class<T> type, Context ctx) throws NamingException {
+    <T> List<T> search(Class<T> type, Context ctx) throws NamingException {
 	NamingEnumeration<NameClassPair> ncps = ctx.list("");
 	List<T> result = new ArrayList<T>();
 	while (ncps.hasMoreElements()) {
