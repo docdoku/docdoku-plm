@@ -20,100 +20,99 @@
 
 package com.docdoku.server.converters.dae;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.services.IBinaryStorageManagerLocal;
-import com.docdoku.server.InternalService;
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.utils.ConversionResult;
-import com.docdoku.server.converters.utils.ConverterUtils;
-
-import javax.inject.Inject;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ejb.Stateless;
+
+import com.docdoku.core.common.BinaryResource;
+import com.docdoku.core.product.PartIteration;
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
+import com.docdoku.server.converters.ConverterUtils;
+
 @DaeFileConverter
+@Stateless
 public class DaeFileConverterImpl implements CADConverter {
 
-    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/dae/conf.properties";
-    private static final Properties CONF = new Properties();
-    private static final Logger LOGGER = Logger.getLogger(DaeFileConverterImpl.class.getName());
-
-    @InternalService
-    @Inject
-    private IBinaryStorageManagerLocal storageManager;
+    static final String CONF_PROPERTIES = "/com/docdoku/server/converters/dae/conf.properties";
+    static final Properties CONF = new Properties();
+    static final Logger LOGGER = Logger.getLogger(DaeFileConverterImpl.class.getName());
 
     static {
-        try (InputStream inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)){
-            CONF.load(inputStream);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
+	try (InputStream inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
+	    CONF.load(inputStream);
+	} catch (IOException e) {
+	    LOGGER.log(Level.SEVERE, null, e);
+	}
     }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, File tempDir) throws IOException, InterruptedException, UserNotActiveException, PartRevisionNotFoundException, WorkspaceNotFoundException, CreationException, UserNotFoundException, NotAllowedException, FileAlreadyExistsException, StorageException {
+    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
+	    throws ConversionException {
 
-        String assimp = CONF.getProperty("assimp");
+	String assimp = CONF.getProperty("assimp");
 
-        File executable = new File(assimp);
+	Path executable = Paths.get(assimp);
 
-        if (!executable.exists()) {
-            LOGGER.log(Level.SEVERE, "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" is not available");
-            return null;
-        }
+	// Sanity checks
 
-        if (!executable.canExecute()) {
-            LOGGER.log(Level.SEVERE, "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" has no execution rights");
-            return null;
-        }
+	if (!Files.exists(executable)) {
+	    throw new ConversionException(
+		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" is not available");
+	}
 
+	if (!Files.isExecutable(executable)) {
+	    throw new ConversionException(
+		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" has no execution rights");
+	}
 
-        File tmpCadFile = new File(tempDir, cadFile.getName().trim());
-        try (InputStream in = storageManager.getBinaryResourceInputStream(cadFile)) {
-            Files.copy(in, tmpCadFile.toPath());
-        } catch (StorageException e) {
-            LOGGER.log(Level.WARNING, null, e);
-            throw new IOException(e);
-        }
+	Path tmpCadFile = tempDir.resolve(cadFile.getName());
 
-        UUID uuid = UUID.randomUUID();
-        String convertedFileName = tempDir.getAbsolutePath() + "/" + uuid + ".obj";
-        String convertedMtlFileName = tempDir.getAbsolutePath() + "/" + uuid + ".obj.mtl";
+	UUID uuid = UUID.randomUUID();
+	Path convertedFile = tempDir.resolve(uuid + ".obj");
+	Path convertedMtlFile = tempDir.resolve(uuid + ".obj.mtl");
 
-        String[] args = {assimp, "export", tmpCadFile.getAbsolutePath(), convertedFileName};
-        ProcessBuilder pb = new ProcessBuilder(args);
-        Process process = pb.start();
+	String[] args = { assimp, "export", tmpCadFile.toAbsolutePath().toString(), convertedFile.toString() };
+	ProcessBuilder pb = new ProcessBuilder(args);
+	try {
+	    Process process = pb.start();
 
-        // Read buffers
-        String stdOutput = ConverterUtils.getOutput(process.getInputStream());
-        String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
+	    // Read buffers
+	    String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+	    String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-        LOGGER.info(stdOutput);
+	    LOGGER.info(stdOutput);
 
-        process.waitFor();
+	    process.waitFor();
 
-        if (process.exitValue() == 0) {
-            List<File> materials = new ArrayList<>();
-            materials.add(new File(convertedMtlFileName));
-            return new ConversionResult(new File(convertedFileName), materials);
-        }
-
-        LOGGER.log(Level.SEVERE, "Cannot convert to obj : " + tmpCadFile.getAbsolutePath(), errorOutput);
-
-        return null;
-
+	    if (process.exitValue() == 0) {
+		List<Path> materials = new ArrayList<>();
+		materials.add(convertedMtlFile);
+		return new ConversionResult(convertedFile, materials);
+	    } else {
+		throw new ConversionException(
+			"Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
+	    }
+	} catch (IOException | InterruptedException e) {
+	    assert (false);
+	    throw new ConversionException(e);
+	}
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-        return Arrays.asList("dxf", "dae", "lwo", "x", "ac", "cob", "scn", "ms3d").contains(cadFileExtension);
+	return Arrays.asList("dxf", "dae", "lwo", "x", "ac", "cob", "scn", "ms3d").contains(cadFileExtension);
     }
 
 }
