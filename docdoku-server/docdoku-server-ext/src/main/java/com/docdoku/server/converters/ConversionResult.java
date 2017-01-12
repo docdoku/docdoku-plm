@@ -18,28 +18,31 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters.utils;
+package com.docdoku.server.converters;
 
-import java.io.File;
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This ConversionResult class represents the conversion status done by a CADConverter plugin.
+ * This ConversionResult class represents the conversion status done by a
+ * CADConverter plugin.
  * <p>
  * It holds the converted file and its materials.
  */
-// TODO replace java.io.File with java.io.InputStream (usage in EJBs)
-public class ConversionResult {
+public class ConversionResult implements Closeable {
 
     /**
      * The converted file for succeed conversions
      */
-    private File convertedFile;
+    private Path convertedFile;
     /**
      * The list of materials files if any
      */
-    private List<File> materials = new ArrayList<>();
+    private List<Path> materials = new ArrayList<>();
     /**
      * The output of conversion program
      */
@@ -58,51 +61,64 @@ public class ConversionResult {
     /**
      * Constructor with converted file
      *
-     * @param convertedFile the converted file
+     * @param convertedFile
+     *            the converted file
      */
-    public ConversionResult(File convertedFile) {
-        this.convertedFile = convertedFile;
+    public ConversionResult(Path convertedFile) {
+	this.convertedFile = convertedFile;
     }
 
     /**
      * Constructor with converted file and materials
      *
-     * @param convertedFile the converted file
+     * @param convertedFile
+     *            the converted file
      */
-    public ConversionResult(File convertedFile, List<File> materials) {
-        this.convertedFile = convertedFile;
-        this.materials = materials;
+    public ConversionResult(Path convertedFile, List<Path> materials) {
+	this.convertedFile = convertedFile;
+	this.materials = materials;
     }
 
-    public File getConvertedFile() {
-        return convertedFile;
+    public Path getConvertedFile() {
+	return convertedFile;
     }
 
-    public void setConvertedFile(File convertedFile) {
-        this.convertedFile = convertedFile;
+    public void setConvertedFile(Path convertedFile) {
+	this.convertedFile = convertedFile;
     }
 
-    public List<File> getMaterials() {
-        return materials;
+    public List<Path> getMaterials() {
+	return materials;
     }
 
-    public void setMaterials(List<File> materials) {
-        this.materials = materials;
+    public void setMaterials(List<Path> materials) {
+	this.materials = materials;
     }
 
     public String getStdOutput() {
-        return stdOutput;
+	return stdOutput;
     }
 
     public void setStdOutput(String stdOutput) {
-        this.stdOutput = stdOutput;
+	this.stdOutput = stdOutput;
     }
 
     public String getErrorOutput() {
-        return errorOutput;
+	return errorOutput;
     }
 
     public void setErrorOutput(String errorOutput) {
-        this.errorOutput = errorOutput;
+	this.errorOutput = errorOutput;
+    }
+
+    public void close() {
+	try {
+	    Files.deleteIfExists(convertedFile);
+	    for (Path m : materials) {
+		Files.deleteIfExists(m);
+	    }
+	} catch (IOException e) {
+	    assert (false);
+	}
     }
 }
