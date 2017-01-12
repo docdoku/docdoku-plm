@@ -50,6 +50,10 @@ public class WorkflowModelDAO {
         mLocale = pLocale;
     }
 
+    public WorkflowModelDAO(EntityManager em) {
+        this.em = em;
+    }
+
     public void removeAllActivityModels(WorkflowModelKey pKey) throws WorkflowModelNotFoundException {
         em.createQuery("DELETE FROM TaskModel t WHERE t.activityModel.workflowModel.id = :id AND t.activityModel.workflowModel.workspaceId = :workspaceId")
                 .setParameter("id", pKey.getId())

@@ -63,6 +63,7 @@ public class PartRevisionDAO {
     public void removeRevision(PartRevision pPartR) {
         new SharedEntityDAO(em).deleteSharesForPart(pPartR);
         new WorkflowDAO(em).removeWorkflowConstraints(pPartR);
+        em.flush();
         new ConversionDAO(em).removePartRevisionConversions(pPartR);
         for(PartIteration partIteration:pPartR.getPartIterations()){
             for(PartUsageLink partUsageLink:partIteration.getComponents()){

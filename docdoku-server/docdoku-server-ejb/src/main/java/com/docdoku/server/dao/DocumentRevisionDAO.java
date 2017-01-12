@@ -147,6 +147,7 @@ public class DocumentRevisionDAO {
 
         WorkflowDAO workflowDAO = new WorkflowDAO(em);
         workflowDAO.removeWorkflowConstraints(pDocR);
+        em.flush();
 
         for(DocumentIteration doc:pDocR.getDocumentIterations()) {
             docDAO.removeDoc(doc);
