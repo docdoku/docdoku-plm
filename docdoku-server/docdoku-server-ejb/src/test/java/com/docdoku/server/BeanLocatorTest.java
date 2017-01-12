@@ -18,7 +18,6 @@ public class BeanLocatorTest {
 
     static Context ctx;
 
-
     @BeforeClass
     public static void setup() throws Exception {
 	ctx = new InitialContext(new Hashtable<>(Collections.singletonMap(Context.INITIAL_CONTEXT_FACTORY,
@@ -35,10 +34,12 @@ public class BeanLocatorTest {
 	ctx.bind("java:global/application/module/c2Bean", converter2);
 	ctx.bind("java:global/application/module/c2Bean!com.docdoku.server.converters.CADConverter", converter2);
     }
+    
+    BeanLocator locator = new BeanLocator();
 
     @Test
     public void testSearch() throws Exception {
-	List<CADConverter> converters = BeanLocator.search(CADConverter.class, ctx);
+	List<CADConverter> converters = locator.search(CADConverter.class, ctx);
 
 	Assert.assertEquals(2, converters.size());
 	for (CADConverter c : converters) {
