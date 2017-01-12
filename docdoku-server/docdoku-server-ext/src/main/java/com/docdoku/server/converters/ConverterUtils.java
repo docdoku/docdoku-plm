@@ -18,7 +18,7 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.converters.utils;
+package com.docdoku.server.converters;
 
 
 import java.io.*;
