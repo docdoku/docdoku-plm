@@ -26,21 +26,21 @@ import java.io.Serializable;
 /**
  * An Effectivity is an abstract subclass which is
  * a kind of qualification object.
- * 
+ * <p>
  * Effectivities are primarily applied to {@link PartRevision} objects.
- * 
- * 
+ *
  * @author Florent Garin
  * @version 1.1, 14/10/11
- * @since   V1.1
+ * @since V1.1
  */
-@Table(name="EFFECTIVITY")
+@Table(name = "EFFECTIVITY")
 @XmlSeeAlso({DateBasedEffectivity.class, SerialNumberBasedEffectivity.class, LotBasedEffectivity.class})
 @Inheritance()
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Effectivity.removeEffectivitiesFromConfigurationItem", query = "DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId"),
-    @NamedQuery(name = "Effectivity.findPartRevisionHolder", query = "SELECT p FROM PartRevision p, Effectivity e WHERE e member of p.effectivities AND e.id = :effectivityId")
+        @NamedQuery(name = "Effectivity.removeEffectivitiesFromConfigurationItem", query = "DELETE FROM Effectivity e WHERE e.configurationItem.id = :configurationItemId AND e.configurationItem.workspace.id = :workspaceId"),
+        @NamedQuery(name = "Effectivity.findPartRevisionHolder", query = "SELECT p FROM PartRevision p, Effectivity e WHERE e member of p.effectivities AND e.id = :effectivityId"),
+        @NamedQuery(name = "Effectivity.getEffectivitiesInWorkspace", query = "SELECT e FROM PartRevision p, Effectivity e WHERE e member of p.effectivities AND p.partMaster.workspace.id = :workspaceId")
 })
 
 public abstract class Effectivity implements Serializable {
@@ -52,11 +52,11 @@ public abstract class Effectivity implements Serializable {
 
     @Lob
     private String description;
-    
+
     @ManyToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumns({
-        @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
-        @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
+            @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "ID"),
+            @JoinColumn(name = "CONFIGURATIONITEM_WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
     })
     private ConfigurationItem configurationItem;
 
