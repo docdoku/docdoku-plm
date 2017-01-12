@@ -12,12 +12,6 @@
     <name>docdoku-server Java EE 7</name>
     <modules>
         <module>docdoku-server-ext</module>
-        <module>docdoku-server-converter-step</module>
-        <module>docdoku-server-converter-obj</module>
-        <module>docdoku-server-converter-all</module>
-        <module>docdoku-server-converter-ifc</module>
-        <module>docdoku-server-converter-catia</module>
-        <module>docdoku-server-converter-catia-product</module>
         <module>docdoku-server-office-doc</module>
         <module>docdoku-server-viewer-image</module>
         <module>docdoku-server-viewer-multimedia</module>
