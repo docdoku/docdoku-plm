@@ -157,10 +157,6 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM DocumentBaseline b where b.author.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
-        // Effectivity
-        em.createQuery("DELETE FROM Effectivity e where e.configurationItem.workspace = :workspace")
-                .setParameter("workspace", workspace).executeUpdate();
-
         // PartCollection
         em.createQuery("DELETE FROM PartCollection pc where pc.author.workspaceId = :workspaceId")
                 .setParameter("workspaceId", workspaceId).executeUpdate();
@@ -175,6 +171,10 @@ public class WorkspaceDAO {
         // Markers
         em.createQuery("DELETE FROM Marker m where m.author.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
+
+        // Reset effectivities constraints on configuration items
+        EffectivityDAO effectivityDAO = new EffectivityDAO(em);
+        effectivityDAO.removeEffectivityConstraints(workspaceId);
 
         // ConfigurationItem
         em.createQuery("DELETE FROM ConfigurationItem c where c.workspace = :workspace")

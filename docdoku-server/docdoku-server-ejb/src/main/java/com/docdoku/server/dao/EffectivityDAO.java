@@ -27,6 +27,7 @@ import com.docdoku.core.product.Effectivity;
 import com.docdoku.core.product.PartRevision;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Locale;
 
 public class EffectivityDAO {
@@ -88,5 +89,12 @@ public class EffectivityDAO {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public void removeEffectivityConstraints(String workspaceId) {
+        TypedQuery<Effectivity> query = em.createNamedQuery("Effectivity.getEffectivitiesInWorkspace", Effectivity.class);
+        query.setParameter("workspaceId", workspaceId);
+        List<Effectivity> effectivities = query.getResultList();
+        effectivities.forEach(effectivity -> effectivity.setConfigurationItem(null));
     }
 }
