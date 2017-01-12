@@ -38,8 +38,6 @@ public class PartUserACLTest {
     private static final WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
 
     private static WorkspaceDTO workspace;
-    private static AccountDTO account1;
-    private static AccountDTO account2;
     private static ApiClient user1Client;
     private static ApiClient user2Client;
 
@@ -56,8 +54,8 @@ public class PartUserACLTest {
 
         workspace = TestUtils.createWorkspace();
 
-        account1 = TestUtils.createAccount();
-        account2 = TestUtils.createAccount();
+        AccountDTO account1 = TestUtils.createAccount();
+        AccountDTO account2 = TestUtils.createAccount();
 
         UserDTO user1 = new UserDTO();
         user1.setLogin(account1.getLogin());

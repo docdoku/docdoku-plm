@@ -64,6 +64,7 @@ public class TestConfig {
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
         ROOT_PASSWORD = System.getProperty("root_password") != null ? System.getProperty("root_password") : "password";
         ROOT_LOGIN = System.getProperty("root_login") != null ? System.getProperty("root_login") : "admin";
+        // workspace argument is now deprecated (wont be used)
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test-api-java";
         EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
         LANGUAGE = System.getProperty("language") != null ? System.getProperty("language") : "en";

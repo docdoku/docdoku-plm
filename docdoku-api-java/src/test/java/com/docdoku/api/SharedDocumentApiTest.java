@@ -24,11 +24,14 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.DocumentCreationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.models.SharedDocumentDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
 import com.docdoku.api.services.SharedApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -36,6 +39,16 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SharedDocumentApiTest {
 
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void privateDocumentShareTests() throws ApiException {
@@ -49,7 +62,7 @@ public class SharedDocumentApiTest {
         documentCreationDTO.setReference(TestUtils.randomString());
         documentCreationDTO.setTitle("PublicDoc");
 
-        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreationDTO, TestConfig.WORKSPACE);
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreationDTO, workspace.getId());
         document = documentsApi.checkInDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
 
         // Try guest access (should fail)
@@ -85,7 +98,7 @@ public class SharedDocumentApiTest {
         documentCreationDTO.setReference(TestUtils.randomString());
         documentCreationDTO.setTitle("PublicDoc");
 
-        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreationDTO, TestConfig.WORKSPACE);
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreationDTO, workspace.getId());
         document = documentsApi.checkInDocument(document.getWorkspaceId(), document.getDocumentMasterId(), document.getVersion());
 
         // Try guest access (should fail)

@@ -25,7 +25,9 @@ import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -38,6 +40,17 @@ public class PartApiTest {
 
     private PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
     private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void partApiUsageTests() throws ApiException {
@@ -47,32 +60,32 @@ public class PartApiTest {
         part.setNumber(TestUtils.randomString());
         part.setName("GeneratedPart");
 
-        PartRevisionDTO createdPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
+        PartRevisionDTO createdPart = partsApi.createNewPart(workspace.getId(), part);
         Assert.assertEquals(createdPart.getNumber(), part.getNumber());
 
         // Check in
-        PartRevisionDTO checkedInPart = partApi.checkIn(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
+        PartRevisionDTO checkedInPart = partApi.checkIn(workspace.getId(), createdPart.getNumber(), createdPart.getVersion());
         Assert.assertEquals(checkedInPart.getNumber(), part.getNumber());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedInPart).getIteration(), Integer.valueOf("1"));
 
         // Check out
-        PartRevisionDTO checkedOutPart = partApi.checkOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
+        PartRevisionDTO checkedOutPart = partApi.checkOut(workspace.getId(), createdPart.getNumber(), createdPart.getVersion());
         Assert.assertEquals(checkedOutPart.getNumber(), part.getNumber());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutPart).getIteration(), Integer.valueOf("2"));
 
         // Undo check out
-        PartRevisionDTO undoCheckOutPart = partApi.undoCheckOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
+        PartRevisionDTO undoCheckOutPart = partApi.undoCheckOut(workspace.getId(), createdPart.getNumber(), createdPart.getVersion());
         Assert.assertEquals(undoCheckOutPart, checkedInPart);
 
         // Check out
-        checkedOutPart = partApi.checkOut(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
+        checkedOutPart = partApi.checkOut(workspace.getId(), createdPart.getNumber(), createdPart.getVersion());
 
         // Edit
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(checkedOutPart);
         Assert.assertNull(lastIteration.getModificationDate());
         lastIteration.setIterationNote("Something modified");
 
-        PartRevisionDTO updatedPartRevision = partApi.updatePartIteration(TestConfig.WORKSPACE, checkedOutPart.getNumber(), checkedOutPart.getVersion(), 2, lastIteration);
+        PartRevisionDTO updatedPartRevision = partApi.updatePartIteration(workspace.getId(), checkedOutPart.getNumber(), checkedOutPart.getVersion(), 2, lastIteration);
 
         PartIterationDTO updatedIteration = LastIterationHelper.getLastIteration(updatedPartRevision);
         Assert.assertNotNull(updatedIteration.getModificationDate());
@@ -80,15 +93,15 @@ public class PartApiTest {
         Assert.assertEquals(lastIteration, updatedIteration);
 
         // Check in
-        checkedInPart = partApi.checkIn(TestConfig.WORKSPACE, createdPart.getNumber(), createdPart.getVersion());
+        checkedInPart = partApi.checkIn(workspace.getId(), createdPart.getNumber(), createdPart.getVersion());
         Assert.assertNull(checkedInPart.getCheckOutUser());
 
         // Release
-        PartRevisionDTO releasedPart = partApi.releasePartRevision(TestConfig.WORKSPACE, checkedInPart.getNumber(), checkedInPart.getVersion());
+        PartRevisionDTO releasedPart = partApi.releasePartRevision(workspace.getId(), checkedInPart.getNumber(), checkedInPart.getVersion());
         Assert.assertEquals(releasedPart.getStatus(), PartRevisionDTO.StatusEnum.RELEASED);
 
         // Mark as obsolete
-        PartRevisionDTO obsoletePart = partApi.markPartRevisionAsObsolete(TestConfig.WORKSPACE, releasedPart.getNumber(), releasedPart.getVersion());
+        PartRevisionDTO obsoletePart = partApi.markPartRevisionAsObsolete(workspace.getId(), releasedPart.getNumber(), releasedPart.getVersion());
         Assert.assertEquals(obsoletePart.getStatus(), PartRevisionDTO.StatusEnum.OBSOLETE);
 
     }
@@ -99,10 +112,10 @@ public class PartApiTest {
         // Create 2 parts
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(TestUtils.randomString());
-        PartRevisionDTO P1 = partsApi.createNewPart(TestConfig.WORKSPACE, part);
+        PartRevisionDTO P1 = partsApi.createNewPart(workspace.getId(), part);
 
         part.setNumber(TestUtils.randomString());
-        PartRevisionDTO P2 = partsApi.createNewPart(TestConfig.WORKSPACE, part);
+        PartRevisionDTO P2 = partsApi.createNewPart(workspace.getId(), part);
 
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(P1);
         List<PartUsageLinkDTO> components = new ArrayList<>();

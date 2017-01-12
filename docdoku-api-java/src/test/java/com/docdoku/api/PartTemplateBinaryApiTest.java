@@ -24,9 +24,11 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.PartMasterTemplateDTO;
 import com.docdoku.api.models.PartTemplateCreationDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.PartTemplateBinaryApi;
 import com.docdoku.api.services.PartTemplatesApi;
 import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -45,12 +47,19 @@ public class PartTemplateBinaryApiTest {
 
     private static PartTemplatesApi partTemplatesApi = new PartTemplatesApi(TestConfig.REGULAR_USER_CLIENT);
     private static PartMasterTemplateDTO template;
+    private static WorkspaceDTO workspace;
 
     @BeforeClass
-    public static void initPart() throws ApiException {
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
         PartTemplateCreationDTO templateCreation = new PartTemplateCreationDTO();
         templateCreation.setReference(TestUtils.randomString());
-        template = partTemplatesApi.createPartMasterTemplate(TestConfig.WORKSPACE, templateCreation);
+        template = partTemplatesApi.createPartMasterTemplate(workspace.getId(), templateCreation);
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
     }
 
     @Test
@@ -63,6 +72,8 @@ public class PartTemplateBinaryApiTest {
     private File partTemplateUpload() throws ApiException {
 
         URL fileURL = PartTemplateBinaryApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
+        Assert.assertNotNull(fileURL);
+
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =

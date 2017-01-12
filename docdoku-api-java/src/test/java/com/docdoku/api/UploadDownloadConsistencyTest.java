@@ -24,10 +24,13 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.DocumentCreationDTO;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.DocumentBinaryApi;
 import com.docdoku.api.services.FoldersApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -47,6 +50,17 @@ public class UploadDownloadConsistencyTest {
 
     private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
     private DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(TestConfig.REGULAR_USER_CLIENT);
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void uploadZipTest() throws ApiException, IOException {
@@ -56,9 +70,12 @@ public class UploadDownloadConsistencyTest {
         documentCreation.setReference(TestUtils.randomString());
         documentCreation.setTitle("GeneratedDoc");
 
-        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
 
         URL fileURL = UploadDownloadConsistencyTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.zip");
+
+        Assert.assertNotNull(fileURL);
+
         File file = new File(fileURL.getPath());
 
         List<String> originalEntries = getEntries(file);

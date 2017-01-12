@@ -24,9 +24,11 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.DocumentCreationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.DocumentBinaryApi;
 import com.docdoku.api.services.FoldersApi;
 import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,16 +46,24 @@ public class DocumentBinaryApiTest {
     private static FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
     private static DocumentRevisionDTO createdDocument;
 
+    private static WorkspaceDTO workspace;
+
     @BeforeClass
-    public static void initDocument() throws ApiException {
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
 
         DocumentCreationDTO document = new DocumentCreationDTO();
         document.setReference(TestUtils.randomString());
         document.setTitle("GeneratedDoc");
         createdDocument =
-                foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
-
+                foldersApi.createDocumentMasterInFolder(workspace.getId(), document, workspace.getId());
     }
+    
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
+    
 
     @Test
     public void testSuite() throws ApiException, IOException {

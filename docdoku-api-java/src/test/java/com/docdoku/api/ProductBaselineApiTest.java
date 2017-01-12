@@ -50,7 +50,6 @@ public class ProductBaselineApiTest {
     private static WorkspaceDTO workspace;
     private static PartRevisionDTO rootPart;
     private static ConfigurationItemDTO product;
-    private static ProductBaselineDTO productBaseline;
 
     private static PartRevisionDTO P1;
     private static PartRevisionDTO P1C;
@@ -278,7 +277,7 @@ public class ProductBaselineApiTest {
         baselineCreation.setConfigurationItemId(product.getId());
         baselineCreation.setName("B1");
         baselineCreation.setType(ProductBaselineDTO.TypeEnum.LATEST);
-        productBaseline = productBaselineApi.createProductBaseline(workspace.getId(), baselineCreation);
+        productBaselineApi.createProductBaseline(workspace.getId(), baselineCreation);
     }
 
 

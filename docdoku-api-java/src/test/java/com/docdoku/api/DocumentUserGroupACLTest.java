@@ -23,9 +23,7 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
-import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.DocumentsApi;
-import com.docdoku.api.services.FoldersApi;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -41,12 +39,8 @@ import java.util.List;
 public class DocumentUserGroupACLTest {
 
     private static final WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
-    private static final FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-    private static final DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
 
     private static WorkspaceDTO workspace;
-    private static AccountDTO account1;
-    private static AccountDTO account2;
     private static UserGroupDTO group1 = new UserGroupDTO();
     private static UserGroupDTO group2 = new UserGroupDTO();
     private static ApiClient user1Client;
@@ -66,8 +60,8 @@ public class DocumentUserGroupACLTest {
 
         workspace = TestUtils.createWorkspace();
 
-        account1 = TestUtils.createAccount();
-        account2 = TestUtils.createAccount();
+        AccountDTO account1 = TestUtils.createAccount();
+        AccountDTO account2 = TestUtils.createAccount();
 
         group1.setId(TestUtils.randomString());
         group1.setWorkspaceId(workspace.getId());

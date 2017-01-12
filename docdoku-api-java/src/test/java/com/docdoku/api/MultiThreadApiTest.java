@@ -113,7 +113,7 @@ public class MultiThreadApiTest {
         document.setTitle("GeneratedDoc");
 
         DocumentRevisionDTO documentRevisionDTO =
-                foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
+                foldersApi.createDocumentMasterInFolder(workspace.getId(), document, workspace.getId());
 
         URL fileURL = DocumentApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
         File original = new File(fileURL.getPath());

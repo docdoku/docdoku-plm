@@ -22,8 +22,11 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.FolderDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.FoldersApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -33,10 +36,22 @@ import java.util.List;
 @RunWith(JUnit4.class)
 public class FoldersApiTest {
 
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
+    
     @Test
     public void getRootFoldersTest() throws ApiException {
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-        List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE);
+        List<FolderDTO> rootFolders = foldersApi.getRootFolders(workspace.getId());
         Assert.assertNotNull(rootFolders);
     }
 
@@ -46,8 +61,8 @@ public class FoldersApiTest {
         FolderDTO folder = new FolderDTO();
         folder.setName(folderName);
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-        foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE, folder);
-        List<FolderDTO> rootFolders = foldersApi.getRootFolders(TestConfig.WORKSPACE);
+        foldersApi.createSubFolder(workspace.getId(), workspace.getId(), folder);
+        List<FolderDTO> rootFolders = foldersApi.getRootFolders(workspace.getId());
         Assert.assertEquals(rootFolders.stream()
                 .filter(folderDTO -> folderName.equals(folderDTO.getName()))
                 .count(), 1);
@@ -56,10 +71,10 @@ public class FoldersApiTest {
     @Test
     public void nonExistingFolderTest() throws ApiException {
         String nonExistingFolderName = "SomethingNotExisting";
-        String folderCompletePath = TestConfig.WORKSPACE + ":" + nonExistingFolderName;
+        String folderCompletePath = workspace.getId() + ":" + nonExistingFolderName;
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
         try {
-            foldersApi.getSubFolders(TestConfig.WORKSPACE, folderCompletePath);
+            foldersApi.getSubFolders(workspace.getId(), folderCompletePath);
         } catch (ApiException e) {
             Assert.assertEquals(404, e.getCode());
         }
@@ -73,13 +88,13 @@ public class FoldersApiTest {
         FolderDTO folder = new FolderDTO();
         folder.setName(folderName);
         FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-        foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE, folder);
+        foldersApi.createSubFolder(workspace.getId(), workspace.getId(), folder);
 
         String subFolderName = "SubFolder-" + TestUtils.randomString();
         FolderDTO subFolder = new FolderDTO();
         subFolder.setName(subFolderName);
-        FolderDTO createdSubFolder = foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE + ":" + folderName, subFolder);
-        List<FolderDTO> subFolders = foldersApi.getSubFolders(TestConfig.WORKSPACE, TestConfig.WORKSPACE + ":" + folderName);
+        FolderDTO createdSubFolder = foldersApi.createSubFolder(workspace.getId(), workspace.getId() + ":" + folderName, subFolder);
+        List<FolderDTO> subFolders = foldersApi.getSubFolders(workspace.getId(), workspace.getId() + ":" + folderName);
 
         Assert.assertEquals(1,subFolders.size());
         Assert.assertEquals(createdSubFolder.getName(),subFolders.get(0).getName());

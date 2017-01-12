@@ -210,4 +210,7 @@ public class TestUtils {
         return acl;
     }
 
+    public static void deleteWorkspace(WorkspaceDTO workspace) throws ApiException {
+        new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT).deleteWorkspace(workspace.getId());
+    }
 }

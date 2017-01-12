@@ -27,8 +27,7 @@ import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -44,6 +43,17 @@ public class DocumentApiTest {
     private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
     private DocumentsApi documentsApi = new DocumentsApi(TestConfig.REGULAR_USER_CLIENT);
     private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
+    
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void documentApiUsageTests() throws ApiException {
@@ -53,47 +63,47 @@ public class DocumentApiTest {
         document.setReference(TestUtils.randomString());
         document.setTitle("GeneratedDoc");
 
-        DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, document, TestConfig.WORKSPACE);
+        DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(workspace.getId(), document, workspace.getId());
         Assert.assertEquals(createdDocument.getDocumentMasterId(), document.getReference());
 
         // Check in
-        DocumentRevisionDTO checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        DocumentRevisionDTO checkedInDocument = documentApi.checkInDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertEquals(checkedInDocument.getDocumentMasterId(), document.getReference());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedInDocument).getIteration(), Integer.valueOf("1"));
 
         // Check out
-        DocumentRevisionDTO checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        DocumentRevisionDTO checkedOutDocument = documentApi.checkOutDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertEquals(checkedOutDocument.getDocumentMasterId(), document.getReference());
         Assert.assertEquals(LastIterationHelper.getLastIteration(checkedOutDocument).getIteration(), Integer.valueOf("2"));
 
         // Undo check out
-        DocumentRevisionDTO undoCheckOutDocument = documentApi.undoCheckOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        DocumentRevisionDTO undoCheckOutDocument = documentApi.undoCheckOutDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertEquals(undoCheckOutDocument, checkedInDocument);
 
         // Check out
-        checkedOutDocument = documentApi.checkOutDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        checkedOutDocument = documentApi.checkOutDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
 
         // Edit
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(checkedOutDocument);
         Assert.assertNull(lastIteration.getModificationDate());
         lastIteration.setRevisionNote("Something modified");
 
-        DocumentIterationDTO updatedIteration = documentApi.updateDocumentIteration(TestConfig.WORKSPACE, checkedOutDocument.getDocumentMasterId(), checkedOutDocument.getVersion(), "2", lastIteration);
+        DocumentIterationDTO updatedIteration = documentApi.updateDocumentIteration(workspace.getId(), checkedOutDocument.getDocumentMasterId(), checkedOutDocument.getVersion(), "2", lastIteration);
 
         Assert.assertNotNull(updatedIteration.getModificationDate());
         lastIteration.setModificationDate(updatedIteration.getModificationDate());
         Assert.assertEquals(lastIteration, updatedIteration);
 
         // Check in
-        checkedInDocument = documentApi.checkInDocument(TestConfig.WORKSPACE, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+        checkedInDocument = documentApi.checkInDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
         Assert.assertNull(checkedInDocument.getCheckOutUser());
 
         // Release
-        DocumentRevisionDTO releasedDocument = documentApi.releaseDocumentRevision(TestConfig.WORKSPACE, checkedInDocument.getDocumentMasterId(), checkedInDocument.getVersion());
+        DocumentRevisionDTO releasedDocument = documentApi.releaseDocumentRevision(workspace.getId(), checkedInDocument.getDocumentMasterId(), checkedInDocument.getVersion());
         Assert.assertEquals(releasedDocument.getStatus(), DocumentRevisionDTO.StatusEnum.RELEASED);
 
         // Mark as obsolete
-        DocumentRevisionDTO obsoleteDocument = documentApi.markDocumentRevisionAsObsolete(TestConfig.WORKSPACE, releasedDocument.getDocumentMasterId(), releasedDocument.getVersion());
+        DocumentRevisionDTO obsoleteDocument = documentApi.markDocumentRevisionAsObsolete(workspace.getId(), releasedDocument.getDocumentMasterId(), releasedDocument.getVersion());
         Assert.assertEquals(obsoleteDocument.getStatus(), DocumentRevisionDTO.StatusEnum.OBSOLETE);
 
     }
@@ -106,7 +116,7 @@ public class DocumentApiTest {
         documentCreation.setReference(TestUtils.randomString());
         documentCreation.setTitle(TestUtils.randomString());
 
-        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
 
         String attrName = TestUtils.randomString();
         String attrValue = TestUtils.randomString();
@@ -117,8 +127,8 @@ public class DocumentApiTest {
         attribute.setType(InstanceAttributeDTO.TypeEnum.TEXT);
         attribute.setValue(attrValue);
         lastIteration.getInstanceAttributes().add(attribute);
-        documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
-        documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A");
+        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "1", lastIteration);
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
 
         String attributeSearchQuery = "TEXT:"+attrName+":"+attrValue;
 
@@ -126,20 +136,20 @@ public class DocumentApiTest {
         Thread.sleep(2000);
 
         // search by attributes
-        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeSearchQuery, null);
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeSearchQuery, null);
         Assert.assertEquals(1, documentRevisions.stream()
                 .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId()))
                 .count());
 
 
         // search by title
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, documentCreation.getTitle(), null, null, null, null, null, null, null, null, null, null, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, documentCreation.getTitle(), null, null, null, null, null, null, null, null, null, null, null);
         Assert.assertEquals(1, documentRevisions.stream()
                 .filter(documentRevisionDTO -> documentCreation.getTitle().equals(documentRevisionDTO.getTitle()))
                 .count());
 
         // search by author
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, TestConfig.LOGIN, null, null, null, null, null, null, null, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, TestConfig.LOGIN, null, null, null, null, null, null, null, null);
         Assert.assertFalse(documentRevisions.isEmpty());
         Assert.assertEquals(documentRevisions.size(), documentRevisions.stream()
                 .filter(documentRevisionDTO -> TestConfig.LOGIN.equals(documentRevisionDTO.getAuthor().getLogin()))
@@ -166,37 +176,37 @@ public class DocumentApiTest {
 
         // Simple attribute query
         attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue1;
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
         // Simple attribute query
         attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue2;
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
         // Simple attribute query
         attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue3;
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document3.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
         // "Or" query on same attribute
         attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue1 + ";" + "TEXT:" + attrName1 + ":" + attributeValue2;
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
         Assert.assertEquals(2, documentRevisions.size());
 
         // Something not existing
         attributeQuery = "TEXT:" + attrName1 + ":something that doesnt exist";
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertTrue(documentRevisions.isEmpty());
 
         // Simple "AND" on 2 different attributes
         attributeQuery = "TEXT:" + attrName1 + ":" + attributeValue1 + ";TEXT:" + attrName2 + ":" + attributeValue1;
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
@@ -207,7 +217,7 @@ public class DocumentApiTest {
                         InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName1 + ":" + attributeValue2 + ";" +
                         InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName2 + ":" + attributeValue1;
 
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
@@ -218,7 +228,7 @@ public class DocumentApiTest {
                 InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName2 + ":" + attributeValue1 + ";" +
                 InstanceAttributeDTO.TypeEnum.TEXT + ":" + attrName2 + ":" + attributeValue2;
 
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, attributeQuery, null);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document1.getId())).count());
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
         Assert.assertEquals(2, documentRevisions.size());
@@ -238,16 +248,16 @@ public class DocumentApiTest {
 
         List<DocumentRevisionDTO> documentRevisions;
 
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, null, folder1);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, null, folder1);
         Assert.assertEquals(1, documentRevisions
                 .stream().filter(d -> d.getId().equals(document1.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, null, folder2);
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, null, folder2);
         Assert.assertEquals(1, documentRevisions.stream().filter(d -> d.getId().equals(document2.getId())).count());
         Assert.assertEquals(1, documentRevisions.size());
 
-        documentRevisions = documentsApi.searchDocumentRevision(TestConfig.WORKSPACE, null, null, null, null, null, null, null, null, null, null, null, null, null, "NonExistingFolder");
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, null, null, null, null, null, null, null, null, null, null, null, "NonExistingFolder");
         Assert.assertTrue(documentRevisions.isEmpty());
 
     }
@@ -258,8 +268,8 @@ public class DocumentApiTest {
         CompletableFuture<DocumentRevisionDTO> future = new CompletableFuture<>();
         DocumentCreationDTO document = new DocumentCreationDTO();
         document.setReference(TestUtils.randomString());
-        foldersApi.createDocumentMasterInFolderAsync(TestConfig.WORKSPACE,
-                document, TestConfig.WORKSPACE, new ApiCallback<DocumentRevisionDTO>() {
+        foldersApi.createDocumentMasterInFolderAsync(workspace.getId(),
+                document, workspace.getId(), new ApiCallback<DocumentRevisionDTO>() {
 
             @Override
             public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
@@ -288,19 +298,19 @@ public class DocumentApiTest {
 
         FolderDTO folderDTO = new FolderDTO();
         folderDTO.setName(folderName);
-        foldersApi.createSubFolder(TestConfig.WORKSPACE, TestConfig.WORKSPACE, folderDTO);
+        foldersApi.createSubFolder(workspace.getId(), workspace.getId(), folderDTO);
 
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
         documentCreation.setReference(TestUtils.randomString());
-        foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE+":"+folderName);
-        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A");
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId()+":"+folderName);
+        return documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
     }
 
     private DocumentRevisionDTO createDocumentWithAttributes(String attrName1, String attrName2, String attrValue) throws ApiException {
 
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
         documentCreation.setReference(TestUtils.randomString());
-        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(TestConfig.WORKSPACE, documentCreation, TestConfig.WORKSPACE);
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
 
         InstanceAttributeDTO attribute1 = new InstanceAttributeDTO();
@@ -317,8 +327,8 @@ public class DocumentApiTest {
         instanceAttributes.add(attribute1);
         instanceAttributes.add(attribute2);
 
-        documentApi.updateDocumentIteration(TestConfig.WORKSPACE, documentCreation.getReference(), "A", "1", lastIteration);
-        return documentApi.checkInDocument(TestConfig.WORKSPACE, documentCreation.getReference(), "A");
+        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "1", lastIteration);
+        return documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
     }
 
 

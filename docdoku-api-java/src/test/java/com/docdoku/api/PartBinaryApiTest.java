@@ -24,9 +24,11 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.PartCreationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.PartBinaryApi;
 import com.docdoku.api.services.PartsApi;
 import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,11 +46,19 @@ public class PartBinaryApiTest {
     private static PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
     private static PartRevisionDTO createdPart;
 
+    private static WorkspaceDTO workspace;
+
     @BeforeClass
-    public static void initPart() throws ApiException {
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(TestUtils.randomString());
-        createdPart = partsApi.createNewPart(TestConfig.WORKSPACE, part);
+        createdPart = partsApi.createNewPart(workspace.getId(), part);
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
     }
 
     @Test

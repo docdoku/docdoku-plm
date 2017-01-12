@@ -24,9 +24,11 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.DocumentMasterTemplateDTO;
 import com.docdoku.api.models.DocumentTemplateCreationDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.DocumentTemplateBinaryApi;
 import com.docdoku.api.services.DocumentTemplatesApi;
 import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,12 +48,21 @@ public class DocumentTemplateBinaryApiTest {
     private static DocumentTemplatesApi documentTemplatesApi = new DocumentTemplatesApi(TestConfig.REGULAR_USER_CLIENT);
     private static DocumentMasterTemplateDTO template;
 
+    private static WorkspaceDTO workspace;
+
     @BeforeClass
-    public static void initDocument() throws ApiException {
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
         DocumentTemplateCreationDTO templateCreation = new DocumentTemplateCreationDTO();
         templateCreation.setReference(TestUtils.randomString());
-        template = documentTemplatesApi.createDocumentMasterTemplate(TestConfig.WORKSPACE, templateCreation);
+        template = documentTemplatesApi.createDocumentMasterTemplate(workspace.getId(), templateCreation);
     }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
+
 
     @Test
     public void testSuite() throws ApiException, IOException {
