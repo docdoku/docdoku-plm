@@ -260,6 +260,13 @@
         <module>docdoku-api-js</module>
         <module>docdoku-cli</module>
         <module>docdoku-dplm</module>
+        <module>converter-dae</module>
+        <module>converter-all</module>
+        <module>converter-catia</module>
+<!--    <module>converter-catia-product</module> -->
+        <module>converter-ifc</module>
+        <module>converter-obj</module>
+        <module>converter-step</module>
     </modules>
     <build>
         <pluginManagement>
@@ -272,6 +279,24 @@
                         <source>1.8</source>
                         <target>1.8</target>
                         <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ear-plugin</artifactId>
+                    <version>2.9</version>
+                    <configuration>
+                        <version>7</version>
+                        <defaultLibBundleDir>/lib</defaultLibBundleDir>
+                        <generateApplicationXml>true</generateApplicationXml>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-ejb-plugin</artifactId>
+                    <version>2.3</version>
+                    <configuration>
+                        <ejbVersion>3.1</ejbVersion>
                     </configuration>
                 </plugin>
             </plugins>
@@ -357,5 +382,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
