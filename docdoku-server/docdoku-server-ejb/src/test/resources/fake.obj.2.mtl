@@ -1,0 +1,115 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.2.0)
+
+newmtl glider_armtex
+Kd 0.262144 0.262144 0.262144
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_black
+Kd 0 0 0
+Ka 0 0 0
+Ks 0.0625 0.0625 0.0625
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_body
+Kd 0.134218 0.134218 0.134218
+Ka 0 0 0
+Ks 0.00390625 0.00390625 0.00390625
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_decal_front
+Kd 0.262144 0.262144 0.262144
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_decal_rear
+Kd 0.32768 0.32768 0.32768
+Ka 0 0 0
+Ks 0.0625 0.0625 0.0625
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_fabric
+Kd 0.32768 0.32768 0.32768
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_guages
+Kd 0.32768 0.32768 0.32768
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_interior
+Kd 0.0604599 0.0604599 0.0604599
+Ka 0 0 0
+Ks 0.0078125 0.0078125 0.0078125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_leather
+Kd 0.0897288 0.0897288 0.0897288
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_leatherlight
+Kd 0.262144 0.262144 0.262144
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_plexi
+Kd 0.0560901 0.0560901 0.0560901
+Ka 0 0 0
+Ks 0.00390625 0.00390625 0.00390625
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_speedo
+Kd 0.262144 0.00294492 0
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_trim
+Kd 0.134218 0 0
+Ka 0 0 0
+Ks 0.00390625 0.00390625 0.00390625
+Ke 0 0 0
+Ns 50
+illum 2
+
+newmtl glider_wheel
+Kd 0.0310068 0.0310068 0.0310068
+Ka 0 0 0
+Ks 0.03125 0.03125 0.03125
+Ke 0 0 0
+Ns 50
+illum 2
+
