@@ -22,17 +22,22 @@ package com.docdoku.server.converters;
 
 import java.nio.file.Path;
 
+import javax.ejb.Remote;
+
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.product.PartIteration;
 
 /**
- * CADConverter plugin interface Extension point for 3D files conversion
+ * CADConverter Extension point interface for 3D files conversion.
+ * 
+ * Converters are supposed to be standalone remote EJB module that can be
+ * deployed independently of DocdokuPLM application.
  */
-
+@Remote
 public interface CADConverter {
 
     /**
-     * Exception reporting a problem during convertion process.
+     * Exception reporting a unrecoverable problem during conversion process.
      */
     class ConversionException extends Exception {
 
@@ -52,29 +57,28 @@ public interface CADConverter {
     }
 
     /**
-     * Convert the given file to obj
+     * Convert the given file (BinaryResource) to Wavefront OBJ format
      *
      * @param partToConvert
      *            the part iteration concerned
      * @param cadFile
      *            the 3D file to convert
      * @param tempDir
-     *            a given temporary directory for plugin operations (soon
-     *            deprecated)
+     *            a given temporary directory for converter operations
      * @return the conversion result
-     * @throws Exception
-     *             Note: plugins should handle errors and add them in the
-     *             ConversionResult object
+     * @throws ConversionException
+     * 
      */
     ConversionResult convert(PartIteration partToConvert, BinaryResource cadFile, Path tempDir)
 	    throws ConversionException;
 
     /**
-     * Determine if plugin is able to convert given extension to obj files
+     * Determine if this converter is able to convert given 3D file format
+     * (identified by it's extension) to Wavefront OBJ format
      *
      * @param cadFileExtension
      *            the extension of the cadFile
-     * @return true if plugin can handle the conversion, false otherwise
+     * @return true if the converter can handle the conversion, false otherwise
      */
     boolean canConvertToOBJ(String cadFileExtension);
 }
