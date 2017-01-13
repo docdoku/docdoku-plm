@@ -21,6 +21,7 @@ package com.docdoku.server;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
@@ -59,7 +60,7 @@ class BeanLocator {
 	try {
 	    result.addAll(search(type, ctx));
 	} catch (NamingException e) {
-	    LOGGER.severe("");
+	    LOGGER.log(Level.SEVERE,e.getMessage(),e);
 	}
 	return result;
     }
