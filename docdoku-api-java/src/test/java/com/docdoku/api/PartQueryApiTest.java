@@ -27,9 +27,11 @@ import com.docdoku.api.models.QueryRuleDTO;
 import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
+import com.docdoku.api.services.WorkspacesApi;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,6 +57,11 @@ public class PartQueryApiTest {
         part.setName(TestUtils.randomString());
         partsApi.createNewPart(workspace.getId(), part);
         partApi.checkIn(workspace.getId(), part.getNumber(), "A");
+    }
+
+    @AfterClass
+    public static void clearData() throws ApiException {
+        new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT).deleteWorkspace(workspace.getId());
     }
 
     @Test

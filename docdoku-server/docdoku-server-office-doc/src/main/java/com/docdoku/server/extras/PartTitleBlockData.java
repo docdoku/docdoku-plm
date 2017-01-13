@@ -22,23 +22,22 @@ package com.docdoku.server.extras;
 
 import com.docdoku.core.product.PartIteration;
 
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
  * @author kelto on 05/01/16.
- *
- * This class should be used to override the default Pdf generation for parts.
+ *         <p>
+ *         This class should be used to override the default Pdf generation for parts.
  * @see com.docdoku.server.extras.TitleBlockGenerator
  */
-public class PartTitleBlockGenerator extends TitleBlockGenerator{
+public class PartTitleBlockData extends TitleBlockData {
 
-    PartTitleBlockGenerator(InputStream inputStream,PartIteration partIteration, Locale locale) {
+    PartTitleBlockData(PartIteration partIteration, Locale locale) {
         pLocale = locale;
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
+        bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
         authorName = partIteration.getAuthor().getName();
         version = partIteration.getVersion();
         creationDate = dateFormat.format(partIteration.getPartRevision().getCreationDate());
@@ -50,8 +49,6 @@ public class PartTitleBlockGenerator extends TitleBlockGenerator{
         workflow = partIteration.getPartRevision().getWorkflow();
         revisionNote = partIteration.getIterationNote();
         lifeCycleState = partIteration.getPartRevision().getLifeCycleState();
-
-        // No hydratation ? not really necessary to create more field ...
         title = partIteration.getNumber() + "-" + version;
         subject = partIteration.getName();
     }

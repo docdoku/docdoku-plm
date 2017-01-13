@@ -39,7 +39,7 @@ import java.util.Locale;
 /**
  * Resource Getter
  */
-@Stateless(name="OnDemandConverterBean")
+@Stateless(name = "OnDemandConverterBean")
 public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
 
     @Inject
@@ -62,27 +62,13 @@ public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
     public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException {
 
-        DocumentIteration docI;
-        Locale locale;
 
-        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            User user = userManager.whoAmI(binaryResource.getWorkspaceId());
-            locale = new Locale(user.getLanguage());
-        }else{
-            locale = Locale.getDefault();
-        }
+        Locale locale = getCallerLocale(binaryResource);
+        DocumentIteration docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
+        OnDemandConverter selectedOnDemandConverter = selectOnDemandConverter(outputFormat, binaryResource);
 
-        docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
-
-        OnDemandConverter selectedOnDemandConverter = null;
-        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
-            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
-                selectedOnDemandConverter = onDemandConverter;
-                break;
-            }
-        }
         if (selectedOnDemandConverter != null) {
-            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource,docI,locale);
+            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, docI, locale);
         }
 
         return null;
@@ -92,18 +78,18 @@ public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
     public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException {
 
-        PartIteration partIteration;
-        Locale locale;
+        Locale locale = getCallerLocale(binaryResource);
+        PartIteration partIteration = productService.findPartIterationByBinaryResource(binaryResource);
+        OnDemandConverter selectedOnDemandConverter = selectOnDemandConverter(outputFormat, binaryResource);
 
-        if(contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            User user = userManager.whoAmI(binaryResource.getWorkspaceId());
-            locale = new Locale(user.getLanguage());
-        }else{
-            locale = Locale.getDefault();
+        if (selectedOnDemandConverter != null) {
+            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, partIteration, locale);
         }
 
-        partIteration = productService.findPartIterationByBinaryResource(binaryResource);
+        return null;
+    }
 
+    private OnDemandConverter selectOnDemandConverter(String outputFormat, BinaryResource binaryResource) {
         OnDemandConverter selectedOnDemandConverter = null;
         for (OnDemandConverter onDemandConverter : documentResourceGetters) {
             if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
@@ -111,11 +97,19 @@ public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
                 break;
             }
         }
-        if (selectedOnDemandConverter != null) {
-            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, partIteration, locale);
-        }
+        return selectedOnDemandConverter;
+    }
 
-        return null;
+    private Locale getCallerLocale(BinaryResource binaryResource) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+        Locale locale;
+
+        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
+            User user = userManager.whoAmI(binaryResource.getWorkspaceId());
+            locale = new Locale(user.getLanguage());
+        } else {
+            locale = Locale.getDefault();
+        }
+        return locale;
     }
 
 }

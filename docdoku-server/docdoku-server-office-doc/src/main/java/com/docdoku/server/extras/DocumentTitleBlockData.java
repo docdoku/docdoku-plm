@@ -21,7 +21,6 @@ package com.docdoku.server.extras;
 
 import com.docdoku.core.document.DocumentIteration;
 
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -32,12 +31,12 @@ import java.util.ResourceBundle;
  *         This class should be used to override the default Pdf generation for document.
  * @see com.docdoku.server.extras.TitleBlockGenerator
  */
-class DocumentTitleBlockGenerator extends TitleBlockGenerator {
+class DocumentTitleBlockData extends TitleBlockData {
 
-    DocumentTitleBlockGenerator(InputStream inputStream, DocumentIteration documentIteration, Locale locale) {
+    DocumentTitleBlockData(DocumentIteration documentIteration, Locale locale) {
         pLocale = locale;
-        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        SimpleDateFormat dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
+        bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
+        dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
         authorName = documentIteration.getAuthor().getName();
         version = documentIteration.getVersion();
         creationDate = dateFormat.format(documentIteration.getDocumentRevision().getCreationDate());
@@ -49,8 +48,6 @@ class DocumentTitleBlockGenerator extends TitleBlockGenerator {
         workflow = documentIteration.getDocumentRevision().getWorkflow();
         revisionNote = documentIteration.getRevisionNote();
         lifeCycleState = documentIteration.getDocumentRevision().getLifeCycleState();
-
-        // No hydratation ? not really necessary to create more field ...
         title = documentIteration.getId() + "-" + version;
         subject = documentIteration.getTitle();
     }

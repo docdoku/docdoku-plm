@@ -43,7 +43,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IWorkspaceManagerLocal.class)
 @Stateless(name = "WorkspaceManagerBean")
 public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
@@ -72,33 +72,37 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @Override
     public long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException {
         Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
-        return new WorkspaceDAO(new Locale(account.getLanguage()),em).getDiskUsageForWorkspace(workspaceId);
+        return new WorkspaceDAO(new Locale(account.getLanguage()), em).getDiskUsageForWorkspace(workspaceId);
     }
 
     @Override
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
-        try{
+        try {
+
             Workspace workspace = new WorkspaceDAO(em, storageManager).loadWorkspace(workspaceId);
-            if(contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)){
+            String callerLogin = contextManager.getCallerPrincipalLogin();
+
+            boolean isAllowedToDeleteWorkspace =
+                    contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID) ||
+                            workspace.getAdmin().getLogin().equals(callerLogin);
+
+            if (isAllowedToDeleteWorkspace) {
                 doWorkspaceDeletion(workspace);
                 esIndexer.deleteWorkspace(workspaceId);
-            }else{
-                if(workspace.getAdmin().getLogin().equals(contextManager.getCallerPrincipalLogin())){
-                    doWorkspaceDeletion(workspace);
-                    esIndexer.deleteWorkspace(workspaceId);
-                }else{
-                    User user = userManager.whoAmI(workspaceId);
-                    throw new AccessRightException(new Locale(user.getLanguage()),user);
-                }
+            } else {
+                User user = userManager.whoAmI(workspaceId);
+                LOGGER.log(Level.SEVERE, "Caller (" + user.getLogin() + ") not authorized to delete workspace : (" + workspaceId + ")");
+                throw new AccessRightException(new Locale(user.getLanguage()), user);
             }
+
         } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
-            LOGGER.log(Level.SEVERE,"Attempt to delete an unauthorized workspace : ("+workspaceId+")",e);
+            LOGGER.log(Level.SEVERE, "Caller not authorized to delete workspace : (" + workspaceId + ")", e);
         } catch (WorkspaceNotFoundException e) {
-            LOGGER.log(Level.WARNING,"Attempt to delete a workspace which does not exist : ("+workspaceId+")",e);
+            LOGGER.log(Level.WARNING, "Attempt to delete a workspace which does not exist : (" + workspaceId + ")", e);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,"Exception deleting workspace "+workspaceId,e);
+            LOGGER.log(Level.SEVERE, "Exception deleting workspace " + workspaceId, e);
         }
     }
 
@@ -109,7 +113,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     }
 
     @Override
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
         Account account = new AccountDAO(em).loadAccount(login);
@@ -122,7 +126,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
                 workspace.setAdmin(account);
             } else {
                 User user = userManager.whoAmI(workspaceId);
-                throw new AccessRightException(new Locale(user.getLanguage()),user);
+                throw new AccessRightException(new Locale(user.getLanguage()), user);
             }
         }
 
@@ -143,17 +147,17 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         try {
             new WorkspaceDAO(em, storageManager).removeWorkspace(workspace);
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE,"IOException while deleting the workspace : "+workspaceId,e);
+            LOGGER.log(Level.SEVERE, "IOException while deleting the workspace : " + workspaceId, e);
         } catch (StorageException e) {
-            LOGGER.log(Level.SEVERE,"StorageException while deleting the workspace : "+workspaceId,e);
+            LOGGER.log(Level.SEVERE, "StorageException while deleting the workspace : " + workspaceId, e);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE,"Exception while deleting the workspace : "+workspaceId,e);
+            LOGGER.log(Level.SEVERE, "Exception while deleting the workspace : " + workspaceId, e);
             //TODO : create own exception
             mailerManager.sendWorkspaceDeletionErrorNotification(admin, workspaceId);
-            throw new Exception("Runtime exception while deleting the workspace : "+workspaceId);
+            throw new Exception("Runtime exception while deleting the workspace : " + workspaceId);
 
         }
 
-        mailerManager.sendWorkspaceDeletionNotification(admin,workspaceId);
+        mailerManager.sendWorkspaceDeletionNotification(admin, workspaceId);
     }
 }

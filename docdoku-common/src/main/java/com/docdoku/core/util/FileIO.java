@@ -32,6 +32,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
+ * Helper class for file manipulation and information
  *
  * @author Florent Garin
  */
@@ -54,7 +55,7 @@ public class FileIO {
     public static void rmDir(File pDir) {
         if (pDir.isDirectory()) {
             File[] files = pDir.listFiles();
-            if(files!=null){
+            if (files != null) {
                 for (File subFile : files) {
                     if (subFile.isDirectory()) {
                         rmDir(subFile);
@@ -70,8 +71,8 @@ public class FileIO {
     public static void copyFile(File pIn, File pOut) throws IOException {
         pOut.getParentFile().mkdirs();
         pOut.createNewFile();
-        try(InputStream in = new BufferedInputStream(new FileInputStream(pIn), BUFFER_CAPACITY);
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(pOut), BUFFER_CAPACITY)) {
+        try (InputStream in = new BufferedInputStream(new FileInputStream(pIn), BUFFER_CAPACITY);
+             OutputStream out = new BufferedOutputStream(new FileOutputStream(pOut), BUFFER_CAPACITY)) {
             FileIO.copyBufferedStream(in, out);
         }
     }
@@ -103,7 +104,7 @@ public class FileIO {
 
     public static String getFileNameWithoutExtension(String fileName) {
         int index = fileName.lastIndexOf(".");
-        if(index!=-1) {
+        if (index != -1) {
             return fileName.substring(0, index);
         } else {
             return fileName;
@@ -144,23 +145,23 @@ public class FileIO {
         return codeUriBuild.toString();
     }
 
-    public static boolean isAVFile(String fileName){
-        String ext=getExtension(fileName);
+    public static boolean isAVFile(String fileName) {
+        String ext = getExtension(fileName);
         return AV_EXTENSIONS.contains(ext);
     }
 
-    public static boolean isDocFile(String fileName){
-        String ext=getExtension(fileName);
+    public static boolean isDocFile(String fileName) {
+        String ext = getExtension(fileName);
         return DOC_EXTENSIONS.contains(ext);
     }
 
-    public static boolean isImageFile(String fileName){
-        String ext=getExtension(fileName);
+    public static boolean isImageFile(String fileName) {
+        String ext = getExtension(fileName);
         return IMAGE_EXTENSIONS.contains(ext);
     }
 
-    public static boolean isArchiveFile(String fileName){
-        String ext=getExtension(fileName);
+    public static boolean isArchiveFile(String fileName) {
+        String ext = getExtension(fileName);
         return ARCHIVE_EXTENSIONS.contains(ext);
     }
 
@@ -172,7 +173,7 @@ public class FileIO {
                 unzipEntry(zipfile, entry, outputDir);
             }
         } catch (Exception e) {
-            LOGGER.log(Level.FINEST,null,e);
+            LOGGER.log(Level.FINEST, null, e);
         }
     }
 
@@ -183,11 +184,11 @@ public class FileIO {
         }
 
         File outputFile = new File(outputDir, entry.getName());
-        if (!outputFile.getParentFile().exists()){
+        if (!outputFile.getParentFile().exists()) {
             outputFile.getParentFile().mkdirs();
         }
-        try(BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry), BUFFER_CAPACITY);
-        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile), BUFFER_CAPACITY)){
+        try (BufferedInputStream in = new BufferedInputStream(zipfile.getInputStream(entry), BUFFER_CAPACITY);
+             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFile), BUFFER_CAPACITY)) {
             copyBufferedStream(in, out);
         }
     }
@@ -195,16 +196,16 @@ public class FileIO {
     public static boolean existsInArchive(File archiveFile, String fileName) throws IOException {
         boolean exists = false;
         ZipFile zipfile = null;
-        try{
+        try {
             zipfile = new ZipFile(archiveFile);
             exists = zipfile.getEntry(fileName) != null;
-        }finally {
-            try{
-                if(zipfile != null){
+        } finally {
+            try {
+                if (zipfile != null) {
                     zipfile.close();
                 }
-            }catch (IOException e){
-                LOGGER.log(Level.FINEST,null,e);
+            } catch (IOException e) {
+                LOGGER.log(Level.FINEST, null, e);
             }
         }
         return exists;
@@ -212,7 +213,7 @@ public class FileIO {
 
     public static boolean existsInArchive(InputStream archiveInputStream, String fileName) {
         ZipEntry zipEntry;
-        try(ZipInputStream zipInputStream = new ZipInputStream(archiveInputStream)) {
+        try (ZipInputStream zipInputStream = new ZipInputStream(archiveInputStream)) {
             while ((zipEntry = zipInputStream.getNextEntry()) != null) {
                 if (zipEntry.getName().equals(fileName)) {
                     zipInputStream.close();

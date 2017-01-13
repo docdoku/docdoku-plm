@@ -27,7 +27,9 @@ import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.api.services.ProductBaselineApi;
 import com.docdoku.api.services.ProductsApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -42,6 +44,16 @@ public class ProductApiTest {
     private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
     private ProductsApi productsApi = new ProductsApi(TestConfig.REGULAR_USER_CLIENT);
     private ProductBaselineApi productBaselineApi = new ProductBaselineApi(TestConfig.REGULAR_USER_CLIENT);
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void createProductTest() throws ApiException {
@@ -55,7 +67,7 @@ public class ProductApiTest {
 
         for (String partNumber : partNumbers) {
             part.setNumber(partNumber);
-            partsApi.createNewPart(TestConfig.WORKSPACE, part);
+            partsApi.createNewPart(workspace.getId(), part);
         }
 
         // Create a structure
@@ -63,7 +75,7 @@ public class ProductApiTest {
         //    - P2
         //    - P3
 
-        PartRevisionDTO p1 = partApi.getPartRevision(TestConfig.WORKSPACE, p1Number, "A");
+        PartRevisionDTO p1 = partApi.getPartRevision(workspace.getId(), p1Number, "A");
         PartIterationDTO i1 = LastIterationHelper.getLastIteration(p1);
         List<PartUsageLinkDTO> components = new ArrayList<>();
 
@@ -88,10 +100,10 @@ public class ProductApiTest {
 
         i1.setComponents(components);
 
-        partApi.updatePartIteration(TestConfig.WORKSPACE, p1Number, "A", 1, i1);
+        partApi.updatePartIteration(workspace.getId(), p1Number, "A", 1, i1);
 
         for (String partNumber : partNumbers) {
-            partApi.checkIn(TestConfig.WORKSPACE, partNumber, "A");
+            partApi.checkIn(workspace.getId(), partNumber, "A");
         }
 
 
@@ -99,22 +111,22 @@ public class ProductApiTest {
         product.setId(TestUtils.randomString());
         product.setDesignItemNumber(p1Number);
         product.setDescription("Generated product");
-        product.setWorkspaceId(TestConfig.WORKSPACE);
+        product.setWorkspaceId(workspace.getId());
 
-        productsApi.createConfigurationItem(TestConfig.WORKSPACE, product);
+        productsApi.createConfigurationItem(workspace.getId(), product);
 
         ProductBaselineDTO baseline = new ProductBaselineDTO();
         baseline.setType(ProductBaselineDTO.TypeEnum.LATEST);
         baseline.setName("Generated baseline");
         baseline.setConfigurationItemId(product.getId());
 
-        ProductBaselineDTO productBaseline = productBaselineApi.createProductBaseline(TestConfig.WORKSPACE, baseline);
-        List<ProductBaselineDTO> productBaselines = productBaselineApi.getProductBaselinesForProduct(TestConfig.WORKSPACE, product.getId());
+        ProductBaselineDTO productBaseline = productBaselineApi.createProductBaseline(workspace.getId(), baseline);
+        List<ProductBaselineDTO> productBaselines = productBaselineApi.getProductBaselinesForProduct(workspace.getId(), product.getId());
         Assert.assertEquals(1, productBaselines.stream()
                 .filter(productBaselineDTO -> productBaseline.getId().equals(productBaselineDTO.getId()))
                 .count());
 
-        List<LeafDTO> leaves = productsApi.getFilteredInstances(TestConfig.WORKSPACE, product.getId(), "latest", "-1", true);
+        List<LeafDTO> leaves = productsApi.getFilteredInstances(workspace.getId(), product.getId(), "latest", "-1", true);
 
         Assert.assertNotNull(leaves);
         // No geometric data uploaded

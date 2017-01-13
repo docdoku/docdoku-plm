@@ -22,20 +22,17 @@ package com.docdoku.server.rest.converters;
 
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.InstancePartNumberAttribute;
-import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
+import com.docdoku.core.util.DateUtils;
 import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.NameValuePairDTO;
 import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.DozerConverter;
 import org.dozer.Mapper;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 
 /**
  * @author Florent Garin
@@ -71,9 +68,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
             type = InstanceAttributeDTO.Type.DATE;
             Date date = ((InstanceDateAttribute) source).getDateValue();
             if (date != null) {
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                df.setTimeZone(TimeZone.getTimeZone("UTC"));
-                value = df.format(date);
+                value = DateUtils.format(date);
             }
         } else if (source instanceof InstanceURLAttribute) {
             type = InstanceAttributeDTO.Type.URL;

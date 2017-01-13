@@ -176,4 +176,8 @@ public class BinaryResourceDownloadMeta {
         String fileName = FileDownloadTools.getFileName(fullName, outputFormat);
         return FileDownloadTools.getContentDisposition(downloadType, fileName);
     }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
 }

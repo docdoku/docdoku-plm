@@ -27,13 +27,18 @@ import com.docdoku.api.services.EffectivityApi;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.api.services.ProductsApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@RunWith(JUnit4.class)
 public class EffectivityApiTest {
 
     private PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
@@ -46,6 +51,17 @@ public class EffectivityApiTest {
     private PartRevisionDTO partRevisionDTO = null;
     private ConfigurationItemDTO configurationItemDTO = null;
 
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void createEffectivitiesTest() throws ApiException {
@@ -53,7 +69,7 @@ public class EffectivityApiTest {
         createPartRevisionDTO();
         createConfigurationItemDTO();
 
-        String workspaceId = TestConfig.WORKSPACE;
+        String workspaceId = workspace.getId();
 
         ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
         configurationItemKey.setId(configurationItemDTO.getId());
@@ -117,7 +133,7 @@ public class EffectivityApiTest {
         createPartRevisionDTO();
         createConfigurationItemDTO();
 
-        String workspaceId = TestConfig.WORKSPACE;
+        String workspaceId = workspace.getId();
 
         ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
         configurationItemKey.setId(configurationItemDTO.getId());
@@ -175,7 +191,7 @@ public class EffectivityApiTest {
         createPartRevisionDTO();
         createConfigurationItemDTO();
 
-        String workspaceId = TestConfig.WORKSPACE;
+        String workspaceId = workspace.getId();
 
         ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
         configurationItemKey.setId(configurationItemDTO.getId());
@@ -205,7 +221,7 @@ public class EffectivityApiTest {
         createPartRevisionDTO();
         createConfigurationItemDTO();
 
-        String workspaceId = TestConfig.WORKSPACE;
+        String workspaceId = workspace.getId();
 
         ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
         configurationItemKey.setId(configurationItemDTO.getId());
@@ -235,7 +251,7 @@ public class EffectivityApiTest {
         createPartRevisionDTO();
         createConfigurationItemDTO();
 
-        String workspaceId = TestConfig.WORKSPACE;
+        String workspaceId = workspace.getId();
 
         ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
         configurationItemKey.setId(configurationItemDTO.getId());
@@ -271,7 +287,7 @@ public class EffectivityApiTest {
         createPartRevisionDTO();
         createConfigurationItemDTO();
 
-        String workspaceId = TestConfig.WORKSPACE;
+        String workspaceId = workspace.getId();
 
         ConfigurationItemKey configurationItemKey = new ConfigurationItemKey();
         configurationItemKey.setId(configurationItemDTO.getId());
@@ -301,14 +317,14 @@ public class EffectivityApiTest {
 
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(partNumber);
-        partsApi.createNewPart(TestConfig.WORKSPACE, part);
+        partsApi.createNewPart(workspace.getId(), part);
 
-        partRevisionDTO = partApi.getPartRevision(TestConfig.WORKSPACE, partNumber, "A");
+        partRevisionDTO = partApi.getPartRevision(workspace.getId(), partNumber, "A");
         PartIterationDTO i1 = LastIterationHelper.getLastIteration(partRevisionDTO);
         List<PartUsageLinkDTO> components = new ArrayList<>();
         i1.setComponents(components);
 
-        partApi.updatePartIteration(TestConfig.WORKSPACE, partNumber, "A", 1, i1);
+        partApi.updatePartIteration(workspace.getId(), partNumber, "A", 1, i1);
         return partRevisionDTO;
     }
 
@@ -318,9 +334,9 @@ public class EffectivityApiTest {
         configurationItemDTO.setId(TestUtils.randomString());
         configurationItemDTO.setDesignItemNumber(partNumber);
         configurationItemDTO.setDescription("Generated product by tests");
-        configurationItemDTO.setWorkspaceId(TestConfig.WORKSPACE);
+        configurationItemDTO.setWorkspaceId(workspace.getId());
 
-        productsApi.createConfigurationItem(TestConfig.WORKSPACE, configurationItemDTO);
+        productsApi.createConfigurationItem(workspace.getId(), configurationItemDTO);
         return configurationItemDTO;
     }
 }

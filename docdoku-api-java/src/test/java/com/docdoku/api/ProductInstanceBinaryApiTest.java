@@ -26,6 +26,7 @@ import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.*;
 import com.docdoku.api.services.*;
 import org.apache.commons.io.FileUtils;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -39,6 +40,8 @@ import java.net.URL;
 @RunWith(JUnit4.class)
 public class ProductInstanceBinaryApiTest {
 
+    private static WorkspaceDTO workspace;
+
 
     private static ProductInstanceMasterDTO productInstance;
     private static PathDataMasterDTO pathDataMaster;
@@ -47,8 +50,8 @@ public class ProductInstanceBinaryApiTest {
 
     @BeforeClass
     public static void initProductInstance() throws ApiException {
-
-        String workspaceId = TestConfig.WORKSPACE;
+        workspace = TestUtils.createWorkspace();
+        String workspaceId = workspace.getId();
         ApiClient client = TestConfig.REGULAR_USER_CLIENT;
 
         PartRevisionDTO part = TestUtils.createPart(workspaceId, TestUtils.randomString());
@@ -89,6 +92,10 @@ public class ProductInstanceBinaryApiTest {
 
     }
 
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void testSuite() throws ApiException, IOException {
@@ -108,7 +115,7 @@ public class ProductInstanceBinaryApiTest {
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =
-                productInstanceBinaryApi.uploadFilesToProductInstanceIterationWithHttpInfo(TestConfig.WORKSPACE,
+                productInstanceBinaryApi.uploadFilesToProductInstanceIterationWithHttpInfo(workspace.getId(),
                         productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1, file);
 
         String location = response.getHeaders().get("Location").get(0);
@@ -118,7 +125,7 @@ public class ProductInstanceBinaryApiTest {
     }
 
     private File downloadAttachedFile() throws ApiException {
-        return productInstanceBinaryApi.downloadFileFromProductInstance(TestConfig.WORKSPACE,
+        return productInstanceBinaryApi.downloadFileFromProductInstance(workspace.getId(),
                 productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1, "attached-file.md",
                 null, null, null);
     }
@@ -129,7 +136,7 @@ public class ProductInstanceBinaryApiTest {
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =
-                productInstanceBinaryApi.uploadFilesToPathDataIterationWithHttpInfo(TestConfig.WORKSPACE,
+                productInstanceBinaryApi.uploadFilesToPathDataIterationWithHttpInfo(workspace.getId(),
                         productInstance.getConfigurationItemId(), productInstance.getSerialNumber(), 1,
                         pathDataMaster.getId(), file);
 
@@ -140,7 +147,7 @@ public class ProductInstanceBinaryApiTest {
     }
 
     private File downloadPathDataFile() throws ApiException {
-        return productInstanceBinaryApi.downloadFileFromPathDataIteration(TestConfig.WORKSPACE,
+        return productInstanceBinaryApi.downloadFileFromPathDataIteration(workspace.getId(),
                 productInstance.getSerialNumber(), pathDataMaster.getId(), 1, "attached-file.md",
                 null, null, null);
     }

@@ -80,7 +80,7 @@ public class PartBinaryResource {
     @Inject
     private IPublicEntityManagerLocal publicEntityManager;
     @Inject
-    private IOnDemandConverterManagerLocal binaryResourceGetterService;
+    private IOnDemandConverterManagerLocal onDemandConverterManager;
 
 
     public PartBinaryResource() {
@@ -358,6 +358,9 @@ public class PartBinaryResource {
         try {
             if (ATTACHED_FILES_SUBTYPE.equals(subType) && output != null && !output.isEmpty()) {
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output, uuid);
+                if(range == null || range.isEmpty()){
+                    binaryResourceDownloadMeta.setLength(0);
+                }
             } else {
                 binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             }
@@ -382,7 +385,7 @@ public class PartBinaryResource {
                 return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }
             if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-                return binaryResourceGetterService.getPartConvertedResource(outputFormat, binaryResource);
+                return onDemandConverterManager.getPartConvertedResource(outputFormat, binaryResource);
             } else {
                 return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
             }

@@ -23,28 +23,24 @@ package com.docdoku.server.rest.util;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.SearchQuery;
+import com.docdoku.core.util.DateUtils;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class SearchQueryParser {
 
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     private static final Logger LOGGER = Logger.getLogger(SearchQueryParser.class.getName());
     private static final String ATTRIBUTES_DELIMITER = ";";
     private static final String ATTRIBUTES_SPLITTER = ":";
-    private static final String FILTERS_DELIMITER = "=";
-    private static final String QUERY_DELIMITER = "&";
 
     private SearchQueryParser() {
         super();
@@ -100,28 +96,28 @@ public class SearchQueryParser {
                         break;
                     case "createdFrom":
                         try {
-                            pCreationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateFrom = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo":
                         try {
-                            pCreationDateTo = SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateTo = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom":
                         try {
-                            pModificationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateFrom = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo":
                         try {
-                            pModificationDateTo = SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateTo = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
@@ -197,28 +193,28 @@ public class SearchQueryParser {
                         break;
                     case "createdFrom":
                         try {
-                            pCreationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateFrom = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "createdTo":
                         try {
-                            pCreationDateTo = SIMPLE_DATE_FORMAT.parse(value);
+                            pCreationDateTo = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedFrom":
                         try {
-                            pModificationDateFrom = SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateFrom = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
                         break;
                     case "modifiedTo":
                         try {
-                            pModificationDateTo = SIMPLE_DATE_FORMAT.parse(value);
+                            pModificationDateTo = DateUtils.parse(value);
                         } catch (ParseException e) {
                             LOGGER.log(Level.FINEST, null, e);
                         }
@@ -270,10 +266,7 @@ public class SearchQueryParser {
                     SearchQuery.DateAttributeQuery daq = new SearchQuery.DateAttributeQuery();
                     daq.setName(attributeName);
                     try {
-                        //Date attributes are always UTC, should not use the default timezone
-                        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                        df.setTimeZone(TimeZone.getTimeZone("UTC"));
-                        daq.setDate(df.parse(attributeValue));
+                        daq.setDate(DateUtils.parse(attributeValue));
                         pAttributes.add(daq);
                     } catch (ParseException e) {
                         LOGGER.log(Level.FINEST, null, e);

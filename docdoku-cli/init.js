@@ -18,7 +18,7 @@ if(url.isEmpty()){
 }
 var username = readLine('What is your username? ');
 var password = readPassword('What is your password? ');
-var client = com.docdoku.cli.services.DocdokuClientFactory.createClient(url,username,password);
+var client = com.docdoku.api.DocdokuPLMClientFactory.createBasicClient(url,username,password);
 var ws = {};
 ws.accounts = new api.AccountsApi(client);
 ws.workspaces = new api.WorkspacesApi(client);

@@ -25,7 +25,9 @@ import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.services.WorkspacesApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -34,6 +36,17 @@ import java.util.List;
 
 @RunWith(JUnit4.class)
 public class WorkspacesApiTest {
+
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void createWorkspaceTest() throws ApiException {
@@ -85,8 +98,8 @@ public class WorkspacesApiTest {
         UserDTO userToAdd = new UserDTO();
         userToAdd.setLogin(newAccount.getLogin());
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
-        workspacesApi.addUser(TestConfig.WORKSPACE, userToAdd, null);
-        List<UserDTO> usersInWorkspace = workspacesApi.getUsersInWorkspace(TestConfig.WORKSPACE);
+        workspacesApi.addUser(workspace.getId(), userToAdd, null);
+        List<UserDTO> usersInWorkspace = workspacesApi.getUsersInWorkspace(workspace.getId());
         Assert.assertEquals(usersInWorkspace.stream().filter(userDTO -> userDTO.getLogin().equals(userToAdd.getLogin())).count(), 1);
     }
 
@@ -97,8 +110,8 @@ public class WorkspacesApiTest {
         userToAdd.setLogin(newAccount.getLogin());
         UserGroupDTO group = createGroup();
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
-        workspacesApi.addUser(TestConfig.WORKSPACE, userToAdd, group.getId());
-        List<UserDTO> usersInGroup = workspacesApi.getUsersInGroup(TestConfig.WORKSPACE, group.getId());
+        workspacesApi.addUser(workspace.getId(), userToAdd, group.getId());
+        List<UserDTO> usersInGroup = workspacesApi.getUsersInGroup(workspace.getId(), group.getId());
         Assert.assertEquals(usersInGroup.stream().filter(userDTO -> userDTO.getLogin().equals(userToAdd.getLogin())).count(), 1);
     }
 
@@ -141,9 +154,9 @@ public class WorkspacesApiTest {
     private UserGroupDTO createGroup() throws ApiException {
         String groupId = TestUtils.randomString();
         UserGroupDTO group = new UserGroupDTO();
-        group.setWorkspaceId(TestConfig.WORKSPACE);
+        group.setWorkspaceId(workspace.getId());
         group.setId(groupId);
-        return new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT).createGroup(TestConfig.WORKSPACE, group);
+        return new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT).createGroup(workspace.getId(), group);
     }
 
 }

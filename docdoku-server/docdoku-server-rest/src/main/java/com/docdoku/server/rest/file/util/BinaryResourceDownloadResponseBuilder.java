@@ -32,10 +32,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ *
  * @author Taylor LABEJOF
  */
 
 public class BinaryResourceDownloadResponseBuilder {
+
     private static final Logger LOGGER = Logger.getLogger(BinaryResourceDownloadResponseBuilder.class.getName());
     private static final int CACHE_SECOND = 60 * 60 * 24;
 
@@ -110,7 +112,7 @@ public class BinaryResourceDownloadResponseBuilder {
     /**
      * Log error & return a 500 error.
      *
-     * @param e        The catched exception which cause the error.
+     * @param e        The original exception which cause the error.
      * @param fullName The full name of the wanted file.
      * @return A 500 error.
      */

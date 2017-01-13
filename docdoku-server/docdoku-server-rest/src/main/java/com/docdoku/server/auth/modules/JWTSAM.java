@@ -55,7 +55,7 @@ public class JWTSAM extends CustomSAM {
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
         HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
 
-        LOGGER.log(Level.INFO, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
+        LOGGER.log(Level.FINE, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
 
         String authorization = request.getHeader("Authorization");
         String[] splitAuthorization = authorization.split(" ");

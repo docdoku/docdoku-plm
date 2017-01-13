@@ -22,8 +22,8 @@ package com.docdoku.server.esindexer;
 
 import com.docdoku.core.exceptions.ESServerException;
 import com.docdoku.core.util.Tools;
-import com.itextpdf.text.pdf.PdfReader;
-import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.poi.hslf.extractor.PowerPointExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -160,7 +160,7 @@ public class ESTools {
                     strRet = microsoftExcelDocumentToString(inputStream);
                     break;
                 case ".pdf":                                                                                            // PDF Document
-                    strRet = pdfDocumentToString(inputStream, fullName);
+                    strRet = pdfDocumentToString(inputStream);
                     break;
                 case ".html":
                 case ".htm":
@@ -265,26 +265,8 @@ public class ESTools {
         return sb.toString();
     }
 
-    private static String pdfDocumentToString(InputStream inputStream, String fullName) throws IOException {
-        StringBuilder buf = new StringBuilder();
-        try(InputStream pdfStream=new BufferedInputStream(inputStream)){
-            PdfReader reader = new PdfReader(pdfStream);
-            for(int i=1; i<=reader.getNumberOfPages(); i++){
-                buf.append(pdfPageToString(reader,i,fullName));
-            }
-            reader.close();
-        }
-
-        return buf.toString();
-    }
-
-    private static String pdfPageToString(PdfReader reader, int pageNumber, String fullName){
-        try{
-            return PdfTextExtractor.getTextFromPage(reader, pageNumber);
-        }catch (Exception e){
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.INFO,"A problem occur in the file : "+fullName+", indexing at page :"+pageNumber);
-            Logger.getLogger(ESIndexer.class.getName()).log(Level.FINER,null,e);
-            return "";
-        }
+    private static String pdfDocumentToString(InputStream inputStream) throws IOException {
+        PDDocument pdf = PDDocument.load(inputStream);
+        return new PDFTextStripper().getText(pdf);
     }
 }

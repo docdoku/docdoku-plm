@@ -54,7 +54,7 @@ public class DocumentTemplateBinaryResourceTest {
     @Mock
     private IDocumentManagerLocal documentService;
     @Mock
-    private IOnDemandConverterManagerLocal binaryResourceGetterService;
+    private IOnDemandConverterManagerLocal onDemandConverterManager;
     @Spy
     BinaryResource binaryResource;
 

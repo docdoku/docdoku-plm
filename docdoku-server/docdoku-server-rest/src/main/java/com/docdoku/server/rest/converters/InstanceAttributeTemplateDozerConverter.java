@@ -20,32 +20,20 @@
 
 package com.docdoku.server.rest.converters;
 
-import com.docdoku.core.meta.*;
+import com.docdoku.core.meta.DefaultAttributeTemplate;
+import com.docdoku.core.meta.InstanceAttributeTemplate;
+import com.docdoku.core.meta.ListOfValuesAttributeTemplate;
 import com.docdoku.core.product.PartNumberAttributeTemplate;
-import com.docdoku.server.rest.dto.InstanceAttributeDTO;
 import com.docdoku.server.rest.dto.InstanceAttributeTemplateDTO;
-import com.docdoku.server.rest.dto.NameValuePairDTO;
-import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.DozerConverter;
-import org.dozer.Mapper;
-
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
 
 /**
  * @author Florent Garin
  */
 public class InstanceAttributeTemplateDozerConverter extends DozerConverter<InstanceAttributeTemplate, InstanceAttributeTemplateDTO> {
 
-    private Mapper mapper;
-
     public InstanceAttributeTemplateDozerConverter() {
         super(InstanceAttributeTemplate.class, InstanceAttributeTemplateDTO.class);
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
 

@@ -36,6 +36,7 @@ import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
+import com.docdoku.core.util.DateUtils;
 import com.docdoku.core.util.Tools;
 import com.docdoku.server.export.ExcelGenerator;
 import com.docdoku.server.rest.collections.QueryResult;
@@ -60,7 +61,6 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -71,22 +71,15 @@ import java.util.logging.Logger;
 public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResult> {
 
     private static final Logger LOGGER = Logger.getLogger(QueryResultMessageBodyWriter.class.getName());
-    private static SimpleDateFormat FORMAT = QueryResultMessageBodyWriter.getFormat();
     private ExcelGenerator excelGenerator = new ExcelGenerator();
     @Inject
     private IProductInstanceManagerLocal productInstanceService;
 
     private Mapper mapper;
+
     @PostConstruct
     public void init() {
         mapper = DozerBeanMapperSingletonWrapper.getInstance();
-    }
-
-
-    private static SimpleDateFormat getFormat() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        return format;
     }
 
     @Override
@@ -383,7 +376,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
     }
 
     private String getFormattedDate(Date date) {
-        return date != null ? FORMAT.format(date) : "";
+        return date != null ? DateUtils.format(date) : "";
     }
 
     public List<String> getPartIterationSelectedAttributes(List<String> selects) {

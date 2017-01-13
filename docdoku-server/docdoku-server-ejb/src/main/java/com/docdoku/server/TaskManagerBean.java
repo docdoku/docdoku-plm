@@ -20,16 +20,14 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.workflow.WorkspaceWorkflow;
+import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
-import com.docdoku.core.workflow.Task;
-import com.docdoku.core.workflow.TaskKey;
-import com.docdoku.core.workflow.TaskWrapper;
+import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.dao.PartRevisionDAO;
 import com.docdoku.server.dao.TaskDAO;
@@ -158,6 +156,28 @@ public class TaskManagerBean implements ITaskManagerLocal {
 
     }
 
+    @Override
+    public void checkTask(String workspaceId, TaskKey taskKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException, TaskNotFoundException, WorkflowNotFoundException, NotAllowedException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        Locale locale = new Locale(user.getLanguage());
+        Task task = new TaskDAO(locale, em).loadTask(taskKey);
+        Workflow workflow = task.getActivity().getWorkflow();
+        DocumentRevision docR = new WorkflowDAO(em).getDocumentTarget(workflow);
+        if (docR == null) {
+            throw new WorkflowNotFoundException(locale, workflow.getId());
+        }
+        DocumentIteration doc = docR.getLastIteration();
+        if (em.createNamedQuery("findLogByDocumentAndUserAndEvent").
+                setParameter("userLogin", user.getLogin()).
+                setParameter("documentWorkspaceId", doc.getWorkspaceId()).
+                setParameter("documentId", doc.getId()).
+                setParameter("documentVersion", doc.getVersion()).
+                setParameter("documentIteration", doc.getIteration()).
+                setParameter("event", "DOWNLOAD").
+                getResultList().isEmpty()) {
+            throw new NotAllowedException(locale, "NotAllowedException10");
+        }
+    }
 
 
     private TaskWrapper wrapTask(Task task, String workspaceId){

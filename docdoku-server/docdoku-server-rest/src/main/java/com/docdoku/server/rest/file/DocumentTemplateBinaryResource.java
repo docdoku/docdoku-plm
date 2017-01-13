@@ -71,7 +71,7 @@ public class DocumentTemplateBinaryResource {
     @Inject
     private IDocumentManagerLocal documentService;
     @Inject
-    private IOnDemandConverterManagerLocal binaryResourceGetterService;
+    private IOnDemandConverterManagerLocal onDemandConverterManager;
 
 
     public DocumentTemplateBinaryResource() {
@@ -160,6 +160,9 @@ public class DocumentTemplateBinaryResource {
         try {
             if (output != null && !output.isEmpty()) {
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
+                if(range == null || range.isEmpty()){
+                    binaryResourceDownloadMeta.setLength(0);
+                }
             } else {
                 binaryContentInputStream = storageManager.getBinaryResourceInputStream(binaryResource);
             }
@@ -180,7 +183,7 @@ public class DocumentTemplateBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String output) throws FileConversionException {
         try {
-            return binaryResourceGetterService.getDocumentConvertedResource(output, binaryResource);
+            return onDemandConverterManager.getDocumentConvertedResource(output, binaryResource);
         } catch (Exception e) {
             throw new FileConversionException(e);
         }

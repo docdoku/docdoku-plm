@@ -24,10 +24,13 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.PartCreationDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.models.SharedPartDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.api.services.SharedApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -35,6 +38,16 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class SharedPartApiTest {
 
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void privatePartShareTests() throws ApiException {
@@ -48,7 +61,7 @@ public class SharedPartApiTest {
         partCreationDTO.setNumber(TestUtils.randomString());
         partCreationDTO.setName("PublicPart");
 
-        PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreationDTO);
+        PartRevisionDTO part = partsApi.createNewPart(workspace.getId(), partCreationDTO);
         part = partApi.checkIn(part.getWorkspaceId(),part.getNumber(),part.getVersion());
 
         // Try guest access (should fail)
@@ -83,7 +96,7 @@ public class SharedPartApiTest {
         partCreationDTO.setNumber(TestUtils.randomString());
         partCreationDTO.setName("PublicPart");
 
-        PartRevisionDTO part = partsApi.createNewPart(TestConfig.WORKSPACE, partCreationDTO);
+        PartRevisionDTO part = partsApi.createNewPart(workspace.getId(), partCreationDTO);
         part = partApi.checkIn(part.getWorkspaceId(), part.getNumber(), part.getVersion());
 
         // Try guest access (should fail)

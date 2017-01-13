@@ -1814,6 +1814,31 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         return documentRevision;
     }
 
+    @Override
+    public void logDocument(String fullName, String event) throws FileNotFoundException {
+
+        String userLogin = contextManager.getCallerPrincipalLogin();
+
+
+        BinaryResourceDAO binDAO = new BinaryResourceDAO(em);
+        BinaryResource file = binDAO.loadBinaryResource(fullName);
+        DocumentIteration document = binDAO.getDocumentHolder(file);
+
+        if (document != null) {
+            DocumentLog log = new DocumentLog();
+            log.setUserLogin(userLogin);
+            log.setLogDate(new Date());
+            log.setDocumentWorkspaceId(document.getWorkspaceId());
+            log.setDocumentId(document.getId());
+            log.setDocumentVersion(document.getVersion());
+            log.setDocumentIteration(document.getIteration());
+            log.setEvent(event);
+            log.setInfo(fullName);
+            createDocumentLog(log);
+        }
+
+    }
+
     /**
      * Apply read access policy on a document revision
      *

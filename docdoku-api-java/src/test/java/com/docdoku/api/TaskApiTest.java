@@ -25,14 +25,15 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.WorkflowHelper;
 import com.docdoku.api.services.*;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(JUnit4.class)
 public class TaskApiTest {
@@ -43,6 +44,16 @@ public class TaskApiTest {
     private WorkflowModelsApi workflowModelsApi = new WorkflowModelsApi(TestConfig.REGULAR_USER_CLIENT);
     private WorkspaceWorkflowsApi workspaceWorkflowsApi = new WorkspaceWorkflowsApi(TestConfig.REGULAR_USER_CLIENT);
     private TasksApi tasksApi = new TasksApi(TestConfig.REGULAR_USER_CLIENT);
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void tests() throws ApiException {
@@ -52,24 +63,24 @@ public class TaskApiTest {
         String groupId = "GROUP-" + TestUtils.randomString();
 
         // Get current user to create a role with default assignee
-        UserDTO user = usersApi.whoAmI(TestConfig.WORKSPACE);
+        UserDTO user = usersApi.whoAmI(workspace.getId());
 
 
         UserGroupDTO userGroup = new UserGroupDTO();
-        userGroup.setWorkspaceId(TestConfig.WORKSPACE);
+        userGroup.setWorkspaceId(workspace.getId());
         userGroup.setId(groupId);
 
-        workspacesApi.createGroup(TestConfig.WORKSPACE,userGroup);
-        workspacesApi.addUser(TestConfig.WORKSPACE,user, userGroup.getId());
+        workspacesApi.createGroup(workspace.getId(),userGroup);
+        workspacesApi.addUser(workspace.getId(),user, userGroup.getId());
 
         RoleDTO role = new RoleDTO();
-        role.setWorkspaceId(TestConfig.WORKSPACE);
+        role.setWorkspaceId(workspace.getId());
         role.setName(roleName);
         // Assign default assigned users
         role.getDefaultAssignedUsers().add(user);
 
 
-        RoleDTO createdRole = rolesApi.createRole(TestConfig.WORKSPACE, role);
+        RoleDTO createdRole = rolesApi.createRole(workspace.getId(), role);
 
         // Create a task model
         TaskModelDTO taskModelDTO = new TaskModelDTO();
@@ -98,7 +109,7 @@ public class TaskApiTest {
         workflowModelDTO.setActivityModels(activityModels);
 
 
-        WorkflowModelDTO workflowModel = workflowModelsApi.createWorkflowModel(TestConfig.WORKSPACE, workflowModelDTO);
+        WorkflowModelDTO workflowModel = workflowModelsApi.createWorkflowModel(workspace.getId(), workflowModelDTO);
         Assert.assertEquals(workflowModel.getId(), workflowModelReference);
 
         // Use this model to create a workflow
@@ -116,8 +127,8 @@ public class TaskApiTest {
         workspaceWorkflowCreationDTO.setRoleMapping(roleMapping);
         workspaceWorkflowCreationDTO.setWorkflowModelId(workflowModel.getId());
 
-        WorkspaceWorkflowDTO workspaceWorkflow = workspaceWorkflowsApi.createWorkspaceWorkflow(TestConfig.WORKSPACE, workspaceWorkflowCreationDTO);
-        List<TaskDTO> assignedTasks = tasksApi.getAssignedTasksForGivenUser(TestConfig.WORKSPACE, TestConfig.LOGIN);
+        WorkspaceWorkflowDTO workspaceWorkflow = workspaceWorkflowsApi.createWorkspaceWorkflow(workspace.getId(), workspaceWorkflowCreationDTO);
+        List<TaskDTO> assignedTasks = tasksApi.getAssignedTasksForGivenUser(workspace.getId(), TestConfig.LOGIN);
         Assert.assertEquals(1,
                 assignedTasks.stream()
                 .filter(taskDTO -> taskDTO.getWorkflowId() != null &&
@@ -135,7 +146,7 @@ public class TaskApiTest {
         TaskProcessDTO taskProcessDTO = new TaskProcessDTO();
         taskProcessDTO.setAction(TaskProcessDTO.ActionEnum.APPROVE);
         taskProcessDTO.setComment("Test are passing !");
-        tasksApi.processTask(TestConfig.WORKSPACE, taskId, taskProcessDTO);
+        tasksApi.processTask(workspace.getId(), taskId, taskProcessDTO);
 
 
     }

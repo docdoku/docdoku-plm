@@ -23,8 +23,11 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.UserDTO;
+import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.UsersApi;
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -35,23 +38,34 @@ import java.util.List;
 public class UserApiTest {
 
     private UsersApi usersApi = new UsersApi(TestConfig.REGULAR_USER_CLIENT);
+    private static WorkspaceDTO workspace;
+
+    @BeforeClass
+    public static void initWorkspace() throws ApiException {
+        workspace = TestUtils.createWorkspace();
+    }
+
+    @AfterClass
+    public static void deleteWorkspace() throws ApiException {
+        TestUtils.deleteWorkspace(workspace);
+    }
 
     @Test
     public void whoAmITest() throws ApiException {
-        UserDTO currentUser = usersApi.whoAmI(TestConfig.WORKSPACE);
+        UserDTO currentUser = usersApi.whoAmI(workspace.getId());
         Assert.assertEquals(currentUser.getLogin(),TestConfig.LOGIN);
-        Assert.assertEquals(currentUser.getWorkspaceId(),TestConfig.WORKSPACE);
+        Assert.assertEquals(currentUser.getWorkspaceId(),workspace.getId());
     }
 
     @Test
     public void getAdminInWorkspaceTest() throws ApiException {
-        UserDTO admin = usersApi.getAdminInWorkspace(TestConfig.WORKSPACE);
-        Assert.assertEquals(admin.getWorkspaceId(),TestConfig.WORKSPACE);
+        UserDTO admin = usersApi.getAdminInWorkspace(workspace.getId());
+        Assert.assertEquals(admin.getWorkspaceId(),workspace.getId());
     }
 
     @Test
     public void getUsersInWorkspaceTest() throws ApiException {
-        List<UserDTO> users = usersApi.getUsersInWorkspace(TestConfig.WORKSPACE);
+        List<UserDTO> users = usersApi.getUsersInWorkspace(workspace.getId());
         Assert.assertEquals(users.stream()
                 .filter(user -> TestConfig.LOGIN.equals(user.getLogin()))
                 .count(),1);
