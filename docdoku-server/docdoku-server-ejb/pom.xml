@@ -30,48 +30,6 @@
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-step</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-dae</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-all</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-obj</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-ifc</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-catia</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-converter-catia-product</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -143,20 +101,6 @@
                 </excludes>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-ejb-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <ejbVersion>3.1</ejbVersion>
-                </configuration>
-            </plugin>
-        </plugins>
         <finalName>${project.artifactId}</finalName>
     </build>
 </project>
