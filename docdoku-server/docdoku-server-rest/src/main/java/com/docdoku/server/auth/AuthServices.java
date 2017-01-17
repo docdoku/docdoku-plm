@@ -23,10 +23,12 @@ package com.docdoku.server.auth;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.server.rest.Tools;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -86,15 +88,24 @@ public class AuthServices {
         return accountManager.getUserGroupMapping(login);
     }
 
-    public static boolean isPublicRequestURI(String requestURI) {
+    public static boolean isPublicRequestURI(String contextPath, String requestURI) {
         if (requestURI != null && publicPaths != null) {
+            contextPath = Tools.stripTrailingSlash(contextPath);
             for (String excludedPath : publicPaths) {
-                if (Pattern.matches(excludedPath, requestURI)) {
+                if (Pattern.matches(contextPath + excludedPath, requestURI)) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    public static void addCORSHeaders(HttpServletResponse response){
+        response.addHeader("Access-Control-Allow-Origin", "*");
+        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, jwt");
+        response.addHeader("Access-Control-Expose-Headers", "jwt");
+        response.addHeader("Access-Control-Allow-Credentials", "true");
+        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
     }
 
 }
