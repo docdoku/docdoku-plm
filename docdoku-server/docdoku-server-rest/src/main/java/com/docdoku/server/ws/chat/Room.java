@@ -21,7 +21,6 @@
 package com.docdoku.server.ws.chat;
 
 import javax.websocket.Session;
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,32 +33,35 @@ public class Room {
     private static final ConcurrentMap<String, Room> DB = new ConcurrentHashMap<>();
 
     private String keyName;
-    private Session userSession1;
-    private Session userSession2;
+    private RoomSession userSession1;
+    private RoomSession userSession2;
 
     public Room(String roomKey) {
         keyName = roomKey;
         put();
     }
 
-    public String getUser1Login(){
-        Principal userPrincipal = userSession1.getUserPrincipal();
-        return userPrincipal.getName();
+    public String getUser1Login() {
+        return userSession1.getLogin();
     }
-    public String getUser2Login(){
-        Principal userPrincipal = userSession2.getUserPrincipal();
-        return userPrincipal.getName();
+
+    public String getUser2Login() {
+        return userSession2.getLogin();
     }
-    
-    /** Retrieve a {@link Room} instance from database */
+
+    /**
+     * Retrieve a {@link Room} instance from database
+     */
     public static Room getByKeyName(String roomKey) {
-        if(roomKey==null) {
+        if (roomKey == null) {
             return null;
         }
         return DB.get(roomKey);
     }
 
-    /** @return a {@link String} representation of this room */
+    /**
+     * @return a {@link String} representation of this room
+     */
     @Override
     public String toString() {
         String str = "[";
@@ -73,7 +75,9 @@ public class Room {
         return str;
     }
 
-    /** @return number of participant in this room */
+    /**
+     * @return number of participant in this room
+     */
     public int getOccupancy() {
         int occupancy = 0;
         if (userSession1 != null) {
@@ -85,80 +89,70 @@ public class Room {
         return occupancy;
     }
 
-    /** @return the name of the other participant, null if none */
+    /**
+     * @return the name of the other participant, null if none
+     */
     public Session getOtherUserSession(Session userSession) {
-        if (userSession.equals(userSession1)) {
-            return userSession2;
-        } else if (userSession.equals(userSession2)) {
-            return userSession1;
+        if (isUser1Session(userSession)) {
+            return userSession2.getUserSession();
+        } else if (isUser2Session(userSession)) {
+            return userSession1.getUserSession();
         } else {
             return null;
         }
     }
 
-    /** @return true if one the participant is named as the input parameter, false otherwise */
+    /**
+     * @return true if one the participant is named as the input parameter, false otherwise
+     */
     public boolean hasUser(String user) {
-
-        if(user != null) {
-            if(userSession1 != null && user.equals(getUser1Login())){
+        if (user != null) {
+            if (userSession1 != null && user.equals(getUser1Login())) {
                 return true;
             }
-
-            if(userSession2 != null && user.equals(getUser2Login())){
+            if (userSession2 != null && user.equals(getUser2Login())) {
                 return true;
             }
-
         }
         return false;
     }
 
-    /** @return true if one the participant is named as the input parameter, false otherwise */
+    /**
+     * @return true if one the participant is named as the input parameter, false otherwise
+     */
     public Session getUserSession(String user) {
 
-        if(user != null) {
-            if(userSession1 != null && user.equals(getUser1Login())){
-                return userSession1;
+        if (user != null) {
+            if (userSession1 != null && user.equals(getUser1Login())) {
+                return userSession1.getUserSession();
             }
 
-            if(userSession2 != null && user.equals(getUser2Login())){
-                return userSession2;
+            if (userSession2 != null && user.equals(getUser2Login())) {
+                return userSession2.getUserSession();
             }
 
         }
         return null;
     }
 
-    /** Removed a participant form current room */
-    public void removeUser(String user) {
 
-        if(user != null) {
-
-            if(userSession1 != null && user.equals(getUser1Login())){
-                removeUserSession(userSession1);
-            }
-
-            if(userSession2 != null && user.equals(getUser2Login())){
-                removeUserSession(userSession2);
-            }
-
-        }
-
-    }
-
-    /** Add a new participant to this room
-     * @return if participant is found */
-    public boolean addUserSession(Session userSession) {
+    /**
+     * Add a new participant to this room
+     *
+     * @return if participant is found
+     */
+    public boolean addUserSession(Session userSession, String login) {
         boolean success = true;
 
         // avoid a user to be added in the room many times.
-        if(userSession != null && (userSession.equals(userSession1) || userSession.equals(userSession2))){
+        if (userSession != null && (isUser1Session(userSession) || isUser2Session(userSession))) {
             return true;
         }
 
         if (userSession1 == null) {
-            userSession1 = userSession;
+            userSession1 = new RoomSession(login, userSession);
         } else if (userSession2 == null) {
-            userSession2 = userSession;
+            userSession2 = new RoomSession(login, userSession);
         } else {
             // room is full, shouldn't happen
             success = false;
@@ -167,13 +161,25 @@ public class Room {
         return success;
     }
 
-    /** Removed a participant form current room */
-    public void removeUserSession(Session userSession) {
-        if (userSession != null && userSession.equals(userSession2)) {
+    private boolean isUser1Session(Session userSession) {
+        return userSession != null && userSession1 != null && userSession.equals(userSession1.getUserSession());
+    }
+
+
+    private boolean isUser2Session(Session userSession) {
+        return userSession != null && userSession2 != null && userSession.equals(userSession2.getUserSession());
+    }
+
+    /**
+     * Removed a participant form current room
+     */
+    public void removeSession(Session userSession) {
+
+        if (isUser2Session(userSession)) {
             userSession2 = null;
         }
 
-        if (userSession != null && userSession.equals(userSession1)) {
+        if (isUser1Session(userSession)) {
             // User session 2 becomes user session 1
             if (userSession2 != null) {
                 userSession1 = userSession2;
@@ -192,17 +198,23 @@ public class Room {
 
     }
 
-    /**@return the key of this room. */
+    /**
+     * @return the key of this room.
+     */
     public String key() {
         return keyName;
     }
 
-    /** Store current instance into database */
+    /**
+     * Store current instance into database
+     */
     public void put() {
         DB.put(keyName, this);
     }
 
-    /** Delete/Remove current {@link Room} instance from database */
+    /**
+     * Delete/Remove current {@link Room} instance from database
+     */
     public void delete() {
         if (keyName != null) {
             DB.remove(keyName);
@@ -210,13 +222,21 @@ public class Room {
         }
     }
 
-    public Session getSessionForUserLogin(String userLogin){
-        if (userSession1 != null && userLogin.equals(getUser1Login())){
+    public RoomSession getRoomSessionForUserLogin(String userLogin) {
+        if (userSession1 != null && userLogin.equals(getUser1Login())) {
             return userSession1;
-        } else if (userSession2 != null && userLogin.equals(getUser2Login())){
+        } else if (userSession2 != null && userLogin.equals(getUser2Login())) {
             return userSession2;
         }
 
+        return null;
+    }
+
+    public Session getSessionForUserLogin(String userLogin) {
+        RoomSession roomSession = getRoomSessionForUserLogin(userLogin);
+        if (roomSession != null) {
+            return roomSession.getUserSession();
+        }
         return null;
     }
 
@@ -225,7 +245,7 @@ public class Room {
         for (Map.Entry<String, Room> entry : roomsEntries) {
             Session session = entry.getValue().getSessionForUserLogin(callerLogin);
             if (session != null) {
-                entry.getValue().removeUserSession(session);
+                entry.getValue().removeSession(session);
             }
         }
     }

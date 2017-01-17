@@ -103,8 +103,7 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
     }
 
 
-
-    private void processP2P(String sender,Session session, WebSocketMessage webSocketMessage) {
+    private void processP2P(String sender, Session session, WebSocketMessage webSocketMessage) {
         // webRTC P2P signaling messages
         // These messages are forwarded to the remote peer(s) in the room
 
@@ -117,11 +116,11 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
 
             // on bye message, remove the user from the room
             if (WEBRTC_BYE.equals(webSocketMessage.getType())) {
-                room.removeUserSession(session);
+                room.removeSession(session);
             }
 
             if (otherSession != null) {
-                webSocketSessionsManager.send(otherSession,webSocketMessage);
+                webSocketSessionsManager.send(otherSession, webSocketMessage);
             }
         }
 
@@ -133,10 +132,10 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
 
         if (room != null) {
             Session otherSession = room.getOtherUserSession(session);
-            room.removeUserSession(session);
+            room.removeSession(session);
 
             WebSocketMessage message = createMessage(WEBRTC_HANGUP, sender, roomKey, null, null, 0, null, null, null, null, null);
-            webSocketSessionsManager.send(otherSession,message);
+            webSocketSessionsManager.send(otherSession, message);
 
         }
     }
@@ -156,7 +155,7 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
             Session otherSession = room.getUserSession(remoteUser);
             if (otherSession != null) {
                 WebSocketMessage otherMessage = createMessage(WEBRTC_REJECT, sender, roomKey, reason, null, 0, null, null, null, null, null);
-                webSocketSessionsManager.send(otherSession,otherMessage);
+                webSocketSessionsManager.send(otherSession, otherMessage);
             }
         }
     }
@@ -164,11 +163,10 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
     private void onWebRTCAcceptMessage(String sender, Session session, WebSocketMessage webSocketMessage) {
         String roomKey = webSocketMessage.getString("roomKey");
         Room room = Room.getByKeyName(roomKey);
-        String remoteUser = webSocketMessage.getString("remoteUser");
 
-        if (room != null && room.hasUser(remoteUser)) {
+        if (room != null && !room.hasUser(sender) && room.getOccupancy() == 1) {
 
-            room.addUserSession(session);
+            room.addUserSession(session, sender);
             // send room join event to caller (all channels to remove invitations if any)
             WebSocketMessage message = createMessage(WEBRTC_ROOM_JOIN_EVENT, sender, roomKey, null, null, room.getOccupancy(), sender, null, null, null, null);
             webSocketSessionsManager.broadcast(sender, message);
@@ -178,7 +176,7 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
 
             if (otherSession != null) {
                 WebSocketMessage otherMessage = createMessage(WEBRTC_ACCEPT, sender, roomKey, null, null, 0, null, null, null, null, null);
-                webSocketSessionsManager.send(otherSession,otherMessage);
+                webSocketSessionsManager.send(otherSession, otherMessage);
             }
         }
     }
@@ -204,7 +202,7 @@ public class WebRTCWebSocketModuleImpl implements WebSocketModule {
         //else :  multiple invitations, caller is spamming or something goes wrong.
         // the room is ready to receive user sessions.
         // add the caller session in the room
-        room.addUserSession(session);
+        room.addUserSession(session, sender);
 
         // send room join event to caller session (single channel)
         WebSocketMessage message = createMessage(WEBRTC_ROOM_JOIN_EVENT, null, roomKey, null, null, room.getOccupancy(), sender, null, null, null, null);
