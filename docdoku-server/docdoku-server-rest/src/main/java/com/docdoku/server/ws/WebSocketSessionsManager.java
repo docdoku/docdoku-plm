@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.websocket.Session;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -58,7 +59,7 @@ public class WebSocketSessionsManager {
     public String getHolder(Session session){
         return CHANNELS.entrySet().stream().
                 filter(stringListEntry -> stringListEntry.getValue().contains(session))
-                .map(stringListEntry -> stringListEntry.getKey())
+                .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
     }
