@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Charles Fallourd on 01/06/15.
+ * @author Charles Fallourd
  */
 public class DateAdapter extends XmlAdapter<String, Date> implements ParamConverter<Date> {
 
