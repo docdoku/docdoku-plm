@@ -215,7 +215,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                             BaselinedDocument baselinedDocument = documentCollection.getBaselinedDocument(new BaselinedDocumentKey(documentCollection.getId(), queryContext.getWorkspaceId(), targetDocument.getDocumentMasterId(), targetDocument.getVersion()));
                             if (null != baselinedDocument) {
                                 DocumentIteration targetDocumentIteration = baselinedDocument.getTargetDocument();
-                                sb.append(targetDocumentIteration.toString() + ",");
+                                sb.append(targetDocumentIteration.toString()).append(",");
                             }
                         }
 
@@ -230,7 +230,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
                             DocumentIteration targetDocumentLastCheckedInIteration = targetDocument.getLastCheckedInIteration();
                             if (targetDocumentLastCheckedInIteration != null) {
-                                sb.append(targetDocumentLastCheckedInIteration.toString() + ",");
+                                sb.append(targetDocumentLastCheckedInIteration.toString()).append(",");
                             }
                         }
                     }

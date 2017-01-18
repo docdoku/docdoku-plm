@@ -281,7 +281,7 @@ public class ExcelGenerator {
                         Set<DocumentLink> linkedDocuments = lastCheckedInIteration.getLinkedDocuments();
                         for (DocumentLink documentLink : linkedDocuments) {
                             DocumentRevision targetDocument = documentLink.getTargetDocument();
-                            sb.append(baseURL + "/documents/" + targetDocument.getWorkspaceId() + "/" + targetDocument.getId() + "/" + targetDocument.getVersion() + " ");
+                            sb.append(baseURL).append("/documents/").append(targetDocument.getWorkspaceId()).append("/").append(targetDocument.getId()).append("/").append(targetDocument.getVersion()).append(" ");
                         }
                     }
                     data.add(sb.toString());
@@ -323,7 +323,7 @@ public class ExcelGenerator {
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
-                                        sbattr.append(attributeValue + "|");
+                                        sbattr.append(attributeValue).append("|");
                                     }
                                 }
                             }
@@ -356,7 +356,7 @@ public class ExcelGenerator {
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
-                                        sbpdattr.append(attributeValue + "|");
+                                        sbpdattr.append(attributeValue).append("|");
                                     }
                                 }
                             }
@@ -401,7 +401,7 @@ public class ExcelGenerator {
 
                             if (attrDTO.getName().equals(attributeSelectName)
                                     && attrDTO.getType().name().equals(attributeSelectType)) {
-                                commentsSbattr.append(attribute.getId() + "|");
+                                commentsSbattr.append(attribute.getId()).append("|");
                             }
                         }
                     }
@@ -427,7 +427,7 @@ public class ExcelGenerator {
 
                             if (attrDTO.getName().equals(attributeSelectName)
                                     && attrDTO.getType().name().equals(attributeSelectType)) {
-                                commentsSbpattr.append(attribute.getId() + "|");
+                                commentsSbpattr.append(attribute.getId()).append("|");
                             }
                         }
                     }
