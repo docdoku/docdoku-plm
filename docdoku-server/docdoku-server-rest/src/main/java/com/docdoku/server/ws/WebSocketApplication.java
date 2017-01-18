@@ -43,7 +43,6 @@ import java.util.logging.Logger;
  * It maintains the list of current users sockets, receive, process and broadcast messages.
  * Authentication is made by passing a jwt token on first message.
  * <p>
- * Todo : create plugin system for chat module, webrtc, rooms, 3d collaborative, and many others ...
  */
 @Stateless
 @ServerEndpoint(
