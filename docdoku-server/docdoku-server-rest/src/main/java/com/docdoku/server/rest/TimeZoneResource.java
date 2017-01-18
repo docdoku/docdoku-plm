@@ -24,10 +24,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.RequestScoped;
@@ -43,18 +40,11 @@ import java.util.TimeZone;
 @RequestScoped
 @Path("timezones")
 @Api(value = "timezone", description = "Operations about timezones")
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
-@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 public class TimeZoneResource {
 
-    private Mapper mapper;
-
     public TimeZoneResource() {
-    }
-
-    @PostConstruct
-    public void init() {
-        mapper = DozerBeanMapperSingletonWrapper.getInstance();
     }
 
     @GET
@@ -67,9 +57,9 @@ public class TimeZoneResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTimeZones()  {
+    public Response getTimeZones() {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
-        for(String timeZone : TimeZone.getAvailableIDs()){
+        for (String timeZone : TimeZone.getAvailableIDs()) {
             arrayBuilder.add(timeZone);
         }
         return Response.ok().entity(arrayBuilder.build()).build();
