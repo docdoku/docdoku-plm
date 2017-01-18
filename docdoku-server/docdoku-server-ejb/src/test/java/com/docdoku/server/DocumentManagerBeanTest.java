@@ -374,7 +374,4 @@ public class DocumentManagerBeanTest {
         Assert.assertTrue(documentRevision.getACL() == null);
     }
 
-    public void removeTagFromDocument(){
-        // TODO
-    }
 }
