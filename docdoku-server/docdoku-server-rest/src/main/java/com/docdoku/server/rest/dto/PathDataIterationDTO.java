@@ -148,13 +148,7 @@ public class PathDataIterationDTO implements Serializable {
 
         PathDataIterationDTO dto = (PathDataIterationDTO) o;
 
-        if (iteration != dto.iteration) {
-            return false;
-        }
-        if (pathDataMasterId != dto.pathDataMasterId) {
-            return false;
-        }
-        return true;
+        return iteration == dto.iteration && pathDataMasterId == dto.pathDataMasterId;
     }
 
     @Override
