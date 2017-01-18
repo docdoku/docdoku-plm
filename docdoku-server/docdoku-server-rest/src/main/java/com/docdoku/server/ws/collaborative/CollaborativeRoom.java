@@ -91,9 +91,9 @@ public class CollaborativeRoom {
         }
 
         JsonArrayBuilder contextPendingUsers = Json.createArrayBuilder();
-        for (String s : this.getPendingUsers()) {
-            contextPendingUsers.add(s);
-        }
+        List<String> pendingUsers = getPendingUsers();
+
+        pendingUsers.forEach(contextPendingUsers::add);
 
         return Json.createObjectBuilder()
                 .add("master", this.getMasterName())
