@@ -57,6 +57,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Florent Garin
@@ -198,14 +199,16 @@ public class ProductResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
-        Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
+        Component rootComponent = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
-        List<Component> components = component.getComponents();
+        List<Component> components = rootComponent.getComponents();
         List<PartRevisionDTO> partsRevisions = new ArrayList<>();
-        for (int i = 0; i < components.size(); i++) {
-            PartIteration retainedIteration = components.get(i).getRetainedIteration();
+
+
+        for (Component component: components) {
+            PartIteration retainedIteration = component.getRetainedIteration();
             //If no iteration has been retained, then take the last revision (the first one).
-            PartRevision partRevision = retainedIteration == null ? components.get(i).getPartMaster().getLastRevision() : retainedIteration.getPartRevision();
+            PartRevision partRevision = retainedIteration == null ? component.getPartMaster().getLastRevision() : retainedIteration.getPartRevision();
             if (!productService.canAccess(partRevision.getKey())) {
                 continue;
             }
@@ -392,11 +395,7 @@ public class ProductResource {
 
         List<PathChoice> choices = productBaselineService.getBaselineCreationPathChoices(ciKey, type);
 
-        List<PathChoiceDTO> pathChoiceDTOs = new ArrayList<>();
-
-        for (PathChoice choice : choices) {
-            pathChoiceDTOs.add(Tools.mapPathChoiceDTO(choice));
-        }
+        List<PathChoiceDTO> pathChoiceDTOs = choices.stream().map(Tools::mapPathChoiceDTO).collect(Collectors.toList());
 
         return Response.ok(new GenericEntity<List<PathChoiceDTO>>((List<PathChoiceDTO>) pathChoiceDTOs) {
         }).build();
