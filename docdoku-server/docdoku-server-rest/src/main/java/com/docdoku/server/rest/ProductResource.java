@@ -21,8 +21,6 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.CascadeResult;
-import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationLink;
