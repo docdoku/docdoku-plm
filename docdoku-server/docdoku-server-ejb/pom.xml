@@ -77,20 +77,8 @@
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-viewer-image</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-office-doc</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.docdoku</groupId>
-            <artifactId>docdoku-server-viewer-multimedia</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -117,10 +105,6 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.github.spullara.mustache.java</groupId>
-            <artifactId>compiler</artifactId>
         </dependency>
         <!-- ES dependency for query builder -->
         <dependency>
