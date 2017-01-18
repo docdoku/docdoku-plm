@@ -41,7 +41,7 @@ public class MilestoneDTO implements Serializable {
     @ApiModelProperty(value = "Milestone due date")
     private Date dueDate;
 
-    @ApiModelProperty(value = "Milestone desription")
+    @ApiModelProperty(value = "Milestone description")
     private String description;
 
     @ApiModelProperty(value = "Workspace id")

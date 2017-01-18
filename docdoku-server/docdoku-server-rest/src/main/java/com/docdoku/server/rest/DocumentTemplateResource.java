@@ -81,13 +81,13 @@ public class DocumentTemplateResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentMasterTemplate[] documentMasterTemplates = documentService.getDocumentMasterTemplates(workspaceId);
-        DocumentMasterTemplateDTO[] dtos = new DocumentMasterTemplateDTO[documentMasterTemplates.length];
+        DocumentMasterTemplateDTO[] documentMasterTemplateDTOs = new DocumentMasterTemplateDTO[documentMasterTemplates.length];
 
         for (int i = 0; i < documentMasterTemplates.length; i++) {
-            dtos[i] = mapper.map(documentMasterTemplates[i], DocumentMasterTemplateDTO.class);
+            documentMasterTemplateDTOs[i] = mapper.map(documentMasterTemplates[i], DocumentMasterTemplateDTO.class);
         }
 
-        return dtos;
+        return documentMasterTemplateDTOs;
     }
 
     @GET
@@ -250,7 +250,7 @@ public class DocumentTemplateResource {
     @ApiOperation(value = "Remove attached file from document template",
             response = Response.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 204, message = "Successful deletiojn of file in DocumentMasterTemplateDTO"),
+            @ApiResponse(code = 204, message = "Successful deletion of file in DocumentMasterTemplateDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })

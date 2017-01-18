@@ -35,6 +35,7 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Florent Garin
@@ -99,11 +100,7 @@ public class Tools {
     }
 
     public static List<ModificationNotificationDTO> mapModificationNotificationsToModificationNotificationDTO(Collection<ModificationNotification> pNotifications) {
-        List<ModificationNotificationDTO> dtos = new ArrayList<>();
-        for (ModificationNotification notification : pNotifications) {
-            dtos.add(mapModificationNotificationToModificationNotificationDTO(notification));
-        }
-        return dtos;
+        return pNotifications.stream().map(Tools::mapModificationNotificationToModificationNotificationDTO).collect(Collectors.toList());
     }
 
     public static ModificationNotificationDTO mapModificationNotificationToModificationNotificationDTO(ModificationNotification pNotification) {

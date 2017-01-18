@@ -382,20 +382,20 @@ public class ChangeOrdersResource {
     }
 
 
-    private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> dtos) {
-        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+    private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> documentIterationDTOList) {
+        DocumentIterationKey[] data = new DocumentIterationKey[documentIterationDTOList.size()];
         int i = 0;
-        for (DocumentIterationDTO dto : dtos) {
+        for (DocumentIterationDTO dto : documentIterationDTOList) {
             data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion(), dto.getIteration());
         }
 
         return data;
     }
 
-    private PartIterationKey[] createPartIterationKeys(List<PartIterationDTO> dtos) {
-        PartIterationKey[] data = new PartIterationKey[dtos.size()];
+    private PartIterationKey[] createPartIterationKeys(List<PartIterationDTO> partIterationDTOList) {
+        PartIterationKey[] data = new PartIterationKey[partIterationDTOList.size()];
         int i = 0;
-        for (PartIterationDTO dto : dtos) {
+        for (PartIterationDTO dto : partIterationDTOList) {
             data[i++] = new PartIterationKey(dto.getWorkspaceId(), dto.getNumber(), dto.getVersion(), dto.getIteration());
         }
 

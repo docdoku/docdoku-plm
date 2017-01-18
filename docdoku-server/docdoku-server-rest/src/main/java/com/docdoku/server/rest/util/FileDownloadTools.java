@@ -59,10 +59,9 @@ public class FileDownloadTools {
      *
      * @return Http Response content disposition
      */
-    // Todo check if we can have unencoding contentDisposition
-    // Todo check accept request
+    // Todo : may be use "accept" header instead of query param "type"
     public static String getContentDisposition(String downloadType, String fileName) {
-        String dispositionType = ("viewer".equals(downloadType)) ? "inline" : "attachement";
+        String dispositionType = ("viewer".equals(downloadType)) ? "inline" : "attachment";
         return dispositionType + "; filename=\"" + fileName + "\" ; filename*=\"" + fileName + "\"";
     }
 

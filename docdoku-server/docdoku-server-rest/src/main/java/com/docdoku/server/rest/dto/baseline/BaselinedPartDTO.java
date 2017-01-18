@@ -34,7 +34,7 @@ public class BaselinedPartDTO implements Serializable {
     @ApiModelProperty(value = "Part number")
     private String number;
 
-    @ApiModelProperty(value = "Part nale")
+    @ApiModelProperty(value = "Part name")
     private String name;
 
     @ApiModelProperty(value = "Part version")

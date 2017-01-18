@@ -86,7 +86,7 @@ public class WorkflowResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workflow's aborted workflows",
+    @ApiOperation(value = "Get workflow's aborted workflow list",
             response = WorkflowDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
@@ -96,23 +96,23 @@ public class WorkflowResource {
     })
     @Path("{workflowId}/aborted")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getWorkflowAbortedWorkflows(
+    public Response getWorkflowAbortedWorkflowList(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Workflow id") @PathParam("workflowId") int workflowId)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             WorkflowNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
-        Workflow[] abortedWorkflows = workflowService.getWorkflowAbortedWorkflows(workspaceId, workflowId);
+        Workflow[] abortedWorkflowList = workflowService.getWorkflowAbortedWorkflows(workspaceId, workflowId);
 
-        List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
+        List<WorkflowDTO> abortedWorkflowDTOList = new ArrayList<>();
 
-        for (Workflow abortedWorkflow : abortedWorkflows) {
-            abortedWorkflowsDTO.add(mapper.map(abortedWorkflow, WorkflowDTO.class));
+        for (Workflow abortedWorkflow : abortedWorkflowList) {
+            abortedWorkflowDTOList.add(mapper.map(abortedWorkflow, WorkflowDTO.class));
         }
 
-        Collections.sort(abortedWorkflowsDTO);
+        Collections.sort(abortedWorkflowDTOList);
 
-        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowsDTO) {
+        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowDTOList) {
         }).build();
 
     }

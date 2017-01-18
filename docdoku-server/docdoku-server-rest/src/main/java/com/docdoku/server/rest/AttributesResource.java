@@ -86,7 +86,7 @@ public class AttributesResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttribute> attributes = productManager.getPartIterationsInstanceAttributesInWorkspace(workspaceId);
-        List<InstanceAttributeDTO> dtos = new ArrayList<>();
+        List<InstanceAttributeDTO> attributeDTOList = new ArrayList<>();
         Set<String> seen=new HashSet<>();
 
         for (InstanceAttribute attribute : attributes) {
@@ -99,11 +99,11 @@ public class AttributesResource {
                 dto.setMandatory(false);
                 dto.setLocked(false);
                 dto.setLovName(null);
-                dtos.add(dto);
+                attributeDTOList.add(dto);
             }
         }
 
-        return Response.ok(new GenericEntity<List<InstanceAttributeDTO>>((List<InstanceAttributeDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<InstanceAttributeDTO>>((List<InstanceAttributeDTO>) attributeDTOList) {
         }).build();
     }
 
@@ -122,7 +122,7 @@ public class AttributesResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         List<InstanceAttribute> attributes = productManager.getPathDataInstanceAttributesInWorkspace(workspaceId);
-        List<InstanceAttributeDTO> dtos = new ArrayList<>();
+        List<InstanceAttributeDTO> attributeDTOList = new ArrayList<>();
         Set<String> seen=new HashSet<>();
 
         for (InstanceAttribute attribute : attributes) {
@@ -135,10 +135,10 @@ public class AttributesResource {
                 dto.setMandatory(false);
                 dto.setLocked(false);
                 dto.setLovName(null);
-                dtos.add(dto);
+                attributeDTOList.add(dto);
             }
         }
-        return Response.ok(new GenericEntity<List<InstanceAttributeDTO>>((List<InstanceAttributeDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<InstanceAttributeDTO>>((List<InstanceAttributeDTO>) attributeDTOList) {
         }).build();
     }
 }

@@ -49,8 +49,8 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
 
     @Override
     public InstanceAttributeDTO convertTo(InstanceAttribute source, InstanceAttributeDTO dto) {
-        if(dto==null)
-            dto=new InstanceAttributeDTO();
+        if (dto == null)
+            dto = new InstanceAttributeDTO();
 
         InstanceAttributeDTO.Type type;
         String value = "";
@@ -88,10 +88,9 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
             value = source.getValue() + "";
         } else if (source instanceof InstancePartNumberAttribute) {
             type = InstanceAttributeDTO.Type.PART_NUMBER;
-            InstancePartNumberAttribute ipna=(InstancePartNumberAttribute) source;
-            value = ipna.getPartMasterValue()==null?"":ipna.getPartMasterValue().getNumber();
-        }
-        else {
+            InstancePartNumberAttribute attribute = (InstancePartNumberAttribute) source;
+            value = attribute.getPartMasterValue() == null ? "" : attribute.getPartMasterValue().getNumber();
+        } else {
             throw new IllegalArgumentException("Instance attribute not supported");
         }
         dto.setName(source.getName());
@@ -145,7 +144,7 @@ public class InstanceAttributeDozerConverter extends DozerConverter<InstanceAttr
                 break;
             case PART_NUMBER:
                 attr = new InstancePartNumberAttribute();
-                attr.setValue(new PartMasterKey(source.getWorkspaceId(),source.getValue()));
+                attr.setValue(new PartMasterKey(source.getWorkspaceId(), source.getValue()));
                 break;
             default:
                 throw new IllegalArgumentException("Instance attribute not supported");
