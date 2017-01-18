@@ -45,7 +45,7 @@ public class PathDataMasterDTO implements Serializable {
     private LightPartLinkListDTO partLinksList;
 
     @ApiModelProperty(value = "Path data master iterations")
-    private List<PathDataIterationDTO> pathDataIterations = new ArrayList<PathDataIterationDTO>();
+    private List<PathDataIterationDTO> pathDataIterations = new ArrayList<>();
 
     @ApiModelProperty(value = "Path data master attributes")
     private List<InstanceAttributeDTO> partAttributes;

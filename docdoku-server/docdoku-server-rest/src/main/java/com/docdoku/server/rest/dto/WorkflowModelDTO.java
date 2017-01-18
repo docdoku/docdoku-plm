@@ -57,7 +57,7 @@ public class WorkflowModelDTO implements Serializable {
     private List<ActivityModelDTO> activityModels;
 
     public WorkflowModelDTO() {
-        activityModels = new ArrayList<ActivityModelDTO>();
+        activityModels = new ArrayList<>();
     }
 
     public WorkflowModelDTO(String id) {
