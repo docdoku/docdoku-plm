@@ -404,13 +404,7 @@ public class PartBinaryResource {
     }
 
     private boolean canAccess(PartIterationKey partIKey) throws UserNotActiveException, EntityNotFoundException {
-        if (publicEntityManager.canAccess(partIKey)) {
-            return true;
-        }
-        if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-            return productService.canAccess(partIKey);
-        }
-        return false;
+        return publicEntityManager.canAccess(partIKey) || contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID) && productService.canAccess(partIKey);
     }
 
     private BinaryResource getBinaryResource(String fullName)
