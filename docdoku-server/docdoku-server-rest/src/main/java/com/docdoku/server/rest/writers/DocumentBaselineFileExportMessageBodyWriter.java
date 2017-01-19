@@ -54,7 +54,7 @@ public class DocumentBaselineFileExportMessageBodyWriter implements MessageBodyW
     private IDocumentBaselineManagerLocal documentBaselineService;
 
     @Override
-    public boolean isWriteable(Class<?> aClass, Type type, Annotation[] annotations, MediaType mediaType) {
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return type.equals(DocumentBaselineFileExport.class);
     }
 

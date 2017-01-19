@@ -120,7 +120,7 @@ public class ProductManagerBeanTest {
         partMasterTemplate = new PartMasterTemplate(workspace, ProductUtil.PART_MASTER_TEMPLATE_ID, user, ProductUtil.PART_TYPE, "", true);
         partRevision = new PartRevision(partMaster,ProductUtil.VERSION,user);
         partIteration = new PartIteration(partRevision, ProductUtil.ITERATION,user);
-        ArrayList<PartIteration> iterations = new ArrayList<PartIteration>();
+        ArrayList<PartIteration> iterations = new ArrayList<>();
         iterations.add(partIteration);
 
         partRevision.setPartIterations(iterations);
@@ -264,11 +264,12 @@ public class ProductManagerBeanTest {
         PartRevision partRevisionResult = productManagerBean.saveTags(partRevisionKey, tags);
 
         Assert.assertEquals(partRevisionResult.getTags().size() ,3);
+
         int i = 0;
-        for (Iterator<Tag> it = partRevisionResult.getTags().iterator(); it.hasNext(); ) {
-            Tag tag = it.next();
-            Assert.assertEquals(tag.getLabel() ,tags[i++]);
+        for (Tag tag : partRevisionResult.getTags()) {
+            Assert.assertEquals(tag.getLabel(), tags[i++]);
         }
+
         Mockito.verify(esIndexer,Mockito.times(1)).index(Mockito.any(PartIteration.class));
 
     }
@@ -276,7 +277,7 @@ public class ProductManagerBeanTest {
 
     @Test
     public void removeTagFromPart() throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
-        Set<Tag> tags = new LinkedHashSet<Tag>();
+        Set<Tag> tags = new LinkedHashSet<>();
         tags.add(new Tag(workspace, "Important"));
         tags.add(new Tag(workspace, "ToRemove"));
         tags.add(new Tag(workspace, "Urgent"));

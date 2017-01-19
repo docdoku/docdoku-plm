@@ -162,8 +162,7 @@ public class DocumentTemplateResource {
         }
 
         DocumentMasterTemplate template = documentService.createDocumentMasterTemplate(workspaceId, id, documentType, workflowModelId, mask, attrTemplates, lovNames, idGenerated, attributesLocked);
-        DocumentMasterTemplateDTO response = mapper.map(template, DocumentMasterTemplateDTO.class);
-        return response;
+        return mapper.map(template, DocumentMasterTemplateDTO.class);
     }
 
     @PUT

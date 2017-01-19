@@ -55,8 +55,7 @@ import java.util.Locale;
 /**
  * EJB that trusts REST layer. Provide public documents, parts and binary resources services.
  *
- *
- * @Author Morgan Guimard
+ * @author Morgan Guimard
  **/
 
 @DeclareRoles({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})

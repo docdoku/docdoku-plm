@@ -75,7 +75,7 @@ public class TitleBlockWriterTest {
         date = new Date();
         documentIteration.setCreationDate(date);
         Mockito.doReturn("TestIdOrNumber").when(documentIteration).getId();
-        Mockito.doReturn("TestIdOrNumber-A-154").when(documentIteration).toString();
+        Mockito.doReturn("TestIdOrNumber-A-154").when(documentIteration.toString());
         Mockito.doReturn("A").when(documentIteration).getVersion();
         Mockito.when(documentIteration.getInstanceAttributes()).thenReturn(new ArrayList<>());
         documentIteration.setAuthor(user);
@@ -100,7 +100,6 @@ public class TitleBlockWriterTest {
         partIteration.setIterationNote("RevisionNote");
         partIteration.setIteration(154);
     }
-
 
 
     @Test
@@ -140,6 +139,8 @@ public class TitleBlockWriterTest {
 
         URL resource = TitleBlockWriterTest.class.getClassLoader()
                 .getResource("com/docdoku/server/extras/sample.pdf");
+
+        Assert.assertNotNull(resource);
 
         byte[] pdfBytes = IOUtils.toByteArray(new FileInputStream(resource.getPath()));
 

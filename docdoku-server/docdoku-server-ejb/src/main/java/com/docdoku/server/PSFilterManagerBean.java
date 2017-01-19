@@ -68,8 +68,8 @@ public class PSFilterManagerBean implements IPSFilterManagerLocal {
     @Override
     public ProductStructureFilter getProductInstanceConfigSpec(ConfigurationItemKey ciKey, String serialNumber) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
-        ProductInstanceMasterKey pimk = new ProductInstanceMasterKey(serialNumber, ciKey);
-        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(pimk);
+        ProductInstanceMasterKey productInstanceMasterKey = new ProductInstanceMasterKey(serialNumber, ciKey);
+        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(productInstanceMasterKey);
         ProductInstanceIteration productII = productIM.getLastIteration();
         return new ProductInstanceConfigSpec(productII, user);
     }

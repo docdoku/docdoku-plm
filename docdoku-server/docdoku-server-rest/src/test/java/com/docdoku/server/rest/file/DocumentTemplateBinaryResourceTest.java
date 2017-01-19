@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -69,10 +70,11 @@ public class DocumentTemplateBinaryResourceTest {
 
         binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date()));
 
-
         String fullName = ResourceUtil.WORKSPACE_ID + "/document-templates/" + ResourceUtil.DOC_TEMPLATE_ID + "/" + ResourceUtil.FILENAME1;
         Mockito.when(documentService.getTemplateBinaryResource(fullName)).thenReturn(binaryResource);
-        File input = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile());
+        URL resource = getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1);
+        Assert.assertNotNull(resource);
+        File input = new File(resource.getFile());
         FileInputStream fileInputStream = new FileInputStream(input);
         Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(fileInputStream);
         //When
@@ -87,11 +89,13 @@ public class DocumentTemplateBinaryResourceTest {
     }
 
     @Test
-    public void downloadDocumentTemplateFilementTemplateFiles() throws Exception {
+    public void downloadDocumentTemplateFiles() throws Exception {
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         binaryResource = Mockito.spy(new BinaryResource(ResourceUtil.FILENAME1, ResourceUtil.DOCUMENT_SIZE, new Date()));
-        Collection<Part> filesParts = new ArrayList<Part>();
-        filesParts.add(new PartImpl(new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1).getFile())));
+        Collection<Part> filesParts = new ArrayList<>();
+        URL resource = getClass().getClassLoader().getResource(ResourceUtil.SOURCE_FILE_STORAGE + ResourceUtil.FILENAME1);
+        Assert.assertNotNull(resource);
+        filesParts.add(new PartImpl(new File(resource.getFile())));
         File uploadedFile = File.createTempFile(ResourceUtil.TARGET_FILE_STORAGE + "new_" + ResourceUtil.FILENAME1, ResourceUtil.TEMP_SUFFIX);
 
         OutputStream outputStream = new FileOutputStream(uploadedFile);

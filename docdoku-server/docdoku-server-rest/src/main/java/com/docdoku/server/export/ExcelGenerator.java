@@ -85,26 +85,26 @@ public class ExcelGenerator {
         }
 
         //Iterate over data and write to sheet
-        Set<Integer> keyset = data.keySet();
-        int rownum = 0;
+        Set<Integer> keySet = data.keySet();
+        int rowNum = 0;
 
-        for (Integer key : keyset) {
+        for (Integer key : keySet) {
 
-            Row row = sheet.createRow(rownum++);
+            Row row = sheet.createRow(rowNum++);
             String[] objArr = data.get(key);
-            int cellnum = 0;
+            int cellNum = 0;
             for (String obj : objArr) {
-                Cell cell = row.createCell(cellnum++);
+                Cell cell = row.createCell(cellNum++);
                 cell.setCellValue(obj);
             }
 
             CreationHelper factory = workbook.getCreationHelper();
             Drawing drawing = sheet.createDrawingPatriarch();
             String[] commentsObjArr = commentsData.get(key);
-            cellnum = 0;
+            cellNum = 0;
             for (String commentsObj : commentsObjArr) {
                 if (commentsObj.length() > 0) {
-                    Cell cell = row.getCell(cellnum) != null ? row.getCell(cellnum) : row.createCell(cellnum);
+                    Cell cell = row.getCell(cellNum) != null ? row.getCell(cellNum) : row.createCell(cellNum);
 
                     // When the comment box is visible, have it show in a 1x3 space
                     ClientAnchor anchor = factory.createClientAnchor();
@@ -120,7 +120,7 @@ public class ExcelGenerator {
                     // Assign the comment to the cell
                     cell.setCellComment(comment);
                 }
-                cellnum++;
+                cellNum++;
             }
         }
 
@@ -303,8 +303,8 @@ public class ExcelGenerator {
                     if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
-                        String attributeValue = "";
-                        StringBuilder sbattr = new StringBuilder();
+                        String attributeValue;
+                        StringBuilder stringBuilder = new StringBuilder();
 
                         if (lastIteration != null) {
                             List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
@@ -323,12 +323,12 @@ public class ExcelGenerator {
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
-                                        sbattr.append(attributeValue).append("|");
+                                        stringBuilder.append(attributeValue).append("|");
                                     }
                                 }
                             }
                         }
-                        String content = sbattr.toString().trim();
+                        String content = stringBuilder.toString().trim();
                         if (content.length() > 0) {
                             content = content.substring(0, content.lastIndexOf("|"));
                         }
@@ -337,9 +337,9 @@ public class ExcelGenerator {
                     if (select.startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                         String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
                         String attributeSelectName = select.substring(select.indexOf(".") + 1);
-                        String attributeValue = "";
+                        String attributeValue;
                         PathDataIteration pdi = row.getPathDataIteration();
-                        StringBuilder sbpdattr = new StringBuilder();
+                        StringBuilder stringBuilder = new StringBuilder();
 
                         if (pdi != null) {
                             List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
@@ -356,12 +356,12 @@ public class ExcelGenerator {
                                         } else if (attribute instanceof InstanceListOfValuesAttribute) {
                                             attributeValue = ((InstanceListOfValuesAttribute) attribute).getSelectedName();
                                         }
-                                        sbpdattr.append(attributeValue).append("|");
+                                        stringBuilder.append(attributeValue).append("|");
                                     }
                                 }
                             }
                         }
-                        String content = sbpdattr.toString().trim();
+                        String content = stringBuilder.toString().trim();
                         if (content.length() > 0) {
                             content = content.substring(0, content.lastIndexOf("|"));
                         }
@@ -391,7 +391,7 @@ public class ExcelGenerator {
             } else if (select.startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                 String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PART_REVISION_ATTRIBUTES_PREFIX.length());
                 String attributeSelectName = select.substring(select.indexOf(".") + 1);
-                StringBuilder commentsSbattr = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder();
 
                 if (lastIteration != null) {
                     List<InstanceAttribute> attributes = lastIteration.getInstanceAttributes();
@@ -401,13 +401,13 @@ public class ExcelGenerator {
 
                             if (attrDTO.getName().equals(attributeSelectName)
                                     && attrDTO.getType().name().equals(attributeSelectType)) {
-                                commentsSbattr.append(attribute.getId()).append("|");
+                                stringBuilder.append(attribute.getId()).append("|");
                             }
                         }
                     }
                 }
 
-                String commentsContent = commentsSbattr.toString().trim();
+                String commentsContent = stringBuilder.toString().trim();
                 if (commentsContent.length() > 0) {
                     commentsContent = commentsContent.substring(0, commentsContent.lastIndexOf("|"));
                 }
@@ -417,7 +417,7 @@ public class ExcelGenerator {
                 String attributeSelectType = select.substring(0, select.indexOf(".")).substring(QueryField.PATH_DATA_ATTRIBUTES_PREFIX.length());
                 String attributeSelectName = select.substring(select.indexOf(".") + 1);
                 PathDataIteration pdi = row.getPathDataIteration();
-                StringBuilder commentsSbpattr = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder();
 
                 if (pdi != null) {
                     List<InstanceAttribute> attributes = pdi.getInstanceAttributes();
@@ -427,13 +427,13 @@ public class ExcelGenerator {
 
                             if (attrDTO.getName().equals(attributeSelectName)
                                     && attrDTO.getType().name().equals(attributeSelectType)) {
-                                commentsSbpattr.append(attribute.getId()).append("|");
+                                stringBuilder.append(attribute.getId()).append("|");
                             }
                         }
                     }
                 }
 
-                String commentsContent = commentsSbpattr.toString().trim();
+                String commentsContent = stringBuilder.toString().trim();
                 if (commentsContent.length() > 0) {
                     commentsContent = commentsContent.substring(0, commentsContent.lastIndexOf("|"));
                 }

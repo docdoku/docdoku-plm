@@ -27,7 +27,7 @@ import com.docdoku.core.product.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,7 +63,7 @@ public class UpdatePartIterationPSFilter implements ProductStructureFilter, Seri
 
         // Return wip on updated part iteration
         if(part.getKey().equals(rootKey)){
-            return Arrays.asList(partIteration);
+            return Collections.singletonList(partIteration);
         }
 
         // Return wip and last

@@ -89,8 +89,8 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
 
         Locale locale = new Locale(user.getLanguage());
         DocumentRevision docR = new DocumentRevisionDAO(locale, em).loadDocR(documentRevisionKey);
-        List<Workflow> abortedWorkflows= docR.getAbortedWorkflows();
-        return abortedWorkflows.toArray(new Workflow[abortedWorkflows.size()]);
+        List<Workflow> abortedWorkflowList= docR.getAbortedWorkflows();
+        return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -124,9 +124,8 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         }
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
-        for (Task runningTask : runningTasks) {
-            runningTask.start();
-        }
+        runningTasks.forEach(Task::start);
+
         em.flush();
         mailer.sendApproval(runningTasks, docR);
         return docR;

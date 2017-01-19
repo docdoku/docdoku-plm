@@ -292,7 +292,7 @@ public class PartResource {
     @ApiOperation(value = "Get conversion status",
             response = ConversionDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of ConvertionDTO"),
+            @ApiResponse(code = 200, message = "Successful retrieval of ConversionDTO"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
@@ -649,7 +649,7 @@ public class PartResource {
 
     // Todo : refactor to only one method with the one above. Use a query param to set on/off public sharing
     @PUT
-    @ApiOperation(value = "Unpublish part revision",
+    @ApiOperation(value = "Un-publish part revision",
             response = Response.class)
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Successful un-publish of PartRevisionDTO"),
@@ -669,7 +669,7 @@ public class PartResource {
     }
 
     @GET
-    @ApiOperation(value = "Get part's aborted workflows",
+    @ApiOperation(value = "Get part's aborted workflow list",
             response = WorkflowDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
@@ -679,7 +679,7 @@ public class PartResource {
     })
     @Path("/aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbortedWorkflowsInPart(
+    public Response getAbortedWorkflowListInPart(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
@@ -688,13 +688,14 @@ public class PartResource {
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
 
-        List<Workflow> abortedWorkflows = partRevision.getAbortedWorkflows();
-        List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
+        List<Workflow> abortedWorkflowList = partRevision.getAbortedWorkflows();
+        List<WorkflowDTO> abortedWorkflowDTOs = new ArrayList<>();
 
-        for (Workflow abortedWorkflow : abortedWorkflows) {
-            abortedWorkflowsDTO.add(mapper.map(abortedWorkflow, WorkflowDTO.class));
+        for (Workflow abortedWorkflow : abortedWorkflowList) {
+            abortedWorkflowDTOs.add(mapper.map(abortedWorkflow, WorkflowDTO.class));
         }
-        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowsDTO) {
+
+        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowDTOs) {
         }).build();
     }
 
@@ -930,10 +931,10 @@ public class PartResource {
         }
     }
 
-    private DocumentRevisionKey[] createDocumentRevisionKey(List<DocumentRevisionDTO> dtos) {
-        DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
+    private DocumentRevisionKey[] createDocumentRevisionKey(List<DocumentRevisionDTO> documentRevisionDTOs) {
+        DocumentRevisionKey[] data = new DocumentRevisionKey[documentRevisionDTOs.size()];
         int i = 0;
-        for (DocumentRevisionDTO dto : dtos) {
+        for (DocumentRevisionDTO dto : documentRevisionDTOs) {
             data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
         return data;

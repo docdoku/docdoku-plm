@@ -102,7 +102,7 @@ public class WorkflowResource {
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             WorkflowNotFoundException, AccessRightException, WorkspaceNotEnabledException {
 
-        Workflow[] abortedWorkflowList = workflowService.getWorkflowAbortedWorkflows(workspaceId, workflowId);
+        Workflow[] abortedWorkflowList = workflowService.getWorkflowAbortedWorkflowList(workspaceId, workflowId);
 
         List<WorkflowDTO> abortedWorkflowDTOList = new ArrayList<>();
 

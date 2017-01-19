@@ -66,7 +66,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Workflow getCurentWorkflow(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+    public Workflow getCurrentWorkflow(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
         if(!productManager.canUserAccess(user, partRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
@@ -87,9 +87,9 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
 
         Locale locale = new Locale(user.getLanguage());
         PartRevision partR = new PartRevisionDAO(locale, em).loadPartR(partRevisionKey);
-        List<Workflow> abortedWorkflows= partR.getAbortedWorkflows();
+        List<Workflow> abortedWorkflowList= partR.getAbortedWorkflows();
 
-        return abortedWorkflows.toArray(new Workflow[abortedWorkflows.size()]);
+        return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

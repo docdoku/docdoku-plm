@@ -76,7 +76,7 @@ public class WIPPSFilterTest {
         Mockito.doReturn(null).when(partRevision).getLastAccessibleIteration(Mockito.any());
         partRevisions.add(partRevision);
 
-        //Should still return empty list of partiteration with multiple partRevision
+        //Should still return empty list of part iteration with multiple partRevision
         Assert.assertTrue(filter.filter(partMaster).isEmpty());
     }
 

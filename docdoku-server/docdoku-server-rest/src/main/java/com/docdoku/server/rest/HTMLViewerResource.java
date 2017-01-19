@@ -34,7 +34,7 @@ import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.server.rest.exceptions.ExpiredLinkException;
-import com.docdoku.server.rest.exceptions.UnmatchingUuidException;
+import com.docdoku.server.rest.exceptions.UnMatchingUuidException;
 import io.swagger.annotations.*;
 
 import javax.enterprise.context.RequestScoped;
@@ -83,7 +83,7 @@ public class HTMLViewerResource {
             @ApiParam(required = false, value = "Uuid of shared entity") @QueryParam("uuid") final String uuid,
             @ApiParam(required = true, value = "File name") @QueryParam("fileName") final String fileName)
             throws AccessRightException, NotAllowedException, EntityNotFoundException, UserNotActiveException,
-            ExpiredLinkException, UnmatchingUuidException {
+            ExpiredLinkException, UnMatchingUuidException {
 
         if (uuid != null && !uuid.isEmpty()) {
             SharedEntity sharedEntity = shareManager.findSharedEntityForGivenUUID(uuid);
@@ -103,7 +103,7 @@ public class HTMLViewerResource {
 
 
     private Response getPartHTMLViewer(String fileName) throws NotAllowedException, AccessRightException,
-            UserNotActiveException, EntityNotFoundException, ExpiredLinkException, UnmatchingUuidException {
+            UserNotActiveException, EntityNotFoundException, ExpiredLinkException, UnMatchingUuidException {
 
         BinaryResource binaryResource = publicEntityManager.getPublicBinaryResourceForPart(fileName);
         if (binaryResource != null) {
@@ -128,7 +128,7 @@ public class HTMLViewerResource {
 
 
     private BinaryResource checkUuidValidity(SharedEntity sharedEntity, String fileName)
-            throws UnmatchingUuidException, NotAllowedException, WorkspaceNotFoundException, AccessRightException,
+            throws UnMatchingUuidException, NotAllowedException, WorkspaceNotFoundException, AccessRightException,
             FileNotFoundException, UserNotFoundException, UserNotActiveException,
             ExpiredLinkException, WorkspaceNotEnabledException {
 
@@ -136,7 +136,7 @@ public class HTMLViewerResource {
         String holderType = BinaryResource.parseHolderType(fileName);
         if ("parts".equals(holderType) && !(sharedEntity instanceof SharedPart) ||
                 "documents".equals(holderType) && !(sharedEntity instanceof SharedDocument)) {
-            throw new UnmatchingUuidException();
+            throw new UnMatchingUuidException();
         }
 
         checkUuidExpiredDate(sharedEntity);
@@ -153,7 +153,7 @@ public class HTMLViewerResource {
             if(partRevision.getKey().equals(partRPK) && (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() <= holderIteration)){
                 return publicEntityManager.getBinaryResourceForSharedPart(fileName);
             }else{
-                throw new UnmatchingUuidException();
+                throw new UnMatchingUuidException();
             }
         }
         if ("documents".equals(holderType)){
@@ -163,10 +163,10 @@ public class HTMLViewerResource {
             if(documentRevision.getKey().equals(docRPK) && (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() <= holderIteration)){
                 return publicEntityManager.getBinaryResourceForSharedDocument(fileName);
             }else{
-                throw new UnmatchingUuidException();
+                throw new UnMatchingUuidException();
             }
         }
-        throw new UnmatchingUuidException();
+        throw new UnMatchingUuidException();
     }
 
     private void checkUuidExpiredDate(SharedEntity sharedEntity) throws ExpiredLinkException {

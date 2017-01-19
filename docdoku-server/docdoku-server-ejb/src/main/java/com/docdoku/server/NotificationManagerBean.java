@@ -250,13 +250,13 @@ public class NotificationManagerBean implements INotificationManagerLocal {
 
         List<User> listUsers = em.createNamedQuery("TagUserSubscription.findSubscribersByTags", User.class)
                 .setParameter("workspaceId", pWorkspaceId)
-                .setParameter("tags", Arrays.asList(pLabel))
+                .setParameter("tags", Collections.singletonList(pLabel))
                 .getResultList();
         users.addAll(listUsers);
 
         listUsers = em.createNamedQuery("TagUserGroupSubscription.findSubscribersByTags", User.class)
                 .setParameter("workspaceId", pWorkspaceId)
-                .setParameter("tags", Arrays.asList(pLabel))
+                .setParameter("tags", Collections.singletonList(pLabel))
                 .getResultList();
         users.addAll(listUsers);
 

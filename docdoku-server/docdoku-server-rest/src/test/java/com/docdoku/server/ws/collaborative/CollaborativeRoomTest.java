@@ -51,7 +51,6 @@ public class CollaborativeRoomTest {
     private static Principal principal2 = Mockito.mock(Principal.class);
 
 
-
     @BeforeClass
     public static void init() {
         Mockito.when(master.getUserPrincipal()).thenReturn(principalMaster);
@@ -84,7 +83,8 @@ public class CollaborativeRoomTest {
         //Given
         CollaborativeRoom collaborativeRoom = Mockito.spy(new CollaborativeRoom(master));
         //Then
-        Assert.assertTrue(CollaborativeRoom.getByKeyName(collaborativeRoom.getKey()) != null);    }
+        Assert.assertTrue(CollaborativeRoom.getByKeyName(collaborativeRoom.getKey()) != null);
+    }
 
     @Test
     public void shouldReturnFourRooms() {
@@ -95,11 +95,11 @@ public class CollaborativeRoomTest {
         CollaborativeRoom collaborativeRoom4 = Mockito.spy(new CollaborativeRoom(master));
 
         //Then
-        Assert.assertTrue(CollaborativeRoom.getAllCollaborativeRooms().size() == 4);
+        Assert.assertEquals(4, CollaborativeRoom.getAllCollaborativeRooms().size());
     }
 
     @Test
-    public void shouldDeleteRooms(){
+    public void shouldDeleteRooms() {
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         CollaborativeRoom collaborativeRoom2 = Mockito.spy(new CollaborativeRoom(master));
@@ -132,7 +132,7 @@ public class CollaborativeRoomTest {
     }
 
     @Test
-    public void shouldRemoveSlave(){
+    public void shouldRemoveSlave() {
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         //When
@@ -144,7 +144,7 @@ public class CollaborativeRoomTest {
     }
 
     @Test
-    public void shouldAddPendingUser(){
+    public void shouldAddPendingUser() {
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         //When
@@ -156,7 +156,7 @@ public class CollaborativeRoomTest {
     }
 
     @Test
-    public void shouldRemovePendingUser(){
+    public void shouldRemovePendingUser() {
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         //When
@@ -171,7 +171,7 @@ public class CollaborativeRoomTest {
     }
 
     @Test
-    public void shouldReturnSlave1Slave2AndNull(){
+    public void shouldReturnSlave1Slave2AndNull() {
         //Given
         CollaborativeRoom collaborativeRoom1 = Mockito.spy(new CollaborativeRoom(master));
         //When
@@ -184,7 +184,7 @@ public class CollaborativeRoomTest {
     }
 
     @Test
-    public void shouldSaveCommands(){
+    public void shouldSaveCommands() {
         //Given
         String msg = "{  \n" +
                 "   \"broadcastMessage\":{  \n" +
@@ -219,18 +219,17 @@ public class CollaborativeRoomTest {
                 "}";
 
 
-
         JsonObject jsObj = Json.createReader(new StringReader(msg)).readObject();
-        JsonObject broadcastMessage = jsObj.containsKey("broadcastMessage")?jsObj.getJsonObject("broadcastMessage"):null;
+        JsonObject broadcastMessage = jsObj.containsKey("broadcastMessage") ? jsObj.getJsonObject("broadcastMessage") : null;
 
         JsonObjectBuilder b = Json.createObjectBuilder()
-                .add("type","COLLABORATIVE_COMMANDS")
-                .add("key","key-12545695-7859-458")
-                .add("broadcastMessage",broadcastMessage)
+                .add("type", "COLLABORATIVE_COMMANDS")
+                .add("key", "key-12545695-7859-458")
+                .add("broadcastMessage", broadcastMessage)
                 .add("remoteUser", "slave1");
 
 
-        WebSocketMessage collaborativeMessage =  Mockito.spy(new WebSocketMessage(b.build()));
+        WebSocketMessage collaborativeMessage = Mockito.spy(new WebSocketMessage(b.build()));
 
         CollaborativeRoom room = Mockito.spy(new CollaborativeRoom(master));
         //When
@@ -241,9 +240,6 @@ public class CollaborativeRoomTest {
         room.saveCommand(commands);
         Assert.assertTrue(room.getCommands().entrySet().size() == 1);
     }
-
-
-
 
 
     @After

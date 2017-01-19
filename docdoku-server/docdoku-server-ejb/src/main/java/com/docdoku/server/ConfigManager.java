@@ -27,7 +27,7 @@ import java.util.Properties;
 /**
  * Get config from resources
  *
- * @author: Morgan Guimard
+ * @author Morgan Guimard
  */
 @ApplicationScoped
 public class ConfigManager {

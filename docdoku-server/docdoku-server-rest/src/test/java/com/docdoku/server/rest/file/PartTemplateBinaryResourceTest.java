@@ -73,7 +73,7 @@ public class PartTemplateBinaryResourceTest {
         final File fileToUpload  = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
         File uploadedFile  = File.createTempFile(ResourceUtil.TARGET_PART_STORAGE+ResourceUtil.FILENAME_TARGET_PART,ResourceUtil.TEMP_SUFFIX);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        Collection<Part> parts = new ArrayList<Part>();
+        Collection<Part> parts = new ArrayList<>();
         parts.add(new PartImpl(fileToUpload));
         Mockito.when(request.getParts()).thenReturn(parts);
         binaryResource = new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date());
@@ -105,7 +105,7 @@ public class PartTemplateBinaryResourceTest {
         final File fileToUpload  = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE+ResourceUtil.TEST_PART_FILENAME1).getFile());
         File uploadedFile  = File.createTempFile(ResourceUtil.TARGET_PART_STORAGE+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER,ResourceUtil.TEMP_SUFFIX);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        Collection<Part> parts = new ArrayList<Part>();
+        Collection<Part> parts = new ArrayList<>();
         parts.add(new PartImpl(fileToUpload) );
         Mockito.when(request.getParts()).thenReturn(parts);
         binaryResource = new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date());
@@ -136,7 +136,7 @@ public class PartTemplateBinaryResourceTest {
         final File fileToUpload  = new File(getClass().getClassLoader().getResource(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER).toURI());
         File uploadedFile  =File.createTempFile(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER,ResourceUtil.TEMP_SUFFIX);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        Collection<Part> parts = new ArrayList<Part>();
+        Collection<Part> parts = new ArrayList<>();
         parts.add(new PartImpl(fileToUpload) );
         Mockito.when(request.getParts()).thenReturn(parts);
         binaryResource = new BinaryResource(ResourceUtil.FILENAME1,ResourceUtil.DOCUMENT_SIZE,new Date());
@@ -174,7 +174,7 @@ public class PartTemplateBinaryResourceTest {
         File uploadedFile2  = File.createTempFile(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.TEST_PART_FILENAME2,ResourceUtil.TEMP_SUFFIX);
         File uploadedFile3  = File.createTempFile(ResourceUtil.TARGET_PART_STORAGE+"new_"+ResourceUtil.FILENAME_TO_UPLOAD_PART_SPECIAL_CHARACTER,ResourceUtil.TEMP_SUFFIX);
         HttpServletRequestWrapper request = Mockito.mock(HttpServletRequestWrapper.class);
-        Collection<Part> parts = new ArrayList<Part>();
+        Collection<Part> parts = new ArrayList<>();
         parts.add(new PartImpl(fileToUpload1) );
         parts.add(new PartImpl(fileToUpload2) );
         parts.add(new PartImpl(fileToUpload3) );
@@ -255,7 +255,7 @@ public class PartTemplateBinaryResourceTest {
         Assert.assertTrue(response.hasEntity());
         Assert.assertTrue(response.getEntity() instanceof BinaryResourceBinaryStreamingOutput);
         Assert.assertNotNull(response.getHeaders().getFirst("Content-Disposition"));
-        Assert.assertNotNull("attachement;filename=\""+ResourceUtil.TEST_PART_FILENAME1+"\"".equals(response.getHeaders().getFirst("Content-Disposition")));
+        Assert.assertNotNull("attachment;filename=\""+ResourceUtil.TEST_PART_FILENAME1+"\"".equals(response.getHeaders().getFirst("Content-Disposition")));
 
         //delete temp file
         file.deleteOnExit();

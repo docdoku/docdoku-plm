@@ -22,9 +22,9 @@ package com.docdoku.server.rest.exceptions;
 /**
  * @author Taylor LABEJOF
  */
-public class UnmatchingUuidException extends RestApiException {
+public class UnMatchingUuidException extends RestApiException {
 
-    public UnmatchingUuidException() {
+    public UnMatchingUuidException() {
         super();
     }
 }

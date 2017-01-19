@@ -55,7 +55,7 @@ public abstract class TitleBlockData {
     protected List<InstanceAttribute> instanceAttributes;
     protected String currentIteration;
     protected Workflow workflow;
-    protected Locale pLocale;
+    protected Locale locale;
     protected String revisionNote;
     protected String lifeCycleState;
 
@@ -115,8 +115,8 @@ public abstract class TitleBlockData {
         return workflow;
     }
 
-    public Locale getpLocale() {
-        return pLocale;
+    public Locale getLocale() {
+        return locale;
     }
 
     public String getRevisionNote() {

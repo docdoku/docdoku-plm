@@ -762,7 +762,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         User user = userManager.checkWorkspaceReadAccess(pKey.getWorkspaceId());
         Locale locale = new Locale(user.getLanguage());
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(locale, em);
 
         PartRevisionDAO partRDAO = new PartRevisionDAO(locale, em);
         PartRevision partRev = partRDAO.loadPartR(pKey.getPartRevision());
@@ -790,7 +790,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
                 int counter = 0;
                 for (DocumentRevisionKey link : pLinkKeys) {
-                    DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
+                    DocumentLink newLink = new DocumentLink(documentRevisionDAO.loadDocR(link));
                     newLink.setComment(documentLinkComments[counter]);
                     linkDAO.createLink(newLink);
                     partIte.getLinkedDocuments().add(newLink);
@@ -2044,9 +2044,9 @@ public class ProductManagerBean implements IProductManagerLocal {
         } else {
             User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
             Locale locale = new Locale(user.getLanguage());
-            if(user.isAdministrator()){
+            if (user.isAdministrator()) {
                 count = new PartRevisionDAO(locale, em).getTotalNumberOfParts(pWorkspaceId);
-            }else{
+            } else {
                 count = new PartRevisionDAO(locale, em).getPartRevisionCountFiltered(user, pWorkspaceId);
             }
         }
@@ -2719,7 +2719,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 component.setRetainedIteration(retainedIteration);
 
             } else {
-                ProductBaseline productBaseline = null;
+                ProductBaseline productBaseline;
                 ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
 
                 if (configSpecType.startsWith("pi-")) {
@@ -3752,7 +3752,7 @@ public class ProductManagerBean implements IProductManagerLocal {
      * Say if a user can write on a part Revision through ACL or Workspace Access
      *
      * @param user         A user with at least Read access to the workspace
-     * @param partRevision
+     * @param partRevision the part revision to access
      * @return True if access is granted, False otherwise
      * @throws WorkspaceNotFoundException
      */

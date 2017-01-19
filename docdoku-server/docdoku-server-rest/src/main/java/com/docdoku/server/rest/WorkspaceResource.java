@@ -225,13 +225,13 @@ public class WorkspaceResource {
             throws EntityNotFoundException {
 
         User[] reachableUsers = userManager.getReachableUsers();
-        UserDTO[] dtos = new UserDTO[reachableUsers.length];
+        UserDTO[] userDTOs = new UserDTO[reachableUsers.length];
 
         for (int i = 0; i < reachableUsers.length; i++) {
-            dtos[i] = mapper.map(reachableUsers[i], UserDTO.class);
+            userDTOs[i] = mapper.map(reachableUsers[i], UserDTO.class);
         }
 
-        return dtos;
+        return userDTOs;
     }
 
     @PUT

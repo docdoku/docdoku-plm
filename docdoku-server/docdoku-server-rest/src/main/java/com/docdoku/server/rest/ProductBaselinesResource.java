@@ -304,7 +304,7 @@ public class ProductBaselinesResource {
             PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
         List<PathToPathLink> pathToPathLinks = productBaselineService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, baselineId, sourcePathAsString, targetPathAsString);
-        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
         for (PathToPathLink pathToPathLink : pathToPathLinks) {
@@ -327,10 +327,10 @@ public class ProductBaselinesResource {
 
             pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
             pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
-            dtos.add(pathToPathLinkDTO);
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
 
-        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) pathToPathLinkDTOs) {
         }).build();
 
     }

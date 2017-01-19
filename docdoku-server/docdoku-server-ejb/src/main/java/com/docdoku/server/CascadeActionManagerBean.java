@@ -52,7 +52,7 @@ public class CascadeActionManagerBean implements ICascadeActionManagerLocal {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeCheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
+    public CascadeResult cascadeCheckOut(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
         CascadeResult cascadeResult = new CascadeResult();
 
         Set<PartRevision> partRevisions = productManager.getWritablePartRevisionsFromPath(configurationItemKey,path);
@@ -72,7 +72,7 @@ public class CascadeActionManagerBean implements ICascadeActionManagerLocal {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeUndocheckout(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
+    public CascadeResult cascadeUndoCheckOut(ConfigurationItemKey configurationItemKey, String path) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
         CascadeResult cascadeResult = new CascadeResult();
         Set<PartRevision> partRevisions = productManager.getWritablePartRevisionsFromPath(configurationItemKey, path);
         for(PartRevision pr : partRevisions) {
@@ -90,7 +90,7 @@ public class CascadeActionManagerBean implements ICascadeActionManagerLocal {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Override
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public CascadeResult cascadeCheckin(ConfigurationItemKey configurationItemKey, String path, String iterationNote) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
+    public CascadeResult cascadeCheckIn(ConfigurationItemKey configurationItemKey, String path, String iterationNote) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartMasterNotFoundException, EntityConstraintException, NotAllowedException, PartUsageLinkNotFoundException, ConfigurationItemNotFoundException, WorkspaceNotEnabledException {
 
         CascadeResult cascadeResult = new CascadeResult();
         Set<PartRevision> partRevisions = productManager.getWritablePartRevisionsFromPath(configurationItemKey, path);

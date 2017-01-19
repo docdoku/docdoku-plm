@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 
 @XmlRootElement
-@ApiModel(value="TransformationDTO", description="This class is a representation of a geometric transformation")
+@ApiModel(value = "TransformationDTO", description = "This class is a representation of a geometric transformation")
 public class TransformationDTO implements Serializable, Cloneable {
 
     @ApiModelProperty(value = "Translation on x Axis")
@@ -116,7 +116,7 @@ public class TransformationDTO implements Serializable, Cloneable {
 
     @Override
     public TransformationDTO clone() {
-        TransformationDTO clone = null;
+        TransformationDTO clone;
         try {
             clone = (TransformationDTO) super.clone();
         } catch (CloneNotSupportedException e) {

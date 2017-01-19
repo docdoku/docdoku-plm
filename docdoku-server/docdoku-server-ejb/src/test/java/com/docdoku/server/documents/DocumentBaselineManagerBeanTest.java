@@ -83,7 +83,7 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
         Mockito.when(em.find(Workspace.class, workspace.getId())).thenReturn(workspace);
         Mockito.when(em.createQuery("SELECT DISTINCT f FROM Folder f WHERE f.parentFolder.completePath = :completePath", Folder.class)).thenReturn(folderTypedQuery);
-        Mockito.when(folderTypedQuery.getResultList()).thenReturn(new ArrayList<Folder>(0));
+        Mockito.when(folderTypedQuery.getResultList()).thenReturn(new ArrayList<>(0));
         Mockito.when(new WorkspaceDAO(new Locale("en"), em).loadWorkspace(workspace.getId())).thenReturn(workspace);
         Mockito.when(em.find(Folder.class, workspace.getId())).thenReturn(folder);
         Mockito.when(documentService.getAllDocumentsInWorkspace(workspace.getId())).thenReturn(new DocumentRevision[0]);
@@ -111,7 +111,7 @@ public class DocumentBaselineManagerBeanTest {
         Mockito.when(userManager.checkWorkspaceWriteAccess(workspace.getId())).thenReturn(user);
         Mockito.when(em.find(Workspace.class, workspace.getId())).thenReturn(workspace);
         Mockito.when(em.createQuery("SELECT DISTINCT f FROM Folder f WHERE f.parentFolder.completePath = :completePath", Folder.class)).thenReturn(folderTypedQuery);
-        Mockito.when(folderTypedQuery.getResultList()).thenReturn(new ArrayList<Folder>(0));
+        Mockito.when(folderTypedQuery.getResultList()).thenReturn(new ArrayList<>(0));
         Mockito.when(new WorkspaceDAO(new Locale("en"), em).loadWorkspace(workspace.getId())).thenReturn(workspace);
         Mockito.when(em.find(Folder.class, workspace.getId())).thenReturn(folder);
         DocumentRevision[] revisions = new DocumentRevision[2];

@@ -63,11 +63,6 @@ public class ESSearcher {
     private static final String ES_TYPE_DOCUMENT = "document";
     private static final String ES_TYPE_PART = "part";
 
-  /*  private static final String ES_SEARCH_ERROR_1 = "ES_SearchError1";
-    private static final String ES_SEARCH_ERROR_2 = "ES_SearchError2";
-    private static final String ES_SERVER_ERROR_1 = "IndexerServerException";
-    private static final String ES_SERVER_ERROR_2 ="MissingIndexException";*/
-
     @PersistenceContext
     private EntityManager em;
 
@@ -153,12 +148,12 @@ public class ESSearcher {
     public List<DocumentRevision> searchInAllWorkspace(DocumentSearchQuery docQuery) throws ESServerException {
         try {
             QueryBuilder qr = getQueryBuilder(docQuery);
-            MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
+            MultiSearchRequestBuilder requestBuilder = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for (Workspace w : wDAO.getAll()) {
-                srbm.add(getSearchRequest(ESTools.formatIndexName(w.getId()), ES_TYPE_DOCUMENT, qr));
+                requestBuilder.add(getSearchRequest(ESTools.formatIndexName(w.getId()), ES_TYPE_DOCUMENT, qr));
             }
-            MultiSearchResponse srm = srbm.execute().actionGet();
+            MultiSearchResponse srm = requestBuilder.execute().actionGet();
 
 
             List<DocumentRevision> listOfDocuments = new ArrayList<>();
@@ -191,12 +186,12 @@ public class ESSearcher {
 
         try {
             QueryBuilder qr = getQueryBuilder(partQuery);
-            MultiSearchRequestBuilder srbm = client.prepareMultiSearch();
+            MultiSearchRequestBuilder requestBuilder = client.prepareMultiSearch();
             WorkspaceDAO wDAO = new WorkspaceDAO(em);
             for (Workspace w : wDAO.getAll()) {
-                srbm.add(getSearchRequest(ESTools.formatIndexName(w.getId()), ES_TYPE_PART, qr));
+                requestBuilder.add(getSearchRequest(ESTools.formatIndexName(w.getId()), ES_TYPE_PART, qr));
             }
-            MultiSearchResponse srm = srbm.execute().actionGet();
+            MultiSearchResponse srm = requestBuilder.execute().actionGet();
 
 
             List<PartRevision> listOfParts = new ArrayList<>();
@@ -222,10 +217,9 @@ public class ESSearcher {
 
     private QueryBuilder getFullTextQuery(SearchQuery query) {
         // TODO Cut the query and make a boolQuery() with all the words
-        QueryBuilder fullTextQuery = QueryBuilders.matchQuery("_all", query.getFullText())
+        return QueryBuilders.matchQuery("_all", query.getFullText())
                 .operator(MatchQueryBuilder.Operator.OR)
                 .fuzziness("AUTO");
-        return fullTextQuery;
     }
 
     /**

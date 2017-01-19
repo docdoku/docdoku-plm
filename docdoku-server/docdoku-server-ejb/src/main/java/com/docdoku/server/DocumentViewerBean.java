@@ -44,7 +44,7 @@ import java.util.logging.Logger;
 
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IFileViewerManagerLocal.class)
-@Stateless(name="DocumentViewerBean")
+@Stateless(name = "DocumentViewerBean")
 public class DocumentViewerBean implements IFileViewerManagerLocal {
 
     @Inject
@@ -63,13 +63,13 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
 
         try {
             if (documentViewerSelected != null) {
-                template = documentViewerSelected.renderHtmlForViewer(binaryResource,uuid);
-            }else{
-                template = getDefaultTemplate(binaryResource,uuid);
+                template = documentViewerSelected.renderHtmlForViewer(binaryResource, uuid);
+            } else {
+                template = getDefaultTemplate(binaryResource, uuid);
             }
         } catch (Exception e) {
             LOGGER.log(Level.INFO, null, e);
-            template = new StringBuilder().append("<p>").append("Can't render ").append(binaryResource.getName()).append("</p>").toString();
+            template = "<p>Can't render " + binaryResource.getName() + "</p>";
         }
 
         return template;
@@ -86,17 +86,17 @@ public class DocumentViewerBean implements IFileViewerManagerLocal {
         return selectedDocumentViewer;
     }
 
-    private String getDefaultTemplate(BinaryResource binaryResource,String uuid) throws IOException {
+    private String getDefaultTemplate(BinaryResource binaryResource, String uuid) throws IOException {
 
         MustacheFactory mf = new DefaultMustacheFactory();
         Mustache mustache = mf.compile("com/docdoku/server/viewers/default_viewer.mustache");
-        Map<Object,Object> scopes = new HashMap<>();
+        Map<Object, Object> scopes = new HashMap<>();
         scopes.put("uriResource", ViewerUtils.getURI(binaryResource, uuid));
         scopes.put("fileName", binaryResource.getName());
         StringWriter templateWriter = new StringWriter();
         mustache.execute(templateWriter, scopes).flush();
 
-        return ViewerUtils.getViewerTemplate(storageManager, binaryResource, uuid, templateWriter.toString(),false);
+        return ViewerUtils.getViewerTemplate(storageManager, binaryResource, uuid, templateWriter.toString(), false);
     }
 
 }

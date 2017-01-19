@@ -33,8 +33,8 @@ import java.util.ResourceBundle;
  */
 class DocumentTitleBlockData extends TitleBlockData {
 
-    DocumentTitleBlockData(DocumentIteration documentIteration, Locale locale) {
-        pLocale = locale;
+    DocumentTitleBlockData(DocumentIteration documentIteration, Locale pLocale) {
+        locale = pLocale;
         bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
         authorName = documentIteration.getAuthor().getName();

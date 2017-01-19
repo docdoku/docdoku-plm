@@ -34,8 +34,8 @@ import java.util.ResourceBundle;
  */
 public class PartTitleBlockData extends TitleBlockData {
 
-    PartTitleBlockData(PartIteration partIteration, Locale locale) {
-        pLocale = locale;
+    PartTitleBlockData(PartIteration partIteration, Locale pLocale) {
+        locale = pLocale;
         bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
         dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
         authorName = partIteration.getAuthor().getName();

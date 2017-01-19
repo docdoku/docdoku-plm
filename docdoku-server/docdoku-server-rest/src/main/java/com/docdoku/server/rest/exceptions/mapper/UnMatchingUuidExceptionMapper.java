@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest.exceptions.mapper;
 
-import com.docdoku.server.rest.exceptions.UnmatchingUuidException;
+import com.docdoku.server.rest.exceptions.UnMatchingUuidException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -31,14 +31,14 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 @Provider
-public class UnmatchingUuidExceptionMapper implements ExceptionMapper<UnmatchingUuidException> {
-    private static final Logger LOGGER = Logger.getLogger(UnmatchingUuidExceptionMapper.class.getName());
+public class UnMatchingUuidExceptionMapper implements ExceptionMapper<UnMatchingUuidException> {
+    private static final Logger LOGGER = Logger.getLogger(UnMatchingUuidExceptionMapper.class.getName());
 
-    public UnmatchingUuidExceptionMapper() {
+    public UnMatchingUuidExceptionMapper() {
     }
 
     @Override
-    public Response toResponse(UnmatchingUuidException e) {
+    public Response toResponse(UnMatchingUuidException e) {
         LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.METHOD_NOT_ALLOWED)
                 .build();
