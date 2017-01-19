@@ -55,11 +55,11 @@ public class CustomServerAuthContext implements ServerAuthContext {
 
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
         HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
+        AuthServices.addCORSHeaders(response);
 
         LOGGER.log(Level.FINE, "validateRequest @" + request.getMethod() + " " + request.getRequestURI());
 
         if (isOptionsRequest(request)) {
-            AuthServices.addCORSHeaders(response);
             return AuthStatus.SUCCESS;
         }
 
@@ -70,7 +70,7 @@ public class CustomServerAuthContext implements ServerAuthContext {
         }
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        AuthServices.addCORSHeaders(response);
+
         return AuthStatus.FAILURE;
     }
 
@@ -80,11 +80,11 @@ public class CustomServerAuthContext implements ServerAuthContext {
 
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
         HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
+        AuthServices.addCORSHeaders(response);
 
         LOGGER.log(Level.FINE, "secureResponse @" + request.getMethod() + " " + request.getRequestURI());
 
         if (isOptionsRequest(request)) {
-            AuthServices.addCORSHeaders(response);
             return AuthStatus.SEND_SUCCESS;
         }
 

@@ -71,7 +71,6 @@ public class BasicHeaderSAM extends CustomSAM {
             credentials = new String(decoded, "US-ASCII");
         } catch (UnsupportedEncodingException e) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            AuthServices.addCORSHeaders(response);
             return AuthStatus.FAILURE;
         }
 
@@ -93,7 +92,6 @@ public class BasicHeaderSAM extends CustomSAM {
             } catch (IOException | UnsupportedCallbackException e) {
                 LOGGER.log(Level.SEVERE, null, e);
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                AuthServices.addCORSHeaders(response);
                 return AuthStatus.FAILURE;
             }
 
@@ -101,7 +99,6 @@ public class BasicHeaderSAM extends CustomSAM {
         }
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        AuthServices.addCORSHeaders(response);
         return AuthStatus.FAILURE;
 
     }

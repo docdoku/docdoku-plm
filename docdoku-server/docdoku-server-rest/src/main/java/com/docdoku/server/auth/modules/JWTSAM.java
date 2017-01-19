@@ -21,7 +21,6 @@
 package com.docdoku.server.auth.modules;
 
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.server.auth.AuthServices;
 import com.docdoku.server.auth.jwt.JWTokenFactory;
 
 import javax.security.auth.Subject;
@@ -80,7 +79,6 @@ public class JWTSAM extends CustomSAM {
         }
 
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        AuthServices.addCORSHeaders(response);
         return AuthStatus.FAILURE;
 
     }

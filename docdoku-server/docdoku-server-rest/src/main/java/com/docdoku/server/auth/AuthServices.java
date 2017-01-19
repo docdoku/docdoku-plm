@@ -101,11 +101,11 @@ public class AuthServices {
     }
 
     public static void addCORSHeaders(HttpServletResponse response){
-        response.addHeader("Access-Control-Allow-Origin", "*");
-        response.addHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, jwt");
-        response.addHeader("Access-Control-Expose-Headers", "jwt");
-        response.addHeader("Access-Control-Allow-Credentials", "true");
-        response.addHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        response.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, jwt");
+        response.setHeader("Access-Control-Expose-Headers", "jwt");
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
     }
 
 }
