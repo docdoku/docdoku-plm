@@ -75,7 +75,7 @@ public class TitleBlockWriterTest {
         date = new Date();
         documentIteration.setCreationDate(date);
         Mockito.doReturn("TestIdOrNumber").when(documentIteration).getId();
-        Mockito.doReturn("TestIdOrNumber-A-154").when(documentIteration.toString());
+        Mockito.doReturn("TestIdOrNumber-A-154").when(documentIteration).toString();
         Mockito.doReturn("A").when(documentIteration).getVersion();
         Mockito.when(documentIteration.getInstanceAttributes()).thenReturn(new ArrayList<>());
         documentIteration.setAuthor(user);
