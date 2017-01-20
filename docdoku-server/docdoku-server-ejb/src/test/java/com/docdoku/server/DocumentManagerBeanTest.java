@@ -143,7 +143,7 @@ public class DocumentManagerBeanTest {
         //Given
         DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace, DocumentUtil.DOCUMENT_ID,user));
         DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster, DocumentUtil.VERSION,user));
-        ArrayList<DocumentIteration> iterations =new ArrayList<DocumentIteration>();
+        ArrayList<DocumentIteration> iterations = new ArrayList<>();
         iterations.add(new DocumentIteration(documentRevision, user));
         documentRevision.setDocumentIterations(iterations);
         documentRevision.setCheckOutUser(user);
@@ -173,7 +173,7 @@ public class DocumentManagerBeanTest {
         //Given
         DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace, DocumentUtil.DOCUMENT_ID,user));
         DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster, DocumentUtil.VERSION,user));
-        ArrayList<DocumentIteration> iterations =new ArrayList<DocumentIteration>();
+        ArrayList<DocumentIteration> iterations = new ArrayList<>();
         iterations.add(new DocumentIteration(documentRevision, user));
         documentRevision.setDocumentIterations(iterations);
         documentRevision.setCheckOutUser(user);
@@ -203,7 +203,7 @@ public class DocumentManagerBeanTest {
         //Given
         DocumentMaster documentMaster = Mockito.spy(new DocumentMaster(workspace, DocumentUtil.DOCUMENT_ID,user));
         DocumentRevision documentRevision = Mockito.spy(new DocumentRevision(documentMaster, DocumentUtil.VERSION,user));
-        ArrayList<DocumentIteration> iterations =new ArrayList<DocumentIteration>();
+        ArrayList<DocumentIteration> iterations = new ArrayList<>();
         iterations.add(new DocumentIteration(documentRevision, user));
         documentRevision.setDocumentIterations(iterations);
         documentRevision.setCheckOutUser(user);
@@ -252,7 +252,7 @@ public class DocumentManagerBeanTest {
         documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
-        ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
+        ArrayList<DocumentIteration> iterations = new ArrayList<>();
         iterations.add(documentIteration);
         documentRevision.setDocumentIterations(iterations);
 
@@ -308,7 +308,7 @@ public class DocumentManagerBeanTest {
         documentIteration = new DocumentIteration(documentRevision, user);
         documentRevision.setCheckOutUser(user);
         documentRevision.setCheckOutDate(new Date());
-        ArrayList<DocumentIteration> iterations = new ArrayList<DocumentIteration>();
+        ArrayList<DocumentIteration> iterations = new ArrayList<>();
         iterations.add(documentIteration);
         documentRevision.setDocumentIterations(iterations);
 
@@ -374,7 +374,4 @@ public class DocumentManagerBeanTest {
         Assert.assertTrue(documentRevision.getACL() == null);
     }
 
-    public void removeTagFromDocument(){
-        // TODO
-    }
 }

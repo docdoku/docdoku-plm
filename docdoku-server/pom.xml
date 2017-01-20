@@ -13,8 +13,6 @@
     <modules>
         <module>docdoku-server-ext</module>
         <module>docdoku-server-office-doc</module>
-        <module>docdoku-server-viewer-image</module>
-        <module>docdoku-server-viewer-multimedia</module>
         <module>docdoku-server-ejb</module>
         <module>docdoku-server-rest</module>
         <module>docdoku-server-ear</module>

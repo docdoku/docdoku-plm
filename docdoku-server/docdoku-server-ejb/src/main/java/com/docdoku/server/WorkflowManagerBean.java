@@ -385,7 +385,7 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public Workflow[] getWorkflowAbortedWorkflows(String workspaceId, int workflowId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
+    public Workflow[] getWorkflowAbortedWorkflowList(String workspaceId, int workflowId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         WorkflowDAO workflowDAO = new WorkflowDAO(em);
         Workflow workflow = workflowDAO.getWorkflow(workflowId);
@@ -393,8 +393,8 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
         if(documentTarget!= null){
             if( documentTarget.getWorkspaceId().equals(workspaceId)){
-                List<Workflow> abortedWorkflows = documentTarget.getAbortedWorkflows();
-                return abortedWorkflows.toArray(new Workflow[abortedWorkflows.size()]);
+                List<Workflow> abortedWorkflowList = documentTarget.getAbortedWorkflows();
+                return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
             }else{
                 throw new AccessRightException(new Locale(user.getLanguage()),user);
             }
@@ -403,8 +403,8 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
         PartRevision partTarget = workflowDAO.getPartTarget(workflow);
         if(partTarget!= null){
             if( partTarget.getWorkspaceId().equals(workspaceId)){
-                List<Workflow> abortedWorkflows = partTarget.getAbortedWorkflows();
-                return abortedWorkflows.toArray(new Workflow[abortedWorkflows.size()]);
+                List<Workflow> abortedWorkflowList = partTarget.getAbortedWorkflows();
+                return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
             }else{
                 throw new AccessRightException(new Locale(user.getLanguage()),user);
             }
@@ -412,8 +412,8 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
 
         WorkspaceWorkflow workspaceWorkflowTarget = workflowDAO.getWorkspaceWorkflowTarget(workspaceId,workflow);
         if(workspaceWorkflowTarget!=null){
-            List<Workflow> abortedWorkflows = workspaceWorkflowTarget.getAbortedWorkflows();
-            return abortedWorkflows.toArray(new Workflow[abortedWorkflows.size()]);
+            List<Workflow> abortedWorkflowList = workspaceWorkflowTarget.getAbortedWorkflows();
+            return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
         }else{
             throw new AccessRightException(new Locale(user.getLanguage()),user);
         }
@@ -469,8 +469,8 @@ public class WorkflowManagerBean implements IWorkflowManagerLocal {
     @Override
     public WorkspaceWorkflow[] getWorkspaceWorkflowList(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         userManager.checkWorkspaceReadAccess(workspaceId);
-        List<WorkspaceWorkflow> workspaceWorkflows = new WorkflowDAO(em).getWorkspaceWorkflowList(workspaceId);
-        return workspaceWorkflows.toArray(new WorkspaceWorkflow[workspaceWorkflows.size()]);
+        List<WorkspaceWorkflow> workspaceWorkflowList = new WorkflowDAO(em).getWorkspaceWorkflowList(workspaceId);
+        return workspaceWorkflowList.toArray(new WorkspaceWorkflow[workspaceWorkflowList.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)

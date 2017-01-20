@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.docdoku</groupId>
@@ -10,26 +10,11 @@
     <artifactId>docdoku-server-ear</artifactId>
     <packaging>ear</packaging>
     <name>docdoku-server-ear Java EE 7 Assembly</name>
+    <properties>
+        <context-root>/</context-root>
+    </properties>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>properties-maven-plugin</artifactId>
-                <version>1.0-alpha-2</version>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>read-project-properties</goal>
-                        </goals>
-                        <configuration>
-                            <files>
-                                <file>../server.properties</file>
-                            </files>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -50,7 +35,7 @@
                         <webModule>
                             <groupId>com.docdoku</groupId>
                             <artifactId>docdoku-server-rest</artifactId>
-                            <contextRoot>${server.contextRoot}</contextRoot>
+                            <contextRoot>${context-root}</contextRoot>
                             <bundleFileName>docdoku-server-rest.war</bundleFileName>
                         </webModule>
                     </modules>

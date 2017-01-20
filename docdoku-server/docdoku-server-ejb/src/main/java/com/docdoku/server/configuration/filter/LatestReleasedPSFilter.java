@@ -27,7 +27,7 @@ import com.docdoku.core.product.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -66,7 +66,7 @@ public class LatestReleasedPSFilter implements ProductStructureFilter, Serializa
     public List<PartIteration> filter(PartMaster part) {
         PartRevision partRevision = part.getLastReleasedRevision();
         if(partRevision != null){
-            return Arrays.asList(partRevision.getLastIteration());
+            return Collections.singletonList(partRevision.getLastIteration());
         }
         return new ArrayList<>();
     }

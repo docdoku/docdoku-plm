@@ -126,8 +126,8 @@ public class ProductBaselineDAO {
     }
 
     public ProductBaseline findLastBaselineWithSerialNumber(ConfigurationItemKey ciKey, String serialNumber) throws ProductInstanceMasterNotFoundException {
-        ProductInstanceMasterKey pimk = new ProductInstanceMasterKey(serialNumber, ciKey);
-        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(pimk);
+        ProductInstanceMasterKey productInstanceMasterKey = new ProductInstanceMasterKey(serialNumber, ciKey);
+        ProductInstanceMaster productIM = new ProductInstanceMasterDAO(em).loadProductInstanceMaster(productInstanceMasterKey);
         ProductInstanceIteration productII = productIM.getLastIteration();
 
         if (productII != null) {

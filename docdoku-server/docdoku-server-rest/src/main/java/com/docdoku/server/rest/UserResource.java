@@ -87,13 +87,13 @@ public class UserResource {
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
 
         User[] users = userManager.getUsers(workspaceId);
-        UserDTO[] dtos = new UserDTO[users.length];
+        UserDTO[] userDTOs = new UserDTO[users.length];
 
         for (int i = 0; i < users.length; i++) {
-            dtos[i] = mapper.map(users[i], UserDTO.class);
+            userDTOs[i] = mapper.map(users[i], UserDTO.class);
         }
 
-        return dtos;
+        return userDTOs;
     }
 
     @GET

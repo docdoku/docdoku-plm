@@ -53,7 +53,7 @@ public class ActivityModelDTO implements Serializable {
     private Integer tasksToComplete;
 
     public ActivityModelDTO() {
-        this.taskModels = new ArrayList<TaskModelDTO>();
+        this.taskModels = new ArrayList<>();
     }
 
     public ActivityModelDTO(int step, List<TaskModelDTO> taskModels, String lifeCycleState, Type type, Integer tasksToComplete, Integer relaunchStep) {

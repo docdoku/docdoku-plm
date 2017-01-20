@@ -52,7 +52,7 @@ public class GuestSAM extends CustomSAM {
     public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
 
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
-        LOGGER.log(Level.FINE, "Validating request @"+request.getMethod() +" " + request.getRequestURI());
+        LOGGER.log(Level.FINE, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
 
         CallerPrincipalCallback callerPrincipalCallback = new CallerPrincipalCallback(clientSubject, "");
         GroupPrincipalCallback groupPrincipalCallback = new GroupPrincipalCallback(clientSubject, new String[]{UserGroupMapping.GUEST_ROLE_ID});
@@ -71,7 +71,7 @@ public class GuestSAM extends CustomSAM {
     @Override
     public boolean canHandle(MessageInfo messageInfo) {
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
-        return AuthServices.isPublicRequestURI(request.getRequestURI());
+        return AuthServices.isPublicRequestURI(request.getContextPath(), request.getRequestURI());
     }
 
 }

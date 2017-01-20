@@ -389,12 +389,12 @@ public class ProductInstancesResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         List<ProductInstanceIteration> productInstanceIterationList = productInstanceService.getProductInstanceIterations(new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemId));
-        List<ProductInstanceIterationDTO> dtos = new ArrayList<>();
+        List<ProductInstanceIterationDTO> productInstanceIterationDTOs = new ArrayList<>();
         for (ProductInstanceIteration productInstanceIteration : productInstanceIterationList) {
             ProductInstanceIterationDTO productInstanceIterationDTO = mapper.map(productInstanceIteration, ProductInstanceIterationDTO.class);
-            dtos.add(productInstanceIterationDTO);
+            productInstanceIterationDTOs.add(productInstanceIterationDTO);
         }
-        return Response.ok(new GenericEntity<List<ProductInstanceIterationDTO>>((List<ProductInstanceIterationDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<ProductInstanceIterationDTO>>((List<ProductInstanceIterationDTO>) productInstanceIterationDTOs) {
         }).build();
     }
 
@@ -921,7 +921,7 @@ public class ProductInstancesResource {
             PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
         List<PathToPathLink> pathToPathLinks = productInstanceService.getPathToPathLinkFromSourceAndTarget(workspaceId, configurationItemId, serialNumber, sourcePathAsString, targetPathAsString);
-        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, configurationItemId);
 
         for (PathToPathLink pathToPathLink : pathToPathLinks) {
@@ -939,16 +939,15 @@ public class ProductInstancesResource {
             List<LightPartLinkDTO> targetLightPartLinkDTOs = new ArrayList<>();
             for (PartLink partLink : targetPath) {
                 LightPartLinkDTO lightPartLinkDTO = new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId());
-                ;
                 targetLightPartLinkDTOs.add(lightPartLinkDTO);
             }
 
             pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
             pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
-            dtos.add(pathToPathLinkDTO);
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
 
-        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) pathToPathLinkDTOs) {
         }).build();
     }
 
@@ -972,11 +971,11 @@ public class ProductInstancesResource {
             ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
 
         List<PathToPathLink> pathToPathLinks = productInstanceService.getRootPathToPathLinks(workspaceId, configurationItemId, serialNumber, type);
-        List<LightPathToPathLinkDTO> dtos = new ArrayList<>();
+        List<LightPathToPathLinkDTO> lightPathToPathLinkDTOs = new ArrayList<>();
         for (PathToPathLink pathToPathLink : pathToPathLinks) {
-            dtos.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
+            lightPathToPathLinkDTOs.add(mapper.map(pathToPathLink, LightPathToPathLinkDTO.class));
         }
-        return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<LightPathToPathLinkDTO>>((List<LightPathToPathLinkDTO>) lightPathToPathLinkDTOs) {
         }).build();
     }
 
@@ -1020,10 +1019,10 @@ public class ProductInstancesResource {
     }
 
 
-    private DocumentRevisionKey[] createDocumentRevisionKeys(Set<DocumentRevisionDTO> dtos) {
-        DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
+    private DocumentRevisionKey[] createDocumentRevisionKeys(Set<DocumentRevisionDTO> documentRevisionDTOs) {
+        DocumentRevisionKey[] data = new DocumentRevisionKey[documentRevisionDTOs.size()];
         int i = 0;
-        for (DocumentRevisionDTO dto : dtos) {
+        for (DocumentRevisionDTO dto : documentRevisionDTOs) {
             data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
         return data;
@@ -1058,13 +1057,13 @@ public class ProductInstancesResource {
     }
 
     private Response makeList(List<ProductInstanceMaster> productInstanceMasterList) {
-        List<ProductInstanceMasterDTO> dtos = new ArrayList<>();
+        List<ProductInstanceMasterDTO> productInstanceMasterDTOs = new ArrayList<>();
         for (ProductInstanceMaster productInstanceMaster : productInstanceMasterList) {
             ProductInstanceMasterDTO productInstanceMasterDTO = mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class);
             productInstanceMasterDTO.setConfigurationItemId(productInstanceMaster.getInstanceOf().getId());
-            dtos.add(productInstanceMasterDTO);
+            productInstanceMasterDTOs.add(productInstanceMasterDTO);
         }
-        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) productInstanceMasterDTOs) {
         }).build();
     }
 

@@ -27,8 +27,11 @@ import javax.security.auth.message.AuthException;
 import javax.security.auth.message.AuthStatus;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Authentication context
@@ -45,22 +48,46 @@ public class CustomServerAuthContext implements ServerAuthContext {
         this.serverAuthModules = serverAuthModules;
     }
 
+    private static final Logger LOGGER = Logger.getLogger(CustomServerAuthContext.class.getName());
+
     @Override
     public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
+
+        HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
+        HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
+        AuthServices.addCORSHeaders(response);
+
+        LOGGER.log(Level.FINE, "validateRequest @" + request.getMethod() + " " + request.getRequestURI());
+
+        if (isOptionsRequest(request)) {
+            return AuthStatus.SUCCESS;
+        }
+
         CustomSAM module = getModule(messageInfo);
 
         if (module != null) {
             return module.validateRequest(messageInfo, clientSubject, serviceSubject);
         }
 
-        HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        return AuthStatus.FAILURE;
 
+        return AuthStatus.FAILURE;
     }
+
 
     @Override
     public AuthStatus secureResponse(MessageInfo messageInfo, Subject serviceSubject) throws AuthException {
+
+        HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
+        HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
+        AuthServices.addCORSHeaders(response);
+
+        LOGGER.log(Level.FINE, "secureResponse @" + request.getMethod() + " " + request.getRequestURI());
+
+        if (isOptionsRequest(request)) {
+            return AuthStatus.SEND_SUCCESS;
+        }
+
         CustomSAM module = getModule(messageInfo);
 
         if (module != null) {
@@ -76,6 +103,12 @@ public class CustomServerAuthContext implements ServerAuthContext {
         if (module != null) {
             module.cleanSubject(messageInfo, subject);
         }
+    }
+
+
+
+    private boolean isOptionsRequest(HttpServletRequest request) {
+        return request.getMethod().equals("OPTIONS");
     }
 
     private CustomSAM getModule(MessageInfo messageInfo) {

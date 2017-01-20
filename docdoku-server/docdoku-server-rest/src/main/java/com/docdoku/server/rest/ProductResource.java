@@ -21,8 +21,6 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
-import com.docdoku.core.configuration.CascadeResult;
-import com.docdoku.core.configuration.PathChoice;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationLink;
@@ -59,6 +57,7 @@ import java.net.URLEncoder;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author Florent Garin
@@ -111,18 +110,18 @@ public class ProductResource {
             throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, NotAllowedException {
 
         List<ConfigurationItem> cis = productService.getConfigurationItems(workspaceId);
-        ConfigurationItemDTO[] dtos = new ConfigurationItemDTO[cis.size()];
+        ConfigurationItemDTO[] configurationItemDTOs = new ConfigurationItemDTO[cis.size()];
 
         for (int i = 0; i < cis.size(); i++) {
             ConfigurationItem ci = cis.get(i);
-            dtos[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(), UserDTO.class), ci.getId(), ci.getWorkspaceId(),
+            configurationItemDTOs[i] = new ConfigurationItemDTO(mapper.map(ci.getAuthor(), UserDTO.class), ci.getId(), ci.getWorkspaceId(),
                     ci.getDescription(), ci.getDesignItem().getNumber(), ci.getDesignItem().getName(), ci.getDesignItem().getLastRevision().getVersion());
-            dtos[i].setPathToPathLinks(getPathToPathLinksForGivenConfigurationItem(ci));
+            configurationItemDTOs[i].setPathToPathLinks(getPathToPathLinksForGivenConfigurationItem(ci));
             // TODO : find a better way to detect modification notifications on products. Too heavy for big structures.
-            //dtos[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
+            //configurationItemDTOs[i].setHasModificationNotification(productService.hasModificationNotification(ci.getKey()));
         }
 
-        return dtos;
+        return configurationItemDTOs;
     }
 
     @GET
@@ -200,14 +199,16 @@ public class ProductResource {
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
         ProductStructureFilter filter = psFilterService.getPSFilter(ciKey, configSpecType, diverge);
         List<PartLink> decodedPath = productService.decodePath(ciKey, path);
-        Component component = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
+        Component rootComponent = productService.filterProductStructure(ciKey, filter, decodedPath, 1);
 
-        List<Component> components = component.getComponents();
+        List<Component> components = rootComponent.getComponents();
         List<PartRevisionDTO> partsRevisions = new ArrayList<>();
-        for (int i = 0; i < components.size(); i++) {
-            PartIteration retainedIteration = components.get(i).getRetainedIteration();
+
+
+        for (Component component: components) {
+            PartIteration retainedIteration = component.getRetainedIteration();
             //If no iteration has been retained, then take the last revision (the first one).
-            PartRevision partRevision = retainedIteration == null ? components.get(i).getPartMaster().getLastRevision() : retainedIteration.getPartRevision();
+            PartRevision partRevision = retainedIteration == null ? component.getPartMaster().getLastRevision() : retainedIteration.getPartRevision();
             if (!productService.canAccess(partRevision.getKey())) {
                 continue;
             }
@@ -394,11 +395,7 @@ public class ProductResource {
 
         List<PathChoice> choices = productBaselineService.getBaselineCreationPathChoices(ciKey, type);
 
-        List<PathChoiceDTO> pathChoiceDTOs = new ArrayList<>();
-
-        for (PathChoice choice : choices) {
-            pathChoiceDTOs.add(Tools.mapPathChoiceDTO(choice));
-        }
+        List<PathChoiceDTO> pathChoiceDTOs = choices.stream().map(Tools::mapPathChoiceDTO).collect(Collectors.toList());
 
         return Response.ok(new GenericEntity<List<PathChoiceDTO>>((List<PathChoiceDTO>) pathChoiceDTOs) {
         }).build();
@@ -719,7 +716,7 @@ public class ProductResource {
             ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
         List<PathToPathLink> pathToPathLinks = productService.getPathToPathLinkFromSourceAndTarget(workspaceId, ciId, sourcePathAsString, targetPathAsString);
-        List<PathToPathLinkDTO> dtos = new ArrayList<>();
+        List<PathToPathLinkDTO> pathToPathLinkDTOs = new ArrayList<>();
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
 
@@ -743,9 +740,9 @@ public class ProductResource {
 
             pathToPathLinkDTO.setSourceComponents(sourceLightPartLinkDTOs);
             pathToPathLinkDTO.setTargetComponents(targetLightPartLinkDTOs);
-            dtos.add(pathToPathLinkDTO);
+            pathToPathLinkDTOs.add(pathToPathLinkDTO);
         }
-        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<PathToPathLinkDTO>>((List<PathToPathLinkDTO>) pathToPathLinkDTOs) {
         }).build();
     }
 
@@ -831,7 +828,7 @@ public class ProductResource {
             ConfigurationItemNotFoundException, PartUsageLinkNotFoundException, PartIterationNotFoundException,
             WorkspaceNotEnabledException {
 
-        List<DocumentIterationLinkDTO> dtos = new ArrayList<>();
+        List<DocumentIterationLinkDTO> documentIterationLinkDTOs = new ArrayList<>();
         PartIterationKey partIterationKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
         List<DocumentIterationLink> documentIterationLinkList = productService.getDocumentLinksAsDocumentIterations(workspaceId, ciId, configSpec, partIterationKey);
         for (DocumentIterationLink documentIterationLink : documentIterationLinkList) {
@@ -847,10 +844,10 @@ public class ProductResource {
             documentIterationLinkDTO.setWorkspaceId(documentIteration.getWorkspaceId());
             documentIterationLinkDTO.setCommentLink(documentLink.getComment());
 
-            dtos.add(documentIterationLinkDTO);
+            documentIterationLinkDTOs.add(documentIterationLinkDTO);
 
         }
-        return Response.ok(new GenericEntity<List<DocumentIterationLinkDTO>>((List<DocumentIterationLinkDTO>) dtos) {
+        return Response.ok(new GenericEntity<List<DocumentIterationLinkDTO>>((List<DocumentIterationLinkDTO>) documentIterationLinkDTOs) {
         }).build();
     }
 
@@ -874,7 +871,7 @@ public class ProductResource {
             NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        CascadeResult cascadeResult = cascadeActionService.cascadeCheckout(ciKey, path);
+        CascadeResult cascadeResult = cascadeActionService.cascadeCheckOut(ciKey, path);
         return Response.ok(cascadeResult).build();
     }
 
@@ -900,7 +897,7 @@ public class ProductResource {
             NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        CascadeResult cascadeResult = cascadeActionService.cascadeCheckin(ciKey, path, iterationNoteDTO.getIterationNote());
+        CascadeResult cascadeResult = cascadeActionService.cascadeCheckIn(ciKey, path, iterationNoteDTO.getIterationNote());
         return Response.ok(cascadeResult).build();
     }
 
@@ -924,7 +921,7 @@ public class ProductResource {
             NotAllowedException, PartUsageLinkNotFoundException, WorkspaceNotEnabledException {
 
         ConfigurationItemKey ciKey = new ConfigurationItemKey(workspaceId, ciId);
-        CascadeResult cascadeResult = cascadeActionService.cascadeUndocheckout(ciKey, path);
+        CascadeResult cascadeResult = cascadeActionService.cascadeUndoCheckOut(ciKey, path);
         return Response.ok(cascadeResult).build();
     }
 

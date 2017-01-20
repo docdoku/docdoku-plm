@@ -54,6 +54,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RequestScoped
 @Api(hidden = true, value = "document", description = "Operations about document")
@@ -375,18 +376,18 @@ public class DocumentResource {
         DocumentRevision[] docR = documentService.createDocumentRevision(
                 new DocumentRevisionKey(workspaceId, documentId, documentVersion),
                 pTitle, pDescription, pWorkflowModelId, userEntries, userGroupEntries, userRoleMapping, groupRoleMapping);
-        DocumentRevisionDTO[] dtos = new DocumentRevisionDTO[docR.length];
+        DocumentRevisionDTO[] documentRevisionDTOs = new DocumentRevisionDTO[docR.length];
 
         for (int i = 0; i < docR.length; i++) {
-            dtos[i] = mapper.map(docR[i], DocumentRevisionDTO.class);
-            dtos[i].setPath(docR[i].getLocation().getCompletePath());
-            dtos[i].setLifeCycleState(docR[i].getLifeCycleState());
-            dtos[i] = Tools.createLightDocumentRevisionDTO(dtos[i]);
-            dtos[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR[i]));
-            dtos[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR[i]));
+            documentRevisionDTOs[i] = mapper.map(docR[i], DocumentRevisionDTO.class);
+            documentRevisionDTOs[i].setPath(docR[i].getLocation().getCompletePath());
+            documentRevisionDTOs[i].setLifeCycleState(docR[i].getLifeCycleState());
+            documentRevisionDTOs[i] = Tools.createLightDocumentRevisionDTO(documentRevisionDTOs[i]);
+            documentRevisionDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docR[i]));
+            documentRevisionDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docR[i]));
         }
 
-        return dtos;
+        return documentRevisionDTOs;
     }
 
     @PUT
@@ -643,7 +644,7 @@ public class DocumentResource {
     }
 
     @PUT
-    @ApiOperation(value = "Unpublish a document",
+    @ApiOperation(value = "Un-publish a document",
             response = Response.class)
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Successful un-publication"),
@@ -688,7 +689,7 @@ public class DocumentResource {
     }
 
     @GET
-    @ApiOperation(value = "Get document's aborted workflows",
+    @ApiOperation(value = "Get document's aborted workflow history",
             response = WorkflowDTO.class,
             responseContainer = "List")
     @ApiResponses(value = {
@@ -698,21 +699,21 @@ public class DocumentResource {
     })
     @Path("aborted-workflows")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAbortedWorkflowsInDocument(
+    public Response getAbortedWorkflowListInDocument(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, AccessRightException, UserNotActiveException {
-        Workflow[] abortedWorkflows = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
-        List<WorkflowDTO> abortedWorkflowsDTO = new ArrayList<>();
+        Workflow[] abortedWorkflowList = documentWorkflowService.getAbortedWorkflow(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
+        List<WorkflowDTO> abortedWorkflowDTOList = new ArrayList<>();
 
-        for (Workflow abortedWorkflow : abortedWorkflows) {
-            abortedWorkflowsDTO.add(mapper.map(abortedWorkflow, WorkflowDTO.class));
+        for (Workflow abortedWorkflow : abortedWorkflowList) {
+            abortedWorkflowDTOList.add(mapper.map(abortedWorkflow, WorkflowDTO.class));
         }
 
-        Collections.sort(abortedWorkflowsDTO);
+        Collections.sort(abortedWorkflowDTOList);
 
-        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowsDTO) {
+        return Response.ok(new GenericEntity<List<WorkflowDTO>>((List<WorkflowDTO>) abortedWorkflowDTOList) {
         }).build();
     }
 
@@ -737,12 +738,10 @@ public class DocumentResource {
 
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<DocumentIteration> documents = documentService.getInverseDocumentsLink(docKey);
-        Set<DocumentRevisionDTO> dtos = new HashSet<>();
-        for (DocumentIteration doc : documents) {
-            dtos.add(new DocumentRevisionDTO(doc.getWorkspaceId(), doc.getDocumentMasterId(), doc.getTitle(), doc.getVersion()));
-        }
-
-        return Response.ok(new GenericEntity<List<DocumentRevisionDTO>>((List<DocumentRevisionDTO>) new ArrayList<>(dtos)) {
+        Set<DocumentRevisionDTO> documentRevisionDTOs = documents.stream()
+                .map(doc -> new DocumentRevisionDTO(doc.getWorkspaceId(), doc.getDocumentMasterId(), doc.getTitle(), doc.getVersion()))
+                .collect(Collectors.toSet());
+        return Response.ok(new GenericEntity<List<DocumentRevisionDTO>>((List<DocumentRevisionDTO>) new ArrayList<>(documentRevisionDTOs)) {
         }).build();
     }
 
@@ -768,12 +767,10 @@ public class DocumentResource {
 
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         List<PartIteration> parts = productService.getInversePartsLink(docKey);
-        Set<PartRevisionDTO> dtos = new HashSet<>();
-        for (PartIteration part : parts) {
-            dtos.add(new PartRevisionDTO(workspaceId, part.getNumber(), part.getPartName(), part.getVersion()));
-        }
-
-        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) new ArrayList<>(dtos)) {
+        Set<PartRevisionDTO> partRevisionDTOs = parts.stream()
+                .map(part -> new PartRevisionDTO(workspaceId, part.getNumber(), part.getPartName(), part.getVersion()))
+                .collect(Collectors.toSet());
+        return Response.ok(new GenericEntity<List<PartRevisionDTO>>((List<PartRevisionDTO>) new ArrayList<>(partRevisionDTOs)) {
         }).build();
     }
 
@@ -799,11 +796,11 @@ public class DocumentResource {
 
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         Set<ProductInstanceMaster> productInstanceMasterList = productService.getInverseProductInstancesLink(docKey);
-        Set<ProductInstanceMasterDTO> dtos = new HashSet<>();
+        Set<ProductInstanceMasterDTO> productInstanceMasterDTOs = new HashSet<>();
         for (ProductInstanceMaster productInstanceMaster : productInstanceMasterList) {
-            dtos.add(mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class));
+            productInstanceMasterDTOs.add(mapper.map(productInstanceMaster, ProductInstanceMasterDTO.class));
         }
-        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) new ArrayList<>(dtos)) {
+        return Response.ok(new GenericEntity<List<ProductInstanceMasterDTO>>((List<ProductInstanceMasterDTO>) new ArrayList<>(productInstanceMasterDTOs)) {
         }).build();
     }
 
@@ -830,7 +827,7 @@ public class DocumentResource {
         DocumentRevisionKey docKey = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         Set<PathDataMaster> pathDataMasters = productService.getInversePathDataLink(docKey);
 
-        Set<PathDataMasterDTO> dtos = new HashSet<>();
+        Set<PathDataMasterDTO> pathDataMasterDTOs = new HashSet<>();
         for (PathDataMaster pathDataMaster : pathDataMasters) {
             PathDataMasterDTO dto = mapper.map(pathDataMaster, PathDataMasterDTO.class);
             ProductInstanceMaster productInstanceMaster = productService.findProductByPathMaster(workspaceId, pathDataMaster);
@@ -843,10 +840,10 @@ public class DocumentResource {
             dto.setPartLinksList(partLinksList);
 
             dto.setSerialNumber(productInstanceMaster.getSerialNumber());
-            dtos.add(dto);
+            pathDataMasterDTOs.add(dto);
         }
 
-        return Response.ok(new GenericEntity<List<PathDataMasterDTO>>((List<PathDataMasterDTO>) new ArrayList<>(dtos)) {
+        return Response.ok(new GenericEntity<List<PathDataMasterDTO>>((List<PathDataMasterDTO>) new ArrayList<>(pathDataMasterDTOs)) {
         }).build();
 
     }
@@ -860,10 +857,10 @@ public class DocumentResource {
         }
     }
 
-    private DocumentRevisionKey[] createDocumentRevisionKeys(List<DocumentRevisionDTO> dtos) {
-        DocumentRevisionKey[] data = new DocumentRevisionKey[dtos.size()];
+    private DocumentRevisionKey[] createDocumentRevisionKeys(List<DocumentRevisionDTO> documentRevisionDTOs) {
+        DocumentRevisionKey[] data = new DocumentRevisionKey[documentRevisionDTOs.size()];
         int i = 0;
-        for (DocumentRevisionDTO dto : dtos) {
+        for (DocumentRevisionDTO dto : documentRevisionDTOs) {
             data[i++] = new DocumentRevisionKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion());
         }
 

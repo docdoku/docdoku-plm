@@ -63,7 +63,7 @@ public class BinaryStorageManagerBean implements IBinaryStorageManagerLocal {
             if (previous != null) {
                 return getBinaryResourceInputStream(previous);
             } else {
-                throw new StorageException(new StringBuilder().append("Can't find ").append(binaryResource.getFullName()).toString());
+                throw new StorageException("Can't find " + binaryResource.getFullName());
             }
         }
     }
@@ -82,7 +82,7 @@ public class BinaryStorageManagerBean implements IBinaryStorageManagerLocal {
             if (previous != null) {
                 return getGeneratedFileInputStream(previous, generatedFileName);
             } else {
-                throw new StorageException(new StringBuilder().append("Can't find generated file ").append(generatedFileName).append(" of ").append(binaryResource.getFullName()).toString());
+                throw new StorageException("Can't find generated file " + generatedFileName + " of " + binaryResource.getFullName());
             }
         }
     }
@@ -111,7 +111,7 @@ public class BinaryStorageManagerBean implements IBinaryStorageManagerLocal {
             if (previous != null) {
                 return getLastModified(previous, generatedFileName);
             } else {
-                throw new StorageException(new StringBuilder().append("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
+                throw new StorageException("Can't find source file to get last modified date " + binaryResource.getFullName());
             }
         }
     }
@@ -126,7 +126,7 @@ public class BinaryStorageManagerBean implements IBinaryStorageManagerLocal {
             if (previous != null) {
                 copyData(previous, destination);
             } else {
-                throw new StorageException(new StringBuilder().append("Can't find source file to copy ").append(source.getFullName()).toString());
+                throw new StorageException("Can't find source file to copy " + source.getFullName());
             }
         }
     }
@@ -144,7 +144,7 @@ public class BinaryStorageManagerBean implements IBinaryStorageManagerLocal {
             if (previous != null) {
                 return getEffectiveBinaryResourceFile(previous);
             } else {
-                throw new StorageException(new StringBuilder().append("Can't find resource ").append(binaryResource.getFullName()).toString());
+                throw new StorageException("Can't find resource " + binaryResource.getFullName());
             }
         }
     }

@@ -33,13 +33,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/*
- *
+/**
  * @author Asmae CHADID on 19/12/14.
  */
-     public class BaselineRule implements TestRule {
+public class BaselineRule implements TestRule {
 
-    private String name ;
+    private String name;
     private ProductBaselineType type;
     private String description;
     private Workspace workspace;
@@ -48,21 +47,22 @@ import java.util.List;
     private ConfigurationItemKey configurationItemKey;
     private ConfigurationItem configurationItem;
     private List<String> substituteLinks = new ArrayList<>();
-    private List<String> optionalUsageLinks = new ArrayList<>();;
+    private List<String> optionalUsageLinks = new ArrayList<>();
 
-    public BaselineRule(String baselineName,ProductBaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released){
+
+    public BaselineRule(String baselineName, ProductBaselineType type, String description, String workspaceId, String login, String partId, String productId, boolean released) {
         name = baselineName;
         this.type = type;
         this.description = description;
         this.workspace = new Workspace(workspaceId);
-        user = new User(workspace, new Account(login,login,login+"@docdoku.com", "en", new Date() ,null));
+        user = new User(workspace, new Account(login, login, login + "@docdoku.com", "en", new Date(), null));
         partMaster = new PartMaster(workspace, partId, user);
-        configurationItemKey = new ConfigurationItemKey("workspace1",productId);
-        configurationItem = new ConfigurationItem(user,workspace, productId, "description");
-        partMaster.setPartRevisions(new ArrayList<PartRevision>());
-        if (released){
-            List<PartRevision> revisions = new ArrayList<PartRevision>();
-            List<PartIteration> iterationLists = new ArrayList<PartIteration>();
+        configurationItemKey = new ConfigurationItemKey("workspace1", productId);
+        configurationItem = new ConfigurationItem(user, workspace, productId, "description");
+        partMaster.setPartRevisions(new ArrayList<>());
+        if (released) {
+            List<PartRevision> revisions = new ArrayList<>();
+            List<PartIteration> iterationLists = new ArrayList<>();
             PartRevision revision = new PartRevision(partMaster, "A", user);
             iterationLists.add(new PartIteration(revision, user));
             revision.setPartIterations(iterationLists);
@@ -74,9 +74,9 @@ import java.util.List;
         configurationItem.setDesignItem(partMaster);
     }
 
-    public BaselineRule(String baselineName,ProductBaselineType type,String description,String workspaceId,String login,String partId,String productId,boolean released,boolean checkedOut){
-        this(baselineName,type,description,workspaceId,login,partId,productId,released);
-        if (checkedOut){
+    public BaselineRule(String baselineName, ProductBaselineType type, String description, String workspaceId, String login, String partId, String productId, boolean released, boolean checkedOut) {
+        this(baselineName, type, description, workspaceId, login, partId, productId, released);
+        if (checkedOut) {
             this.partMaster.getLastReleasedRevision().getIteration(1).getPartRevision().setCheckOutUser(this.user);
         }
     }
@@ -84,84 +84,86 @@ import java.util.List;
 
     @Override
     public Statement apply(Statement statement, Description description) {
-        return new BaselineStatement(statement,this.configurationItem);
+        return new BaselineStatement(statement);
     }
 
     public PartLink getRootPartUsageLink() {
-       return new PartLink() {
-           @Override
-           public int getId() {
-               return 1;
-           }
+        return new PartLink() {
+            @Override
+            public int getId() {
+                return 1;
+            }
 
-           @Override
-           public Character getCode() {
-               return '-';
-           }
+            @Override
+            public Character getCode() {
+                return '-';
+            }
 
-           @Override
-           public String getFullId() {
-               return "-1";
-           }
+            @Override
+            public String getFullId() {
+                return "-1";
+            }
 
-           @Override
-           public double getAmount() {
-               return 1;
-           }
+            @Override
+            public double getAmount() {
+                return 1;
+            }
 
-           @Override
-           public String getUnit() {
-               return null;
-           }
+            @Override
+            public String getUnit() {
+                return null;
+            }
 
-           @Override
-           public String getComment() {
-               return null;
-           }
+            @Override
+            public String getComment() {
+                return null;
+            }
 
-           @Override
-           public boolean isOptional() {
-               return false;
-           }
+            @Override
+            public boolean isOptional() {
+                return false;
+            }
 
-           @Override
-           public PartMaster getComponent() {
-               return configurationItem.getDesignItem();
-           }
+            @Override
+            public PartMaster getComponent() {
+                return configurationItem.getDesignItem();
+            }
 
-           @Override
-           public List<PartSubstituteLink> getSubstitutes() {
-               return null;
-           }
+            @Override
+            public List<PartSubstituteLink> getSubstitutes() {
+                return null;
+            }
 
-           @Override
-           public String getReferenceDescription() {
-               return null;
-           }
+            @Override
+            public String getReferenceDescription() {
+                return null;
+            }
 
-           @Override
-           public List<CADInstance> getCadInstances() {
-               List<CADInstance> cads = new ArrayList<>();
-               CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d);
-               cad.setId(0);
-               cads.add(cad);
-               return cads;
-           }
-       };
+            @Override
+            public List<CADInstance> getCadInstances() {
+                List<CADInstance> cads = new ArrayList<>();
+                CADInstance cad = new CADInstance(0d, 0d, 0d, 0d, 0d, 0d);
+                cad.setId(0);
+                cads.add(cad);
+                return cads;
+            }
+        };
     }
 
-    public class BaselineStatement extends Statement{
+    public class BaselineStatement extends Statement {
         private final Statement statement;
-        public BaselineStatement(Statement s,ConfigurationItem configurationItem){
+
+        public BaselineStatement(Statement s) {
             this.statement = s;
         }
+
         @Override
         public void evaluate() throws Throwable {
             statement.evaluate();
         }
     }
 
-    public ConfigurationItem getConfigurationItem(){
+    public ConfigurationItem getConfigurationItem() {
         return this.configurationItem;
     }
 

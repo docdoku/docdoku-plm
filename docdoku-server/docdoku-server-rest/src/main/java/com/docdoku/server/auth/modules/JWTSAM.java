@@ -58,9 +58,15 @@ public class JWTSAM extends CustomSAM {
         LOGGER.log(Level.FINE, "Validating request @" + request.getMethod() + " " + request.getRequestURI());
 
         String authorization = request.getHeader("Authorization");
-        String[] splitAuthorization = authorization.split(" ");
+        String jwt;
 
-        String jwt = splitAuthorization[1];
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String[] splitAuthorization = authorization.split(" ");
+            jwt = splitAuthorization[1];
+        } else {
+            jwt = request.getParameter("jwtToken");
+        }
+
 
         UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(jwt);
 
@@ -86,11 +92,17 @@ public class JWTSAM extends CustomSAM {
     @Override
     public boolean canHandle(MessageInfo messageInfo) {
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
+
+        // Check in headers
         String authorization = request.getHeader("Authorization");
         if (authorization != null && authorization.startsWith("Bearer ")) {
             return authorization.split(" ").length == 2;
         }
-        return false;
+
+        // In query string (embedded resources)
+        // todo restrict query string usage to files only ?
+        String token = request.getParameter("jwtToken") ;
+        return token != null && !token.isEmpty();
     }
 
 

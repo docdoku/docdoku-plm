@@ -145,7 +145,7 @@ public class ProductInstanceBinaryResource {
             @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException,
             NotAllowedException, PreconditionFailedException, NotModifiedException,
-            RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+            RequestedRangeNotSatisfiableException, UnMatchingUuidException, ExpiredLinkException {
 
 
         String fullName = workspaceId + "/product-instances/" + serialNumber + "/iterations/" + iteration + "/" + fileName;
@@ -232,7 +232,7 @@ public class ProductInstanceBinaryResource {
             @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException,
             NotAllowedException, PreconditionFailedException, NotModifiedException,
-            RequestedRangeNotSatisfiableException, UnmatchingUuidException, ExpiredLinkException {
+            RequestedRangeNotSatisfiableException, UnMatchingUuidException, ExpiredLinkException {
 
 
         String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/" + fileName;
@@ -277,7 +277,7 @@ public class ProductInstanceBinaryResource {
             @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
             PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
-            UnmatchingUuidException, ExpiredLinkException {
+            UnMatchingUuidException, ExpiredLinkException {
 
 
         String fullName = workspaceId + "/product-instances/" + serialNumber + "/pathdata/" + pathDataId + "/iterations/" + iteration + '/' + fileName;

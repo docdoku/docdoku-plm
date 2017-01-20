@@ -31,7 +31,6 @@ import org.apache.commons.io.FileUtils;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -64,7 +63,7 @@ public class FileStorageProvider implements StorageProvider {
                 throw new StorageException(e.getMessage(), e);
             }
         } else {
-            throw new FileNotFoundException(new StringBuilder().append(file.getAbsolutePath()).append(" not found").toString());
+            throw new FileNotFoundException(file.getAbsolutePath() + " not found");
         }
     }
 
@@ -88,10 +87,10 @@ public class FileStorageProvider implements StorageProvider {
             try {
                 FileIO.copyFile(source, target);
             } catch (IOException e) {
-                throw new StorageException(new StringBuilder().append("Error copying ").append(pSourceBinaryResource.getFullName()).append(" to ").append(pTargetBinaryResource.getFullName()).toString(), e);
+                throw new StorageException("Error copying " + pSourceBinaryResource.getFullName() + " to " + pTargetBinaryResource.getFullName(), e);
             }
         } else {
-            throw new FileNotFoundException(new StringBuilder("Can't find source file to copy ").append(pSourceBinaryResource.getFullName()).toString());
+            throw new FileNotFoundException("Can't find source file to copy " + pSourceBinaryResource.getFullName());
         }
     }
 
@@ -107,7 +106,7 @@ public class FileStorageProvider implements StorageProvider {
         if (generatedFile.exists()) {
             return new Date(generatedFile.lastModified());
         } else {
-            throw new FileNotFoundException(new StringBuilder("Can't find source file to get last modified date ").append(binaryResource.getFullName()).toString());
+            throw new FileNotFoundException("Can't find source file to get last modified date " + binaryResource.getFullName());
         }
     }
 
@@ -136,10 +135,10 @@ public class FileStorageProvider implements StorageProvider {
                 FileIO.copyFile(source, target);
                 return target;
             } catch (IOException e) {
-                throw new StorageException(new StringBuilder().append("Error copying ").append(source.getAbsolutePath()).append(" to ").append(pTargetBinaryResource.getFullName()).toString(), e);
+                throw new StorageException("Error copying " + source.getAbsolutePath() + " to " + pTargetBinaryResource.getFullName(), e);
             }
         } else {
-            throw new FileNotFoundException(new StringBuilder("Can't find source file to copy ").append(source.getAbsolutePath()).toString());
+            throw new FileNotFoundException("Can't find source file to copy " + source.getAbsolutePath());
         }
     }
 
@@ -165,12 +164,12 @@ public class FileStorageProvider implements StorageProvider {
     public void deleteWorkspaceFolder(String workspaceId, List<BinaryResource> binaryResourcesInWorkspace) throws StorageException {
         if(workspaceId != null && !workspaceId.isEmpty()){
             try{
-                File rootFolder = new File(new StringBuilder().append(vaultPath).append("/").append(workspaceId).toString());
+                File rootFolder = new File(vaultPath + "/" + workspaceId);
                 if(rootFolder.exists()){
                     FileUtils.deleteDirectory(rootFolder);
                 }
             } catch (IOException e) {
-                throw new StorageException(new StringBuilder().append("Error deleting directory for workspace ").append(workspaceId).toString(), e);
+                throw new StorageException("Error deleting directory for workspace " + workspaceId, e);
             }
         }
     }
@@ -178,15 +177,15 @@ public class FileStorageProvider implements StorageProvider {
     @Override
     public void renameData(File src, String pNewName) throws StorageException {
         if(src.exists()){
-            src.renameTo(new File(new StringBuilder().append(src.getParentFile().getAbsolutePath()).append("/").append(Tools.unAccent(pNewName)).toString()));
+            src.renameTo(new File(src.getParentFile().getAbsolutePath() + "/" + Tools.unAccent(pNewName)));
         }else{
-            throw new StorageException(new StringBuilder().append("Error renaming file ").append(src.getAbsolutePath()).toString());
+            throw new StorageException("Error renaming file " + src.getAbsolutePath());
         }
     }
 
     private String getVirtualPath(BinaryResource pBinaryResource) {
         String normalizedName = Tools.unAccent(pBinaryResource.getFullName());
-        return new StringBuilder().append(this.vaultPath).append("/").append(normalizedName).toString();
+        return this.vaultPath + "/" + normalizedName;
     }
 
     private File getGeneratedFilesFolder(BinaryResource pBinaryResource) {
@@ -207,7 +206,7 @@ public class FileStorageProvider implements StorageProvider {
                 throw new StorageException(e.getMessage(), e);
             }
         } else {
-            throw new FileNotFoundException(new StringBuilder().append(file.getAbsolutePath()).append(" not found").toString());
+            throw new FileNotFoundException(file.getAbsolutePath() + " not found");
         }
     }
 

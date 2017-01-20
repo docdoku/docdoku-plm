@@ -35,6 +35,7 @@ import org.dozer.DozerBeanMapperSingletonWrapper;
 import org.dozer.Mapper;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author Florent Garin
@@ -46,6 +47,9 @@ public class Tools {
     }
 
     public static String stripTrailingSlash(String completePath) {
+        if (completePath == null || completePath.isEmpty()) {
+            return completePath;
+        }
         if (completePath.charAt(completePath.length() - 1) == '/') {
             return completePath.substring(0, completePath.length() - 1);
         } else {
@@ -96,11 +100,7 @@ public class Tools {
     }
 
     public static List<ModificationNotificationDTO> mapModificationNotificationsToModificationNotificationDTO(Collection<ModificationNotification> pNotifications) {
-        List<ModificationNotificationDTO> dtos = new ArrayList<>();
-        for (ModificationNotification notification : pNotifications) {
-            dtos.add(mapModificationNotificationToModificationNotificationDTO(notification));
-        }
-        return dtos;
+        return pNotifications.stream().map(Tools::mapModificationNotificationToModificationNotificationDTO).collect(Collectors.toList());
     }
 
     public static ModificationNotificationDTO mapModificationNotificationToModificationNotificationDTO(ModificationNotification pNotification) {
@@ -215,8 +215,8 @@ public class Tools {
         partIterationDTO.setNumber(partIteration.getPartRevision().getPartNumber());
         partIterationDTO.setVersion(partIteration.getPartRevision().getVersion());
 
-        if(!partIteration.getGeometries().isEmpty()){
-            partIterationDTO.setGeometryFileURI("/api/files/"+partIteration.getSortedGeometries().get(0).getFullName());
+        if (!partIteration.getGeometries().isEmpty()) {
+            partIterationDTO.setGeometryFileURI("/api/files/" + partIteration.getSortedGeometries().get(0).getFullName());
         }
 
         return partIterationDTO;
@@ -233,13 +233,13 @@ public class Tools {
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()) {
             BaselinedDocument baselinedDocument = map.getValue();
             DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
-            baselinedDocumentDTOs.add(new BaselinedDocumentDTO(targetDocument.getDocumentMasterId(), targetDocument.getVersion(),targetDocument.getIteration(),targetDocument.getTitle()));
+            baselinedDocumentDTOs.add(new BaselinedDocumentDTO(targetDocument.getDocumentMasterId(), targetDocument.getVersion(), targetDocument.getIteration(), targetDocument.getTitle()));
         }
 
         return baselinedDocumentDTOs;
     }
 
-    public static BaselinedPartDTO mapPartIterationToBaselinedPart(PartIteration partIteration){
+    public static BaselinedPartDTO mapPartIterationToBaselinedPart(PartIteration partIteration) {
 
         BaselinedPartDTO baselinedPartDTO = new BaselinedPartDTO();
         baselinedPartDTO.setNumber(partIteration.getPartNumber());
@@ -283,7 +283,7 @@ public class Tools {
             PartIteration resolvedIteration = resolvedPartLink.getPartIteration();
             resolvedPartLinkDTO.setPartIteration(new PartIterationDTO(resolvedIteration.getWorkspaceId(), resolvedIteration.getName(), resolvedIteration.getNumber(), resolvedIteration.getVersion(), resolvedIteration.getIteration()));
             PartLink partLink = resolvedPartLink.getPartLink();
-            resolvedPartLinkDTO.setPartLink(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(),partLink.getReferenceDescription(),partLink.getFullId()));
+            resolvedPartLinkDTO.setPartLink(new LightPartLinkDTO(partLink.getComponent().getNumber(), partLink.getComponent().getName(), partLink.getReferenceDescription(), partLink.getFullId()));
             resolvedPath.add(resolvedPartLinkDTO);
         }
         pathChoiceDTO.setResolvedPath(resolvedPath);

@@ -153,7 +153,7 @@ public class DocumentBinaryResource {
             @ApiParam(required = false, value = "Resource token") @PathParam("uuid") final String pUuid)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
             NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException,
-            UnmatchingUuidException, ExpiredLinkException {
+            UnMatchingUuidException, ExpiredLinkException {
 
         String fullName;
         if (pUuid != null && !pUuid.isEmpty()) {
@@ -260,9 +260,9 @@ public class DocumentBinaryResource {
     }
 
     private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String documentId, String version, int iteration, String referer)
-            throws UnmatchingUuidException, ExpiredLinkException, NotAllowedException {
+            throws UnMatchingUuidException, ExpiredLinkException, NotAllowedException {
         if (!(sharedEntity instanceof SharedDocument)) {
-            throw new UnmatchingUuidException();
+            throw new UnMatchingUuidException();
         }
 
         checkUuidReferer(sharedEntity, referer);
@@ -275,7 +275,7 @@ public class DocumentBinaryResource {
                 !documentRevision.getDocumentMasterId().equals(documentId) ||
                 !documentRevision.getVersion().equals(version) ||
                 (null != lastCheckedInIteration && lastCheckedInIteration.getIteration() < iteration)) {
-            throw new UnmatchingUuidException();
+            throw new UnMatchingUuidException();
         }
     }
 

@@ -82,13 +82,13 @@ public class WorkflowModelResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         WorkflowModel[] workflowModels = workflowService.getWorkflowModels(workspaceId);
-        WorkflowModelDTO[] dtos = new WorkflowModelDTO[workflowModels.length];
+        WorkflowModelDTO[] workflowModelDTOs = new WorkflowModelDTO[workflowModels.length];
 
         for (int i = 0; i < workflowModels.length; i++) {
-            dtos[i] = mapper.map(workflowModels[i], WorkflowModelDTO.class);
+            workflowModelDTOs[i] = mapper.map(workflowModels[i], WorkflowModelDTO.class);
         }
 
-        return dtos;
+        return workflowModelDTOs;
     }
 
     @GET

@@ -111,7 +111,7 @@ public class DocumentBaselinesResource {
      *
      * @param workspaceId         The current workspace
      * @param documentBaselineDTO Description of the baseline to create
-     * @return Reponse of the transaction
+     * @return the created baseline
      */
     @POST
     @ApiOperation(value = "Create baseline",
@@ -251,7 +251,7 @@ public class DocumentBaselinesResource {
      * Try to put a document baseline in a response
      *
      * @param baselineDTO The document baseline to add
-     * @return The reponse with the document baseline
+     * @return a Response object with created baseline as entity
      */
     private Response prepareCreatedResponse(DocumentBaselineDTO baselineDTO) {
         try {

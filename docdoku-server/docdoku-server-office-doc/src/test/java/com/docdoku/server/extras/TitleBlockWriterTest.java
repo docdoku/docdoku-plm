@@ -102,7 +102,6 @@ public class TitleBlockWriterTest {
     }
 
 
-
     @Test
     public void createTitleBlockForDocumentIterationTest() throws Exception {
         DocumentTitleBlockData documentTitleData = new DocumentTitleBlockData(documentIteration, new Locale("en"));
@@ -140,6 +139,8 @@ public class TitleBlockWriterTest {
 
         URL resource = TitleBlockWriterTest.class.getClassLoader()
                 .getResource("com/docdoku/server/extras/sample.pdf");
+
+        Assert.assertNotNull(resource);
 
         byte[] pdfBytes = IOUtils.toByteArray(new FileInputStream(resource.getPath()));
 

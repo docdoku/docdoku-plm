@@ -39,7 +39,7 @@ import java.util.logging.Logger;
 @Singleton
 public class FileConverter {
 
-    private static final String PROPERTIES_FILE = "/com/docdoku/server/viewers/conf.properties";
+    private static final String OO_PROPERTIES_FILE = "/com/docdoku/server/viewers/open-office.properties";
     private static final String OO_HOME_KEY = "com.docdoku.server.viewers.ooHome";
     private static final String OO_PORT_KEY = "com.docdoku.server.viewers.ooPort";
     private static final Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
@@ -49,7 +49,7 @@ public class FileConverter {
     @PostConstruct
     private void init() {
 
-        try (InputStream inputStream = FileConverter.class.getResourceAsStream(PROPERTIES_FILE)){
+        try (InputStream inputStream = FileConverter.class.getResourceAsStream(OO_PROPERTIES_FILE)) {
 
             Properties properties = new Properties();
 
@@ -68,7 +68,7 @@ public class FileConverter {
     }
 
     @PreDestroy
-    private void close(){
+    private void close() {
         officeManager.stop();
     }
 

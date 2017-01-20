@@ -371,13 +371,7 @@ public class PartRevisionDTO implements Serializable {
 
         PartRevisionDTO partRevisionDTO = (PartRevisionDTO) o;
 
-        if (!number.equals(partRevisionDTO.number)) {
-            return false;
-        }
-        if (!version.equals(partRevisionDTO.version)) {
-            return false;
-        }
-        return workspaceId.equals(partRevisionDTO.workspaceId);
+        return number.equals(partRevisionDTO.number) && version.equals(partRevisionDTO.version) && workspaceId.equals(partRevisionDTO.workspaceId);
 
     }
 

@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 
 @XmlRootElement
-@ApiModel(value="FolderDTO", description="This class is a representation of a {@link com.docdoku.core.document.Folder} entity")
+@ApiModel(value = "FolderDTO", description = "This class is a representation of a {@link com.docdoku.core.document.Folder} entity")
 public class FolderDTO implements Serializable {
 
     @ApiModelProperty(value = "Folder full path")
@@ -55,12 +55,12 @@ public class FolderDTO implements Serializable {
         path = parentFolder + "/" + this.name;
     }
 
-    public static String replaceSlashWithColon(String slashedCompletePath) {
-        return slashedCompletePath.replaceAll("/", ":");
+    public static String replaceSlashWithColon(String completePathWithSlashes) {
+        return completePathWithSlashes.replaceAll("/", ":");
     }
 
-    public static String replaceColonWithSlash(String colonedCompletePath) {
-        return colonedCompletePath.replaceAll(":", "/");
+    public static String replaceColonWithSlash(String completePathWithColons) {
+        return completePathWithColons.replaceAll(":", "/");
     }
 
     public static String extractName(String slashedCompletePath) {

@@ -83,7 +83,7 @@ public class AttributesConsistencyUtils {
 
     /**
      * Check the validity of an attribute.
-     * @param newAttr
+     * @param newAttr the attribute to validate
      * @return a boolean stating the validity of the attribute
      */
     private static boolean checkValidAttribute(InstanceAttribute newAttr) {
@@ -105,7 +105,7 @@ public class AttributesConsistencyUtils {
      * Check if an attribute is lock in currentAttrs, that it still exists in pAttributes.
      * Since an attribute does not have a uniq id, for X locked attributes of name N in currentAttrs,
      * we must have X locked attributes of name N in pAttributes.
-     * This function will also check for all attributes in pAttributes their invidual validity.
+     * This function will also check for all attributes in pAttributes their individual validity.
      * @param currentAttrs Current list of attributes
      * @param pAttributes List of attributes to be used.
      * @return a boolean stating the consistency of the attributes

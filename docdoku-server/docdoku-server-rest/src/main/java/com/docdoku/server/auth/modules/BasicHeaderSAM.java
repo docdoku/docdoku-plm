@@ -55,7 +55,6 @@ public class BasicHeaderSAM extends CustomSAM {
     @Override
     public AuthStatus validateRequest(MessageInfo messageInfo, Subject clientSubject, Subject serviceSubject) throws AuthException {
 
-
         HttpServletRequest request = (HttpServletRequest) messageInfo.getRequestMessage();
         HttpServletResponse response = (HttpServletResponse) messageInfo.getResponseMessage();
 
@@ -91,7 +90,9 @@ public class BasicHeaderSAM extends CustomSAM {
             try {
                 callbackHandler.handle(callbacks);
             } catch (IOException | UnsupportedCallbackException e) {
-                throw new RuntimeException(e);
+                LOGGER.log(Level.SEVERE, null, e);
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return AuthStatus.FAILURE;
             }
 
             return AuthStatus.SUCCESS;

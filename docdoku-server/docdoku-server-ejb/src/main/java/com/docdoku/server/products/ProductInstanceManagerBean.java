@@ -150,7 +150,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     public ProductInstanceMaster createProductInstance(String workspaceId, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, Map<String, String> aclUserEntries, Map<String, String> aclUserGroupEntries, List<InstanceAttribute> attributes, DocumentRevisionKey[] links, String[] documentLinkComments) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, BaselineNotFoundException, CreationException, ProductInstanceAlreadyExistsException, NotAllowedException, EntityConstraintException, UserNotActiveException, PathToPathLinkAlreadyExistsException, PartMasterNotFoundException, ProductInstanceMasterNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(configurationItemKey.getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(userLocale, em);
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
 
         checkNameValidity(serialNumber,userLocale);
@@ -217,7 +217,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
             int counter = 0;
             for (DocumentRevisionKey link : links) {
-                DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
+                DocumentLink newLink = new DocumentLink(documentRevisionDAO.loadDocR(link));
                 newLink.setComment(documentLinkComments[counter]);
                 linkDAO.createLink(newLink);
                 productInstanceIteration.getLinkedDocuments().add(newLink);
@@ -235,7 +235,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
     public ProductInstanceMaster updateProductInstance(String workspaceId, int iteration, String iterationNote, ConfigurationItemKey configurationItemKey, String serialNumber, int baselineId, List<InstanceAttribute> attributes, DocumentRevisionKey[] links, String[] documentLinkComments) throws ProductInstanceMasterNotFoundException, UserNotFoundException, AccessRightException, WorkspaceNotFoundException, ProductInstanceIterationNotFoundException, UserNotActiveException, BaselineNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale userLocale = new Locale(user.getLanguage());
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(userLocale, em);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(userLocale, em);
 
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(userLocale, em);
         ProductInstanceMasterKey pInstanceIterationKey = new ProductInstanceMasterKey(serialNumber, workspaceId, configurationItemKey.getId());
@@ -264,7 +264,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
                 int counter = 0;
                 for (DocumentRevisionKey link : links) {
-                    DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
+                    DocumentLink newLink = new DocumentLink(documentRevisionDAO.loadDocR(link));
                     newLink.setComment(documentLinkComments[counter]);
                     linkDAO.createLink(newLink);
                     productInstanceIteration.getLinkedDocuments().add(newLink);
@@ -768,7 +768,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(locale, em);
 
         // Load the product instance
         ProductInstanceMasterDAO productInstanceMasterDAO = new ProductInstanceMasterDAO(locale, em);
@@ -805,7 +805,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
             int counter = 0;
             for (DocumentRevisionKey link : pLinkKeys) {
-                DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
+                DocumentLink newLink = new DocumentLink(documentRevisionDAO.loadDocR(link));
                 newLink.setComment(documentLinkComments[counter]);
                 linkDAO.createLink(newLink);
                 pathDataIteration.getLinkedDocuments().add(newLink);
@@ -1284,7 +1284,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
     private PathDataIteration createDocumentLink(Locale locale, PathDataIteration pathDataIteration, DocumentRevisionKey[] links, String[] documentLinkComments) throws DocumentRevisionNotFoundException {
         DocumentLinkDAO linkDAO = new DocumentLinkDAO(locale, em);
-        DocumentRevisionDAO docRDAO = new DocumentRevisionDAO(locale, em);
+        DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(locale, em);
 
         if (links != null) {
             Set<DocumentLink> currentLinks = new HashSet<>(pathDataIteration.getLinkedDocuments());
@@ -1295,7 +1295,7 @@ public class ProductInstanceManagerBean implements IProductInstanceManagerLocal 
 
             int counter = 0;
             for (DocumentRevisionKey link : links) {
-                DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
+                DocumentLink newLink = new DocumentLink(documentRevisionDAO.loadDocR(link));
                 newLink.setComment(documentLinkComments[counter]);
                 linkDAO.createLink(newLink);
                 pathDataIteration.getLinkedDocuments().add(newLink);

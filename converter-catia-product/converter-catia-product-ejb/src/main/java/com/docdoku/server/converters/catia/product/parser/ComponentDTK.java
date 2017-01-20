@@ -47,7 +47,7 @@ public class ComponentDTK {
 
     public void addMetaData(MetaData metaData) {
         if (metaDataList == null) {
-            metaDataList = new ArrayList<MetaData>();
+            metaDataList = new ArrayList<>();
         }
         metaDataList.add(metaData);
     }
@@ -59,7 +59,7 @@ public class ComponentDTK {
     public void addSubComponent(ComponentDTK componentDtk) {
 
         if (subComponentDtkList == null)
-            subComponentDtkList = new ArrayList<ComponentDTK>();
+            subComponentDtkList = new ArrayList<>();
 
         subComponentDtkList.add(componentDtk);
 

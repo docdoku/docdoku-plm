@@ -81,15 +81,15 @@ public class LOVResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
 
-        List<ListOfValuesDTO> lovsDTO = new ArrayList<>();
-        List<ListOfValues> lovs = lovManager.findLOVFromWorkspace(workspaceId);
+        List<ListOfValuesDTO> LOVDTOs = new ArrayList<>();
+        List<ListOfValues> LOVs = lovManager.findLOVFromWorkspace(workspaceId);
 
-        for (ListOfValues lov : lovs) {
+        for (ListOfValues lov : LOVs) {
             ListOfValuesDTO lovDTO = mapper.map(lov, ListOfValuesDTO.class);
             lovDTO.setDeletable(lovManager.isLOVDeletable(new ListOfValuesKey(lov.getWorkspaceId(), lov.getName())));
-            lovsDTO.add(lovDTO);
+            LOVDTOs.add(lovDTO);
         }
-        return Response.ok(new GenericEntity<List<ListOfValuesDTO>>((List<ListOfValuesDTO>) lovsDTO) {
+        return Response.ok(new GenericEntity<List<ListOfValuesDTO>>((List<ListOfValuesDTO>) LOVDTOs) {
         }).build();
     }
 

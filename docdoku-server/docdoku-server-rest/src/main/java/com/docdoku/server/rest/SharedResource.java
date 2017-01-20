@@ -231,11 +231,11 @@ public class SharedResource {
         } catch (Exception e) {
             return null;
         }
-        StringBuffer hexString = new StringBuffer();
+        StringBuilder hexString = new StringBuilder();
         for (byte aDigest : digest) {
             String hex = Integer.toHexString(0xFF & aDigest);
             if (hex.length() == 1) {
-                hexString.append("0" + hex);
+                hexString.append("0").append(hex);
             } else {
                 hexString.append(hex);
             }

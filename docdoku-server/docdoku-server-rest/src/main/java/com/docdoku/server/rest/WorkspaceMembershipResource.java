@@ -149,9 +149,9 @@ public class WorkspaceMembershipResource {
 
         WorkspaceUserGroupMembership[] workspaceUserGroupMemberships = userManager.getWorkspaceSpecificUserGroupMemberships(workspaceId);
         List<WorkspaceUserGroupMemberShipDTO> workspaceUserGroupMemberShipDTO = new ArrayList<>();
-        for (int i = 0; i < workspaceUserGroupMemberships.length; i++) {
-            if (workspaceUserGroupMemberships[i] != null) {
-                workspaceUserGroupMemberShipDTO.add(mapper.map(workspaceUserGroupMemberships[i], WorkspaceUserGroupMemberShipDTO.class));
+        for (WorkspaceUserGroupMembership workspaceUserGroupMembership : workspaceUserGroupMemberships) {
+            if (workspaceUserGroupMembership != null) {
+                workspaceUserGroupMemberShipDTO.add(mapper.map(workspaceUserGroupMembership, WorkspaceUserGroupMemberShipDTO.class));
             }
         }
 

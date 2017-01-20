@@ -57,14 +57,6 @@ public class ACLDTO implements Serializable {
         groupEntries.add(aclEntryDTO);
     }
 
-    public void removeUserEntry(String login) {
-        userEntries.remove(login);
-    }
-
-    public void removeGroupEntry(String groupId) {
-        groupEntries.remove(groupId);
-    }
-
     public List<ACLEntryDTO> getGroupEntries() {
         return groupEntries;
     }

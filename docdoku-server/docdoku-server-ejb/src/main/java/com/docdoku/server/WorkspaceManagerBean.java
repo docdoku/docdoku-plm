@@ -38,7 +38,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -146,16 +145,9 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         String workspaceId = workspace.getId();
         try {
             new WorkspaceDAO(em, storageManager).removeWorkspace(workspace);
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "IOException while deleting the workspace : " + workspaceId, e);
-        } catch (StorageException e) {
-            LOGGER.log(Level.SEVERE, "StorageException while deleting the workspace : " + workspaceId, e);
         } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Exception while deleting the workspace : " + workspaceId, e);
-            //TODO : create own exception
             mailerManager.sendWorkspaceDeletionErrorNotification(admin, workspaceId);
-            throw new Exception("Runtime exception while deleting the workspace : " + workspaceId);
-
+            throw e;
         }
 
         mailerManager.sendWorkspaceDeletionNotification(admin, workspaceId);

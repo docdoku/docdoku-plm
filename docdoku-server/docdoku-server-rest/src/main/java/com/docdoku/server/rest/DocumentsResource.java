@@ -248,13 +248,13 @@ public class DocumentsResource {
         int maxResults = limit == 0 ? 20 : limit;
         DocumentRevision[] docRs = documentService.getDocumentRevisionsWithReferenceOrTitle(workspaceId, q, maxResults);
 
-        List<DocumentRevisionDTO> docRevDTOS = new ArrayList<>();
+        List<DocumentRevisionDTO> documentRevisionDTOs = new ArrayList<>();
         for (DocumentRevision docR : docRs) {
             DocumentRevisionDTO docRevDTO = new DocumentRevisionDTO(docR.getWorkspaceId(), docR.getDocumentMasterId(), docR.getTitle(), docR.getVersion());
-            docRevDTOS.add(docRevDTO);
+            documentRevisionDTOs.add(docRevDTO);
         }
 
-        return docRevDTOS.toArray(new DocumentRevisionDTO[docRevDTOS.size()]);
+        return documentRevisionDTOs.toArray(new DocumentRevisionDTO[documentRevisionDTOs.size()]);
     }
 
 

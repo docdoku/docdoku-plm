@@ -409,20 +409,20 @@ public class ChangeRequestsResource {
         return changeRequestDTO;
     }
 
-    private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> dtos) {
-        DocumentIterationKey[] data = new DocumentIterationKey[dtos.size()];
+    private DocumentIterationKey[] createDocumentIterationKeys(List<DocumentIterationDTO> documentIterationDTOList) {
+        DocumentIterationKey[] data = new DocumentIterationKey[documentIterationDTOList.size()];
         int i = 0;
-        for (DocumentIterationDTO dto : dtos) {
+        for (DocumentIterationDTO dto : documentIterationDTOList) {
             data[i++] = new DocumentIterationKey(dto.getWorkspaceId(), dto.getDocumentMasterId(), dto.getVersion(), dto.getIteration());
         }
 
         return data;
     }
 
-    private PartIterationKey[] createPartIterationKeys(List<PartIterationDTO> dtos) {
-        PartIterationKey[] data = new PartIterationKey[dtos.size()];
+    private PartIterationKey[] createPartIterationKeys(List<PartIterationDTO> partIterationDTOs) {
+        PartIterationKey[] data = new PartIterationKey[partIterationDTOs.size()];
         int i = 0;
-        for (PartIterationDTO dto : dtos) {
+        for (PartIterationDTO dto : partIterationDTOs) {
             data[i++] = new PartIterationKey(dto.getWorkspaceId(), dto.getNumber(), dto.getVersion(), dto.getIteration());
         }
 

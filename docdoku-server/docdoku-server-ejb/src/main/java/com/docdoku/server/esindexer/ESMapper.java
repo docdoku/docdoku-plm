@@ -72,8 +72,8 @@ public class ESMapper {
     public static final String CONTENT_KEY = "content";
     public static final String STANDARD_PART_KEY = "standardPart";
     public static final String PART_TYPE = "part";
-    public static final String DOCUMENT_TYPE = "document" ;
-    public static final String ATTR_NESTED_PATH = ITERATIONS_KEY +"."+ ATTRIBUTES_KEY;
+    public static final String DOCUMENT_TYPE = "document";
+    public static final String ATTR_NESTED_PATH = ITERATIONS_KEY + "." + ATTRIBUTES_KEY;
 
     private ESMapper() {
         super();
@@ -101,7 +101,8 @@ public class ESMapper {
 
     /**
      * Convert a Document Revision to a JSON Builder.
-     *"" + attr.getValue()
+     * "" + attr.getValue()
+     *
      * @param doc           Document to pass to JSON
      * @param contentInputs Map of binary resources content
      * @return A JSON Builder to index
@@ -207,16 +208,16 @@ public class ESMapper {
         }
         if (!doc.getInstanceAttributes().isEmpty()) {
             Collection<InstanceAttribute> listAttr = doc.getInstanceAttributes();
-            List<Map<String,Object>> listAttributes = new ArrayList<>();
+            List<Map<String, Object>> listAttributes = new ArrayList<>();
             params.put(ATTRIBUTES_KEY, listAttributes);
             for (InstanceAttribute attr : listAttr) {
-                Map<String,Object> attributesParams = new HashMap<>();
+                Map<String, Object> attributesParams = new HashMap<>();
                 listAttributes.add(attributesParams);
                 setAttrParam(attributesParams, attr, 0.6f);
             }
         }
         if (!doc.getAttachedFiles().isEmpty()) {
-            List<Map<String,Object>> filesParams = new ArrayList<>();
+            List<Map<String, Object>> filesParams = new ArrayList<>();
             params.put(FILES_KEY, filesParams);
             for (Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
                 Map<String, Object> map = new HashMap<>();
@@ -234,8 +235,8 @@ public class ESMapper {
      * Create the Json for a new Part.
      * This will be used if and only if the PartRevision has not been indexed in elastic search.
      *
-     * @param part the PartIteration which was checkin.
-     * @param binaryList
+     * @param part       the PartIteration which was checkin.
+     * @param binaryList List of files name
      * @return The Json produced contains the PartRevision information and the information of all the iteration.
      */
     protected static XContentBuilder partRevisionToJson(PartIteration part, Map<String, String> binaryList) {
@@ -276,7 +277,7 @@ public class ESMapper {
                     tmp.startArray(ATTRIBUTES_KEY);
                     for (InstanceAttribute attr : listAttr) {
                         tmp.startObject();
-                        setAttrField(tmp,attr,0.6f);
+                        setAttrField(tmp, attr, 0.6f);
                         tmp.endObject();
                     }
                     tmp.endArray();
@@ -308,8 +309,8 @@ public class ESMapper {
     /**
      * Create a Map of all the data of an iteration.
      *
-     * @param part PartIteration to be Mapped.
-     * @param binaryList
+     * @param part       PartIteration to be Mapped.
+     * @param binaryList List of files name
      * @return The Map is well formatted to be used by an elasticsearch Script
      */
     protected static Map<String, Object> partIterationMap(PartIteration part, Map<String, String> binaryList) {
@@ -343,17 +344,17 @@ public class ESMapper {
 
         if (!part.getInstanceAttributes().isEmpty()) {
             Collection<InstanceAttribute> listAttr = part.getInstanceAttributes();
-            List<Map<String,Object>> listAttributes = new ArrayList<>();
+            List<Map<String, Object>> listAttributes = new ArrayList<>();
             params.put(ATTRIBUTES_KEY, listAttributes);
             for (InstanceAttribute attr : listAttr) {
-                Map<String,Object> attributesParams = new HashMap<>();
+                Map<String, Object> attributesParams = new HashMap<>();
                 listAttributes.add(attributesParams);
                 setAttrParam(attributesParams, attr, 0.6f);
             }
         }
 
         if (!part.getAttachedFiles().isEmpty()) {
-            List<Map<String,Object>> filesParams = new ArrayList<>();
+            List<Map<String, Object>> filesParams = new ArrayList<>();
             params.put(FILES_KEY, filesParams);
             for (Map.Entry<String, String> contentInput : binaryList.entrySet()) {
                 Map<String, Object> map = new HashMap<>();
@@ -366,26 +367,27 @@ public class ESMapper {
         return params;
     }
 
-    private static void setAttrField(XContentBuilder object,InstanceAttribute attr, float coef ) throws IOException {
-        setField(object,ATTRIBUTE_NAME,attr.getNameWithoutWhiteSpace(),coef);
-        if(attr instanceof InstanceListOfValuesAttribute) {
+    // fixme : what does "coef" means ? should be renamed or documented
+    private static void setAttrField(XContentBuilder object, InstanceAttribute attr, float coef) throws IOException {
+        setField(object, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), coef);
+        if (attr instanceof InstanceListOfValuesAttribute) {
             InstanceListOfValuesAttribute lov = (InstanceListOfValuesAttribute) attr;
             String lovItemName = !lov.getItems().isEmpty() ? lov.getItems().get(lov.getIndexValue()).getName() : "";
-            setField(object,ATTRIBUTE_VALUE,lovItemName,coef);
+            setField(object, ATTRIBUTE_VALUE, lovItemName, coef);
         } else {
-            setField(object,ATTRIBUTE_VALUE,""+attr.getValue(),coef);
+            setField(object, ATTRIBUTE_VALUE, "" + attr.getValue(), coef);
         }
 
     }
 
-    private static void setAttrParam(Map<String,Object> params, InstanceAttribute attr,float coef) {
+    private static void setAttrParam(Map<String, Object> params, InstanceAttribute attr, float coef) {
         setParam(params, ATTRIBUTE_NAME, attr.getNameWithoutWhiteSpace(), coef);
-        if(attr instanceof InstanceListOfValuesAttribute) {
+        if (attr instanceof InstanceListOfValuesAttribute) {
             InstanceListOfValuesAttribute lov = (InstanceListOfValuesAttribute) attr;
             String lovItemName = !lov.getItems().isEmpty() ? lov.getItems().get(lov.getIndexValue()).getName() : "";
             setParam(params, ATTRIBUTE_VALUE, lovItemName, coef);
         } else {
-            setParam(params,ATTRIBUTE_VALUE,""+attr.getValue(),coef);
+            setParam(params, ATTRIBUTE_VALUE, "" + attr.getValue(), coef);
         }
     }
 
