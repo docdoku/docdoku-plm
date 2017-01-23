@@ -93,9 +93,6 @@ public class WorkspaceResource {
     private TagResource tags;
 
     @Inject
-    private CheckedOutDocumentResource checkedOutDocuments;
-
-    @Inject
     private TaskResource tasks;
 
     @Inject
@@ -800,12 +797,6 @@ public class WorkspaceResource {
     @Path("/{workspaceId}/tags")
     public TagResource tags() {
         return tags;
-    }
-
-    @ApiOperation(value = "CheckedOutDocumentResource")
-    @Path("/{workspaceId}/checkedouts")
-    public CheckedOutDocumentResource checkedOuts() {
-        return checkedOutDocuments;
     }
 
     @ApiOperation(value = "TaskResource")

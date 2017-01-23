@@ -75,12 +75,6 @@ public class DocumentsResource {
     public DocumentResource getDocumentResource() {
         return documentResource;
     }
-/*
-    @ApiOperation(value = "SubResource : DocumentBaselinesResource")
-    @Path("baselines")
-    public DocumentBaselinesResource getAllBaselines() {
-        return baselinesResource;
-    }*/
 
     @GET
     @ApiOperation(value = "Get documents in workspace",
@@ -100,21 +94,9 @@ public class DocumentsResource {
             BaselineNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         int maxResult = max != 0 ? max : 20;
-
         DocumentRevision[] docRs = documentService.getFilteredDocumentsInWorkspace(workspaceId, start, maxResult);
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-        }
-
-        return docRsDTOs;
+        return mapToDTOs(docRs);
     }
-
 
     @GET
     @ApiOperation(value = "Search documents",
@@ -145,21 +127,11 @@ public class DocumentsResource {
             @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
             @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder
     ) throws EntityNotFoundException, UserNotActiveException, ESServerException {
+
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);
-
         DocumentRevision[] docRs = documentService.searchDocumentRevisions(documentSearchQuery);
-        DocumentRevisionDTO[] docRsDTOs = new DocumentRevisionDTO[docRs.length];
-
-        for (int i = 0; i < docRs.length; i++) {
-            docRsDTOs[i] = mapper.map(docRs[i], DocumentRevisionDTO.class);
-            docRsDTOs[i].setPath(docRs[i].getLocation().getCompletePath());
-            docRsDTOs[i] = Tools.createLightDocumentRevisionDTO(docRsDTOs[i]);
-            docRsDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-            docRsDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, docRs[i]));
-        }
-
-        return docRsDTOs;
+        return mapToDTOs(docRs);
     }
 
     @GET
@@ -196,17 +168,7 @@ public class DocumentsResource {
             throws EntityNotFoundException, UserNotActiveException {
 
         DocumentRevision[] checkedOutDocumentRevisions = documentService.getCheckedOutDocumentRevisions(workspaceId);
-        DocumentRevisionDTO[] documentRevisionDTOs = new DocumentRevisionDTO[checkedOutDocumentRevisions.length];
-
-        for (int i = 0; i < checkedOutDocumentRevisions.length; i++) {
-            documentRevisionDTOs[i] = mapper.map(checkedOutDocumentRevisions[i], DocumentRevisionDTO.class);
-            documentRevisionDTOs[i].setPath(checkedOutDocumentRevisions[i].getLocation().getCompletePath());
-            documentRevisionDTOs[i] = Tools.createLightDocumentRevisionDTO(documentRevisionDTOs[i]);
-            documentRevisionDTOs[i].setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(workspaceId, checkedOutDocumentRevisions[i]));
-            documentRevisionDTOs[i].setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(workspaceId, checkedOutDocumentRevisions[i]));
-        }
-
-        return documentRevisionDTOs;
+        return mapToDTOs(checkedOutDocumentRevisions);
     }
 
     @GET
@@ -258,4 +220,19 @@ public class DocumentsResource {
     }
 
 
+    private DocumentRevisionDTO[] mapToDTOs(DocumentRevision[] docRs) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+
+        List<DocumentRevisionDTO> documentRevisionDTOs = new ArrayList<>();
+
+        for (DocumentRevision doc : docRs) {
+            DocumentRevisionDTO dto = mapper.map(doc, DocumentRevisionDTO.class);
+            dto = Tools.createLightDocumentRevisionDTO(dto);
+            dto.setPath(doc.getLocation().getCompletePath());
+            dto.setIterationSubscription(documentService.isUserIterationChangeEventSubscribedForGivenDocument(doc.getWorkspaceId(), doc));
+            dto.setStateSubscription(documentService.isUserStateChangeEventSubscribedForGivenDocument(doc.getWorkspaceId(), doc));
+            documentRevisionDTOs.add(dto);
+        }
+
+        return documentRevisionDTOs.toArray(new DocumentRevisionDTO[documentRevisionDTOs.size()]);
+    }
 }

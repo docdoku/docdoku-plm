@@ -303,7 +303,7 @@ public class ESIndexer {
         sendNotification(workspaceId, hasSuccess, failureMessage);
     }
 
-    private void generateIndex(String pIndex) throws ESIndexAlreadyExistsException, ESIndexNamingException {
+    private void generateIndex(String pIndex) throws ESIndexNamingException, ESIndexAlreadyExistsException {
         try {
             client.admin().indices().prepareCreate(pIndex)
                     .setSettings(ImmutableSettings.settingsBuilder()
@@ -315,7 +315,6 @@ public class ESIndexer {
                     .setSource(defaultMapping())
                     .execute().actionGet();
         } catch (IndexAlreadyExistsException e) {
-            LOGGER.log(Level.SEVERE, "Cannot create index: " + pIndex + " already exists");
             throw new ESIndexAlreadyExistsException(Locale.getDefault());
         } catch (InvalidIndexNameException e) {
             LOGGER.log(Level.SEVERE, "Cannot create index: " + pIndex + " invalid index name");
@@ -407,7 +406,7 @@ public class ESIndexer {
         try {
             generateIndex(pIndex);
         } catch (ESIndexAlreadyExistsException e) {
-            LOGGER.log(Level.FINEST, null, e);
+            LOGGER.log(Level.FINE, "Index " + pIndex + "already exists", e);
         }
     }
 
@@ -424,10 +423,12 @@ public class ESIndexer {
 
     private BulkRequestBuilder bulkWorkspaceRequestBuilder(BulkRequestBuilder pBulkRequest, String workspaceId, boolean silent) throws ESIndexNamingException {
         BulkRequestBuilder bulkRequest = pBulkRequest;
+        String index = ESTools.formatIndexName(workspaceId);
+
         try {
-            generateIndex(ESTools.formatIndexName(workspaceId));
+            generateIndex(index);
         } catch (ESIndexAlreadyExistsException e) {
-            LOGGER.log(Level.WARNING, "Cannot generate index: " + workspaceId + " already exists");
+            LOGGER.log(Level.FINE, "Index " + index + "already exists");
         } catch (ESIndexNamingException e) {
             LOGGER.log(Level.SEVERE, null, e);
             if (!silent) {

@@ -586,9 +586,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         List<InstanceAttributeTemplate> attrs = new ArrayList<>();
         for (int i = 0; i < pAttributeTemplates.size(); i++) {
-            if (attributesLocked) {
-                pAttributeTemplates.get(i).setLocked(attributesLocked);
-            }
+            pAttributeTemplates.get(i).setLocked(attributesLocked);
             attrs.add(pAttributeTemplates.get(i));
             if (pAttributeTemplates.get(i) instanceof ListOfValuesAttributeTemplate) {
                 ListOfValuesAttributeTemplate lovAttr = (ListOfValuesAttributeTemplate) pAttributeTemplates.get(i);
@@ -1414,7 +1412,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
                 int counter = 0;
                 for (DocumentRevisionKey link : pLinkKeys) {
-                    if (!link.equals(iKey)) {
+                    if (!link.equals(iKey.getDocumentRevision())) {
                         DocumentLink newLink = new DocumentLink(docRDAO.loadDocR(link));
                         newLink.setComment(documentLinkComments[counter]);
                         linkDAO.createLink(newLink);

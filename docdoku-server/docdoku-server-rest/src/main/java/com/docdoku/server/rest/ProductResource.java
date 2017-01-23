@@ -356,9 +356,7 @@ public class ProductResource {
 
     @ApiOperation(value = "SubResource : LayerResource")
     @Path("{ciId}/layers")
-    public LayerResource processLayers(
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId) {
+    public LayerResource processLayers() {
         return layerResource;
     }
 
@@ -636,7 +634,6 @@ public class ProductResource {
     public LightPathToPathLinkDTO createPathToPathLink(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-            @ApiParam(required = true, value = "Product instance serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Path to path link to create") LightPathToPathLinkDTO pathToPathLinkDTO)
             throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException,
             CreationException, UserNotFoundException, ProductInstanceMasterNotFoundException,
@@ -661,7 +658,6 @@ public class ProductResource {
     public LightPathToPathLinkDTO updatePathToPathLink(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-            @ApiParam(required = true, value = "Product instance serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Path to path link id") @PathParam("pathToPathLinkId") int pathToPathLinkId,
             @ApiParam(required = true, value = "Path to path link to update") LightPathToPathLinkDTO pathToPathLinkDTO)
             throws PathToPathLinkAlreadyExistsException, UserNotActiveException, WorkspaceNotFoundException,
@@ -686,7 +682,6 @@ public class ProductResource {
     public Response deletePathToPathLink(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
-            @ApiParam(required = true, value = "Product instance serial number") @PathParam("serialNumber") String serialNumber,
             @ApiParam(required = true, value = "Path to path link id") @PathParam("pathToPathLinkId") int pathToPathLinkId)
             throws PathToPathLinkNotFoundException, UserNotActiveException, WorkspaceNotFoundException,
             UserNotFoundException, ProductInstanceMasterNotFoundException, AccessRightException,

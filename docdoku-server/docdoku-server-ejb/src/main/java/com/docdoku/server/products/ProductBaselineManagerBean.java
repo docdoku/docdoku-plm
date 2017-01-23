@@ -36,7 +36,6 @@ import com.docdoku.core.util.Tools;
 import com.docdoku.server.configuration.PSFilterVisitor;
 import com.docdoku.server.configuration.filter.LatestPSFilter;
 import com.docdoku.server.configuration.filter.ReleasedPSFilter;
-import com.docdoku.server.configuration.spec.ProductBaselineConfigSpec;
 import com.docdoku.server.configuration.spec.ProductBaselineCreationConfigSpec;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.factory.ACLFactory;
@@ -71,19 +70,21 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
-        if(null == name || name.isEmpty()){
-            throw new NotAllowedException(locale,"NotAllowedException61");
+        if (null == name || name.isEmpty()) {
+            throw new NotAllowedException(locale, "NotAllowedException61");
         }
 
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(locale, em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
         List<PartIteration> partIterations = new ArrayList<>();
-        for(PartIterationKey piKey: partIterationKeys){
-            partIterations.add(em.find(PartIteration.class,piKey));
+        for (PartIterationKey piKey : partIterationKeys) {
+            partIterations.add(em.find(PartIteration.class, piKey));
         }
 
-        ProductBaselineCreationConfigSpec filter = new ProductBaselineCreationConfigSpec(user,pType,partIterations,substituteLinks,optionalUsageLinks);
+        ProductBaselineCreationConfigSpec filter = new ProductBaselineCreationConfigSpec(user, pType, partIterations, substituteLinks, optionalUsageLinks);
+
+        List<String> visitedPaths = new ArrayList<>();
 
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
@@ -119,6 +120,8 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
             @Override
             public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
                 // Unused here
+                String encodedPath = Tools.getPathAsString(path);
+                visitedPaths.add(encodedPath);
                 return true;
             }
 
@@ -127,22 +130,25 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         psFilterVisitor.visit(configurationItem.getDesignItem(), -1);
 
         // Visitor has finished, and should have thrown an exception if errors
-        ProductBaseline baseline = new ProductBaseline(user,configurationItem, name, pType, description);
-        new PartCollectionDAO(em).createPartCollection(baseline.getPartCollection());
-        new DocumentCollectionDAO(em).createDocumentCollection(baseline.getDocumentCollection());
+        ProductBaseline baseline = new ProductBaseline(user, configurationItem, name, pType, description);
+        DocumentCollection documentCollection = baseline.getDocumentCollection();
+        PartCollection partCollection = baseline.getPartCollection();
 
-        baseline.getPartCollection().setCreationDate(new Date());
-        baseline.getPartCollection().setAuthor(user);
+        new PartCollectionDAO(em).createPartCollection(partCollection);
+        new DocumentCollectionDAO(em).createDocumentCollection(documentCollection);
 
-        baseline.getDocumentCollection().setCreationDate(new Date());
-        baseline.getDocumentCollection().setAuthor(user);
+        partCollection.setCreationDate(new Date());
+        partCollection.setAuthor(user);
+
+        documentCollection.setCreationDate(new Date());
+        documentCollection.setAuthor(user);
 
 
-        for(PartIteration partIteration: filter.getRetainedPartIterations() ){
+        for (PartIteration partIteration : filter.getRetainedPartIterations()) {
             baseline.addBaselinedPart(partIteration);
-            for (DocumentLink docLink :partIteration.getLinkedDocuments()){
+            for (DocumentLink docLink : partIteration.getLinkedDocuments()) {
                 DocumentIteration docI = docLink.getTargetDocument().getLastCheckedInIteration();
-                if(docI!=null)
+                if (docI != null)
                     baseline.addBaselinedDocument(docI);
             }
         }
@@ -152,72 +158,16 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         new ProductBaselineDAO(locale, em).createBaseline(baseline);
 
-        copyPathToPathLinks(user, baseline);
-
-        return baseline;
-    }
-
-    private void copyPathToPathLinks(User user, ProductBaseline baseline) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, ConfigurationItemNotFoundException, BaselineNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, PathToPathLinkAlreadyExistsException, CreationException, WorkspaceNotEnabledException {
-        ConfigurationItem configurationItem = baseline.getConfigurationItem();
-        PartLink rootPartUsageLink = productManager.getRootPartUsageLink(configurationItem.getKey());
-        ProductStructureFilter filter = new ProductBaselineConfigSpec(baseline);
-
-        List<PartLink> startPath = new ArrayList<>();
-        startPath.add(rootPartUsageLink);
-
-        List<String> visitedPaths = new ArrayList<>();
-
-        // Reset the list
-        baseline.setPathToPathLinks(new ArrayList<>());
-
-        PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
-            @Override
-            public void onIndeterminateVersion(PartMaster partMaster, List<PartIteration> partIterations) throws NotAllowedException {
-                // Unused here
-            }
-
-            @Override
-            public void onIndeterminatePath(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
-                // Unused here
-            }
-
-            @Override
-            public void onUnresolvedPath(List<PartLink> pCurrentPath, List<PartIteration> partIterations) throws NotAllowedException {
-                // Unused here
-            }
-
-            @Override
-            public void onBranchDiscovered(List<PartLink> pCurrentPath, List<PartIteration> copyPartIteration) {
-                // Unused here
-            }
-
-            @Override
-            public void onOptionalPath(List<PartLink> path, List<PartIteration> partIterations) {
-                // Unused here
-            }
-
-            @Override
-            public boolean onPathWalk(List<PartLink> path, List<PartMaster> parts) {
-                String encodedPath = Tools.getPathAsString(path);
-                visitedPaths.add(encodedPath);
-                return true;
-            }
-
-            @Override
-            public void onUnresolvedVersion(PartMaster partMaster) {
-                // Unused here
-            }
-        };
-
-        psFilterVisitor.visit(startPath, -1);
-
-        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(new Locale(user.getLanguage()), em);
-        List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem,visitedPaths);
-        for(PathToPathLink link : links){
+        // Copy PathToPathLink list to baseline
+        PathToPathLinkDAO pathToPathLinkDAO = new PathToPathLinkDAO(locale, em);
+        List<PathToPathLink> links = pathToPathLinkDAO.getPathToPathLinkFromPathList(configurationItem, visitedPaths);
+        for (PathToPathLink link : links) {
             PathToPathLink clone = link.clone();
             pathToPathLinkDAO.createPathToPathLink(clone);
             baseline.addPathToPathLink(clone);
         }
+
+        return baseline;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
@@ -236,22 +186,22 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteBaseline(String pWorkspaceId,int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException, EntityConstraintException, WorkspaceNotEnabledException {
+    public void deleteBaseline(String pWorkspaceId, int baselineId) throws UserNotFoundException, AccessRightException, WorkspaceNotFoundException, BaselineNotFoundException, UserNotActiveException, EntityConstraintException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
 
-        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale,em);
+        ProductBaselineDAO productBaselineDAO = new ProductBaselineDAO(locale, em);
         ProductBaseline productBaseline = productBaselineDAO.loadBaseline(baselineId);
 
         userManager.checkWorkspaceWriteAccess(productBaseline.getConfigurationItem().getWorkspaceId());
 
         // Check for product instances based on this baseline
 
-        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(locale,em);
+        ProductInstanceIterationDAO productInstanceIterationDAO = new ProductInstanceIterationDAO(locale, em);
 
-        if(productInstanceIterationDAO.isBaselinedUsed(productBaseline)){
-            throw new EntityConstraintException(locale,"EntityConstraintException16");
+        if (productInstanceIterationDAO.isBaselinedUsed(productBaseline)) {
+            throw new EntityConstraintException(locale, "EntityConstraintException16");
         }
 
         productBaselineDAO.deleteBaseline(productBaseline);
@@ -297,9 +247,9 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
         ProductStructureFilter filter;
 
-        if(type == null || type.equals(ProductBaselineType.RELEASED)){
+        if (type == null || type.equals(ProductBaselineType.RELEASED)) {
             filter = new ReleasedPSFilter(user, true);
-        }else{
+        } else {
             filter = new LatestPSFilter(user, true);
         }
 
@@ -345,10 +295,10 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
             private void addPartChoice(List<PartLink> pCurrentPath, List<PartIteration> pCurrentPathPartIterations) {
                 List<ResolvedPartLink> resolvedPath = new ArrayList<>();
-                for(int i = 0; i < pCurrentPathPartIterations.size(); i++){
-                    resolvedPath.add(new ResolvedPartLink(pCurrentPathPartIterations.get(i),pCurrentPath.get(i)));
+                for (int i = 0; i < pCurrentPathPartIterations.size(); i++) {
+                    resolvedPath.add(new ResolvedPartLink(pCurrentPathPartIterations.get(i), pCurrentPath.get(i)));
                 }
-                choices.add(new PathChoice(resolvedPath, pCurrentPath.get(pCurrentPath.size()-1)));
+                choices.add(new PathChoice(resolvedPath, pCurrentPath.get(pCurrentPath.size() - 1)));
             }
 
         };
@@ -417,18 +367,18 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String,String> aclUserEntries, Map<String,String> aclUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
+    public ProductConfiguration createProductConfiguration(ConfigurationItemKey ciKey, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks, Map<String, String> aclUserEntries, Map<String, String> aclUserGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ConfigurationItemNotFoundException, CreationException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(ciKey.getWorkspace());
 
         Locale locale = new Locale(user.getLanguage());
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
 
         ConfigurationItemDAO configurationItemDAO = new ConfigurationItemDAO(new Locale(user.getLanguage()), em);
         ConfigurationItem configurationItem = configurationItemDAO.loadConfigurationItem(ciKey);
 
-        ProductConfiguration productConfiguration = new ProductConfiguration(user,configurationItem, name,description,null);
+        ProductConfiguration productConfiguration = new ProductConfiguration(user, configurationItem, name, description, null);
 
-        if(aclUserEntries != null && !aclUserEntries.isEmpty() || aclUserGroupEntries != null &&  !aclUserGroupEntries.isEmpty()){
+        if (aclUserEntries != null && !aclUserEntries.isEmpty() || aclUserGroupEntries != null && !aclUserGroupEntries.isEmpty()) {
             ACLFactory aclFactory = new ACLFactory(em);
             ACL acl = aclFactory.createACL(ciKey.getWorkspace(), aclUserEntries, aclUserGroupEntries);
             productConfiguration.setAcl(acl);
@@ -445,12 +395,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     public List<ProductConfiguration> getAllProductConfigurations(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
         List<ProductConfiguration> productConfigurations = productConfigurationDAO.getAllProductConfigurations(workspaceId);
 
         ListIterator<ProductConfiguration> ite = productConfigurations.listIterator();
 
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             ProductConfiguration next = ite.next();
             try {
                 checkProductConfigurationReadAccess(workspaceId, next, user);
@@ -468,12 +418,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
         List<ProductConfiguration> productConfigurations = productConfigurationDAO.getAllProductConfigurationsByConfigurationItem(ciKey);
 
         ListIterator<ProductConfiguration> ite = productConfigurations.listIterator();
 
-        while(ite.hasNext()){
+        while (ite.hasNext()) {
             ProductConfiguration next = ite.next();
             try {
                 checkProductConfigurationReadAccess(ciKey.getWorkspace(), next, user);
@@ -490,7 +440,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     public ProductConfiguration getProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
 
         String workspaceId = productConfiguration.getConfigurationItem().getWorkspace().getId();
@@ -505,12 +455,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     public ProductConfiguration updateProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId, String name, String description, List<String> substituteLinks, List<String> optionalUsageLinks) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
 
         String workspaceId = productConfiguration.getConfigurationItem().getWorkspace().getId();
         user = userManager.checkWorkspaceReadAccess(workspaceId);
-        checkProductConfigurationWriteAccess(workspaceId,productConfiguration,user);
+        checkProductConfigurationWriteAccess(workspaceId, productConfiguration, user);
 
         productConfiguration.setName(name);
         productConfiguration.setDescription(description);
@@ -525,12 +475,12 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     public void deleteProductConfiguration(ConfigurationItemKey ciKey, int productConfigurationId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ProductConfigurationNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale locale = new Locale(user.getLanguage());
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(locale, em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
 
         String workspaceId = productConfiguration.getConfigurationItem().getWorkspace().getId();
         user = userManager.checkWorkspaceReadAccess(workspaceId);
-        checkProductConfigurationWriteAccess(workspaceId,productConfiguration,user);
+        checkProductConfigurationWriteAccess(workspaceId, productConfiguration, user);
 
         productConfigurationDAO.deleteProductConfiguration(productConfiguration);
     }
@@ -545,7 +495,7 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
 
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(userLocale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(userLocale, em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
 
         String workspaceId = productConfiguration.getConfigurationItem().getWorkspaceId();
@@ -579,7 +529,6 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
     }
 
 
-
     private User checkProductConfigurationReadAccess(String workspaceId, ProductConfiguration productConfiguration, User user) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         if (user.isAdministrator()) {
             // Check if it is the workspace's administrator
@@ -604,13 +553,13 @@ public class ProductBaselineManagerBean implements IProductBaselineManagerLocal 
         User user = userManager.checkWorkspaceReadAccess(ciKey.getWorkspace());
         Locale userLocale = new Locale(user.getLanguage());
 
-        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(userLocale,em);
+        ProductConfigurationDAO productConfigurationDAO = new ProductConfigurationDAO(userLocale, em);
         ProductConfiguration productConfiguration = productConfigurationDAO.getProductConfiguration(productConfigurationId);
 
         String workspaceId = productConfiguration.getConfigurationItem().getWorkspaceId();
         user = userManager.checkWorkspaceReadAccess(workspaceId);
 
-        checkProductConfigurationWriteAccess(workspaceId,productConfiguration,user);
+        checkProductConfigurationWriteAccess(workspaceId, productConfiguration, user);
 
         ACL acl = productConfiguration.getAcl();
         if (acl != null) {
