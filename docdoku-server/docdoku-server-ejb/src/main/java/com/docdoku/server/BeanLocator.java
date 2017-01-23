@@ -32,7 +32,7 @@ import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 
 /**
- * Utility to lookup EJB implementing a given business interface from a JNDI
+ * Utility class that looks-up EJBs implementing a given business interface from JNDI
  * naming service.
  * 
  * @author Olivier Bourgeat
@@ -41,13 +41,13 @@ import javax.rmi.PortableRemoteObject;
 class BeanLocator {
 
     private static final Logger LOGGER = Logger.getLogger(BeanLocator.class.getName());
-    
-    @Resource(lookup="java:global")
-    Context ctx;
+
+    @Resource(lookup = "java:global")
+    private Context ctx;
 
     /**
-     * Search for EJBs implementing a given business interface in the naming
-     * namespace "java:global".
+     * Search for EJBs implementing a given business interface within the naming
+     * Context "java:global".
      * 
      * @param type
      *            Bean's Business Interface.
@@ -57,11 +57,7 @@ class BeanLocator {
      */
     <T> List<T> search(Class<T> type) {
 	List<T> result = new ArrayList<>();
-	try {
-	    result.addAll(search(type, ctx));
-	} catch (NamingException e) {
-	    LOGGER.log(Level.SEVERE,e.getMessage(),e);
-	}
+	result.addAll(search(type, ctx));
 	return result;
     }
 
@@ -78,20 +74,29 @@ class BeanLocator {
      * @throws NamingException
      */
     @SuppressWarnings("unchecked") // Cause : Generic Type Erasure
-    <T> List<T> search(Class<T> type, Context ctx) throws NamingException {
-	NamingEnumeration<NameClassPair> ncps = ctx.list("");
+    <T> List<T> search(Class<T> type, Context ctx) {
 	List<T> result = new ArrayList<T>();
-	while (ncps.hasMoreElements()) {
-	    NameClassPair ncp = ncps.next();
-	    Object o = ctx.lookup(ncp.getName());
-	    if (ncp.getName().contains("!" + type.getCanonicalName())) {
-		// bean reference
-		result.add((T) PortableRemoteObject.narrow(o, type));
-	    } else if (Context.class.isAssignableFrom(o.getClass())) {
-		// sub-context
-		result.addAll(search(type, (Context) o));
+	try {
+	    NamingEnumeration<NameClassPair> ncps = ctx.list("");
+	    while (ncps.hasMoreElements()) {
+		try {
+		    NameClassPair ncp = ncps.next();
+		    Object o = ctx.lookup(ncp.getName());
+		    if (ncp.getName().contains("!" + type.getCanonicalName())) {
+			// bean reference
+			result.add((T) PortableRemoteObject.narrow(o, type));
+		    } else if (Context.class.isAssignableFrom(o.getClass())) {
+			// sub-context
+			result.addAll(search(type, (Context) o));
+		    }
+		    // else ignore this object
+		} catch (NamingException e) {
+		    LOGGER.log(Level.INFO, "Ignoring JNDI entry: " + e.getMessage());
+		}
 	    }
-	    // else ignore this object
+	} catch (NamingException e) {
+	    assert (false);
+	    LOGGER.log(Level.SEVERE, e.getMessage(), e);
 	}
 	return result;
     }
