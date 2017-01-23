@@ -16,12 +16,12 @@
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-server-ext</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>com.docdoku</groupId>
             <artifactId>docdoku-common</artifactId>
-            <version>${project.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
