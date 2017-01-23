@@ -201,6 +201,7 @@ public class ChangeIssuesResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("{issueId}")
     public Response removeIssue(
+            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Issue id") @PathParam("issueId") int issueId)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, EntityConstraintException {
         changeManager.deleteChangeIssue(issueId);
