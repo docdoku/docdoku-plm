@@ -33,51 +33,53 @@ import java.net.URL;
 import java.util.Locale;
 
 /**
- *
  * @author Florent Garin
  */
 public abstract class BaseCommandLine extends AbstractCommandLine {
 
-    @Option(name="-P", aliases = "--port", metaVar = "<port>", usage="port number to use for connection; default is 80")
-    protected int port=80;
+    @Option(name = "-P", aliases = "--port", metaVar = "<port>", usage = "port number to use for connection; default is 80")
+    protected int port = 80;
 
-    @Option(name="-h", aliases = "--host", metaVar = "<host>", usage="host of the DocDokuPLM server to connect; default is docdokuplm.net")
-    protected String host="docdokuplm.net";
+    @Option(name = "-h", aliases = "--host", metaVar = "<host>", usage = "host of the DocDokuPLM server to connect; default is docdokuplm.net")
+    protected String host = "docdokuplm.net";
 
-    @Option(name="-p", aliases = "--password", metaVar = "<password>", usage="password to log in")
+    @Option(name = "-C", aliases = "--context-path", metaVar = "<contextPath>", usage = "Context root for DocdokuPLM API, default is /docdoku-server-rest")
+    protected String contextPath = "/docdoku-server-rest";
+
+    @Option(name = "-p", aliases = "--password", metaVar = "<password>", usage = "password to log in")
     protected String password;
 
-    @Option(name="-S", aliases = "--ssl", usage="use a ssl (tls) connection")
+    @Option(name = "-S", aliases = "--ssl", usage = "use a SSL (TLS) connection")
     protected boolean ssl;
 
     protected ApiClient client;
 
-    private void promptForUser(Locale locale){
+    private void promptForUser(Locale locale) {
         Console c = System.console();
-        if(c == null){
+        if (c == null) {
             return;
         }
 
-        user = c.readLine(LangHelper.getLocalizedMessage("PromptUser",locale) + " '" + host + "': ");
+        user = c.readLine(LangHelper.getLocalizedMessage("PromptUser", locale) + " '" + host + "': ");
     }
 
-    private void promptForPassword(Locale locale){
+    private void promptForPassword(Locale locale) {
         Console c = System.console();
-        if(c == null){
+        if (c == null) {
             return;
         }
-        password = new String(c.readPassword(LangHelper.getLocalizedMessage("PromptPassword",locale) + " '"  + user + "@" + host +"': "));
+        password = new String(c.readPassword(LangHelper.getLocalizedMessage("PromptPassword", locale) + " '" + user + "@" + host + "': "));
     }
 
     @Override
     public void exec() throws Exception {
 
         Locale userLocale = new AccountsManager().getUserLocale(user);
-        output = CliOutput.getOutput(format,userLocale);
-        if(user==null && format.equals(CliOutput.formats.HUMAN)){
+        output = CliOutput.getOutput(format, userLocale);
+        if (user == null && format.equals(CliOutput.formats.HUMAN)) {
             promptForUser(userLocale);
         }
-        if(password==null && format.equals(CliOutput.formats.HUMAN)){
+        if (password == null && format.equals(CliOutput.formats.HUMAN)) {
             promptForPassword(userLocale);
         }
 
@@ -90,6 +92,6 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
     }
 
     public URL getServerURL() throws MalformedURLException {
-        return new URL( ssl ? "https":"http",host,port,"");
+        return new URL(ssl ? "https" : "http", host, port, contextPath);
     }
 }

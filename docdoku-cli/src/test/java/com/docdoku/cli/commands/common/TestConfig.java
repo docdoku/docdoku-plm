@@ -29,6 +29,7 @@ public class TestConfig {
 
     public static String HOST;
     public static String LOGIN;
+    public static String CONTEXT_ROOT;
     public static String PASSWORD;
     public static String WORKSPACE;
     public static String PORT;
@@ -36,6 +37,7 @@ public class TestConfig {
 
     static {
         HOST = System.getProperty("host") != null ? System.getProperty("host") : "localhost";
+        CONTEXT_ROOT = System.getProperty("contextRoot") != null ? System.getProperty("contextRoot") : "/docdoku-server-rest";
         PORT = System.getProperty("port") != null ? System.getProperty("port") : "8080";
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
@@ -59,6 +61,8 @@ public class TestConfig {
                         TestConfig.PASSWORD,
                         "-h",
                         TestConfig.HOST,
+                        "-C",
+                        TestConfig.CONTEXT_ROOT,
                         "-P",
                         TestConfig.PORT,
                         "-F",
