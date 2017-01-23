@@ -8,19 +8,13 @@ import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.docdoku.core.common.BinaryResource;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.ConversionResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DaeFileConverterImplTest {
-
-    @Mock
-    BinaryResource cadFile;
 
     DaeFileConverterImpl converter = new DaeFileConverterImpl();
 
@@ -41,9 +35,8 @@ public class DaeFileConverterImplTest {
 	// setup
 	Path tempDir = Paths.get("src/test/resources");
 	Path daeFile = tempDir.resolve("glider/glider.dae");
-	Mockito.when(cadFile.getName()).thenReturn(daeFile.toAbsolutePath().toString());
 
-	ConversionResult result = converter.convert(null, cadFile, tempDir);
+	ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
 
 	Assert.assertNotNull(result.getConvertedFile());
 	Assert.assertTrue(Files.exists(result.getConvertedFile()));
@@ -65,9 +58,8 @@ public class DaeFileConverterImplTest {
 	// setup
 	Path tempDir = Paths.get("src/test/resources");
 	Path daeFile = tempDir.resolve("bad/bad.dae");
-	Mockito.when(cadFile.getName()).thenReturn(daeFile.toAbsolutePath().toString());
 
-	ConversionResult result = converter.convert(null, cadFile, tempDir);
+	ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
 
 	//Test should fail
 	Assert.fail();

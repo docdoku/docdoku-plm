@@ -22,6 +22,7 @@ package com.docdoku.server.converters.dae;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,8 +36,6 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.ConversionResult;
 import com.docdoku.server.converters.ConverterUtils;
@@ -58,30 +57,30 @@ public class DaeFileConverterImpl implements CADConverter {
     }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
+    public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
 	    throws ConversionException {
-
+	
+	Path tmpDir = Paths.get(tmpDirUri);
+	Path tmpCadFile = Paths.get(cadFileUri);
+	
 	String assimp = CONF.getProperty("assimp");
-
 	Path executable = Paths.get(assimp);
 
 	// Sanity checks
 
 	if (!Files.exists(executable)) {
 	    throw new ConversionException(
-		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" is not available");
+		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + assimp + "\" is not available");
 	}
 
 	if (!Files.isExecutable(executable)) {
 	    throw new ConversionException(
-		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + assimp + "\" has no execution rights");
+		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + assimp + "\" has no execution rights");
 	}
 
-	Path tmpCadFile = tempDir.resolve(cadFile.getName());
-
 	UUID uuid = UUID.randomUUID();
-	Path convertedFile = tempDir.resolve(uuid + ".obj");
-	Path convertedMtlFile = tempDir.resolve(uuid + ".obj.mtl");
+	Path convertedFile = tmpDir.resolve(uuid + ".obj");
+	Path convertedMtlFile = tmpDir.resolve(uuid + ".obj.mtl");
 
 	String[] args = { assimp, "export", tmpCadFile.toAbsolutePath().toString(), convertedFile.toString() };
 	ProcessBuilder pb = new ProcessBuilder(args);
