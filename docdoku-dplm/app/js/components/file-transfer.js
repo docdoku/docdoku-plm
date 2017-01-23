@@ -22,7 +22,7 @@
                 var requestOpts = ConfigurationService.getHttpFormRequestOpts();
                 requestOpts.method = 'post';
                 requestOpts.headers = form.getHeaders();
-                requestOpts.path = '/api' + url;
+                requestOpts.path = ConfigurationService.configuration.contextRoot + '/api' + url;
 
                 var request = http.request(requestOpts);
                 form.pipe(request);
@@ -114,7 +114,7 @@
                 var fileName = getFileName(url);
                 var file = destinationFolder + '/' + fileName;
 
-                if(!FileUtils.fileExists(file)){
+                if (!FileUtils.fileExists(file)) {
                     fs.writeFileSync(file, '');
                 }
 
@@ -123,7 +123,7 @@
                 var fileStream = fs.createWriteStream(file);
 
                 var requestOpts = ConfigurationService.getHttpFormRequestOpts();
-                requestOpts.path = $window.encodeURI('/api' + url);
+                requestOpts.path = $window.encodeURI(ConfigurationService.configuration.contextRoot + '/api' + url);
 
                 var bytes = 0, totalBytes = 0;
 
@@ -144,7 +144,7 @@
 
                 request.on('response', function () {
                     // wait for writeStream end (file completely written to disk), always happens after response event
-                    fileStream.on('finish', function() {
+                    fileStream.on('finish', function () {
                         deferred.resolve(file);
                     });
                 });

@@ -22,6 +22,11 @@
                     login: login,
                     password: password
                 }), function (err, account, response) {
+                    if (err) {
+                        console.log('Error while login');
+                        console.log(err);
+                        return deferred.reject(err);
+                    }
                     DocdokuAPIService.setToken(response.headers.jwt);
                     angular.copy(account, user);
                     $translate.use(user.language);

@@ -10,7 +10,7 @@
 
             this.error = 'CONFIG_SERVICE_ERROR';
 
-            this.configuration = JSON.parse($window.localStorage.configuration || '{"port":443,"host":"docdokuplm.net","ssl":true}');
+            this.configuration = JSON.parse($window.localStorage.configuration || '{"port":443,"host":"docdokuplm.net","ssl":true,"contextRoot":"/docdoku-server-rest"}');
 
             this.save = function () {
                 _this.configuration.protocol = _this.configuration.ssl ?
@@ -35,9 +35,8 @@
                 return _this.configuration.protocol + '://' + _this.configuration.host + ':' + _this.configuration.port;
             };
 
-
             this.getHostApiURL = function () {
-                return _this.getHostUrl() + '/api';
+                return _this.getHostUrl() + _this.configuration.contextRoot + '/api';
             };
 
             this.getFileApiURL = function () {

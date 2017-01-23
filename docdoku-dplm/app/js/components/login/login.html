@@ -4,13 +4,9 @@
             {{'GREETINGS' | translate}}
         </p>
         <span class="md-subhead description">
-             {{'PLEASE_LOG_IN' | translate}}
+            {{'PLEASE_LOG_IN' | translate}}
         </span>
     </div>
-
-    <!--
-    <pre>{{xhrFrom | json}}</pre>
-    -->
 
     <div ng-if="xhrFrom.errObj.code" class="md-caption md-error">
         {{xhrFrom.errObj.code | translate}}
@@ -41,20 +37,24 @@
                     <label>{{'PORT' | translate}}</label>
                     <input ng-model="configuration.port" type="number" required>
                 </md-input-container>
+            </div>
+            <div>
+                <md-input-container>
+                    <label>{{'CONTEXT_ROOT' | translate}}</label>
+                    <input ng-model="configuration.contextRoot" required>
+                </md-input-container>
                 <md-input-container>
                     <md-checkbox ng-model="configuration.ssl" aria-label="{{'SSL'|translate}}">
                         {{'SSL'|translate}}
                     </md-checkbox>
                 </md-input-container>
             </div>
-
             <div>
                 <md-progress-circular ng-if="loggingIn" class="md-hue-2" md-diameter="20px"></md-progress-circular>
                 <md-button ng-if="!loggingIn" type="submit" aria-label="" class="md-raised md-primary">
                     {{'CONNECT'|translate}}
                 </md-button>
             </div>
-
         </form>
     </div>
 </md-content>

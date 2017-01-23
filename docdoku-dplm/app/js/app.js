@@ -33,7 +33,7 @@
 
     ])
 
-        .config(function ($routeProvider, $mdThemingProvider, $compileProvider) {
+        .config(function ($routeProvider, $mdThemingProvider, $compileProvider, $qProvider) {
 
             $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|chrome-extension):/);
 
@@ -46,6 +46,8 @@
                 .accentPalette('blue');
 
             $routeProvider.otherwise('/');
+
+            $qProvider.errorOnUnhandledRejections(false);
 
         })
 

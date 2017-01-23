@@ -4,7 +4,7 @@ module.exports = function(grunt){
 
     require('load-grunt-tasks')(grunt);
 
-    var nwjsVersion = '0.15.4';
+    var nwjsVersion = '0.20.0-rc1';
     var platforms = ['linux32','linux64','osx64','win32','win64'];
 
     grunt.initConfig ({

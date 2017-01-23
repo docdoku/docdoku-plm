@@ -22,6 +22,8 @@
                         .finally(function () {
                             $scope.loggingIn = false;
                         });
+                }else{
+                    // todo : inform error
                 }
             };
 
