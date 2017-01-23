@@ -11,7 +11,7 @@
     <packaging>ear</packaging>
     <name>docdoku-server-ear Java EE 7 Assembly</name>
     <properties>
-        <context-root>/</context-root>
+        <context-root></context-root>
     </properties>
     <build>
         <plugins>
