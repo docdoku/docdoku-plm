@@ -20,17 +20,14 @@
 
 package com.docdoku.server.converters;
 
-import java.nio.file.Path;
+import java.net.URI;
 
 import javax.ejb.Remote;
-
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 
 /**
  * CADConverter Extension point interface for 3D files conversion.
  * 
- * Converters are supposed to be standalone remote EJB module that can be
+ * Converters are supposed to be (standalone) remote EJB module that can be
  * deployed independently of DocdokuPLM application.
  */
 @Remote
@@ -57,23 +54,21 @@ public interface CADConverter {
     }
 
     /**
-     * Convert the given file (BinaryResource) to Wavefront OBJ format
+     * Convert the given CAD file to Wavefront OBJ format
      *
-     * @param partToConvert
-     *            the part iteration concerned
      * @param cadFile
-     *            the 3D file to convert
+     *            the CAD file to convert
      * @param tempDir
      *            a given temporary directory for converter operations
      * @return the conversion result
      * @throws ConversionException
      * 
      */
-    ConversionResult convert(PartIteration partToConvert, BinaryResource cadFile, Path tempDir)
+    ConversionResult convert(URI cadFileName, URI tempDir)
 	    throws ConversionException;
 
     /**
-     * Determine if this converter is able to convert given 3D file format
+     * Determine if this converter is able to convert given CAD file format
      * (identified by it's extension) to Wavefront OBJ format
      *
      * @param cadFileExtension

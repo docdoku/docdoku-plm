@@ -20,14 +20,13 @@
 
 package com.docdoku.server.converters.obj;
 
+import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.ConversionResult;
 
@@ -35,13 +34,13 @@ import com.docdoku.server.converters.ConversionResult;
 @Stateless
 public class ObjFileConverterImpl implements CADConverter {
 
-    private static final Logger LOGGER = Logger.getLogger(ObjFileConverterImpl.class.getName());
+//    private static final Logger LOGGER = Logger.getLogger(ObjFileConverterImpl.class.getName());
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
+    public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
 	    throws ConversionException {
-
-	Path tmpCadFile = tempDir.resolve(cadFile + ".obj");
+	
+	Path tmpCadFile = Paths.get(cadFileUri);
 
 	return new ConversionResult(tmpCadFile);
     }

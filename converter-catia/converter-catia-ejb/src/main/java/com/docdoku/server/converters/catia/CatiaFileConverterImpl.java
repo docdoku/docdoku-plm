@@ -22,6 +22,7 @@ package com.docdoku.server.converters.catia;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,8 +34,6 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.ConversionResult;
 import com.docdoku.server.converters.ConverterUtils;
@@ -56,8 +55,11 @@ public class CatiaFileConverterImpl implements CADConverter {
     }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
+    public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
 	    throws ConversionException {
+	
+	Path tmpDir = Paths.get(tmpDirUri);
+	Path tmpCadFile = Paths.get(cadFileUri);
 
 	String catPartConverter = CONF.getProperty("catPartConverter");
 	Path executable = Paths.get(catPartConverter);
@@ -65,17 +67,16 @@ public class CatiaFileConverterImpl implements CADConverter {
 	// Sanity checks
 	if (!Files.exists(executable)) {
 	    throw new ConversionException(
-		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + catPartConverter + "\" is not available");
+		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + catPartConverter + "\" is not available");
 	}
 
 	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException("Cannot convert file \"" + cadFile.getName() + "\", \"" + catPartConverter
+	    throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + catPartConverter
 		    + "\" has no execution rights");
 	}
 
 	UUID uuid = UUID.randomUUID();
-	Path tmpCadFile = tempDir.resolve(cadFile.getName());
-	Path tmpDAEFile = tempDir.resolve(uuid + ".dae");
+	Path tmpDAEFile = tmpDir.resolve(uuid + ".dae");
 
 	String[] args = { "sh", catPartConverter, tmpCadFile.toAbsolutePath().toString(),
 		tmpDAEFile.toAbsolutePath().toString() };
@@ -95,7 +96,7 @@ public class CatiaFileConverterImpl implements CADConverter {
 	    // Convert to OBJ once converted to DAE
 	    if (process1.exitValue() == 0 && Files.exists(tmpDAEFile) && Files.size(tmpDAEFile) > 0) {
 		String assimp = CONF.getProperty("assimp");
-		Path convertedFileName = tempDir.resolve(uuid + ".obj");
+		Path convertedFileName = tmpDir.resolve(uuid + ".obj");
 		String[] argsOBJ = { assimp, "export", tmpDAEFile.toAbsolutePath().toString(),
 			convertedFileName.toString() };
 		pb = new ProcessBuilder(argsOBJ);

@@ -22,8 +22,10 @@ package com.docdoku.server.converters.step;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Properties;
 import java.util.UUID;
@@ -32,8 +34,6 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.ConversionResult;
 import com.docdoku.server.converters.ConverterUtils;
@@ -56,16 +56,18 @@ public class StepFileConverterImpl implements CADConverter {
     }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
+    public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
 	    throws ConversionException {
 	String pythonInterpreter = CONF.getProperty("pythonInterpreter");
 	String freeCadLibPath = CONF.getProperty("freeCadLibPath");
+	
+	Path tmpDir = Paths.get(tmpDirUri);
+	Path tmpCadFile = Paths.get(cadFileUri);
 
 	UUID uuid = UUID.randomUUID();
-	Path tmpCadFile = tempDir.resolve(cadFile.getName());
-	Path tmpOBJFile = tempDir.resolve(uuid + ".obj");
+	Path tmpOBJFile = tmpDir.resolve(uuid + ".obj");
 
-	Path scriptToOBJ = tempDir.resolve("python_script" + uuid + ".py");
+	Path scriptToOBJ = tmpDir.resolve("python_script" + uuid + ".py");
 	try (InputStream scriptStream = StepFileConverterImpl.class.getResourceAsStream(PYTHON_SCRIPT_TO_OBJ)) {
 	    Files.copy(scriptStream, scriptToOBJ);
 	} catch (IOException | NullPointerException e) {

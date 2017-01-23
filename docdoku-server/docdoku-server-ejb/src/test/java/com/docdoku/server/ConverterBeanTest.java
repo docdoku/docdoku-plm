@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.nio.file.Path;
+import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
@@ -94,7 +94,7 @@ public class ConverterBeanTest {
 	when(result.getMaterials()).thenReturn(Arrays.asList(Paths.get("src/test/resources/fake.obj.1.mtl"),
 		Paths.get("src/test/resources/fake.obj.2.mtl")));
 
-	when(conv.convert(eq(partIter), eq(cadBinRes), any(Path.class))).thenReturn(result);
+	when(conv.convert(any(URI.class), any(URI.class))).thenReturn(result);
 
 	when(locator.search(CADConverter.class)).thenReturn(Arrays.asList(conv));
 	
@@ -107,7 +107,7 @@ public class ConverterBeanTest {
 	bean.convertCADFileToOBJ(ipk, cadBinRes);
 	verify(locator).search(CADConverter.class);
 	verify(conv).canConvertToOBJ("dae");
-	verify(conv).convert(eq(partIter), eq(cadBinRes), any(Path.class));
+	verify(conv).convert(any(URI.class), any(URI.class));
 	verify(product).saveGeometryInPartIteration(eq(ipk), anyString(), anyInt(), anyLong(), any(double[].class));
 	verify(storage).getBinaryResourceOutputStream(lod);
 	verify(product, times(2)).saveFileInPartIteration(eq(ipk), anyString(), eq("attachedfiles"), anyLong());
@@ -124,7 +124,7 @@ public class ConverterBeanTest {
 
 	verify(locator).search(CADConverter.class);
 	verify(conv).canConvertToOBJ("unknown");
-	verify(conv, never()).convert(any(), any(), any());
+	verify(conv, never()).convert(any(), any());
 	verify(product, never()).saveGeometryInPartIteration(any(), anyString(), anyInt(), anyLong(), any());
 	verify(product, never()).saveFileInPartIteration(any(), anyString(), anyString(), anyLong());
 	verify(storage, never()).getBinaryResourceOutputStream(any());
@@ -133,13 +133,13 @@ public class ConverterBeanTest {
     @Test
     public void testBrokenConvert() throws Exception {
 	// * setup *
-	when(conv.convert(eq(partIter), eq(cadBinRes), any())).thenThrow(new CADConverter.ConversionException("error"));
+	when(conv.convert(any(URI.class), any(URI.class))).thenThrow(new CADConverter.ConversionException("error"));
 	
 	// * test *
 	bean.convertCADFileToOBJ(ipk, cadBinRes);
 	
 	verify(conv).canConvertToOBJ("dae");
-	verify(conv).convert(eq(partIter), eq(cadBinRes), any(Path.class));
+	verify(conv).convert(any(URI.class), any(URI.class));
 	verify(product, never()).saveGeometryInPartIteration(any(), anyString(), anyInt(), anyLong(), any());
 	verify(product, never()).saveFileInPartIteration(any(), anyString(), anyString(), anyLong());
 	verify(storage, never()).getBinaryResourceOutputStream(any());

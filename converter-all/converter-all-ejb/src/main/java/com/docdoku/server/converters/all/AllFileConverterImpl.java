@@ -22,6 +22,7 @@ package com.docdoku.server.converters.all;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -33,8 +34,6 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 
-import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.ConversionResult;
 import com.docdoku.server.converters.ConverterUtils;
@@ -56,26 +55,27 @@ public class AllFileConverterImpl implements CADConverter {
     }
 
     @Override
-    public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
+    public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
 	    throws ConversionException {
+	Path tmpDir = Paths.get(tmpDirUri);
+	Path tmpCadFile = Paths.get(cadFileUri);
+	
 	String meshConvBinary = CONF.getProperty("meshconv_path");
 	Path executable = Paths.get(meshConvBinary);
 
 	// sanity checks
 	if (!Files.exists(executable)) {
 	    throw new ConversionException(
-		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + meshConvBinary + "\" is not available");
+		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + meshConvBinary + "\" is not available");
 	}
 
 	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException("Cannot convert file \"" + cadFile.getName() + "\", \"" + meshConvBinary
+	    throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + meshConvBinary
 		    + "\" has no execution rights");
 	}
 
-	Path tmpCadFile = tempDir.resolve(cadFile.getName());
-
 	UUID uuid = UUID.randomUUID();
-	Path convertedFile = tempDir.resolve(uuid + ".obj");
+	Path convertedFile = tmpDir.resolve(uuid + ".obj");
 
 	String[] args = { meshConvBinary, tmpCadFile.toAbsolutePath().toString(), "-c", "obj", "-o",
 		convertedFile.toString() };

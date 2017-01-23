@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.Asynchronous;
+import javax.ejb.EJBException;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -45,7 +46,6 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.FileAlreadyExistsException;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.exceptions.PartIterationNotFoundException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.exceptions.UserNotActiveException;
@@ -53,7 +53,6 @@ import com.docdoku.core.exceptions.UserNotFoundException;
 import com.docdoku.core.exceptions.WorkspaceNotEnabledException;
 import com.docdoku.core.exceptions.WorkspaceNotFoundException;
 import com.docdoku.core.product.Geometry;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IConverterManagerLocal;
@@ -63,7 +62,6 @@ import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.CADConverter.ConversionException;
 import com.docdoku.server.converters.ConversionResult;
 import com.docdoku.server.converters.GeometryParser;
-import com.docdoku.server.dao.PartIterationDAO;
 
 /**
  * CAD File converter
@@ -126,8 +124,8 @@ public class ConverterBean implements IConverterManagerLocal {
 	if (selectedConverter != null) {
 	    try {
 
-		PartIterationDAO partIDAO = new PartIterationDAO(em);
-		PartIteration partI = partIDAO.loadPartI(pPartIPK);
+		//PartIterationDAO partIDAO = new PartIterationDAO(em);
+		//PartIteration partI = partIDAO.loadPartI(pPartIPK);
 
 		UUID uuid = UUID.randomUUID();
 		Path tempDir = Files.createDirectory(Paths.get("docdoku-" + uuid));
@@ -138,8 +136,7 @@ public class ConverterBean implements IConverterManagerLocal {
 		    Files.copy(in, tmpCadFile);
 
 		    // convert file
-		    try (ConversionResult conversionResult = selectedConverter.convert(partI, cadBinaryResource,
-			    tempDir)) {
+		    try (ConversionResult conversionResult = selectedConverter.convert(tmpCadFile.toUri(),tempDir.toUri())) {
 
 			// manage converted file
 			Path convertedFile = conversionResult.getConvertedFile();
@@ -161,8 +158,8 @@ public class ConverterBean implements IConverterManagerLocal {
 			for (Path material : conversionResult.getMaterials()) {
 			    saveAttachedFile(pPartIPK, material);
 			}
-		    } catch (ConversionException e) {
-			LOGGER.warning("Cannot convert " + cadBinaryResource.getName());
+		    } catch (ConversionException | EJBException e) {
+			LOGGER.log(Level.WARNING,"Cannot convert " + cadBinaryResource.getName(),e);
 		    } finally {
 			Files.list(tempDir).forEach((p) -> {
 			    try {
@@ -175,8 +172,8 @@ public class ConverterBean implements IConverterManagerLocal {
 		} finally {
 		    Files.deleteIfExists(tempDir);
 		}
-	    } catch (PartIterationNotFoundException e) {
-		LOGGER.log(Level.WARNING, "PartIteration not found", e);
+//	    } catch (PartIterationNotFoundException e) {
+//		LOGGER.log(Level.WARNING, "PartIteration not found", e);
 	    } catch (StorageException e) {
 		LOGGER.log(Level.WARNING, "Unable to read from storage", e);
 	    } catch (IOException e) {
