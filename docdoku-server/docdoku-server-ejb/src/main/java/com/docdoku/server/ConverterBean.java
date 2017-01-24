@@ -124,8 +124,8 @@ public class ConverterBean implements IConverterManagerLocal {
 	if (selectedConverter != null) {
 	    try {
 
-		//PartIterationDAO partIDAO = new PartIterationDAO(em);
-		//PartIteration partI = partIDAO.loadPartI(pPartIPK);
+		// PartIterationDAO partIDAO = new PartIterationDAO(em);
+		// PartIteration partI = partIDAO.loadPartI(pPartIPK);
 
 		UUID uuid = UUID.randomUUID();
 		Path tempDir = Files.createDirectory(Paths.get("docdoku-" + uuid));
@@ -136,7 +136,8 @@ public class ConverterBean implements IConverterManagerLocal {
 		    Files.copy(in, tmpCadFile);
 
 		    // convert file
-		    try (ConversionResult conversionResult = selectedConverter.convert(tmpCadFile.toUri(),tempDir.toUri())) {
+		    try (ConversionResult conversionResult = selectedConverter.convert(tmpCadFile.toUri(),
+			    tempDir.toUri())) {
 
 			// manage converted file
 			Path convertedFile = conversionResult.getConvertedFile();
@@ -145,8 +146,7 @@ public class ConverterBean implements IConverterManagerLocal {
 			if (decimate(pPartIPK, convertedFile, tempDir, box, RATIO)) {
 			    String fileName = convertedFile.getFileName().toString();
 			    for (int i = 0; i < RATIO.length; i++) {
-				Path geometryFile = Paths
-					.get(fileName.replaceAll("\\.obj$", "." + (RATIO[i] * 100) + ".obj"));
+				Path geometryFile = tempDir.resolve(fileName.replaceAll("\\.obj$", "." + Math.round((RATIO[i] * 100)) + ".obj"));
 				saveGeometryFile(pPartIPK, i, geometryFile, box);
 			    }
 			} else {
@@ -159,21 +159,21 @@ public class ConverterBean implements IConverterManagerLocal {
 			    saveAttachedFile(pPartIPK, material);
 			}
 		    } catch (ConversionException | EJBException e) {
-			LOGGER.log(Level.WARNING,"Cannot convert " + cadBinaryResource.getName(),e);
+			LOGGER.log(Level.WARNING, "Cannot convert " + cadBinaryResource.getName(), e);
 		    } finally {
 			Files.list(tempDir).forEach((p) -> {
 			    try {
 				Files.delete(p);
 			    } catch (IOException e) {
-				assert (false);
+				LOGGER.warning("Unable to delete "+p.getFileName());
 			    }
 			});
 		    }
 		} finally {
 		    Files.deleteIfExists(tempDir);
 		}
-//	    } catch (PartIterationNotFoundException e) {
-//		LOGGER.log(Level.WARNING, "PartIteration not found", e);
+		// } catch (PartIterationNotFoundException e) {
+		// LOGGER.log(Level.WARNING, "PartIteration not found", e);
 	    } catch (StorageException e) {
 		LOGGER.log(Level.WARNING, "Unable to read from storage", e);
 	    } catch (IOException e) {
