@@ -1,10 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.docdoku</groupId>
-    <artifactId>converter-step</artifactId>
-    <version>2.5-SNAPSHOT</version>
-  </parent>
-  <artifactId>converter-step-ear</artifactId>
-  <packaging>ear</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.docdoku</groupId>
+        <artifactId>converter-step</artifactId>
+        <version>2.5-SNAPSHOT</version>
+    </parent>
+    <artifactId>converter-step-ear</artifactId>
+    <packaging>ear</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>${project.parent.groupId}</groupId>
+            <artifactId>converter-step-ejb</artifactId>
+            <version>${project.parent.version}</version>
+            <type>ejb</type>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
 </project>
