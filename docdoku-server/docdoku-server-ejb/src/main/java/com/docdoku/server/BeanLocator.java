@@ -84,6 +84,7 @@ class BeanLocator {
 		    Object o = ctx.lookup(ncp.getName());
 		    if (ncp.getName().contains("!" + type.getCanonicalName())) {
 			// bean reference
+			LOGGER.info("EJB found: "+ncp.getName());
 			result.add((T) PortableRemoteObject.narrow(o, type));
 		    } else if (Context.class.isAssignableFrom(o.getClass())) {
 			// sub-context
