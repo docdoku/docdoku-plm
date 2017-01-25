@@ -1,17 +1,16 @@
 package com.docdoku.server.converters.dae;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DaeFileConverterImplTest {
@@ -32,10 +31,9 @@ public class DaeFileConverterImplTest {
         Path assimp = Paths.get(DaeFileConverterImpl.CONF.getProperty("assimp"));
         Assume.assumeTrue(Files.exists(assimp) && Files.isExecutable(assimp));
 
-	// setup
-	Path tempDir = Paths.get("src/test/resources");
-	Path daeFile = tempDir.resolve("good/good.dae");
-	Mockito.when(cadFile.getName()).thenReturn(daeFile.toAbsolutePath().toString());
+        // setup
+        Path tempDir = Paths.get("src/test/resources");
+        Path daeFile = tempDir.resolve("good/good.dae");
 
         ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
 
