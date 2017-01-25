@@ -24,6 +24,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.Conversion;
 import com.docdoku.core.product.Geometry;
 import com.docdoku.core.product.PartIterationKey;
+import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IConverterManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
@@ -34,7 +35,10 @@ import com.docdoku.server.converters.ConversionResult;
 import com.docdoku.server.converters.GeometryParser;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.security.DeclareRoles;
+import javax.annotation.security.RolesAllowed;
 import javax.ejb.Asynchronous;
+import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.io.*;
@@ -53,6 +57,9 @@ import java.util.logging.Logger;
  *
  * @author Florent.Garin
  */
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
+@RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+@Local(IConverterManagerLocal.class)
 @Stateless(name = "ConverterBean")
 public class ConverterBean implements IConverterManagerLocal {
 
@@ -89,6 +96,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
     @Override
     @Asynchronous
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void convertCADFileToOBJ(PartIterationKey partIterationKey, BinaryResource cadBinaryResource) {
 
         try {
@@ -141,6 +149,7 @@ public class ConverterBean implements IConverterManagerLocal {
         }
 
         try {
+            LOGGER.log(Level.FINE, "Conversion ended");
             productService.endConversion(partIterationKey, succeed);
         } catch (ApplicationException e) {
             LOGGER.log(Level.SEVERE, null, e);
@@ -168,7 +177,7 @@ public class ConverterBean implements IConverterManagerLocal {
                     try {
                         Files.delete(p);
                     } catch (IOException e) {
-						LOGGER.warning("Unable to delete "+p.getFileName());
+                        LOGGER.warning("Unable to delete " + p.getFileName());
                     }
                 });
             }
