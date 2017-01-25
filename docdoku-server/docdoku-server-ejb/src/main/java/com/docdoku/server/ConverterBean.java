@@ -32,6 +32,7 @@ import com.docdoku.core.util.FileIO;
 import com.docdoku.server.converters.CADConverter;
 import com.docdoku.server.converters.CADConverter.ConversionException;
 import com.docdoku.server.converters.ConversionResult;
+import com.docdoku.server.converters.ConverterUtils;
 import com.docdoku.server.converters.GeometryParser;
 
 import javax.annotation.PostConstruct;
@@ -225,6 +226,8 @@ public class ConverterBean implements IConverterManagerLocal {
 
     private boolean decimate(Path file, Path tempDir, float[] ratio) {
 
+        LOGGER.log(Level.INFO, "Decimate file in progress : " + ratio);
+
         // sanity checks
         String decimater = CONF.getProperty("decimater");
         Path executable = Paths.get(decimater);
@@ -245,25 +248,24 @@ public class ConverterBean implements IConverterManagerLocal {
             String[] args = {decimater, "-i", file.toAbsolutePath().toString(), "-o",
                     tempDir.toAbsolutePath().toString(), String.valueOf(ratio[0]), String.valueOf(ratio[1]),
                     String.valueOf(ratio[2])};
-            ProcessBuilder pb = new ProcessBuilder(args);
+
+            LOGGER.log(Level.INFO, "Decimate command" + "\n" + args);
+
+            // Add redirectErrorStream, fix process hang up
+            ProcessBuilder pb = new ProcessBuilder(args)
+                    .redirectErrorStream(true);
+
             Process proc = pb.start();
 
-            StringBuilder output = new StringBuilder();
-            // Read buffer
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(proc.getInputStream(), "UTF-8"))) {
-                String line;
-                while ((line = br.readLine()) != null) {
-                    output.append(line).append("\n");
-                }
-            }
+            String stdOutput = ConverterUtils.getOutput(proc.getInputStream());
 
             proc.waitFor();
 
             if (proc.exitValue() == 0) {
-                LOGGER.log(Level.INFO, "decimation done");
+                LOGGER.log(Level.INFO, "Decimation done");
                 decimateSucceed = true;
             } else {
-                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), output.toString());
+                LOGGER.log(Level.SEVERE, "Decimation failed with code = " + proc.exitValue(), stdOutput);
             }
 
         } catch (IOException | InterruptedException e) {
