@@ -20,6 +20,11 @@
 
 package com.docdoku.server.converters.all;
 
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
+import com.docdoku.server.converters.ConverterUtils;
+
+import javax.ejb.Stateless;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -32,12 +37,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
-
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
-import com.docdoku.server.converters.ConverterUtils;
-
 @AllFileConverter
 @Stateless
 public class AllFileConverterImpl implements CADConverter {
@@ -47,65 +46,69 @@ public class AllFileConverterImpl implements CADConverter {
     private static final Logger LOGGER = Logger.getLogger(AllFileConverterImpl.class.getName());
 
     static {
-	try (InputStream inputStream = AllFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
-	    CONF.load(inputStream);
-	} catch (IOException e) {
-	    LOGGER.log(Level.SEVERE, null, e);
-	}
+        try (InputStream inputStream = AllFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
+            CONF.load(inputStream);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 
     @Override
     public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
-	    throws ConversionException {
-	Path tmpDir = Paths.get(tmpDirUri);
-	Path tmpCadFile = Paths.get(cadFileUri);
-	
-	String meshConvBinary = CONF.getProperty("meshconv_path");
-	Path executable = Paths.get(meshConvBinary);
+            throws ConversionException {
+        Path tmpDir = Paths.get(tmpDirUri);
+        Path tmpCadFile = Paths.get(cadFileUri);
 
-	// sanity checks
-	if (!Files.exists(executable)) {
-	    throw new ConversionException(
-		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + meshConvBinary + "\" is not available");
-	}
+        String meshConvBinary = CONF.getProperty("meshconv_path");
+        Path executable = Paths.get(meshConvBinary);
 
-	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + meshConvBinary
-		    + "\" has no execution rights");
-	}
+        // sanity checks
+        if (!Files.exists(executable)) {
+            throw new ConversionException(
+                    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + meshConvBinary + "\" is not available");
+        }
 
-	UUID uuid = UUID.randomUUID();
-	Path convertedFile = tmpDir.resolve(uuid + ".obj");
+        if (!Files.isExecutable(executable)) {
+            throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + meshConvBinary
+                    + "\" has no execution rights");
+        }
 
-	String[] args = { meshConvBinary, tmpCadFile.toAbsolutePath().toString(), "-c", "obj", "-o",
-		convertedFile.toString() };
-	ProcessBuilder pb = new ProcessBuilder(args);
-	try {
-	    Process proc = pb.start();
+        UUID uuid = UUID.randomUUID();
+        Path convertedFile = tmpDir.resolve(uuid.toString());
+        // Pass the file without extension to binary, it will add automatically the extension.
 
-	    // Read buffers
-	    String stdOutput = ConverterUtils.getOutput(proc.getInputStream());
-	    String errorOutput = ConverterUtils.getOutput(proc.getErrorStream());
+        Path finalConvertedFile = tmpDir.resolve(uuid + ".obj");
 
-	    LOGGER.info(stdOutput);
+        String[] args = {meshConvBinary, tmpCadFile.toAbsolutePath().toString(), "-c", "obj", "-o",
+                convertedFile.toString()};
+        ProcessBuilder pb = new ProcessBuilder(args);
 
-	    proc.waitFor();
+        try {
+            Process proc = pb.start();
 
-	    if (proc.exitValue() == 0) {
-		return new ConversionResult(convertedFile);
-	    } else {
-		throw new ConversionException(
-			"Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
-	    }
-	} catch (IOException | InterruptedException e) {
-	    assert (false);
-	    throw new ConversionException(e);
-	}
+            // Read buffers
+            String stdOutput = ConverterUtils.getOutput(proc.getInputStream());
+            String errorOutput = ConverterUtils.getOutput(proc.getErrorStream());
+
+            LOGGER.info(stdOutput);
+
+            proc.waitFor();
+
+            if (proc.exitValue() == 0) {
+                return new ConversionResult(finalConvertedFile);
+            } else {
+                throw new ConversionException(
+                        "Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
+            }
+        } catch (IOException | InterruptedException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new ConversionException(e);
+        }
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-	return Arrays.asList("stl", "off", "ply", "3ds", "wrl").contains(cadFileExtension);
+        return Arrays.asList("stl", "off", "ply", "3ds", "wrl").contains(cadFileExtension);
     }
 
 }
