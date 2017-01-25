@@ -19,24 +19,22 @@
  */
 package com.docdoku.server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.annotation.Resource;
 import javax.naming.Context;
 import javax.naming.NameClassPair;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class that looks-up EJBs implementing a given business interface from JNDI
  * naming service.
- * 
- * @author Olivier Bourgeat
  *
+ * @author Olivier Bourgeat
  */
 class BeanLocator {
 
@@ -48,57 +46,53 @@ class BeanLocator {
     /**
      * Search for EJBs implementing a given business interface within the naming
      * Context "java:global".
-     * 
-     * @param type
-     *            Bean's Business Interface.
-     * 
+     *
+     * @param type Bean's Business Interface.
      * @return the list of EJBs implementing the given interface.
      * @throws NamingException
      */
     <T> List<T> search(Class<T> type) {
-	List<T> result = new ArrayList<>();
-	result.addAll(search(type, ctx));
-	return result;
+        List<T> result = new ArrayList<>();
+        result.addAll(search(type, ctx));
+        return result;
     }
 
     /**
      * Search for EJBs implementing a given business interface within the given
      * Naming Context.
-     * 
-     * @param type
-     *            EJB's Business Interface
-     * @param ctx
-     *            Current Naming Context
+     *
+     * @param type EJB's Business Interface
+     * @param ctx  Current Naming Context
      * @return the list of EJBs implementing the given interface within the
-     *         context.
+     * context.
      * @throws NamingException
      */
-    @SuppressWarnings("unchecked") // Cause : Generic Type Erasure
+    @SuppressWarnings("unchecked")
+    // Cause : Generic Type Erasure
     <T> List<T> search(Class<T> type, Context ctx) {
-	List<T> result = new ArrayList<T>();
-	try {
-	    NamingEnumeration<NameClassPair> ncps = ctx.list("");
-	    while (ncps.hasMoreElements()) {
-		try {
-		    NameClassPair ncp = ncps.next();
-		    Object o = ctx.lookup(ncp.getName());
-		    if (ncp.getName().contains("!" + type.getCanonicalName())) {
-			// bean reference
-			LOGGER.info("EJB found: "+ncp.getName());
-			result.add((T) PortableRemoteObject.narrow(o, type));
-		    } else if (Context.class.isAssignableFrom(o.getClass())) {
-			// sub-context
-			result.addAll(search(type, (Context) o));
-		    }
-		    // else ignore this object
-		} catch (NamingException e) {
-		    LOGGER.log(Level.INFO, "Ignoring JNDI entry: " + e.getMessage());
-		}
-	    }
-	} catch (NamingException e) {
-	    assert (false);
-	    LOGGER.log(Level.SEVERE, e.getMessage(), e);
-	}
-	return result;
+        List<T> result = new ArrayList<T>();
+        try {
+            NamingEnumeration<NameClassPair> ncps = ctx.list("");
+            while (ncps.hasMoreElements()) {
+                try {
+                    NameClassPair ncp = ncps.next();
+                    Object o = ctx.lookup(ncp.getName());
+                    if (ncp.getName().contains("!" + type.getCanonicalName())) {
+                        // bean reference
+                        LOGGER.info("EJB found: " + ncp.getName());
+                        result.add((T) PortableRemoteObject.narrow(o, type));
+                    } else if (Context.class.isAssignableFrom(o.getClass())) {
+                        // sub-context
+                        result.addAll(search(type, (Context) o));
+                    }
+                    // else ignore this object
+                } catch (NamingException e) {
+                    LOGGER.log(Level.INFO, "Ignoring JNDI entry: " + e.getMessage());
+                }
+            }
+        } catch (NamingException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
+        return result;
     }
 }

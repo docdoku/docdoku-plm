@@ -20,6 +20,11 @@
 
 package com.docdoku.server.converters.catia;
 
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
+import com.docdoku.server.converters.ConverterUtils;
+
+import javax.ejb.Stateless;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -32,12 +37,6 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ejb.Stateless;
-
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
-import com.docdoku.server.converters.ConverterUtils;
-
 @CatiaFileConverter
 @Stateless
 public class CatiaFileConverterImpl implements CADConverter {
@@ -47,87 +46,87 @@ public class CatiaFileConverterImpl implements CADConverter {
     private static final Logger LOGGER = Logger.getLogger(CatiaFileConverterImpl.class.getName());
 
     static {
-	try (InputStream inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
-	    CONF.load(inputStream);
-	} catch (IOException e) {
-	    LOGGER.log(Level.SEVERE, null, e);
-	}
+        try (InputStream inputStream = CatiaFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
+            CONF.load(inputStream);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 
     @Override
     public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
-	    throws ConversionException {
-	
-	Path tmpDir = Paths.get(tmpDirUri);
-	Path tmpCadFile = Paths.get(cadFileUri);
+            throws ConversionException {
 
-	String catPartConverter = CONF.getProperty("catPartConverter");
-	Path executable = Paths.get(catPartConverter);
+        Path tmpDir = Paths.get(tmpDirUri);
+        Path tmpCadFile = Paths.get(cadFileUri);
 
-	// Sanity checks
-	if (!Files.exists(executable)) {
-	    throw new ConversionException(
-		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + catPartConverter + "\" is not available");
-	}
+        String catPartConverter = CONF.getProperty("catPartConverter");
+        Path executable = Paths.get(catPartConverter);
 
-	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + catPartConverter
-		    + "\" has no execution rights");
-	}
+        // Sanity checks
+        if (!Files.exists(executable)) {
+            throw new ConversionException(
+                    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + catPartConverter + "\" is not available");
+        }
 
-	UUID uuid = UUID.randomUUID();
-	Path tmpDAEFile = tmpDir.resolve(uuid + ".dae");
+        if (!Files.isExecutable(executable)) {
+            throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + catPartConverter
+                    + "\" has no execution rights");
+        }
 
-	String[] args = { "sh", catPartConverter, tmpCadFile.toAbsolutePath().toString(),
-		tmpDAEFile.toAbsolutePath().toString() };
+        UUID uuid = UUID.randomUUID();
+        Path tmpDAEFile = tmpDir.resolve(uuid + ".dae");
 
-	ProcessBuilder pb = new ProcessBuilder(args);
-	try {
-	    Process process1 = pb.start();
+        String[] args = {"sh", catPartConverter, tmpCadFile.toAbsolutePath().toString(),
+                tmpDAEFile.toAbsolutePath().toString()};
 
-	    // Read buffers
-	    String stdOutput1 = ConverterUtils.getOutput(process1.getInputStream());
-	    String errorOutput1 = ConverterUtils.getOutput(process1.getErrorStream());
+        ProcessBuilder pb = new ProcessBuilder(args);
+        try {
+            Process process1 = pb.start();
 
-	    LOGGER.info(stdOutput1);
+            // Read buffers
+            String stdOutput1 = ConverterUtils.getOutput(process1.getInputStream());
+            String errorOutput1 = ConverterUtils.getOutput(process1.getErrorStream());
 
-	    process1.waitFor();
+            LOGGER.info(stdOutput1);
 
-	    // Convert to OBJ once converted to DAE
-	    if (process1.exitValue() == 0 && Files.exists(tmpDAEFile) && Files.size(tmpDAEFile) > 0) {
-		String assimp = CONF.getProperty("assimp");
-		Path convertedFileName = tmpDir.resolve(uuid + ".obj");
-		String[] argsOBJ = { assimp, "export", tmpDAEFile.toAbsolutePath().toString(),
-			convertedFileName.toString() };
-		pb = new ProcessBuilder(argsOBJ);
-		Process process2 = pb.start();
+            process1.waitFor();
 
-		// Read buffers
-		String stdOutput2 = ConverterUtils.getOutput(process2.getInputStream());
-		String errorOutput2 = ConverterUtils.getOutput(process2.getErrorStream());
+            // Convert to OBJ once converted to DAE
+            if (process1.exitValue() == 0 && Files.exists(tmpDAEFile) && Files.size(tmpDAEFile) > 0) {
+                String assimp = CONF.getProperty("assimp");
+                Path convertedFileName = tmpDir.resolve(uuid + ".obj");
+                String[] argsOBJ = {assimp, "export", tmpDAEFile.toAbsolutePath().toString(),
+                        convertedFileName.toString()};
+                pb = new ProcessBuilder(argsOBJ);
+                Process process2 = pb.start();
 
-		LOGGER.info(stdOutput2);
+                // Read buffers
+                String stdOutput2 = ConverterUtils.getOutput(process2.getInputStream());
+                String errorOutput2 = ConverterUtils.getOutput(process2.getErrorStream());
 
-		process2.waitFor();
+                LOGGER.info(stdOutput2);
 
-		if (process2.exitValue() == 0) {
-		    return new ConversionResult(convertedFileName);
-		} else {
-		    throw new ConversionException(
-			    "Cannot convert to obj : " + tmpCadFile.toAbsolutePath() + ": " + errorOutput2);
-		}
-	    } else {
-		throw new ConversionException(
-			"Cannot convert to dae : " + tmpCadFile.toAbsolutePath() + ": " + errorOutput1);
-	    }
-	} catch (IOException | InterruptedException e) {
-	    assert (false);
-	    throw new ConversionException(e);
-	}
+                process2.waitFor();
+
+                if (process2.exitValue() == 0) {
+                    return new ConversionResult(convertedFileName);
+                } else {
+                    throw new ConversionException(
+                            "Cannot convert to obj : " + tmpCadFile.toAbsolutePath() + ": " + errorOutput2);
+                }
+            } else {
+                throw new ConversionException(
+                        "Cannot convert to dae : " + tmpCadFile.toAbsolutePath() + ": " + errorOutput1);
+            }
+        } catch (IOException | InterruptedException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new ConversionException(e);
+        }
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-	return Arrays.asList("catpart").contains(cadFileExtension);
+        return Arrays.asList("catpart").contains(cadFileExtension);
     }
 }

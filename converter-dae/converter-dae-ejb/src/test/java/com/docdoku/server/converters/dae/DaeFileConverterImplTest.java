@@ -20,55 +20,55 @@ public class DaeFileConverterImplTest {
 
     @Test
     public void testCanConvertToObj() throws Exception {
-	Assert.assertTrue(converter.canConvertToOBJ("dae"));
-	Assert.assertTrue(converter.canConvertToOBJ("dxf"));
-	Assert.assertTrue(converter.canConvertToOBJ("lwo"));
-	Assert.assertFalse(converter.canConvertToOBJ("toto"));
+        Assert.assertTrue(converter.canConvertToOBJ("dae"));
+        Assert.assertTrue(converter.canConvertToOBJ("dxf"));
+        Assert.assertTrue(converter.canConvertToOBJ("lwo"));
+        Assert.assertFalse(converter.canConvertToOBJ("toto"));
     }
 
     @Test
     public void testNominalConvert() throws Exception {
-	// Assume assimp is installed
-	Path assimp = Paths.get(DaeFileConverterImpl.CONF.getProperty("assimp"));
-	Assume.assumeTrue(Files.exists(assimp) && Files.isExecutable(assimp));
+        // Assume assimp is installed
+        Path assimp = Paths.get(DaeFileConverterImpl.CONF.getProperty("assimp"));
+        Assume.assumeTrue(Files.exists(assimp) && Files.isExecutable(assimp));
 
 	// setup
 	Path tempDir = Paths.get("src/test/resources");
 	Path daeFile = tempDir.resolve("good/good.dae");
 	Mockito.when(cadFile.getName()).thenReturn(daeFile.toAbsolutePath().toString());
 
-	ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
+        ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
 
-	Assert.assertNotNull(result.getConvertedFile());
-	Assert.assertTrue(Files.exists(result.getConvertedFile()));
-	Assert.assertEquals(1, result.getMaterials().size());
-	Assert.assertTrue(Files.exists(result.getMaterials().get(0)));
+        Assert.assertNotNull(result.getConvertedFile());
+        Assert.assertTrue(Files.exists(result.getConvertedFile()));
+        Assert.assertEquals(1, result.getMaterials().size());
+        Assert.assertTrue(Files.exists(result.getMaterials().get(0)));
 
-	// cleanup
-	if (result != null) {
-	    result.close();
-	}
+        // cleanup
+        if (result != null) {
+            result.close();
+        }
     }
 
-    @Test(expected=CADConverter.ConversionException.class)
+    @Test(expected = CADConverter.ConversionException.class)
     public void testInvalidConvert() throws Exception {
-	// Assume assimp is installed
-	Path assimp = Paths.get(DaeFileConverterImpl.CONF.getProperty("assimp"));
-	Assume.assumeTrue(Files.exists(assimp) && Files.isExecutable(assimp));
+        // Assume assimp is installed
+        Path assimp = Paths.get(DaeFileConverterImpl.CONF.getProperty("assimp"));
+        Assume.assumeTrue(Files.exists(assimp) && Files.isExecutable(assimp));
 
-	// setup
-	Path tempDir = Paths.get("src/test/resources");
-	Path daeFile = tempDir.resolve("bad/bad.dae");
+        // setup
+        Path tempDir = Paths.get("src/test/resources");
+        Path daeFile = tempDir.resolve("bad/bad.dae");
 
-	ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
+        ConversionResult result = converter.convert(daeFile.toUri(), tempDir.toUri());
 
-	//Test should fail
-	Assert.fail();
-	
-	// cleanup
-	if (result != null){
-	    result.close();
-	}
+        //Test should fail
+        Assert.fail();
+
+        // cleanup
+        if (result != null) {
+            result.close();
+        }
     }
 
 }

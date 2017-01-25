@@ -69,133 +69,133 @@ public class CatiaProductFileParserImpl implements CADConverter {
     private IBinaryStorageManagerLocal storageManager;
 
     static {
-	try (InputStream inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
-	    CONF.load(inputStream);
-	} catch (IOException e) {
-	    LOGGER.log(Level.SEVERE, null, e);
-	}
+        try (InputStream inputStream = CatiaProductFileParserImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
+            CONF.load(inputStream);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 
     @Override
     public ConversionResult convert(PartIteration partToConvert, final BinaryResource cadFile, Path tempDir)
-	    throws ConversionException {
+            throws ConversionException {
 
-	String catProductReader = CONF.getProperty("catProductReader");
-	Path executable = Paths.get(catProductReader);
+        String catProductReader = CONF.getProperty("catProductReader");
+        Path executable = Paths.get(catProductReader);
 
-	// Sanity checks
+        // Sanity checks
 
-	if (!Files.exists(executable)) {
-	    throw new ConversionException(
-		    "Cannot convert file \"" + cadFile.getName() + "\", \"" + catProductReader + "\" is not available");
-	}
+        if (!Files.exists(executable)) {
+            throw new ConversionException(
+                    "Cannot convert file \"" + cadFile.getName() + "\", \"" + catProductReader + "\" is not available");
+        }
 
-	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException("Cannot convert file \"" + cadFile.getName() + "\", \"" + catProductReader
-		    + "\" has no execution rights");
-	}
+        if (!Files.isExecutable(executable)) {
+            throw new ConversionException("Cannot convert file \"" + cadFile.getName() + "\", \"" + catProductReader
+                    + "\" has no execution rights");
+        }
 
-	Path tmpXMLFile = tempDir.resolve(cadFile.getName() + "_dtk.xml");
+        Path tmpXMLFile = tempDir.resolve(cadFile.getName() + "_dtk.xml");
 
-	Path tmpCadFile = tempDir.resolve(cadFile.getName());
+        Path tmpCadFile = tempDir.resolve(cadFile.getName());
 
-	String[] args = { "sh", catProductReader, tmpCadFile.toAbsolutePath().toString() };
+        String[] args = {"sh", catProductReader, tmpCadFile.toAbsolutePath().toString()};
 
-	ProcessBuilder pb = new ProcessBuilder(args);
-	try {
-	    Process process = pb.start();
+        ProcessBuilder pb = new ProcessBuilder(args);
+        try {
+            Process process = pb.start();
 
-	    // Read buffers
-	    String stdOutput = ConverterUtils.getOutput(process.getInputStream());
-	    String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
+            // Read buffers
+            String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+            String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-	    LOGGER.info(stdOutput);
+            LOGGER.info(stdOutput);
 
-	    process.waitFor();
+            process.waitFor();
 
-	    if (process.exitValue() == 0 && Files.exists(tmpXMLFile) && Files.size(tmpXMLFile) > 0) {
-		try {
-		    SAXParserFactory factory = SAXParserFactory.newInstance();
-		    SAXParser saxParser = factory.newSAXParser();
-		    ComponentDTKSaxHandler handler = new ComponentDTKSaxHandler();
-		    saxParser.parse(new InputSource(Files.newBufferedReader(tmpXMLFile)), handler);
+            if (process.exitValue() == 0 && Files.exists(tmpXMLFile) && Files.size(tmpXMLFile) > 0) {
+                try {
+                    SAXParserFactory factory = SAXParserFactory.newInstance();
+                    SAXParser saxParser = factory.newSAXParser();
+                    ComponentDTKSaxHandler handler = new ComponentDTKSaxHandler();
+                    saxParser.parse(new InputSource(Files.newBufferedReader(tmpXMLFile)), handler);
 
-		    syncAssembly(handler.getComponent(), partToConvert);
+                    syncAssembly(handler.getComponent(), partToConvert);
 
-		} catch (ParserConfigurationException | SAXException | IOException e) {
-		    throw new ConversionException(e);
-		}
-	    } else {
-		throw new ConversionException(
-			"Cannot parse catia product file " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
-	    }
-	} catch (IOException | InterruptedException e) {
-	    throw new ConversionException(e);
-	}
+                } catch (ParserConfigurationException | SAXException | IOException e) {
+                    throw new ConversionException(e);
+                }
+            } else {
+                throw new ConversionException(
+                        "Cannot parse catia product file " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new ConversionException(e);
+        }
     }
 
     private void syncAssembly(ComponentDTK componentDtk, PartIteration partToConvert) {
 
-	List<PartUsageLink> partUsageLinks = new ArrayList<>();
+        List<PartUsageLink> partUsageLinks = new ArrayList<>();
 
-	Map<String, List<CADInstance>> mapInstances = new HashMap<>();
+        Map<String, List<CADInstance>> mapInstances = new HashMap<>();
 
-	parseSubComponents(mapInstances, componentDtk);
+        parseSubComponents(mapInstances, componentDtk);
 
-	for (Map.Entry<String, List<CADInstance>> entry : mapInstances.entrySet()) {
-	    String cadFileName = entry.getKey();
-	    List<CADInstance> instances = entry.getValue();
+        for (Map.Entry<String, List<CADInstance>> entry : mapInstances.entrySet()) {
+            String cadFileName = entry.getKey();
+            List<CADInstance> instances = entry.getValue();
 
-	    PartMaster partMaster = productService.findPartMasterByCADFileName(partToConvert.getWorkspaceId(),
-		    cadFileName);
-	    if (partMaster != null) {
-		PartUsageLink partUsageLink = new PartUsageLink();
-		partUsageLink.setAmount(instances.size());
-		partUsageLink.setComponent(partMaster);
-		partUsageLink.setCadInstances(instances);
-		partUsageLinks.add(partUsageLink);
-	    }
+            PartMaster partMaster = productService.findPartMasterByCADFileName(partToConvert.getWorkspaceId(),
+                    cadFileName);
+            if (partMaster != null) {
+                PartUsageLink partUsageLink = new PartUsageLink();
+                partUsageLink.setAmount(instances.size());
+                partUsageLink.setComponent(partMaster);
+                partUsageLink.setCadInstances(instances);
+                partUsageLinks.add(partUsageLink);
+            }
 
-	}
+        }
 
-	// Erase old structure
-	partToConvert.setComponents(partUsageLinks);
+        // Erase old structure
+        partToConvert.setComponents(partUsageLinks);
 
     }
 
     private void parseSubComponents(Map<String, List<CADInstance>> mapInstances, ComponentDTK root) {
 
-	List<ComponentDTK> subComponentDtkList = root.getSubComponentDtkList();
-	if (subComponentDtkList != null) {
+        List<ComponentDTK> subComponentDtkList = root.getSubComponentDtkList();
+        if (subComponentDtkList != null) {
 
-	    for (ComponentDTK componentDTK : subComponentDtkList) {
+            for (ComponentDTK componentDTK : subComponentDtkList) {
 
-		if (componentDTK.isLinkable()) {
+                if (componentDTK.isLinkable()) {
 
-		    List<CADInstance> cadInstances = mapInstances.get(componentDTK.getName());
+                    List<CADInstance> cadInstances = mapInstances.get(componentDTK.getName());
 
-		    if (cadInstances == null) {
-			cadInstances = new LinkedList<>();
-			mapInstances.put(componentDTK.getName(), cadInstances);
-		    }
+                    if (cadInstances == null) {
+                        cadInstances = new LinkedList<>();
+                        mapInstances.put(componentDTK.getName(), cadInstances);
+                    }
 
-		    mapInstances.put(componentDTK.getName(), cadInstances);
+                    mapInstances.put(componentDTK.getName(), cadInstances);
 
-		    CADInstance instance = componentDTK.getPositioning().toCADInstance();
+                    CADInstance instance = componentDTK.getPositioning().toCADInstance();
 
-		    if (instance != null) {
-			cadInstances.add(instance);
-		    }
-		}
+                    if (instance != null) {
+                        cadInstances.add(instance);
+                    }
+                }
 
-		parseSubComponents(mapInstances, componentDTK);
-	    }
-	}
+                parseSubComponents(mapInstances, componentDTK);
+            }
+        }
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-	return "catproduct".equals(cadFileExtension);
+        return "catproduct".equals(cadFileExtension);
     }
 
 }

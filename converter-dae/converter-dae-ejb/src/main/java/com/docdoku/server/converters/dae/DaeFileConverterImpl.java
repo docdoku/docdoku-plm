@@ -20,25 +20,20 @@
 
 package com.docdoku.server.converters.dae;
 
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
+import com.docdoku.server.converters.ConverterUtils;
+
+import javax.ejb.Stateless;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.ejb.Stateless;
-
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
-import com.docdoku.server.converters.ConverterUtils;
 
 @DaeFileConverter
 @Stateless
@@ -49,69 +44,69 @@ public class DaeFileConverterImpl implements CADConverter {
     static final Logger LOGGER = Logger.getLogger(DaeFileConverterImpl.class.getName());
 
     static {
-	try (InputStream inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
-	    CONF.load(inputStream);
-	} catch (IOException e) {
-	    LOGGER.log(Level.SEVERE, null, e);
-	}
+        try (InputStream inputStream = DaeFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
+            CONF.load(inputStream);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 
     @Override
     public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
-	    throws ConversionException {
-	
-	Path tmpDir = Paths.get(tmpDirUri);
-	Path tmpCadFile = Paths.get(cadFileUri);
-	
-	String assimp = CONF.getProperty("assimp");
-	Path executable = Paths.get(assimp);
+            throws ConversionException {
 
-	// Sanity checks
+        Path tmpDir = Paths.get(tmpDirUri);
+        Path tmpCadFile = Paths.get(cadFileUri);
 
-	if (!Files.exists(executable)) {
-	    throw new ConversionException(
-		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + assimp + "\" is not available");
-	}
+        String assimp = CONF.getProperty("assimp");
+        Path executable = Paths.get(assimp);
 
-	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException(
-		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + assimp + "\" has no execution rights");
-	}
+        // Sanity checks
 
-	UUID uuid = UUID.randomUUID();
-	Path convertedFile = tmpDir.resolve(uuid + ".obj");
-	Path convertedMtlFile = tmpDir.resolve(uuid + ".obj.mtl");
+        if (!Files.exists(executable)) {
+            throw new ConversionException(
+                    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + assimp + "\" is not available");
+        }
 
-	String[] args = { assimp, "export", tmpCadFile.toAbsolutePath().toString(), convertedFile.toString() };
-	ProcessBuilder pb = new ProcessBuilder(args);
-	try {
-	    Process process = pb.start();
+        if (!Files.isExecutable(executable)) {
+            throw new ConversionException(
+                    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + assimp + "\" has no execution rights");
+        }
 
-	    // Read buffers
-	    String stdOutput = ConverterUtils.getOutput(process.getInputStream());
-	    String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
+        UUID uuid = UUID.randomUUID();
+        Path convertedFile = tmpDir.resolve(uuid + ".obj");
+        Path convertedMtlFile = tmpDir.resolve(uuid + ".obj.mtl");
 
-	    LOGGER.info(stdOutput);
+        String[] args = {assimp, "export", tmpCadFile.toAbsolutePath().toString(), convertedFile.toString()};
+        ProcessBuilder pb = new ProcessBuilder(args);
+        try {
+            Process process = pb.start();
 
-	    process.waitFor();
+            // Read buffers
+            String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+            String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-	    if (process.exitValue() == 0) {
-		List<Path> materials = new ArrayList<>();
-		materials.add(convertedMtlFile);
-		return new ConversionResult(convertedFile, materials);
-	    } else {
-		throw new ConversionException(
-			"Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
-	    }
-	} catch (IOException | InterruptedException e) {
-	    assert (false);
-	    throw new ConversionException(e);
-	}
+            LOGGER.info(stdOutput);
+
+            process.waitFor();
+
+            if (process.exitValue() == 0) {
+                List<Path> materials = new ArrayList<>();
+                materials.add(convertedMtlFile);
+                return new ConversionResult(convertedFile, materials);
+            } else {
+                throw new ConversionException(
+                        "Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
+            }
+        } catch (IOException | InterruptedException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+            throw new ConversionException(e);
+        }
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-	return Arrays.asList("dxf", "dae", "lwo", "x", "ac", "cob", "scn", "ms3d").contains(cadFileExtension);
+        return Arrays.asList("dxf", "dae", "lwo", "x", "ac", "cob", "scn", "ms3d").contains(cadFileExtension);
     }
 
 }

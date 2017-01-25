@@ -20,25 +20,20 @@
 
 package com.docdoku.server.converters.ifc;
 
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
+import com.docdoku.server.converters.ConverterUtils;
+
+import javax.ejb.Stateless;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.ejb.Stateless;
-
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
-import com.docdoku.server.converters.ConverterUtils;
 
 @IFCFileConverter
 @Stateless
@@ -49,71 +44,71 @@ public class IFCFileConverterImpl implements CADConverter {
     private static final Logger LOGGER = Logger.getLogger(IFCFileConverterImpl.class.getName());
 
     static {
-	try (InputStream inputStream = IFCFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
-	    CONF.load(inputStream);
-	} catch (IOException e) {
-	    LOGGER.log(Level.SEVERE, null, e);
-	}
+        try (InputStream inputStream = IFCFileConverterImpl.class.getResourceAsStream(CONF_PROPERTIES)) {
+            CONF.load(inputStream);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        }
     }
 
     @Override
     public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
-	    throws ConversionException {
-	Path tmpDir= Paths.get(tmpDirUri);
-	Path tmpCadFile = Paths.get(cadFileUri);
+            throws ConversionException {
+        Path tmpDir = Paths.get(tmpDirUri);
+        Path tmpCadFile = Paths.get(cadFileUri);
 
-	String ifcConverter = CONF.getProperty("ifc_convert_path");
-	Path executable = Paths.get(ifcConverter);	
+        String ifcConverter = CONF.getProperty("ifc_convert_path");
+        Path executable = Paths.get(ifcConverter);
 
-	// Sanity checks
+        // Sanity checks
 
-	if (!Files.exists(executable)) {
-	    throw new ConversionException(
-		    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + ifcConverter + "\" is not available");
-	}
+        if (!Files.exists(executable)) {
+            throw new ConversionException(
+                    "Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + ifcConverter + "\" is not available");
+        }
 
-	if (!Files.isExecutable(executable)) {
-	    throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + ifcConverter
-		    + "\" has no execution rights");
-	}
+        if (!Files.isExecutable(executable)) {
+            throw new ConversionException("Cannot convert file \"" + tmpCadFile.toString() + "\", \"" + ifcConverter
+                    + "\" has no execution rights");
+        }
 
-	UUID uuid = UUID.randomUUID();
-	// String extension = FileIO.getExtension(cadFile.getName());
+        UUID uuid = UUID.randomUUID();
+        // String extension = FileIO.getExtension(cadFile.getName());
 
-	Path convertedFile = tmpDir.resolve(uuid + ".obj");
-	Path convertedMtl = tmpDir.resolve(uuid + ".mtl");
+        Path convertedFile = tmpDir.resolve(uuid + ".obj");
+        Path convertedMtl = tmpDir.resolve(uuid + ".mtl");
 
-	String[] args = { ifcConverter, "--sew-shells", tmpCadFile.toAbsolutePath().toString(),
-		convertedFile.toString() };
-	ProcessBuilder pb = new ProcessBuilder(args);
+        String[] args = {ifcConverter, "--sew-shells", tmpCadFile.toAbsolutePath().toString(),
+                convertedFile.toString()};
+        ProcessBuilder pb = new ProcessBuilder(args);
 
-	try {
-	    Process process = pb.start();
+        try {
+            Process process = pb.start();
 
-	    // Read buffers
-	    String stdOutput = ConverterUtils.getOutput(process.getInputStream());
-	    String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
+            // Read buffers
+            String stdOutput = ConverterUtils.getOutput(process.getInputStream());
+            String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
 
-	    LOGGER.info(stdOutput);
+            LOGGER.info(stdOutput);
 
-	    process.waitFor();
+            process.waitFor();
 
-	    if (process.exitValue() == 0) {
-		List<Path> materials = new ArrayList<>();
-		materials.add(convertedMtl);
-		return new ConversionResult(convertedFile, materials);
-	    } else {
-		throw new ConversionException(
-			"Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
-	    }
-	} catch (IOException | InterruptedException e) {
-	    throw new ConversionException(e);
-	}
+            if (process.exitValue() == 0) {
+                List<Path> materials = new ArrayList<>();
+                materials.add(convertedMtl);
+                return new ConversionResult(convertedFile, materials);
+            } else {
+                throw new ConversionException(
+                        "Cannot convert to obj " + tmpCadFile.toAbsolutePath() + ": " + errorOutput);
+            }
+        } catch (IOException | InterruptedException e) {
+            throw new ConversionException(e);
+        }
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-	return Arrays.asList("ifc").contains(cadFileExtension);
+        return "ifc".equals(cadFileExtension);
     }
 
 }

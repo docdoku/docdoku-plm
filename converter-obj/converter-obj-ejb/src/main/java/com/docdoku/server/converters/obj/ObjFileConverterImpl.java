@@ -20,34 +20,28 @@
 
 package com.docdoku.server.converters.obj;
 
+import com.docdoku.server.converters.CADConverter;
+import com.docdoku.server.converters.ConversionResult;
+
+import javax.ejb.Stateless;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-
-import javax.ejb.Stateless;
-
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
 
 @ObjFileConverter
 @Stateless
 public class ObjFileConverterImpl implements CADConverter {
 
-//    private static final Logger LOGGER = Logger.getLogger(ObjFileConverterImpl.class.getName());
-
     @Override
     public ConversionResult convert(final URI cadFileUri, final URI tmpDirUri)
-	    throws ConversionException {
-	
-	Path tmpCadFile = Paths.get(cadFileUri);
-
-	return new ConversionResult(tmpCadFile);
+            throws ConversionException {
+        Path tmpCadFile = Paths.get(cadFileUri);
+        return new ConversionResult(tmpCadFile);
     }
 
     @Override
     public boolean canConvertToOBJ(String cadFileExtension) {
-	return Arrays.asList("obj").contains(cadFileExtension);
+        return "obj".equals(cadFileExtension);
     }
 
 }
