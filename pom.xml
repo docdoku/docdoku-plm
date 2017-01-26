@@ -261,8 +261,6 @@
         <module>docdoku-dplm</module>
         <module>converter-dae</module>
         <module>converter-all</module>
-        <module>converter-catia</module>
-<!--    <module>converter-catia-product</module> -->
         <module>converter-ifc</module>
         <module>converter-obj</module>
         <module>converter-step</module>
