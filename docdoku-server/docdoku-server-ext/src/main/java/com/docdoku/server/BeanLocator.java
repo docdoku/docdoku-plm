@@ -19,11 +19,7 @@
  */
 package com.docdoku.server;
 
-import javax.annotation.Resource;
-import javax.naming.Context;
-import javax.naming.NameClassPair;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
+import javax.naming.*;
 import javax.rmi.PortableRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,12 +32,9 @@ import java.util.logging.Logger;
  *
  * @author Olivier Bourgeat
  */
-class BeanLocator {
+public class BeanLocator {
 
     private static final Logger LOGGER = Logger.getLogger(BeanLocator.class.getName());
-
-    @Resource(lookup = "java:global")
-    private Context ctx;
 
     /**
      * Search for EJBs implementing a given business interface within the naming
@@ -51,9 +44,19 @@ class BeanLocator {
      * @return the list of EJBs implementing the given interface.
      * @throws NamingException
      */
-    <T> List<T> search(Class<T> type) {
+    public <T> List<T> search(Class<T> type) {
+
         List<T> result = new ArrayList<>();
-        result.addAll(search(type, ctx));
+
+        try {
+            InitialContext context = new InitialContext();
+            Context ctx = (Context) context.lookup("java:global");
+            result.addAll(search(type, ctx));
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }
+
+
         return result;
     }
 
