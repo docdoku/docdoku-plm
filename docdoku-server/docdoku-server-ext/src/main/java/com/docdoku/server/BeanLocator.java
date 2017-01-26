@@ -53,7 +53,7 @@ public class BeanLocator {
             Context ctx = (Context) context.lookup("java:global");
             result.addAll(search(type, ctx));
         } catch (NamingException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, null, e);
         }
 
 
