@@ -81,8 +81,8 @@ public class StepFileConverterImpl implements CADConverter {
             Process process = pb.start();
 
             // Read buffers
-            String stdOutput = ConverterUtils.getOutput(process.getInputStream());
-            String errorOutput = ConverterUtils.getOutput(process.getErrorStream());
+            String stdOutput = ConverterUtils.inputStreamToString(process.getInputStream());
+            String errorOutput = ConverterUtils.inputStreamToString(process.getErrorStream());
 
             LOGGER.info(stdOutput);
 

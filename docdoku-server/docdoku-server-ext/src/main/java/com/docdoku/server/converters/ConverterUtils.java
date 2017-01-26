@@ -38,7 +38,7 @@ public class ConverterUtils {
      * @param is an InputStream
      * @return the representation as String
      */
-    public static String getOutput(InputStream is) throws IOException {
+    public static String inputStreamToString(InputStream is) throws IOException {
         StringBuilder output = new StringBuilder();
         String line;
         try (InputStreamReader isr = new InputStreamReader(is, "UTF-8"); BufferedReader br = new BufferedReader(isr)) {

@@ -87,8 +87,8 @@ public class AllFileConverterImpl implements CADConverter {
             Process proc = pb.start();
 
             // Read buffers
-            String stdOutput = ConverterUtils.getOutput(proc.getInputStream());
-            String errorOutput = ConverterUtils.getOutput(proc.getErrorStream());
+            String stdOutput = ConverterUtils.inputStreamToString(proc.getInputStream());
+            String errorOutput = ConverterUtils.inputStreamToString(proc.getErrorStream());
 
             LOGGER.info(stdOutput);
 

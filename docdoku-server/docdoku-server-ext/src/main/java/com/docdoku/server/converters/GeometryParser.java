@@ -20,95 +20,76 @@
 
 package com.docdoku.server.converters;
 
-import javax.json.Json;
-import javax.json.JsonException;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import java.io.*;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Properties;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
+
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * This GeometryParser class allows to compute geometric data for given file
- * It relies on docdoku-node-server to get the data.
+ * It relies on Nashorn to compute the bounding box
+ *
+ * @author Morgan Guimard
  */
 public class GeometryParser {
 
-    private static final String CONF_PROPERTIES = "/com/docdoku/server/converters/utils/conf.properties";
-    private static final Properties CONF = new Properties();
     private static final Logger LOGGER = Logger.getLogger(GeometryParser.class.getName());
+    private final Path convertedFile;
 
-    private GeometryParser() {
+    private final ScriptEngineManager factory = new ScriptEngineManager();
+    private final ScriptEngine engine = factory.getEngineByName("nashorn");
+
+    private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
+
+
+    public GeometryParser(Path convertedFile) {
+
+        this.convertedFile = convertedFile;
+
+        List<String> scripts = Arrays.asList(
+                "com/docdoku/server/converters/box-calculator.js",
+                "META-INF/resources/webjars/three.js/r70/three.js"
+        );
+
+        scripts.stream().forEach((script) -> {
+            try {
+                loadFile(script);
+            } catch (ScriptException e) {
+                LOGGER.log(Level.SEVERE, "Cannot load script : " + script, e);
+            }
+        });
+
     }
 
+
     /**
-     * Computes the bounding box of given 3D file
+     * Computes the bounding box of given 3D OBJ file
      *
-     * @param file the file to compute
      * @return an array of double representing the bounding box min and max values
      */
-    public static double[] calculateBox(File file) {
-
-        String result = "";
-        String nodeServerUrl = "";
-
-        try (InputStream inputStream = GeometryParser.class.getResourceAsStream(CONF_PROPERTIES)) {
-
-            CONF.load(inputStream);
-
-            nodeServerUrl = CONF.getProperty("nodeServerUrl");
-
-            URL url = new URL(nodeServerUrl + "/box");
-
-            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-            con.setRequestMethod("POST");
-            con.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
-            JsonObjectBuilder body = Json.createObjectBuilder().add("filename", file.getAbsolutePath());
-            con.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream(), "UTF-8");
-            wr.write(body.build().toString());
-            wr.flush();
-            wr.close();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream(), "UTF-8"));
-            String inputLine;
-            StringBuilder response = new StringBuilder();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-            in.close();
-
-            result = response.toString();
-
-            JsonObject box = Json.createReader(new StringReader(result)).readObject();
-
-            JsonObject min = box.getJsonObject("min");
-            JsonObject max = box.getJsonObject("max");
+    public double[] calculateBox() throws IOException, ScriptException, NoSuchMethodException {
+        final Invocable invocable = (Invocable) engine;
+        final InputStream inputStream = Files.newInputStream(convertedFile);
+        String data = ConverterUtils.inputStreamToString(inputStream);
+        ScriptObjectMirror scriptObjectMirror = (ScriptObjectMirror) invocable.invokeFunction("calculateBox", data);
+        return scriptObjectMirror.to(double[].class);
+    }
 
 
-            return new double[]{
-                    min.getJsonNumber("x").doubleValue(),
-                    min.getJsonNumber("y").doubleValue(),
-                    min.getJsonNumber("z").doubleValue(),
-                    max.getJsonNumber("x").doubleValue(),
-                    max.getJsonNumber("y").doubleValue(),
-                    max.getJsonNumber("z").doubleValue()
-            };
-
-        } catch (ConnectException e) {
-            LOGGER.log(Level.WARNING, "Communication with docdoku-node-server failed. Is it listening on '" + nodeServerUrl + "' ?");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        } catch (JsonException e) {
-            LOGGER.log(Level.SEVERE, "Cannot parse program output : \n " + result, e);
-        }
-
-        return new double[6];
+    private void loadFile(String script) throws ScriptException {
+        final InputStream inputStream = loader.getResourceAsStream(script);
+        final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+        engine.eval(inputStreamReader);
     }
 }

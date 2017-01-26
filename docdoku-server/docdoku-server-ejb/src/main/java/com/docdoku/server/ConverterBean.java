@@ -42,6 +42,7 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.script.ScriptException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -192,7 +193,13 @@ public class ConverterBean implements IConverterManagerLocal {
         // manage converted file
         Path convertedFile = conversionResult.getConvertedFile();
 
-        double[] box = GeometryParser.calculateBox(convertedFile.toFile());
+        double[] box;
+
+        try {
+            box = new GeometryParser(convertedFile).calculateBox();
+        } catch (IOException | ScriptException | NoSuchMethodException e) {
+            box = new double[6];
+        }
 
         if (decimate(convertedFile, tempDir, RATIO)) {
             String fileName = convertedFile.getFileName().toString();
@@ -257,7 +264,7 @@ public class ConverterBean implements IConverterManagerLocal {
 
             Process proc = pb.start();
 
-            String stdOutput = ConverterUtils.getOutput(proc.getInputStream());
+            String stdOutput = ConverterUtils.inputStreamToString(proc.getInputStream());
 
             proc.waitFor();
 

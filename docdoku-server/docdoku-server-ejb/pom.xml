@@ -83,6 +83,11 @@
             <artifactId>simple-jndi</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>three.js</artifactId>
+            <version>r70</version>
+        </dependency>
     </dependencies>
     <build>
         <resources>
