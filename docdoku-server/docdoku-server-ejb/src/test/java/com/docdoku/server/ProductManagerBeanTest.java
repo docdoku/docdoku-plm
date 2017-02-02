@@ -28,10 +28,10 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.services.IContextManagerLocal;
+import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.dao.PartUsageLinkDAO;
 import com.docdoku.server.dao.PathToPathLinkDAO;
-import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.events.PartIterationEvent;
 import com.docdoku.server.events.PartRevisionEvent;
 import com.docdoku.server.events.TagEvent;
@@ -68,7 +68,7 @@ public class ProductManagerBeanTest {
     @Mock
     SessionContext ctx;
     @Mock
-    private ESIndexer esIndexer;
+    private IIndexerManagerLocal indexerManager;
     @Mock
     TypedQuery<Tag> tagsQuery;
     @Mock
@@ -182,7 +182,7 @@ public class ProductManagerBeanTest {
                 }
             }
         }
-        Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
+        Mockito.verify(indexerManager,Mockito.never()).indexPartIteration(Mockito.any(PartIteration.class));
 
     }
 
@@ -230,7 +230,7 @@ public class ProductManagerBeanTest {
         }catch (NotAllowedException notAllowedException){
             Assert.assertTrue("updateDocument shouldn't have raised an exception because the attributes are not frozen", false);
         }
-        Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
+        Mockito.verify(indexerManager,Mockito.never()).indexPartIteration(Mockito.any(PartIteration.class));
 
     }
 
@@ -270,7 +270,7 @@ public class ProductManagerBeanTest {
             Assert.assertEquals(tag.getLabel(), tags[i++]);
         }
 
-        Mockito.verify(esIndexer,Mockito.times(1)).index(Mockito.any(PartIteration.class));
+        Mockito.verify(indexerManager,Mockito.times(1)).indexPartIteration(Mockito.any(PartIteration.class));
 
     }
 
@@ -289,7 +289,7 @@ public class ProductManagerBeanTest {
         Mockito.when(em.find(PartRevision.class, partRevisionKey)).thenReturn(partRevision);
 
         PartRevision partRevisionResult = productManagerBean.removeTag(partRevision.getKey(), "Important");
-        Mockito.verify(esIndexer,Mockito.times(1)).index(partRevisionResult.getLastIteration());
+        Mockito.verify(indexerManager,Mockito.times(1)).indexPartIteration(partRevisionResult.getLastIteration());
         Assert.assertEquals(partRevisionResult.getTags().size() ,2);
         Assert.assertFalse(partRevisionResult.getTags().contains(new Tag(workspace,"Important")));
         Assert.assertTrue(partRevisionResult.getTags().contains(new Tag(workspace,"Urgent")));
@@ -308,7 +308,7 @@ public class ProductManagerBeanTest {
         try {
             productManagerBean.saveTags(partRevisionKey,tags);
         } catch (IllegalArgumentException e) {
-            Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
+            Mockito.verify(indexerManager,Mockito.never()).indexPartIteration(Mockito.any(PartIteration.class));
             throw e;
         }
 
@@ -326,7 +326,7 @@ public class ProductManagerBeanTest {
         thrown.expect(EntityConstraintException.class);
 
         productManagerBean.checkCyclicAssemblyForPartIteration(cyclicAssemblyRule.getP1().getLastRevision().getLastIteration());
-        Mockito.verify(esIndexer,Mockito.never()).index(Mockito.any(PartIteration.class));
+        Mockito.verify(indexerManager,Mockito.never()).indexPartIteration(Mockito.any(PartIteration.class));
 
     }
 

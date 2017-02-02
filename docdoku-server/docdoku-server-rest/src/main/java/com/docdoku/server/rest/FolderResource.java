@@ -343,7 +343,7 @@ public class FolderResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Folder id") @PathParam("folderId") String completePath)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException,
-            ESServerException, EntityConstraintException {
+            EntityConstraintException {
 
         deleteFolder(completePath);
         return Response.noContent().build();
@@ -379,7 +379,7 @@ public class FolderResource {
     }
 
     private DocumentRevisionKey[] deleteFolder(String pCompletePath)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException,
+            throws EntityNotFoundException, AccessRightException, NotAllowedException,
             EntityConstraintException, UserNotActiveException {
 
         String decodedCompletePath = FolderDTO.replaceColonWithSlash(pCompletePath);

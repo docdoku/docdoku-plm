@@ -90,7 +90,7 @@ public class DocumentsResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = false, value = "Start offset", defaultValue = "0") @QueryParam("start") int start,
             @ApiParam(required = false, value = "Max results", defaultValue = "20") @QueryParam("max") int max)
-            throws UserNotActiveException, ESServerException, WorkspaceNotFoundException, UserNotFoundException,
+            throws UserNotActiveException, WorkspaceNotFoundException, UserNotFoundException,
             BaselineNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         int maxResult = max != 0 ? max : 20;
@@ -126,7 +126,7 @@ public class DocumentsResource {
             @ApiParam(required = false, value = "Document modified to date") @QueryParam("modifiedTo") String modifiedTo,
             @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
             @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder
-    ) throws EntityNotFoundException, UserNotActiveException, ESServerException {
+    ) throws EntityNotFoundException, UserNotActiveException{
 
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);

@@ -44,8 +44,6 @@ import com.docdoku.server.configuration.filter.LatestPSFilter;
 import com.docdoku.server.configuration.filter.UpdatePartIterationPSFilter;
 import com.docdoku.server.configuration.filter.WIPPSFilter;
 import com.docdoku.server.dao.*;
-import com.docdoku.server.esindexer.ESIndexer;
-import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.events.*;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
@@ -89,10 +87,7 @@ public class ProductManagerBean implements IProductManagerLocal {
     private IBinaryStorageManagerLocal storageManager;
 
     @Inject
-    private ESIndexer esIndexer;
-
-    @Inject
-    private ESSearcher esSearcher;
+    private IIndexerManagerLocal indexerManager;
 
     @Inject
     private IPSFilterManagerLocal psFilterManager;
@@ -506,7 +501,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, ESServerException, EntityConstraintException, UserNotActiveException, PartMasterNotFoundException, WorkspaceNotEnabledException {
+    public PartRevision checkInPart(PartRevisionKey pPartRPK) throws PartRevisionNotFoundException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, EntityConstraintException, UserNotActiveException, PartMasterNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pPartRPK.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
 
@@ -531,7 +526,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             PartIteration lastIteration = partR.getLastIteration();
             lastIteration.setCheckInDate(new Date());
 
-            esIndexer.index(lastIteration);
+            indexerManager.indexPartIteration(lastIteration);
 
             partIterationEvent.select(new AnnotationLiteral<CheckedIn>() {
             }).fire(new PartIterationEvent(lastIteration));
@@ -1080,9 +1075,9 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, ESServerException, WorkspaceNotEnabledException {
+    public List<PartRevision> searchPartRevisions(PartSearchQuery pQuery) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<PartRevision> fetchedPartRs = esSearcher.search(pQuery);
+        List<PartRevision> fetchedPartRs = indexerManager.searchPartRevisions(pQuery);
         // Get Search Results
 
         ListIterator<PartRevision> ite = fetchedPartRs.listIterator();
@@ -1339,7 +1334,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             }
 
             for (PartIteration partIteration : partRevision.getPartIterations()) {
-                esIndexer.index(partIteration);
+                indexerManager.indexPartIteration(partIteration);
             }
         } else {
             throw new IllegalArgumentException("pTags argument must not be null");
@@ -1367,7 +1362,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         }
 
         for (PartIteration partIteration : partRevision.getPartIterations()) {
-            esIndexer.index(partIteration);
+            indexerManager.indexPartIteration(partIteration);
         }
         return partRevision;
     }
@@ -1614,7 +1609,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 LOGGER.log(Level.INFO, null, e);
             }
 
-            esIndexer.delete(partIteration);
+            indexerManager.removePartIterationFromIndex(partIteration);
         }
     }
 
@@ -2056,7 +2051,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, ESServerException, AccessRightException, WorkspaceNotEnabledException {
+    public void deletePartRevision(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, EntityConstraintException, AccessRightException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
         Locale locale = new Locale(user.getLanguage());
@@ -2103,8 +2098,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         // delete ElasticSearch Index for this revision iteration
         for (PartIteration partIteration : partR.getPartIterations()) {
-            esIndexer.delete(partIteration);
-            // Remove ElasticSearch Index for this PartIteration
+            indexerManager.removePartIterationFromIndex(partIteration);
         }
 
         partRevisionEvent.select(new AnnotationLiteral<Removed>() {

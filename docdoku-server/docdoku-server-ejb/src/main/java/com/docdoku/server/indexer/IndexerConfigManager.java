@@ -17,19 +17,19 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.server.esindexer;
+package com.docdoku.server.indexer;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
 import java.util.Properties;
 
 /**
- * Retrieves Elastic search config from resource
+ * Retrieves Elastic search config from custom jndi resource
  *
  * @author Morgan Guimard
  */
 @ApplicationScoped
-public class ESConfigManager {
+public class IndexerConfigManager {
 
     @Resource(name = "elasticsearch.config")
     private Properties properties;

@@ -32,8 +32,6 @@ import com.docdoku.core.meta.InstanceTextAttribute;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.ACLPermission;
 import com.docdoku.core.services.*;
-import com.docdoku.server.esindexer.ESIndexer;
-import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.util.DocumentUtil;
 import org.junit.Assert;
 import org.junit.Before;
@@ -74,9 +72,7 @@ public class DocumentManagerBeanTest {
     @Mock
     private IGCMSenderLocal gcmNotifier;
     @Mock
-    private ESIndexer esIndexer;
-    @Mock
-    private ESSearcher esSearcher;
+    private IIndexerManagerLocal indexerManager;
     @Mock
     private IBinaryStorageManagerLocal storageManager;
     @Mock

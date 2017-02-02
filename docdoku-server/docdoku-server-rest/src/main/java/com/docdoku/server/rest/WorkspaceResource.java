@@ -411,7 +411,7 @@ public class WorkspaceResource {
             @ApiParam(value = "Login for workspace admin", required = false) @QueryParam("userLogin") String userLogin,
             @ApiParam(value = "Workspace to create", required = true) WorkspaceDTO workspaceDTO)
             throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException,
-            CreationException, AccountNotFoundException, ESIndexNamingException, IOException, NotAllowedException {
+            CreationException, AccountNotFoundException, IOException, NotAllowedException {
         Account account;
         if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             account = accountManager.getAccount(userLogin);
@@ -498,7 +498,9 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response removeUserFromWorkspace(@ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
                                             @ApiParam(value = "User to remove from workspace", required = true) UserDTO userDTO)
-            throws UserGroupNotFoundException, AccessRightException, UserNotFoundException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException {
+            throws UserGroupNotFoundException, AccessRightException, UserNotFoundException,
+            AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException,
+            EntityConstraintException, DocumentRevisionNotFoundException, UserNotActiveException {
         Workspace workspace = userManager.removeUser(workspaceId, userDTO.getLogin());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }

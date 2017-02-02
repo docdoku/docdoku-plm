@@ -18,9 +18,8 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.esindexer;
+package com.docdoku.server.indexer;
 
-import com.docdoku.core.exceptions.ESServerException;
 import com.docdoku.core.util.Tools;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -40,18 +39,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
-import org.elasticsearch.ElasticsearchException;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.ImmutableSettings;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -60,7 +50,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,35 +57,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Tools for Search & Index Method using ElasticSearch API.
+ * Utility methods for Search & Index Method using ElasticSearch API.
+ *
  * @author Taylor LABEJOF
  */
-public class ESTools {
+public class IndexerUtils {
 
-    @Inject
-    private ESConfigManager esConfigManager;
+    private static final Logger LOGGER = Logger.getLogger(IndexerUtils.class.getName());
 
-    private static final Logger LOGGER = Logger.getLogger(ESTools.class.getName());
-
-    private ESTools() {
-        super();
-    }
-
-    /**
-     * Create a ElasticSearch Client to make QueryRequest
-     */
-    @Produces
-    @ApplicationScoped
-    public Client createClient() throws ESServerException {
-        try{
-            Settings settings = ImmutableSettings.settingsBuilder()
-                    .put("cluster.name", esConfigManager.getClusterName()).build();
-
-            return new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(esConfigManager.getHost(), esConfigManager.getPort()));
-        }catch (ElasticsearchException e){
-            LOGGER.log(Level.WARNING, null, e);
-            throw new ESServerException(Locale.getDefault(), "IndexerServerException");
-        }
+    private IndexerUtils() {
     }
 
     /**
@@ -105,18 +74,19 @@ public class ESTools {
      * @param workspaceId Id to convert
      * @return The workspaceId without uppercase and space
      */
-    protected static String formatIndexName(String workspaceId){
+    protected static String formatIndexName(String workspaceId) {
         try {
             return java.net.URLEncoder.encode(Tools.unAccent(workspaceId), "UTF-8").toLowerCase();
         } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.FINEST,null,e);
+            LOGGER.log(Level.FINEST, null, e);
             return null;
         }
     }
 
     /**
      * Get Stream for a Bin Resource
-     * @param fullName The full name of the resource
+     *
+     * @param fullName    The full name of the resource
      * @param inputStream Stream of the resource
      * @return String to index
      */
@@ -130,7 +100,7 @@ public class ESTools {
                 extension = fullName.substring(lastDotIndex);
             }
 
-            switch (extension){
+            switch (extension) {
                 case ".odt":
                 case ".ods":
                 case ".odp":
@@ -153,7 +123,7 @@ public class ESTools {
                     break;
                 case ".txt":                                                                                            //Text Document
                 case ".csv":                                                                                            //CSV Document
-                    strRet = new Scanner(inputStream,"UTF-8").useDelimiter("\\A").next();
+                    strRet = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
                     break;
                 case ".xls":                                                                                            //MSExcelExtractor Document
                 case ".xlsx":                                                                                            //MSExcelExtractor Document
@@ -172,16 +142,16 @@ public class ESTools {
                     break;
             }
         } catch (Exception ex) {
-            LOGGER.log(Level.WARNING, "The file " + fullName + " can't be indexed.",ex);
+            LOGGER.log(Level.WARNING, "The file " + fullName + " can't be indexed.", ex);
         }
         return strRet;
     }
 
     private static String openOfficeDocumentToString(InputStream inputStream) throws IOException, SAXException, ParserConfigurationException {
         final StringBuilder text = new StringBuilder();
-        try(ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream))) {
+        try (ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream))) {
             ZipEntry zipEntry;
-            while((zipEntry=zipOpenDoc.getNextEntry())!=null)
+            while ((zipEntry = zipOpenDoc.getNextEntry()) != null)
 
             {
                 if ("content.xml".equals(zipEntry.getName())) {
@@ -209,11 +179,11 @@ public class ESTools {
 
     private static String microsoftWordDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
-        try(InputStream wordStream = new BufferedInputStream(inputStream)) {
-            if(POIFSFileSystem.hasPOIFSHeader(wordStream)){
+        try (InputStream wordStream = new BufferedInputStream(inputStream)) {
+            if (POIFSFileSystem.hasPOIFSHeader(wordStream)) {
                 WordExtractor wordExtractor = new WordExtractor(wordStream);
                 strRet = wordExtractor.getText();
-            }else{
+            } else {
                 XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordStream));
                 strRet = wordXExtractor.getText();
             }
@@ -223,13 +193,13 @@ public class ESTools {
 
     private static String microsoftPowerPointDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
-        try(InputStream pptStream = new BufferedInputStream(inputStream)) {
-            if(POIFSFileSystem.hasPOIFSHeader(pptStream)) {
+        try (InputStream pptStream = new BufferedInputStream(inputStream)) {
+            if (POIFSFileSystem.hasPOIFSHeader(pptStream)) {
                 PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
                 strRet = pptExtractor.getText(true, true);
-            }else{
+            } else {
                 XSLFPowerPointExtractor pptExtractor = new XSLFPowerPointExtractor(new XMLSlideShow(pptStream));
-                strRet = pptExtractor.getText(true,true,true);
+                strRet = pptExtractor.getText(true, true, true);
             }
         }
         return strRet;
@@ -237,7 +207,7 @@ public class ESTools {
 
     private static String microsoftExcelDocumentToString(InputStream inputStream) throws IOException, OpenXML4JException, XmlException {
         StringBuilder sb = new StringBuilder();
-        try(InputStream excelStream=new BufferedInputStream(inputStream)) {
+        try (InputStream excelStream = new BufferedInputStream(inputStream)) {
             if (POIFSFileSystem.hasPOIFSHeader(excelStream)) { // Before 2007 format files
                 POIFSFileSystem excelFS = new POIFSFileSystem(excelStream);
                 ExcelExtractor excelExtractor = new ExcelExtractor(excelFS);

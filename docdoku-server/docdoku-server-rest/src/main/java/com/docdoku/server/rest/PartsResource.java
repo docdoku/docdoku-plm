@@ -212,7 +212,7 @@ public class PartsResource {
             @ApiParam(required = false, value = "Part tags") @QueryParam("tags") String tags,
             @ApiParam(required = false, value = "Part files content") @QueryParam("content") String content,
             @ApiParam(required = false, value = "Part files attributes") @QueryParam("attributes") String attributes)
-            throws EntityNotFoundException, ESServerException, UserNotActiveException, AccessRightException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
 

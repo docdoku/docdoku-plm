@@ -28,7 +28,6 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
-import com.docdoku.server.esindexer.ESIndexer;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -63,7 +62,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     private IMailerLocal mailerManager;
 
     @Inject
-    private ESIndexer esIndexer;
+    private IIndexerManagerLocal indexerManager;
 
     private static final Logger LOGGER = Logger.getLogger(WorkspaceManagerBean.class.getName());
 
@@ -89,7 +88,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
             if (isAllowedToDeleteWorkspace) {
                 doWorkspaceDeletion(workspace);
-                esIndexer.deleteWorkspace(workspaceId);
+                indexerManager.deleteWorkspaceIndex(workspaceId);
             } else {
                 User user = userManager.whoAmI(workspaceId);
                 LOGGER.log(Level.SEVERE, "Caller (" + user.getLogin() + ") not authorized to delete workspace : (" + workspaceId + ")");
@@ -108,7 +107,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @Override
     @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID})
     public void synchronizeIndexer(String workspaceId) {
-        esIndexer.indexWorkspace(workspaceId);
+        indexerManager.indexWorkspace(workspaceId);
     }
 
     @Override

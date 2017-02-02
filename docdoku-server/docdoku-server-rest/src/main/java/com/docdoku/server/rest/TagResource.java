@@ -199,7 +199,7 @@ public class TagResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document to create") DocumentCreationDTO docCreationDTO,
             @ApiParam(required = true, value = "Tag id") @PathParam("tagId") String tagId)
-            throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, ESServerException, UserGroupNotFoundException, WorkspaceNotEnabledException {
+            throws CreationException, FileAlreadyExistsException, DocumentRevisionAlreadyExistsException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentMasterAlreadyExistsException, RoleNotFoundException, FolderNotFoundException, WorkflowModelNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, UserGroupNotFoundException, WorkspaceNotEnabledException {
 
         String pDocMID = docCreationDTO.getReference();
         String pTitle = docCreationDTO.getTitle();

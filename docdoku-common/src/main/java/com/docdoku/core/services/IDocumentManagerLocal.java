@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Florent Garin
  */
 public interface IDocumentManagerLocal {
@@ -47,7 +46,7 @@ public interface IDocumentManagerLocal {
 
     DocumentRevision getDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
 
-    DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, ESServerException, WorkspaceNotEnabledException;
+    DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
     DocumentMasterTemplate getDocumentMasterTemplate(DocumentMasterTemplateKey pKey) throws WorkspaceNotFoundException, DocumentMasterTemplateNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
@@ -74,13 +73,9 @@ public interface IDocumentManagerLocal {
     /**
      * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
      *
-     * @param fullName
-     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
-     * data file will be returned
-     *
-     * @return
-     * The binary resource, a BinaryResource instance, that now needs to be created
-     *
+     * @param fullName Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
+     *                 data file will be returned
+     * @return The binary resource, a BinaryResource instance, that now needs to be created
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -89,16 +84,13 @@ public interface IDocumentManagerLocal {
      * @throws AccessRightException
      */
     BinaryResource getBinaryResource(String fullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
+
     /**
      * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
      *
-     * @param fullName
-     * Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
-     * data file will be returned
-     *
-     * @return
-     * The binary resource, a BinaryResource instance, that now needs to be created
-     *
+     * @param fullName Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
+     *                 data file will be returned
+     * @return The binary resource, a BinaryResource instance, that now needs to be created
      * @throws UserNotFoundException
      * @throws UserNotActiveException
      * @throws WorkspaceNotFoundException
@@ -106,21 +98,21 @@ public interface IDocumentManagerLocal {
      */
     BinaryResource getTemplateBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, WorkspaceNotEnabledException;
 
-    DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, WorkspaceNotEnabledException;
+    DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
     DocumentRevision checkOutDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, FileAlreadyExistsException, UserNotFoundException, UserNotActiveException, CreationException, WorkspaceNotEnabledException;
 
     DocumentRevision undoCheckOutDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
 
-    void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, EntityConstraintException, WorkspaceNotEnabledException;
+    void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, EntityConstraintException, WorkspaceNotEnabledException;
 
     DocumentRevision moveDocumentRevision(String pParentFolder, DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, DocumentRevisionNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
     Folder createFolder(String pParentFolder, String pFolder) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, FolderNotFoundException, FolderAlreadyExistsException, UserNotFoundException, CreationException, WorkspaceNotEnabledException;
 
-    DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException;
+    DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException;
 
-    DocumentRevisionKey[] deleteUserFolder(User user) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException;
+    DocumentRevisionKey[] deleteUserFolder(User user) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException;
 
     DocumentRevisionKey[] moveFolder(String pCompletePath, String pDestParentFolder, String pDestFolder) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, CreationException, FolderAlreadyExistsException, WorkspaceNotEnabledException;
 
@@ -146,7 +138,7 @@ public interface IDocumentManagerLocal {
 
     void createTag(String pWorkspaceId, String pLabel) throws WorkspaceNotFoundException, AccessRightException, CreationException, TagAlreadyExistsException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
-    DocumentRevision saveTags(DocumentRevisionKey pDocRPK, String[] pTags) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, WorkspaceNotEnabledException;
+    DocumentRevision saveTags(DocumentRevisionKey pDocRPK, String[] pTags) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
     DocumentRevisionKey[] getIterationChangeEventSubscriptions(String pWorkspaceId) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
@@ -180,11 +172,13 @@ public interface IDocumentManagerLocal {
 
     DocumentIteration findDocumentIterationByBinaryResource(BinaryResource pBinaryResource) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException;
 
-    void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String,String> userEntries, Map<String,String> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException;
-    void updateACLForDocumentMasterTemplate(String pWorkspaceId, String documentTemplateId, Map<String,String> userEntries, Map<String,String> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, DocumentMasterTemplateNotFoundException, WorkspaceNotEnabledException;
+    void updateDocumentACL(String pWorkspaceId, DocumentRevisionKey docKey, Map<String, String> userEntries, Map<String, String> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException;
+
+    void updateACLForDocumentMasterTemplate(String pWorkspaceId, String documentTemplateId, Map<String, String> userEntries, Map<String, String> userGroupEntries) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, NotAllowedException, DocumentMasterTemplateNotFoundException, WorkspaceNotEnabledException;
 
     void removeACLFromDocumentRevision(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException;
-    void removeACLFromDocumentMasterTemplate(String pWorkspaceId,String documentTemplateId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, WorkspaceNotEnabledException;
+
+    void removeACLFromDocumentMasterTemplate(String pWorkspaceId, String documentTemplateId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, AccessRightException, DocumentMasterTemplateNotFoundException, WorkspaceNotEnabledException;
 
     DocumentRevision[] getAllDocumentsInWorkspace(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException;
 
@@ -192,21 +186,26 @@ public interface IDocumentManagerLocal {
 
     int getDocumentsInWorkspaceCount(String workspaceId) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException, AccountNotFoundException;
 
-    DocumentRevision removeTag(DocumentRevisionKey pDocMPK, String pTag) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, ESServerException, WorkspaceNotEnabledException;
+    DocumentRevision removeTag(DocumentRevisionKey pDocMPK, String pTag) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, WorkspaceNotEnabledException;
 
     boolean canAccess(DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException;
+
     boolean canAccess(DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, WorkspaceNotEnabledException;
+
     boolean canUserAccess(User user, DocumentRevisionKey docRKey) throws DocumentRevisionNotFoundException;
+
     boolean canUserAccess(User user, DocumentIterationKey docRKey) throws DocumentRevisionNotFoundException;
 
     List<DocumentIteration> getInverseDocumentsLink(DocumentRevisionKey docKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException;
 
     DocumentRevision[] getDocumentRevisionsWithAssignedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
+
     DocumentRevision[] getDocumentRevisionsWithOpenedTasksForGivenUser(String pWorkspaceId, String assignedUserLogin) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
     void createDocumentLog(DocumentLog log);
 
     DocumentRevision releaseDocumentRevision(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException;
+
     DocumentRevision markDocumentRevisionAsObsolete(DocumentRevisionKey pRevisionKey) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, DocumentRevisionNotFoundException, AccessRightException, NotAllowedException, WorkspaceNotEnabledException;
 
     void logDocument(String fullName, String event) throws FileNotFoundException;

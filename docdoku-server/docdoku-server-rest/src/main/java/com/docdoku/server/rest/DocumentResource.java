@@ -126,7 +126,7 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
-            throws NotAllowedException, EntityNotFoundException, ESServerException, AccessRightException, UserNotActiveException {
+            throws NotAllowedException, EntityNotFoundException, AccessRightException, UserNotActiveException {
         DocumentRevision docR = documentService.checkInDocument(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         DocumentRevisionDTO docRsDTO = mapper.map(docR, DocumentRevisionDTO.class);
         docRsDTO.setPath(docR.getLocation().getCompletePath());
@@ -450,8 +450,7 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
             @ApiParam(required = true, value = "Tag list to save") TagListDTO tagListDTO)
-            throws EntityNotFoundException, NotAllowedException, ESServerException,
-            AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
 
         List<TagDTO> tagDTOs = tagListDTO.getTags();
         String[] tagsLabel = new String[tagDTOs.size()];
@@ -483,7 +482,7 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
             @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         DocumentRevisionKey docRPK = new DocumentRevisionKey(workspaceId, documentId, documentVersion);
         DocumentRevision docR = documentService.getDocumentRevision(docRPK);
@@ -520,7 +519,7 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName)
-            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException, ESServerException {
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
         DocumentRevision documentRevision = documentService.removeTag(new DocumentRevisionKey(workspaceId, documentId, documentVersion), tagName);
         DocumentRevisionDTO documentRevisionDTO = mapper.map(documentRevision, DocumentRevisionDTO.class);
         documentRevisionDTO.setPath(documentRevision.getLocation().getCompletePath());
@@ -542,7 +541,7 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException,
-            ESServerException, EntityConstraintException {
+            EntityConstraintException {
 
         documentService.deleteDocumentRevision(new DocumentRevisionKey(workspaceId, documentId, documentVersion));
         return Response.noContent().build();

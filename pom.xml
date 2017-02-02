@@ -59,11 +59,11 @@
                 <artifactId>commons-io</artifactId>
                 <version>2.4</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.lucene</groupId>
-                <artifactId>lucene-core</artifactId>
-                <version>4.6.0</version>
-            </dependency>
+            <!-- <dependency>
+                 <groupId>org.apache.lucene</groupId>
+                 <artifactId>lucene-core</artifactId>
+                 <version>4.6.0</version>
+             </dependency>-->
 
             <!-- Apache POI -->
             <dependency>
@@ -98,7 +98,24 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>1.0.0</version>
+                <version>5.2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>transport</artifactId>
+                <version>5.2.0</version>
+            </dependency>
+
+            <!-- Log4j -->
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.7</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>2.7</version>
             </dependency>
 
             <!-- pdfbox-->

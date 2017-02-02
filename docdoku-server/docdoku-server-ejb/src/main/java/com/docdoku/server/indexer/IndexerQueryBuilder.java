@@ -18,22 +18,17 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.server.esindexer;
-
-import org.elasticsearch.index.query.*;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.docdoku.server.indexer;
 
 /**
  * @author kelto on 09/07/15.
  */
-public class ESQueryBuilder {
-
+public class IndexerQueryBuilder {
+/*
     private final List<FilterBuilder> filters;
     private final List<QueryBuilder> queries;
 
-    public ESQueryBuilder() {
+    public IndexerQueryBuilder() {
         filters = new ArrayList<>();
         queries = new ArrayList<>();
     }
@@ -76,7 +71,7 @@ public class ESQueryBuilder {
             filter = FilterBuilders.boolFilter().must(array);
         }
         return filter;
-    }
+    }*/
 
 
 }

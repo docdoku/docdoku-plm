@@ -104,7 +104,7 @@ public class CascadeActionManagerBean implements ICascadeActionManagerLocal {
                 productManager.checkInPart(pr.getKey());
                 cascadeResult.incSucceedAttempts();
 
-            } catch (DocumentRevisionNotFoundException | PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ESServerException | ListOfValuesNotFoundException e) {
+            } catch (DocumentRevisionNotFoundException | PartRevisionNotFoundException | AccessRightException  | NotAllowedException | ListOfValuesNotFoundException e) {
                 cascadeResult.incFailedAttempts();
                 LOGGER.log(Level.SEVERE,null,e);
             }

@@ -23,13 +23,9 @@ import com.docdoku.core.admin.OperationSecurityStrategy;
 import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.*;
-import com.docdoku.core.services.IContextManagerLocal;
-import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.core.services.IPlatformOptionsManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
-import com.docdoku.server.esindexer.ESIndexer;
 import com.docdoku.server.events.*;
 
 import javax.annotation.security.DeclareRoles;
@@ -54,7 +50,7 @@ public class UserManagerBean implements IUserManagerLocal {
     private EntityManager em;
 
     @Inject
-    private ESIndexer esIndexer;
+    private IIndexerManagerLocal indexerManager;
 
     @Inject
     private Event<WorkspaceAccessEvent> workspaceAccessEvent;
@@ -96,8 +92,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void addUserInWorkspace(String pWorkspaceId, String pLogin) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
-        Account account = checkAdmin(pWorkspaceId);
+    public void addUserInWorkspace(String pWorkspaceId, String pLogin) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {        Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         User userToAdd = em.find(User.class, new UserKey(pWorkspaceId, pLogin));
         Workspace workspace = em.getReference(Workspace.class, pWorkspaceId);
@@ -111,7 +106,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public Workspace removeUser(String pWorkspaceId, String login) throws UserNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
+    public Workspace removeUser(String pWorkspaceId, String login) throws UserNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
         Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
         Workspace workspace = new WorkspaceDAO(new Locale(account.getLanguage()), em).loadWorkspace(pWorkspaceId);
         checkAdmin(workspace, account);
@@ -168,7 +163,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, ESIndexNamingException, NotAllowedException {
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, NotAllowedException {
         if (!NamingConvention.correct(pID)) {
             throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9", pID);
         }
@@ -182,11 +177,9 @@ public class UserManagerBean implements IUserManagerLocal {
         userDAO.addUserMembership(workspace, userToCreate);
 
         try {
-            esIndexer.createIndex(pID);
-        } catch (ESServerException e) {
-            // When ElasticSearch have not start
-        } catch (ESIndexAlreadyExistsException e) {
-            throw new WorkspaceAlreadyExistsException(new Locale(pAdmin.getLanguage()), workspace);                      // Send if the workspace have the same index name that another
+            indexerManager.createWorkspaceIndex(pID);
+        } catch (Exception e) { // TODO review exception thrown
+            throw new WorkspaceAlreadyExistsException(new Locale(pAdmin.getLanguage()), workspace);
         }
 
         return workspace;
@@ -430,7 +423,7 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
+    public void removeUsers(String pWorkspaceId, String[] pLogins) throws UserNotFoundException, AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, FolderNotFoundException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException {
         Account account = checkAdmin(pWorkspaceId);
         Locale locale = new Locale(account.getLanguage());
         UserDAO userDAO = new UserDAO(locale, em);

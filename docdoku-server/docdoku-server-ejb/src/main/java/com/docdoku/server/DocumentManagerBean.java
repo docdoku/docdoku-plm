@@ -37,8 +37,6 @@ import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
 import com.docdoku.server.dao.*;
-import com.docdoku.server.esindexer.ESIndexer;
-import com.docdoku.server.esindexer.ESSearcher;
 import com.docdoku.server.events.*;
 import com.docdoku.server.factory.ACLFactory;
 import com.docdoku.server.validation.AttributesConsistencyUtils;
@@ -79,10 +77,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     private IGCMSenderLocal gcmNotifier;
 
     @Inject
-    private ESIndexer esIndexer;
-
-    @Inject
-    private ESSearcher esSearcher;
+    private IIndexerManagerLocal indexerManager;
 
     @Inject
     private IBinaryStorageManagerLocal storageManager;
@@ -519,9 +514,9 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, ESServerException, WorkspaceNotEnabledException {
+    public DocumentRevision[] searchDocumentRevisions(DocumentSearchQuery pQuery) throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(pQuery.getWorkspaceId());
-        List<DocumentRevision> fetchedDocRs = esSearcher.search(pQuery);                                                // Get Search Results
+        List<DocumentRevision> fetchedDocRs = indexerManager.searchDocumentRevisions(pQuery);
         List<DocumentRevision> docList = new ArrayList<>();
 
         if (!fetchedDocRs.isEmpty()) {
@@ -862,7 +857,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             DocumentIteration lastCheckedInIteration = docR.getLastCheckedInIteration();
 
             if (null != lastCheckedInIteration) {
-                esIndexer.index(lastCheckedInIteration);
+                indexerManager.indexDocumentIteration(lastCheckedInIteration);
             }
 
             return docR;
@@ -945,7 +940,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision saveTags(DocumentRevisionKey pDocRPK, String[] pTags) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, WorkspaceNotEnabledException {
+    public DocumentRevision saveTags(DocumentRevisionKey pDocRPK, String[] pTags) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
 
         Locale userLocale = new Locale(user.getLanguage());
@@ -991,7 +986,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             }
 
             for (DocumentIteration documentIteration : docR.getDocumentIterations()) {
-                esIndexer.index(documentIteration);
+                indexerManager.indexDocumentIteration(documentIteration);
             }
         } else {
             throw new IllegalArgumentException("pTags argument must not be null");
@@ -1002,7 +997,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public DocumentRevision removeTag(DocumentRevisionKey pDocRPK, String pTag)
-            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, ESServerException, WorkspaceNotEnabledException {
+            throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, AccessRightException, DocumentRevisionNotFoundException, NotAllowedException, WorkspaceNotEnabledException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
 
@@ -1019,7 +1014,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         }
 
         for (DocumentIteration documentIteration : docR.getDocumentIterations()) {
-            esIndexer.index(documentIteration);
+            indexerManager.indexDocumentIteration(documentIteration);
         }
         return docR;
     }
@@ -1059,7 +1054,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, WorkspaceNotEnabledException {
+    public DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
         Locale userLocale = new Locale(user.getLanguage());
@@ -1086,7 +1081,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 gcmNotifier.sendIterationNotification(gcmAccounts, docR);
             }
 
-            esIndexer.index(lastIteration);
+            indexerManager.indexDocumentIteration(lastIteration);
 
             return docR;
         } else {
@@ -1096,7 +1091,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevisionKey[] deleteFolder(String pCompletePath) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pCompletePath));
         Locale userLocale = new Locale(user.getLanguage());
 
@@ -1114,7 +1109,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public DocumentRevisionKey[] deleteUserFolder(User pUser) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, ESServerException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevisionKey[] deleteUserFolder(User pUser) throws WorkspaceNotFoundException, NotAllowedException, AccessRightException, UserNotFoundException, FolderNotFoundException, EntityConstraintException, UserNotActiveException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
 
         User user = userManager.checkWorkspaceWriteAccess(pUser.getWorkspaceId());
         Locale userLocale = new Locale(user.getLanguage());
@@ -1129,7 +1124,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         return doFolderDeletion(folder, userLocale);
     }
 
-    private DocumentRevisionKey[] doFolderDeletion(Folder folder, Locale locale) throws EntityConstraintException, NotAllowedException, WorkspaceNotFoundException, ESServerException, AccessRightException, DocumentRevisionNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
+    private DocumentRevisionKey[] doFolderDeletion(Folder folder, Locale locale) throws EntityConstraintException, NotAllowedException, WorkspaceNotFoundException, AccessRightException, DocumentRevisionNotFoundException, UserNotActiveException, UserNotFoundException, WorkspaceNotEnabledException {
         FolderDAO folderDAO = new FolderDAO(locale, em);
         List<DocumentRevision> allDocRevision = folderDAO.findDocumentRevisionsInFolder(folder);
         List<DocumentRevisionKey> allDocRevisionKey = new ArrayList<>();
@@ -1175,7 +1170,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             }
 
             if (!lastCheckedInIterations.isEmpty()) {
-                esIndexer.indexMultiple(lastCheckedInIterations);
+                indexerManager.indexDocumentIterations(lastCheckedInIterations);
             }
 
             return pks;
@@ -1184,7 +1179,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
-    public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, ESServerException, EntityConstraintException, WorkspaceNotEnabledException {
+    public void deleteDocumentRevision(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, EntityConstraintException, WorkspaceNotEnabledException {
 
         User user = checkDocumentRevisionWriteAccess(pDocRPK);
         Locale locale = new Locale(user.getLanguage());
@@ -1239,8 +1234,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
                 } catch (StorageException e) {
                     LOGGER.log(Level.INFO, null, e);
                 }
-
-                esIndexer.delete(doc);
+                indexerManager.removeDocumentIterationFromIndex(doc);
             }
         }
     }

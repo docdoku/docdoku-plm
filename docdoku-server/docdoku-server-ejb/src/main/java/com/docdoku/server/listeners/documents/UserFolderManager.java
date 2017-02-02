@@ -41,7 +41,7 @@ public class UserFolderManager {
     @Inject
     private IDocumentManagerLocal documentService;
 
-    private void onRemoveUser(@Observes @Removed UserEvent event) throws ESServerException, EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FolderNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotEnabledException {
+    private void onRemoveUser(@Observes @Removed UserEvent event) throws EntityConstraintException, WorkspaceNotFoundException, UserNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, FolderNotFoundException, AccessRightException, UserNotActiveException, WorkspaceNotEnabledException {
         User user = event.getObservedUser();
         documentService.deleteUserFolder(user);
     }

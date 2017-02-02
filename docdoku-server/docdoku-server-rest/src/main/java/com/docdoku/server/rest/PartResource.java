@@ -361,7 +361,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
-            throws EntityNotFoundException, ESServerException, AccessRightException, NotAllowedException,
+            throws EntityNotFoundException, AccessRightException, NotAllowedException,
             EntityConstraintException, UserNotActiveException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
@@ -541,7 +541,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion)
-            throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, ESServerException, AccessRightException {
+            throws EntityNotFoundException, UserNotActiveException, EntityConstraintException, AccessRightException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         productService.deletePartRevision(revisionKey);
@@ -715,8 +715,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
             @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
-            throws EntityNotFoundException, NotAllowedException, ESServerException,
-            AccessRightException, UserNotActiveException {
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
 
         List<TagDTO> tagDTOs = tagListDTO.getTags();
         String[] tagLabels = new String[tagDTOs.size()];
@@ -746,7 +745,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
             @ApiParam(required = true, value = "Tag list to add") TagListDTO tagListDTO)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, ESServerException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartRevisionKey revisionKey = new PartRevisionKey(workspaceId, partNumber, partVersion);
         PartRevision partRevision = productService.getPartRevision(revisionKey);
@@ -779,8 +778,7 @@ public class PartResource {
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("partVersion") String partVersion,
             @ApiParam(required = true, value = "Tag name") @PathParam("tagName") String tagName)
-            throws EntityNotFoundException, NotAllowedException, AccessRightException,
-            UserNotActiveException, ESServerException {
+            throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException{
 
         PartRevision partRevision = productService.removeTag(new PartRevisionKey(workspaceId, partNumber, partVersion), tagName);
         return mapper.map(partRevision, PartRevisionDTO.class);
