@@ -58,7 +58,7 @@ public class TestConfig {
     }
 
     private static void parseProperties() {
-        URL = System.getProperty("url") != null ? System.getProperty("url") : "http://localhost:8080/api";
+        URL = System.getProperty("url") != null ? System.getProperty("url") : "http://localhost:8080/docdoku-server-rest/api";
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         NAME = System.getProperty("name") != null ? System.getProperty("name") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
