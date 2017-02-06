@@ -1,0 +1,15 @@
+{
+  "document": {
+    "properties": {
+      "attributes": {
+        "type": "nested",
+        "properties": {
+          "attr_value": {
+            "type": "string",
+            "index": "not_analyzed"
+          }
+        }
+      }
+    }
+  }
+}
