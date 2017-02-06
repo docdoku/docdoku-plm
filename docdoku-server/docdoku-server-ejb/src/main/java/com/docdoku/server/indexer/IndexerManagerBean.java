@@ -25,7 +25,9 @@ import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartMaster;
@@ -38,6 +40,7 @@ import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.DocumentMasterDAO;
+import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.dao.PartMasterDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 import org.elasticsearch.ResourceAlreadyExistsException;
@@ -45,10 +48,15 @@ import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequestBuilder;
 import org.elasticsearch.action.index.IndexRequestBuilder;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.search.SearchType;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -190,7 +198,33 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery) {
-        return null;
+
+        String workspaceId = documentSearchQuery.getWorkspaceId();
+
+        QueryBuilder query = IndexerQueryBuilder.getSearchQueryBuilder(documentSearchQuery);
+
+        LOGGER.log(Level.INFO, query.toString());
+
+        SearchResponse searchResponse = client.prepareSearch(IndexerUtils.formatIndexName(workspaceId))
+                .setTypes(IndexerMapping.DOCUMENT_TYPE)
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
+                .setQuery(query)
+                .get();
+
+        SearchHits hits = searchResponse.getHits();
+
+        Set<DocumentRevisionKey> documentRevisionKeys = new HashSet<>();
+
+        if (hits != null) {
+            for (SearchHit hit : hits.getHits()) {
+                Map<String, Object> source = hit.getSource();
+                documentRevisionKeys.add(IndexerMapping.getDocumentRevisionKey(source));
+            }
+        }
+
+        LOGGER.log(Level.INFO, "Results : " + documentRevisionKeys.size());
+
+        return documentRevisionKeysToDocumentRevisions(documentRevisionKeys);
     }
 
     @Override
@@ -211,10 +245,14 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                 bulkRequest = bulkWorkspaceRequestBuilder(bulkRequest, workspace.getId());
             }
 
-            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+            if (bulkRequest.numberOfActions() > 0) {
+                BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
-            if (bulkResponse.hasFailures()) {
-                LOGGER.log(Level.SEVERE, "Failures while bulk indexing: \n" + bulkResponse.buildFailureMessage());
+                if (bulkResponse.hasFailures()) {
+                    LOGGER.log(Level.SEVERE, "Failures while bulk indexing: \n" + bulkResponse.buildFailureMessage());
+                }
+            } else {
+                LOGGER.log(Level.INFO, "No actions for workspace index request, ignoring");
             }
 
         } catch (NoNodeAvailableException e) {
@@ -228,11 +266,17 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
         BulkRequestBuilder bulkRequest = client.prepareBulk();
         bulkWorkspaceRequestBuilder(bulkRequest, workspaceId);
-        BulkResponse bulkResponse = bulkRequest.execute().actionGet();
 
-        if (bulkResponse.hasFailures()) {
-            LOGGER.log(Level.SEVERE, "Failures while bulk indexing: \n" + bulkResponse.buildFailureMessage());
+        if (bulkRequest.numberOfActions() > 0) {
+            BulkResponse bulkResponse = bulkRequest.execute().actionGet();
+
+            if (bulkResponse.hasFailures()) {
+                LOGGER.log(Level.SEVERE, "Failures while bulk indexing: \n" + bulkResponse.buildFailureMessage());
+            }
+        } else {
+            LOGGER.log(Level.INFO, "No actions for workspace index request, ignoring [" + workspaceId + "]");
         }
+
     }
 
     @Override
@@ -358,4 +402,25 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     private String getString(String key) {
         return ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(key);
     }
+
+    private List<DocumentRevision> documentRevisionKeysToDocumentRevisions(Set<DocumentRevisionKey> documentRevisionKeys) {
+        List<DocumentRevision> documentRevisions = new ArrayList<>();
+        for (DocumentRevisionKey documentRevisionKey : documentRevisionKeys) {
+            DocumentRevision documentRevision = getDocumentRevision(documentRevisionKey);
+            if (documentRevision != null) {
+                documentRevisions.add(documentRevision);
+            }
+        }
+        return documentRevisions;
+    }
+
+    private DocumentRevision getDocumentRevision(DocumentRevisionKey documentRevisionKey) {
+        try {
+            return new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
+        } catch (DocumentRevisionNotFoundException e) {
+            LOGGER.log(Level.INFO, "Cannot infer document revision from key [" + documentRevisionKey + "]", e);
+            return null;
+        }
+    }
+
 }

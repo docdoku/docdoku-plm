@@ -93,13 +93,15 @@ public class IndexerUtils {
     protected static String streamToString(String fullName, InputStream inputStream) {
         String strRet = " ";
 
-        try {
-            int lastDotIndex = fullName.lastIndexOf('.');
-            String extension = "";
-            if (lastDotIndex != -1) {
-                extension = fullName.substring(lastDotIndex);
-            }
+        int lastDotIndex = fullName.lastIndexOf('.');
 
+        String extension = "";
+
+        if (lastDotIndex != -1) {
+            extension = fullName.substring(lastDotIndex);
+        }
+
+        try {
             switch (extension) {
                 case ".odt":
                 case ".ods":
@@ -121,15 +123,15 @@ public class IndexerUtils {
                 case ".pptx":
                     strRet = microsoftPowerPointDocumentToString(inputStream);
                     break;
-                case ".txt":                                                                                            //Text Document
-                case ".csv":                                                                                            //CSV Document
-                    strRet = new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
+                case ".txt":
+                case ".csv":
+                    strRet = rawTextDocumentToString(inputStream);
                     break;
-                case ".xls":                                                                                            //MSExcelExtractor Document
-                case ".xlsx":                                                                                            //MSExcelExtractor Document
+                case ".xls":
+                case ".xlsx":
                     strRet = microsoftExcelDocumentToString(inputStream);
                     break;
-                case ".pdf":                                                                                            // PDF Document
+                case ".pdf":
                     strRet = pdfDocumentToString(inputStream);
                     break;
                 case ".html":
@@ -144,21 +146,26 @@ public class IndexerUtils {
         } catch (Exception ex) {
             LOGGER.log(Level.WARNING, "The file " + fullName + " can't be indexed.", ex);
         }
+        // todo : remove \n \r \t from string
+        // text.replace("\n", "").replace("\r", "");
         return strRet;
+    }
+
+    private static String rawTextDocumentToString(InputStream inputStream) {
+        return new Scanner(inputStream, "UTF-8").useDelimiter("\\A").next();
     }
 
     private static String openOfficeDocumentToString(InputStream inputStream) throws IOException, SAXException, ParserConfigurationException {
         final StringBuilder text = new StringBuilder();
+
         try (ZipInputStream zipOpenDoc = new ZipInputStream(new BufferedInputStream(inputStream))) {
             ZipEntry zipEntry;
-            while ((zipEntry = zipOpenDoc.getNextEntry()) != null)
 
-            {
+            while ((zipEntry = zipOpenDoc.getNextEntry()) != null) {
                 if ("content.xml".equals(zipEntry.getName())) {
                     SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
                     SAXParser parser = saxParserFactory.newSAXParser();
                     parser.parse(zipOpenDoc, new DefaultHandler() {
-
                         @Override
                         public void characters(char[] ch,
                                                int start,
@@ -173,12 +180,15 @@ public class IndexerUtils {
                     break;
                 }
             }
+
         }
+
         return text.toString();
     }
 
     private static String microsoftWordDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
+
         try (InputStream wordStream = new BufferedInputStream(inputStream)) {
             if (POIFSFileSystem.hasPOIFSHeader(wordStream)) {
                 WordExtractor wordExtractor = new WordExtractor(wordStream);
@@ -188,11 +198,13 @@ public class IndexerUtils {
                 strRet = wordXExtractor.getText();
             }
         }
+
         return strRet;
     }
 
     private static String microsoftPowerPointDocumentToString(InputStream inputStream) throws IOException {
         String strRet;
+
         try (InputStream pptStream = new BufferedInputStream(inputStream)) {
             if (POIFSFileSystem.hasPOIFSHeader(pptStream)) {
                 PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
@@ -202,11 +214,13 @@ public class IndexerUtils {
                 strRet = pptExtractor.getText(true, true, true);
             }
         }
+
         return strRet;
     }
 
     private static String microsoftExcelDocumentToString(InputStream inputStream) throws IOException, OpenXML4JException, XmlException {
         StringBuilder sb = new StringBuilder();
+
         try (InputStream excelStream = new BufferedInputStream(inputStream)) {
             if (POIFSFileSystem.hasPOIFSHeader(excelStream)) { // Before 2007 format files
                 POIFSFileSystem excelFS = new POIFSFileSystem(excelStream);
@@ -232,6 +246,7 @@ public class IndexerUtils {
                 }
             }
         }
+
         return sb.toString();
     }
 

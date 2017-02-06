@@ -20,58 +20,129 @@
 
 package com.docdoku.server.indexer;
 
+import com.docdoku.core.query.DocumentSearchQuery;
+import com.docdoku.core.query.SearchQuery;
+import org.apache.lucene.search.join.ScoreMode;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
  * @author kelto on 09/07/15.
  */
 public class IndexerQueryBuilder {
-/*
-    private final List<FilterBuilder> filters;
-    private final List<QueryBuilder> queries;
 
-    public IndexerQueryBuilder() {
-        filters = new ArrayList<>();
-        queries = new ArrayList<>();
+
+    public static QueryBuilder getSearchQueryBuilder(DocumentSearchQuery documentSearchQuery) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        List<QueryBuilder> documentQueries = getDocumentQueries(documentSearchQuery);
+        documentQueries.forEach(boolQueryBuilder::must);
+        return boolQueryBuilder;
     }
 
-    public void add(QueryBuilder query) {
-        queries.add(query);
+    private static List<QueryBuilder> getDocumentQueries(DocumentSearchQuery documentSearchQuery) {
+        List<QueryBuilder> queries = new ArrayList<>();
+
+        String docMId = documentSearchQuery.getDocMId();
+        String title = documentSearchQuery.getTitle();
+        String folder = documentSearchQuery.getFolder();
+
+        if (docMId != null && !docMId.isEmpty()) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.DOCUMENT_ID_KEY, docMId));
+        }
+
+        if (title != null && !title.isEmpty()) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.TITLE_KEY, title));
+        }
+
+        if (folder != null && !folder.isEmpty()) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.FOLDER_KEY, folder));
+        }
+
+        queries.addAll(getCommonQueries(documentSearchQuery));
+
+        return queries;
     }
 
-    public void add(FilterBuilder filter) {
-        filters.add(filter);
+    private static List<QueryBuilder> getCommonQueries(SearchQuery searchQuery) {
+
+        String[] tags = searchQuery.getTags();
+        SearchQuery.AbstractAttributeQuery[] attributes = searchQuery.getAttributes();
+
+        List<QueryBuilder> queries = new ArrayList<>();
+
+        if (searchQuery.getVersion() != null) {
+            queries.add(QueryBuilders.termQuery(IndexerMapping.VERSION_KEY, searchQuery.getVersion()));
+        }
+        if (searchQuery.getAuthor() != null) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.AUTHOR_NAME_KEY, searchQuery.getAuthor()));
+        }
+        if (searchQuery.getType() != null) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.TYPE_KEY, searchQuery.getType()));
+        }
+
+        if (searchQuery.getCreationDateFrom() != null) {
+            queries.add(QueryBuilders.rangeQuery(IndexerMapping.CREATION_DATE_KEY).from(searchQuery.getCreationDateFrom()));
+        }
+
+        if (searchQuery.getCreationDateTo() != null) {
+            queries.add(QueryBuilders.rangeQuery(IndexerMapping.CREATION_DATE_KEY).to(searchQuery.getCreationDateTo()));
+        }
+
+        if (searchQuery.getModificationDateFrom() != null) {
+            queries.add(QueryBuilders.rangeQuery(IndexerMapping.MODIFICATION_DATE_KEY).from(searchQuery.getModificationDateFrom()));
+        }
+
+        if (searchQuery.getModificationDateTo() != null) {
+            queries.add(QueryBuilders.rangeQuery(IndexerMapping.MODIFICATION_DATE_KEY).to(searchQuery.getModificationDateTo()));
+        }
+
+        if (searchQuery.getContent() != null) {
+            queries.add(QueryBuilders.matchQuery(IndexerMapping.CONTENT_KEY, searchQuery.getContent()));
+        }
+
+        if (tags != null && tags.length > 0) {
+            queries.add(QueryBuilders.termsQuery(IndexerMapping.TAGS_KEY, tags));
+        }
+
+
+        if (attributes != null) {
+            Stream.of(attributes)
+                    .collect(Collectors.groupingBy(SearchQuery.AbstractAttributeQuery::getNameWithoutWhiteSpace))
+                    .forEach((attributeName, attributeList) -> addAttributeToQueries(queries, attributeName, attributeList));
+        }
+
+        return queries;
     }
 
-    public QueryBuilder getFilteredQuery() {
-        return QueryBuilders.filteredQuery(getQuery(),getFilter());
-    }
+    private static void addAttributeToQueries(List<QueryBuilder> queries, String attributeName, List<SearchQuery.AbstractAttributeQuery> attributeList) {
 
-    private QueryBuilder getQuery() {
-        QueryBuilder query;
-        if(!queries.isEmpty()) {
-            BoolQueryBuilder bqr = QueryBuilders.boolQuery();
-            for(QueryBuilder qr : queries) {
-                bqr.must(qr);
+        BoolQueryBuilder attributeQueryBuilder = QueryBuilders.boolQuery();
+
+        attributeQueryBuilder.must(QueryBuilders.nestedQuery(IndexerMapping.ATTRIBUTES_KEY,
+                QueryBuilders.termQuery(IndexerMapping.ATTRIBUTES_KEY + "." + IndexerMapping.ATTRIBUTE_NAME, attributeName), ScoreMode.None));
+
+        BoolQueryBuilder valuesQuery = QueryBuilders.boolQuery();
+
+        for (SearchQuery.AbstractAttributeQuery attr : attributeList) {
+            String attributeValue = attr.toString();
+            if (attributeValue != null && !attributeValue.isEmpty()) {
+                valuesQuery.should(QueryBuilders.nestedQuery(IndexerMapping.ATTRIBUTES_KEY,
+                        QueryBuilders.termQuery(IndexerMapping.ATTRIBUTES_KEY + "." + IndexerMapping.ATTRIBUTE_VALUE, attributeValue), ScoreMode.None));
             }
-            query = bqr;
-        } else {
-            // A FilteredQuery must have a query
-            // Therefore, we send a neutral query which will match anything.
-            query = QueryBuilders.matchAllQuery();
         }
-        return query;
+
+        if (valuesQuery.hasClauses()) {
+            attributeQueryBuilder.must(valuesQuery);
+        }
+
+        queries.add(attributeQueryBuilder);
+
     }
-
-    private FilterBuilder getFilter() {
-        FilterBuilder filter;
-        if(filters.isEmpty()) {
-            // a FilteredQuery can have no Filter.
-            filter = null;
-        } else {
-            FilterBuilder array[] = filters.toArray(new FilterBuilder[filters.size()]);
-            filter = FilterBuilders.boolFilter().must(array);
-        }
-        return filter;
-    }*/
-
 
 }
