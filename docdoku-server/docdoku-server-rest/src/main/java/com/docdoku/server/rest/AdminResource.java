@@ -80,6 +80,9 @@ public class AdminResource implements Serializable {
     @Inject
     private IPlatformOptionsManagerLocal platformOptionsManager;
 
+    @Inject
+    private IIndexerManagerLocal indexManager;
+
     private Mapper mapper;
 
     public AdminResource() {
@@ -234,7 +237,7 @@ public class AdminResource implements Serializable {
     @Path("index/{workspaceId}")
     public Response indexWorkspace(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) {
-        workspaceManager.synchronizeIndexer(workspaceId);
+        indexManager.indexWorkspace(workspaceId);
         return Response.status(Response.Status.ACCEPTED).build();
 
     }
@@ -252,7 +255,7 @@ public class AdminResource implements Serializable {
             throws AccountNotFoundException {
         Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
         for (Workspace workspace : administratedWorkspaces) {
-            workspaceManager.synchronizeIndexer(workspace.getId());
+            indexManager.indexWorkspace(workspace.getId());
         }
         return Response.status(Response.Status.ACCEPTED).build();
     }

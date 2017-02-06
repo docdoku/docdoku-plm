@@ -30,9 +30,6 @@ import com.docdoku.core.exceptions.*;
 public interface IWorkspaceManagerLocal {
     long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException;
     void deleteWorkspace(String workspaceId);
-    void synchronizeIndexer(String workspaceId);
-
     Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
-
     Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException;
 }

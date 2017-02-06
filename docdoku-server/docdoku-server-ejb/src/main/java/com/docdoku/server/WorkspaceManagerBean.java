@@ -103,13 +103,6 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
             LOGGER.log(Level.SEVERE, "Exception deleting workspace " + workspaceId, e);
         }
     }
-
-    @Override
-    @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID})
-    public void synchronizeIndexer(String workspaceId) {
-        indexerManager.indexWorkspace(workspaceId);
-    }
-
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {

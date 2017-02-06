@@ -151,6 +151,9 @@ public class WorkspaceResource {
     @Inject
     private IContextManagerLocal contextManager;
 
+    @Inject
+    private IIndexerManagerLocal indexerManager;
+
     public WorkspaceResource() {
     }
 
@@ -265,7 +268,7 @@ public class WorkspaceResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException {
 
-        workspaceManager.synchronizeIndexer(workspaceId);
+        indexerManager.indexWorkspace(workspaceId);
         return Response.accepted().build();
     }
 
