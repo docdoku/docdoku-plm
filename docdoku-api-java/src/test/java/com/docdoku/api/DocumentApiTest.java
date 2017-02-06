@@ -27,11 +27,15 @@ import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -43,16 +47,17 @@ public class DocumentApiTest {
     private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
     private DocumentsApi documentsApi = new DocumentsApi(TestConfig.REGULAR_USER_CLIENT);
     private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-    
+
     private static WorkspaceDTO workspace;
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
         workspace = TestUtils.createWorkspace();
     }
+
     @AfterClass
     public static void deleteWorkspace() throws ApiException {
-        TestUtils.deleteWorkspace(workspace);
+        //TestUtils.deleteWorkspace(workspace);
     }
 
     @Test
@@ -109,6 +114,208 @@ public class DocumentApiTest {
     }
 
     @Test
+    public void searchDocumentById() throws ApiException, IOException, InterruptedException {
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(TestUtils.randomString());
+        documentCreation.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
+
+        // create a document that shouldn't be retrieved
+        DocumentCreationDTO documentCreation2 = new DocumentCreationDTO();
+        documentCreation2.setReference(TestUtils.randomString());
+        documentCreation2.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation2, workspace.getId());
+        documentApi.checkInDocument(workspace.getId(), documentCreation2.getReference(), "A");
+
+        // Let some time to server for data indexing (asynchronous)
+        Thread.sleep(2000);
+
+        // search by id
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, documentCreation.getReference(), null, null, null, null, null, null, null, null, null, null, null, null);
+        Assert.assertEquals(1, documentRevisions.size());
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId()))
+                .count());
+    }
+
+    @Test
+    public void searchDocumentByTitle() throws ApiException, IOException, InterruptedException {
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(TestUtils.randomString());
+        documentCreation.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
+
+        // create a document that shouldn't be retrieved
+        DocumentCreationDTO documentCreation2 = new DocumentCreationDTO();
+        documentCreation2.setReference(TestUtils.randomString());
+        documentCreation2.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation2, workspace.getId());
+        documentApi.checkInDocument(workspace.getId(), documentCreation2.getReference(), "A");
+
+        // Let some time to server for data indexing (asynchronous)
+        Thread.sleep(2000);
+
+        // search by id
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null, documentCreation.getTitle(), null, null, null, null, null, null, null, null, null, null, null);
+        Assert.assertEquals(1, documentRevisions.size());
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId()))
+                .count());
+    }
+
+    @Test
+    public void searchDocumentByVersion() throws ApiException, IOException, InterruptedException {
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(TestUtils.randomString());
+        documentCreation.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
+
+        documentsApi.createNewDocumentVersion(workspace.getId(), documentCreation.getReference(), "A", documentCreation);
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "B");
+
+        documentsApi.createNewDocumentVersion(workspace.getId(), documentCreation.getReference(), "B", documentCreation);
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "C");
+
+        // Let some time to server for data indexing (asynchronous)
+        Thread.sleep(2000);
+
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null,
+                null, null, "B", null, null, null, null, null, null, null, null, null);
+        Assert.assertEquals(1, documentRevisions.size());
+        Assert.assertEquals(0, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId())
+                        && documentRevisionDTO.getVersion().equals("A"))
+                .count());
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId())
+                        && documentRevisionDTO.getVersion().equals("B"))
+                .count());
+        Assert.assertEquals(0, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId())
+                        && documentRevisionDTO.getVersion().equals("C"))
+                .count());
+
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null,
+                null, null, "C", null, null, null, null, null, null, null, null, null);
+        Assert.assertEquals(1, documentRevisions.size());
+        Assert.assertEquals(0, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId())
+                        && documentRevisionDTO.getVersion().equals("A"))
+                .count());
+        Assert.assertEquals(0, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId())
+                        && documentRevisionDTO.getVersion().equals("B"))
+                .count());
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId())
+                        && documentRevisionDTO.getVersion().equals("C"))
+                .count());
+
+
+    }
+
+    @Test
+    public void searchDocumentByMultipleCriteria() throws ApiException, IOException, InterruptedException {
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(TestUtils.randomString());
+        documentCreation.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
+
+        // Let some time to server for data indexing (asynchronous)
+        Thread.sleep(2000);
+
+        // search by id
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null,
+                documentCreation.getReference(), documentCreation.getTitle(), null, "A", null, null, null, null, null, null, null, null, null);
+
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId()))
+                .count());
+    }
+
+    @Test
+    public void searchDocumentByTag() throws ApiException, IOException, InterruptedException {
+
+        // Create a document
+        DocumentCreationDTO documentCreation = new DocumentCreationDTO();
+        documentCreation.setReference(TestUtils.randomString());
+
+        DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
+
+        TagListDTO tagListDTO = new TagListDTO();
+
+        TagDTO tag = new TagDTO();
+        tag.setLabel(TestUtils.randomString());
+
+        TagDTO anOtherTag = new TagDTO();
+        anOtherTag.setLabel(TestUtils.randomString());
+
+        List<TagDTO> tags = Arrays.asList(tag, anOtherTag);
+        tagListDTO.setTags(tags);
+
+        documentApi.addDocTag(workspace.getId(), document.getDocumentMasterId(), "A", tagListDTO);
+        documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
+
+
+        // create a document that shouldn't be retrieved
+        DocumentCreationDTO documentCreation2 = new DocumentCreationDTO();
+        documentCreation2.setReference(TestUtils.randomString());
+        documentCreation2.setTitle(TestUtils.randomString());
+
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation2, workspace.getId());
+        DocumentRevisionDTO a = documentApi.checkInDocument(workspace.getId(), documentCreation2.getReference(), "A");
+
+        // Let some time to server for data indexing (asynchronous)
+        Thread.sleep(2000);
+
+        // search by tag
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null,
+                null, null, null, null, null, tag.getLabel(), null, null, null, null, null, null, null);
+
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId()))
+                .count());
+
+        Assert.assertEquals(1, documentRevisions.size());
+
+        // search by tag
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null,
+                null, null, null, null, null, anOtherTag.getLabel(), null, null, null, null, null, null, null);
+
+        Assert.assertEquals(1, documentRevisions.stream()
+                .filter(documentRevisionDTO -> documentCreation.getReference().equals(documentRevisionDTO.getDocumentMasterId()))
+                .count());
+
+        Assert.assertEquals(1, documentRevisions.size());
+
+        // search by tag
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null,
+                null, null, null, null, null, tag.getLabel() + "," + anOtherTag.getLabel(), null, null, null, null, null, null, null);
+
+        Assert.assertEquals(1, documentRevisions.size());
+
+        // search by tag
+        documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null,
+                null, null, null, null, null, "whatever", null, null, null, null, null, null, null);
+
+        Assert.assertEquals(0, documentRevisions.size());
+    }
+
+    @Test
     public void createDocumentAndSearch() throws ApiException, IOException, InterruptedException {
 
         // Create a document
@@ -130,7 +337,7 @@ public class DocumentApiTest {
         documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "1", lastIteration);
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
 
-        String attributeSearchQuery = "TEXT:"+attrName+":"+attrValue;
+        String attributeSearchQuery = "TEXT:" + attrName + ":" + attrValue;
 
         // Let some time to server for data indexing (asynchronous)
         Thread.sleep(2000);
@@ -271,24 +478,24 @@ public class DocumentApiTest {
         foldersApi.createDocumentMasterInFolderAsync(workspace.getId(),
                 document, workspace.getId(), new ApiCallback<DocumentRevisionDTO>() {
 
-            @Override
-            public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
-                future.complete(null);
-            }
+                    @Override
+                    public void onFailure(ApiException e, int statusCode, Map<String, List<String>> responseHeaders) {
+                        future.complete(null);
+                    }
 
-            @Override
-            public void onSuccess(DocumentRevisionDTO result, int statusCode, Map<String, List<String>> responseHeaders) {
-                future.complete(result);
-            }
+                    @Override
+                    public void onSuccess(DocumentRevisionDTO result, int statusCode, Map<String, List<String>> responseHeaders) {
+                        future.complete(result);
+                    }
 
-            @Override
-            public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
-            }
+                    @Override
+                    public void onUploadProgress(long bytesWritten, long contentLength, boolean done) {
+                    }
 
-            @Override
-            public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
-            }
-        });
+                    @Override
+                    public void onDownloadProgress(long bytesRead, long contentLength, boolean done) {
+                    }
+                });
 
         Assert.assertNotNull(future.get());
 
@@ -302,7 +509,7 @@ public class DocumentApiTest {
 
         DocumentCreationDTO documentCreation = new DocumentCreationDTO();
         documentCreation.setReference(TestUtils.randomString());
-        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId()+":"+folderName);
+        foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId() + ":" + folderName);
         return documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
     }
 
