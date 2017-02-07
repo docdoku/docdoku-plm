@@ -45,13 +45,14 @@ public class SearchQuery  implements Serializable {
     protected AbstractAttributeQuery[] attributes;
     protected String[] tags;
     protected String content;
+    private boolean fetchHeadOnly;
 
     public SearchQuery(){
 
     }
     public SearchQuery(String workspaceId, String fullText, String version, String author, String type,
                        Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo,
-                       AbstractAttributeQuery[] attributes, String[] tags, String content) {
+                       AbstractAttributeQuery[] attributes, String[] tags, String content, boolean fetchHeadOnly) {
         this.workspaceId = workspaceId;
         this.fullText =fullText;
         this.version = version;
@@ -64,6 +65,7 @@ public class SearchQuery  implements Serializable {
         this.attributes = attributes;
         this.tags = tags;
         this.content = content;
+        this.fetchHeadOnly = fetchHeadOnly;
     }
 
     // Getter
@@ -141,6 +143,10 @@ public class SearchQuery  implements Serializable {
     }
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public boolean isFetchHeadOnly() {
+        return fetchHeadOnly;
     }
 
     @XmlSeeAlso({TextAttributeQuery.class, NumberAttributeQuery.class, DateAttributeQuery.class, BooleanAttributeQuery.class, URLAttributeQuery.class})

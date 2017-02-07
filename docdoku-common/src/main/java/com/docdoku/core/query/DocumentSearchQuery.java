@@ -25,25 +25,26 @@ import java.util.Date;
 
 /**
  * Wraps data needed to perform a query on documents.
- * 
+ *
  * @author Florent Garin
  * @version 2.0, 03/01/2014
- * @since   V2.0
+ * @since V2.0
  */
-public class DocumentSearchQuery extends SearchQuery implements Serializable{
+public class DocumentSearchQuery extends SearchQuery implements Serializable {
     protected String docMId;
     protected String title;
     protected String folder;
 
-    public DocumentSearchQuery(){
+    public DocumentSearchQuery() {
 
     }
-    public DocumentSearchQuery(String workspaceId, String fullText, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content, String folder){
-        super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,modificationDateFrom,modificationDateTo,attributes,tags,content);
-        this.docMId=docMId;
-        this.title=title;
-        this.content=content;
-        this.folder=folder;
+
+    public DocumentSearchQuery(String workspaceId, String fullText, String docMId, String title, String version, String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom, Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, String content, String folder, boolean fetchHeadOnly) {
+        super(workspaceId, fullText, version, author, type, creationDateFrom, creationDateTo, modificationDateFrom, modificationDateTo, attributes, tags, content, fetchHeadOnly);
+        this.docMId = docMId;
+        this.title = title;
+        this.content = content;
+        this.folder = folder;
     }
 
     public String getDocMId() {

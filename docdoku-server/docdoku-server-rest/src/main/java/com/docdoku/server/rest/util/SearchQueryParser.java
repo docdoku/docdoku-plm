@@ -47,6 +47,7 @@ public class SearchQueryParser {
     }
 
     public static DocumentSearchQuery parseDocumentStringQuery(String workspaceId, MultivaluedMap<String, String> query) {
+
         String fullText = null;
         String pDocMId = null;
         String pTitle = null;
@@ -61,6 +62,7 @@ public class SearchQueryParser {
         String[] pTags = null;
         String pContent = null;
         String folder = null;
+        boolean fetchHeadOnly = false;
 
 
         for (String filter : query.keySet()) {
@@ -131,6 +133,9 @@ public class SearchQueryParser {
                     case "attributes":
                         pAttributes = parseAttributeStringQuery(value);
                         break;
+                    case "fetchHeadOnly":
+                        fetchHeadOnly = Boolean.valueOf(value);
+                        break;
                     default:
                         break;
 
@@ -143,7 +148,7 @@ public class SearchQueryParser {
 
         return new DocumentSearchQuery(workspaceId, fullText, pDocMId, pTitle, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
-                pAttributesArray, pTags, pContent, folder);
+                pAttributesArray, pTags, pContent, folder, fetchHeadOnly);
 
     }
 
@@ -162,6 +167,7 @@ public class SearchQueryParser {
         String[] pTags = null;
         Boolean standardPart = null;
         String content = null;
+        boolean fetchHeadOnly = false;
 
         for (String filter : query.keySet()) {
             List<String> values = query.get(filter);
@@ -231,6 +237,9 @@ public class SearchQueryParser {
                     case "attributes":
                         pAttributes = parseAttributeStringQuery(value);
                         break;
+                    case "fetchHeadOnly":
+                        fetchHeadOnly = Boolean.valueOf(value);
+                        break;
                 }
             }
         }
@@ -239,7 +248,7 @@ public class SearchQueryParser {
 
         return new PartSearchQuery(workspaceId, fullText, pNumber, pName, pVersion, pAuthor, pType,
                 pCreationDateFrom, pCreationDateTo, pModificationDateFrom, pModificationDateTo,
-                pAttributesArray, pTags, standardPart, content);
+                pAttributesArray, pTags, standardPart, content, fetchHeadOnly);
 
     }
 

@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class DocumentSearchCommand extends BaseCommandLine {
@@ -44,12 +43,13 @@ public class DocumentSearchCommand extends BaseCommandLine {
     @Override
     public void execImpl() throws Exception {
         DocumentsApi documentsApi = new DocumentsApi(client);
-        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace, searchValue, null, null, null, null, null, null, null, null, null, null, null, null, null);
+        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace, searchValue,
+                null, null, null, null, null, null, null, null, null, null, null, null, null, false);
         output.printDocumentRevisions(documentRevisions);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentSearchCommandDescription",user);
+        return LangHelper.getLocalizedMessage("DocumentSearchCommandDescription", user);
     }
 }

@@ -2,13 +2,14 @@ package com.docdoku.server.indexer;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentMaster;
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Workflow;
@@ -32,15 +33,15 @@ public class IndexerMapping {
     protected static final String WORKSPACE_ID_KEY = "workspaceId";
     protected static final String ITERATION_KEY = "iteration";
     protected static final String VERSION_KEY = "version";
-    protected static final String AUTHOR_KEY = "author";
-    protected static final String AUTHOR_LOGIN_KEY = "login";
-    protected static final String AUTHOR_NAME_KEY = "name";
+    protected static final String AUTHOR_LOGIN_KEY = "authorLogin";
+    protected static final String AUTHOR_NAME_KEY = "authorName";
+    protected static final String FILE_NAME_KEY = "fileName";
     protected static final String CREATION_DATE_KEY = "creationDate";
     protected static final String MODIFICATION_DATE_KEY = "modificationDate";
     protected static final String TYPE_KEY = "type";
     protected static final String DOCUMENT_ID_KEY = "docMId";
     protected static final String PART_NUMBER_KEY = "partNumber";
-    protected static final String PART_NAME_KEY = "name";
+    protected static final String PART_NAME_KEY = "partName";
     protected static final String TITLE_KEY = "title";
     protected static final String DESCRIPTION_KEY = "description";
     protected static final String REVISION_NOTE_KEY = "revisionNote";
@@ -80,7 +81,7 @@ public class IndexerMapping {
 
         DocumentRevision documentRevision = documentIteration.getDocumentRevision();
         DocumentMaster documentMaster = documentRevision.getDocumentMaster();
-        User author = documentIteration.getAuthor();
+        User author = documentMaster.getAuthor();
         Set<Tag> tags = documentRevision.getTags();
         List<InstanceAttribute> instanceAttributes = documentIteration.getInstanceAttributes();
 
@@ -94,19 +95,13 @@ public class IndexerMapping {
             setField(tmp, VERSION_KEY, documentIteration.getVersion());
             setField(tmp, TYPE_KEY, documentMaster.getType());
             setField(tmp, DESCRIPTION_KEY, documentRevision.getDescription());
-            setField(tmp, ITERATION_KEY, "" + documentIteration.getIteration());
+            setField(tmp, ITERATION_KEY, documentIteration.getIteration());
             setField(tmp, CREATION_DATE_KEY, documentRevision.getCreationDate());
             setField(tmp, MODIFICATION_DATE_KEY, documentIteration.getModificationDate());
             setField(tmp, REVISION_NOTE_KEY, documentIteration.getRevisionNote());
             setField(tmp, WORKFLOW_KEY, documentRevision.getWorkflow());
             setField(tmp, FOLDER_KEY, documentRevision.getLocation().getShortName());
 
-            if (author != null) {
-                tmp.startObject(AUTHOR_KEY);
-                setField(tmp, AUTHOR_LOGIN_KEY, author.getLogin());
-                setField(tmp, AUTHOR_NAME_KEY, author.getName());
-                tmp.endObject();
-            }
             addCommonJSONFields(tmp, author, tags, instanceAttributes, contentInputs);
 
             return tmp.endObject();
@@ -120,7 +115,7 @@ public class IndexerMapping {
 
         PartRevision partRevision = partIteration.getPartRevision();
         PartMaster partMaster = partRevision.getPartMaster();
-        User author = partIteration.getAuthor();
+        User author = partMaster.getAuthor();
         Set<Tag> tags = partRevision.getTags();
         List<InstanceAttribute> instanceAttributes = partIteration.getInstanceAttributes();
 
@@ -153,12 +148,8 @@ public class IndexerMapping {
 
     private static void addCommonJSONFields(XContentBuilder tmp, User author, Set<Tag> tags, List<InstanceAttribute> instanceAttributes, Map<String, String> contentInputs) throws IOException {
 
-        if (author != null) {
-            tmp.startObject(AUTHOR_KEY);
-            setField(tmp, AUTHOR_LOGIN_KEY, author.getLogin());
-            setField(tmp, AUTHOR_NAME_KEY, author.getName());
-            tmp.endObject();
-        }
+        setField(tmp, AUTHOR_LOGIN_KEY, author.getLogin());
+        setField(tmp, AUTHOR_NAME_KEY, author.getName());
 
         if (!tags.isEmpty()) {
             tmp.startArray(TAGS_KEY);
@@ -182,7 +173,7 @@ public class IndexerMapping {
             tmp.startArray(FILES_KEY);
             for (Map.Entry<String, String> contentInput : contentInputs.entrySet()) {
                 tmp.startObject();
-                setField(tmp, AUTHOR_NAME_KEY, contentInput.getKey());
+                setField(tmp, FILE_NAME_KEY, contentInput.getKey());
                 setField(tmp, CONTENT_KEY, contentInput.getValue());
                 tmp.endObject();
             }
@@ -234,10 +225,22 @@ public class IndexerMapping {
         return null;
     }
 
-    public static DocumentRevisionKey getDocumentRevisionKey(Map<String, Object> source) {
-        return new DocumentRevisionKey(extractValue(source, WORKSPACE_ID_KEY), extractValue(source, DOCUMENT_ID_KEY), extractValue(source, VERSION_KEY));
+    public static DocumentIterationKey getDocumentIterationKey(Map<String, Object> source) {
+        return new DocumentIterationKey(extractValue(source, WORKSPACE_ID_KEY),
+                extractValue(source, DOCUMENT_ID_KEY),
+                extractValue(source, VERSION_KEY),
+                Integer.valueOf(extractValue(source, ITERATION_KEY))
+        );
     }
 
+    public static PartIterationKey getPartIterationKey(Map<String, Object> source) {
+        return new PartIterationKey(extractValue(source, WORKSPACE_ID_KEY),
+                extractValue(source, PART_NUMBER_KEY),
+                extractValue(source, VERSION_KEY),
+                Integer.valueOf(extractValue(source, ITERATION_KEY))
+        );
+    }
+    
     private static String extractValue(Map<String, Object> source, String key) {
         Object ret = source.get(key);
         if (ret instanceof List) {

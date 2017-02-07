@@ -22,16 +22,12 @@ package com.docdoku.server.indexer;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentMaster;
-import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.DocumentRevisionKey;
+import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.AccountNotFoundException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
+import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.exceptions.StorageException;
-import com.docdoku.core.product.PartIteration;
-import com.docdoku.core.product.PartMaster;
-import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.*;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.security.UserGroupMapping;
@@ -39,10 +35,7 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
-import com.docdoku.server.dao.DocumentMasterDAO;
-import com.docdoku.server.dao.DocumentRevisionDAO;
-import com.docdoku.server.dao.PartMasterDAO;
-import com.docdoku.server.dao.WorkspaceDAO;
+import com.docdoku.server.dao.*;
 import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -126,53 +119,32 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     }
 
     @Override
+    @Asynchronous
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void indexDocumentIteration(DocumentIteration documentIteration) {
-
-        try {
-            createIndex(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()));
-        } catch (ResourceAlreadyExistsException e) {
-            LOGGER.log(Level.INFO, "Index already exists");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
-
-        try {
-            indexRequest(documentIteration).get();
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot create index for requested document iteration indexation, The ElasticSearch server doesn't seem to respond", e);
-        }
-
+        doIndexDocumentIteration(documentIteration);
     }
 
     @Override
+    @Asynchronous
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void indexDocumentIterations(List<DocumentIteration> documentIterations) {
-        documentIterations.forEach(this::indexDocumentIteration);
+        documentIterations.forEach(this::doIndexDocumentIteration);
     }
 
     @Override
+    @Asynchronous
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void indexPartIteration(PartIteration partIteration) {
-        try {
-            createIndex(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()));
-        } catch (ResourceAlreadyExistsException e) {
-            LOGGER.log(Level.INFO, "Index already exists");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        }
+        doIndexPartIteration(partIteration);
 
-        try {
-            indexRequest(partIteration).get();
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot create index for requested part iteration indexation, The ElasticSearch server doesn't seem to respond", e);
-        }
     }
 
     @Override
+    @Asynchronous
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void indexPartIterations(List<PartIteration> partIterations) {
-        partIterations.forEach(this::indexPartIteration);
+        partIterations.forEach(this::doIndexPartIteration);
     }
 
     @Override
@@ -213,24 +185,50 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
         SearchHits hits = searchResponse.getHits();
 
-        Set<DocumentRevisionKey> documentRevisionKeys = new HashSet<>();
+        Set<DocumentIterationKey> documentIterationKeys = new HashSet<>();
 
         if (hits != null) {
             for (SearchHit hit : hits.getHits()) {
                 Map<String, Object> source = hit.getSource();
-                documentRevisionKeys.add(IndexerMapping.getDocumentRevisionKey(source));
+                documentIterationKeys.add(IndexerMapping.getDocumentIterationKey(source));
             }
         }
 
-        LOGGER.log(Level.INFO, "Results : " + documentRevisionKeys.size());
+        LOGGER.log(Level.INFO, "Results : " + documentIterationKeys.size());
 
-        return documentRevisionKeysToDocumentRevisions(documentRevisionKeys);
+        return documentIterationKeysToDocumentRevisions(documentSearchQuery.isFetchHeadOnly(), documentIterationKeys);
     }
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery) {
-        return null;
+
+        String workspaceId = partSearchQuery.getWorkspaceId();
+
+        QueryBuilder query = IndexerQueryBuilder.getSearchQueryBuilder(partSearchQuery);
+
+        LOGGER.log(Level.INFO, query.toString());
+
+        SearchResponse searchResponse = client.prepareSearch(IndexerUtils.formatIndexName(workspaceId))
+                .setTypes(IndexerMapping.PART_TYPE)
+                .setSearchType(SearchType.QUERY_THEN_FETCH)
+                .setQuery(query)
+                .get();
+
+        SearchHits hits = searchResponse.getHits();
+
+        Set<PartIterationKey> partIterationKeys = new HashSet<>();
+
+        if (hits != null) {
+            for (SearchHit hit : hits.getHits()) {
+                Map<String, Object> source = hit.getSource();
+                partIterationKeys.add(IndexerMapping.getPartIterationKey(source));
+            }
+        }
+
+        LOGGER.log(Level.INFO, "Results : " + partIterationKeys.size());
+
+        return partIterationKeysToPartRevisions(partSearchQuery.isFetchHeadOnly(), partIterationKeys);
     }
 
     @Override
@@ -297,6 +295,45 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         sendNotification(workspaceId, hasSuccess, failureMessage);
     }
 
+
+    private void doIndexDocumentIteration(DocumentIteration documentIteration) {
+        try {
+            createIndex(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()));
+        } catch (ResourceAlreadyExistsException e) {
+            LOGGER.log(Level.INFO, "Index already exists");
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        } catch (NoNodeAvailableException e) {
+            LOGGER.log(Level.INFO, "The ElasticSearch server doesn't seem to respond");
+        }
+
+        try {
+            indexRequest(documentIteration).get();
+        } catch (NoNodeAvailableException e) {
+            LOGGER.log(Level.INFO, "The ElasticSearch server doesn't seem to respond");
+        }
+
+    }
+
+
+    private void doIndexPartIteration(PartIteration partIteration) {
+        try {
+            createIndex(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()));
+        } catch (ResourceAlreadyExistsException e) {
+            LOGGER.log(Level.INFO, "Index already exists");
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, null, e);
+        } catch (NoNodeAvailableException e) {
+            LOGGER.log(Level.WARNING, "Cannot create index for requested part iteration indexation, The ElasticSearch server doesn't seem to respond", e);
+        }
+
+        try {
+            indexRequest(partIteration).get();
+        } catch (NoNodeAvailableException e) {
+            LOGGER.log(Level.WARNING, "Cannot create index for requested part iteration indexation, The ElasticSearch server doesn't seem to respond", e);
+        }
+    }
+
     private void createIndex(String pIndex) throws IOException {
 
         Settings settings = Settings.builder()
@@ -352,31 +389,31 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
 
     private IndexRequestBuilder indexRequest(DocumentIteration documentIteration) throws NoNodeAvailableException {
-        Map<String, String> binaryList = getBinaryList(documentIteration.getAttachedFiles());
-        XContentBuilder jsonDoc = IndexerMapping.documentIterationToJSON(documentIteration, binaryList);
+        Map<String, String> contentInputs = getContentInputs(documentIteration.getAttachedFiles());
+        XContentBuilder jsonDoc = IndexerMapping.documentIterationToJSON(documentIteration, contentInputs);
         return client.prepareIndex(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()),
                 IndexerMapping.DOCUMENT_TYPE, documentIteration.getKey().toString())
                 .setSource(jsonDoc);
     }
 
     private IndexRequestBuilder indexRequest(PartIteration partIteration) {
-        Map<String, String> binaryList = getBinaryList(partIteration.getAttachedFiles());
-        XContentBuilder jsonDoc = IndexerMapping.partIterationToJSON(partIteration, binaryList);
+        Map<String, String> contentInputs = getContentInputs(partIteration.getAttachedFiles());
+        XContentBuilder jsonDoc = IndexerMapping.partIterationToJSON(partIteration, contentInputs);
         return client.prepareIndex(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()),
                 IndexerMapping.PART_TYPE, partIteration.getKey().toString())
                 .setSource(jsonDoc);
     }
 
-    private Map<String, String> getBinaryList(Set<BinaryResource> attachedFiles) {
-        Map<String, String> binaryList = new HashMap<>();
+    private Map<String, String> getContentInputs(Set<BinaryResource> attachedFiles) {
+        Map<String, String> contentInputs = new HashMap<>();
         for (BinaryResource bin : attachedFiles) {
             try (InputStream in = storageManager.getBinaryResourceInputStream(bin)) {
-                binaryList.put(bin.getName(), IndexerUtils.streamToString(bin.getFullName(), in));
+                contentInputs.put(bin.getName(), IndexerUtils.streamToString(bin.getFullName(), in));
             } catch (StorageException | IOException e) {
                 LOGGER.log(Level.SEVERE, "Cannot read file " + bin.getFullName(), e);
             }
         }
-        return binaryList;
+        return contentInputs;
     }
 
     private DeleteRequestBuilder deleteRequest(DocumentIteration documentIteration) throws NoNodeAvailableException {
@@ -403,15 +440,26 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         return ResourceBundle.getBundle(I18N_CONF, Locale.getDefault()).getString(key);
     }
 
-    private List<DocumentRevision> documentRevisionKeysToDocumentRevisions(Set<DocumentRevisionKey> documentRevisionKeys) {
-        List<DocumentRevision> documentRevisions = new ArrayList<>();
-        for (DocumentRevisionKey documentRevisionKey : documentRevisionKeys) {
-            DocumentRevision documentRevision = getDocumentRevision(documentRevisionKey);
-            if (documentRevision != null) {
-                documentRevisions.add(documentRevision);
+    private List<DocumentRevision> documentIterationKeysToDocumentRevisions(boolean fetchHeadOnly, Set<DocumentIterationKey> documentIterationKeys) {
+
+        Set<DocumentRevision> documentRevisions = new HashSet<>();
+
+        for (DocumentIterationKey documentIterationKey : documentIterationKeys) {
+
+            DocumentRevision documentRevision = getDocumentRevision(documentIterationKey.getDocumentRevision());
+
+            if (documentRevision != null && !documentRevisions.contains(documentRevision)) {
+                if (fetchHeadOnly) {
+                    if (documentRevision.getLastCheckedInIteration().getKey().equals(documentIterationKey)) {
+                        documentRevisions.add(documentRevision);
+                    }
+                } else {
+                    documentRevisions.add(documentRevision);
+                }
             }
         }
-        return documentRevisions;
+
+        return new ArrayList<>(documentRevisions);
     }
 
     private DocumentRevision getDocumentRevision(DocumentRevisionKey documentRevisionKey) {
@@ -419,6 +467,39 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
             return new DocumentRevisionDAO(em).loadDocR(documentRevisionKey);
         } catch (DocumentRevisionNotFoundException e) {
             LOGGER.log(Level.INFO, "Cannot infer document revision from key [" + documentRevisionKey + "]", e);
+            return null;
+        }
+    }
+
+
+    private List<PartRevision> partIterationKeysToPartRevisions(boolean fetchHeadOnly, Set<PartIterationKey> partIterationKeys) {
+
+        Set<PartRevision> partRevisions = new HashSet<>();
+
+        for (PartIterationKey partIterationKey : partIterationKeys) {
+
+            PartRevision partRevision = getPartRevision(partIterationKey.getPartRevision());
+
+            if (partRevision != null && !partRevisions.contains(partRevision)) {
+                if (fetchHeadOnly) {
+                    if (partRevision.getLastCheckedInIteration().getKey().equals(partIterationKey)) {
+                        partRevisions.add(partRevision);
+                    }
+                } else {
+                    partRevisions.add(partRevision);
+                }
+            }
+        }
+
+        return new ArrayList<>(partRevisions);
+
+    }
+
+    private PartRevision getPartRevision(PartRevisionKey partRevision) {
+        try {
+            return new PartRevisionDAO(em).loadPartR(partRevision);
+        } catch (PartRevisionNotFoundException e) {
+            LOGGER.log(Level.INFO, "Cannot infer part revision from key [" + partRevision + "]", e);
             return null;
         }
     }

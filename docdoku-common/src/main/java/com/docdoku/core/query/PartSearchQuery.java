@@ -25,46 +25,52 @@ import java.util.Date;
 
 /**
  * Wraps data needed to perform a query on part revisions.
- * 
+ *
  * @author Morgan Guimard
  * @version 2.0, 03/01/2014
- * @since   V2.0
+ * @since V2.0
  */
-public class PartSearchQuery extends SearchQuery implements Serializable{
+public class PartSearchQuery extends SearchQuery implements Serializable {
     protected String partNumber;
     protected String name;
     protected Boolean standardPart;
 
-    public PartSearchQuery(){
+    public PartSearchQuery() {
 
     }
+
     public PartSearchQuery(String workspaceId, String fullText, String partNumber, String name, String version,
                            String author, String type, Date creationDateFrom, Date creationDateTo, Date modificationDateFrom,
-                           Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes,String[] tags, Boolean standardPart, String content){
-        super(workspaceId,fullText,version,author,type,creationDateFrom,creationDateTo,modificationDateFrom,
-                modificationDateTo,attributes,tags,content);
-        this.partNumber=partNumber;
-        this.name=name;
-        this.standardPart=standardPart;
+                           Date modificationDateTo, SearchQuery.AbstractAttributeQuery[] attributes, String[] tags, Boolean standardPart, String content, boolean fetchHeadOnly) {
+        super(workspaceId, fullText, version, author, type, creationDateFrom, creationDateTo, modificationDateFrom,
+                modificationDateTo, attributes, tags, content, fetchHeadOnly);
+        this.partNumber = partNumber;
+        this.name = name;
+        this.standardPart = standardPart;
     }
 
     //Getter
     public String getPartNumber() {
         return partNumber;
     }
+
     public String getName() {
         return name;
     }
+
     public Boolean isStandardPart() {
         return standardPart;
     }
+
     //Setter
     public void setPartNumber(String partNumber) {
         this.partNumber = partNumber;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public void setStandardPart(Boolean standardPart) {
         this.standardPart = standardPart;
     }

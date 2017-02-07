@@ -21,6 +21,7 @@
 package com.docdoku.server.indexer;
 
 import com.docdoku.core.query.DocumentSearchQuery;
+import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.SearchQuery;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -33,10 +34,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author kelto on 09/07/15.
+ * @author Morgan Guimard
  */
 public class IndexerQueryBuilder {
-
 
     public static QueryBuilder getSearchQueryBuilder(DocumentSearchQuery documentSearchQuery) {
         BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
@@ -44,6 +44,14 @@ public class IndexerQueryBuilder {
         documentQueries.forEach(boolQueryBuilder::must);
         return boolQueryBuilder;
     }
+
+    public static QueryBuilder getSearchQueryBuilder(PartSearchQuery partSearchQuery) {
+        BoolQueryBuilder boolQueryBuilder = QueryBuilders.boolQuery();
+        List<QueryBuilder> partQueries = getPartQueries(partSearchQuery);
+        partQueries.forEach(boolQueryBuilder::must);
+        return boolQueryBuilder;
+    }
+
 
     private static List<QueryBuilder> getDocumentQueries(DocumentSearchQuery documentSearchQuery) {
         List<QueryBuilder> queries = new ArrayList<>();
@@ -69,6 +77,25 @@ public class IndexerQueryBuilder {
         return queries;
     }
 
+    private static List<QueryBuilder> getPartQueries(PartSearchQuery partSearchQuery) {
+        List<QueryBuilder> queries = new ArrayList<>();
+
+        String partNumber = partSearchQuery.getPartNumber();
+        String partName = partSearchQuery.getName();
+
+        if (partNumber != null && !partNumber.isEmpty()) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.PART_NUMBER_KEY, partNumber));
+        }
+
+        if (partName != null && !partName.isEmpty()) {
+            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.PART_NAME_KEY, partName));
+        }
+
+        queries.addAll(getCommonQueries(partSearchQuery));
+
+        return queries;
+    }
+
     private static List<QueryBuilder> getCommonQueries(SearchQuery searchQuery) {
 
         String[] tags = searchQuery.getTags();
@@ -80,7 +107,10 @@ public class IndexerQueryBuilder {
             queries.add(QueryBuilders.termQuery(IndexerMapping.VERSION_KEY, searchQuery.getVersion()));
         }
         if (searchQuery.getAuthor() != null) {
-            queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.AUTHOR_NAME_KEY, searchQuery.getAuthor()));
+            BoolQueryBuilder authorQuery = QueryBuilders.boolQuery();
+            authorQuery.should(QueryBuilders.fuzzyQuery(IndexerMapping.AUTHOR_NAME_KEY, searchQuery.getAuthor()));
+            authorQuery.should(QueryBuilders.fuzzyQuery(IndexerMapping.AUTHOR_LOGIN_KEY, searchQuery.getAuthor()));
+            queries.add(authorQuery);
         }
         if (searchQuery.getType() != null) {
             queries.add(QueryBuilders.fuzzyQuery(IndexerMapping.TYPE_KEY, searchQuery.getType()));
@@ -109,7 +139,6 @@ public class IndexerQueryBuilder {
         if (tags != null && tags.length > 0) {
             queries.add(QueryBuilders.termsQuery(IndexerMapping.TAGS_KEY, tags));
         }
-
 
         if (attributes != null) {
             Stream.of(attributes)

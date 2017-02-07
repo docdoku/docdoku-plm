@@ -125,7 +125,8 @@ public class DocumentsResource {
             @ApiParam(required = false, value = "Document modified from date") @QueryParam("modifiedFrom") String modifiedFrom,
             @ApiParam(required = false, value = "Document modified to date") @QueryParam("modifiedTo") String modifiedTo,
             @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
-            @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder
+            @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder,
+            @ApiParam(required = false, value = "Search mode (false for history/ true for head only)") @QueryParam("fetchHeadOnly") boolean fetchHeadOnly
     ) throws EntityNotFoundException, UserNotActiveException{
 
         MultivaluedMap<String, String> params = uri.getQueryParameters();
