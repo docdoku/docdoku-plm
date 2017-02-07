@@ -45,6 +45,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -286,7 +287,6 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @Asynchronous
     @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void indexWorkspaceData(String workspaceId) {
-        // TODO :Clear workspace if exists, or recreate
 
         Account account;
 
@@ -298,6 +298,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         }
 
         try {
+            // Clear workspace if exists, or recreate
             doDeleteWorkspaceIndex(workspaceId);
 
             BulkRequestBuilder bulkRequest = indexerClient.prepareBulk();
@@ -369,6 +370,9 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
             LOGGER.log(Level.WARNING, "Cannot delete index for workspace [" + workspaceId
                     + "] : The ElasticSearch server doesn't seem to respond. Consider to delete it manually.");
             mailer.sendWorkspaceIndexationFailure(account, workspaceId, getString("IndexerNotAvailableForRequest", new Locale(account.getLanguage())));
+        } catch (IndexNotFoundException e) {
+            LOGGER.log(Level.WARNING, "Cannot delete index for workspace [" + workspaceId
+                    + "] : the index does not exists.");
         }
     }
 

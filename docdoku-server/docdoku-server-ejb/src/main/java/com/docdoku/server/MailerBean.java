@@ -216,13 +216,45 @@ public class MailerBean implements IMailerLocal {
     @Asynchronous
     @Override
     public void sendWorkspaceDeletionNotification(Account admin, String workspaceId) {
-        sendWorkspaceDeletionNotification(admin, workspaceId, true);
+
+        LOGGER.info("Sending workspace deletion notification message \n\tfor the user which login is " + admin.getLogin());
+
+        Locale locale = new Locale(admin.getLanguage());
+
+        Object[] args = {
+                workspaceId
+        };
+
+        String subject = getSubject("WorkspaceDeletion_title", locale);
+        String body = getBody("WorkspaceDeletion_text", args, locale);
+
+        try {
+            sendMessage(admin, subject, body);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
     }
 
     @Asynchronous
     @Override
     public void sendWorkspaceDeletionErrorNotification(Account admin, String workspaceId) {
-        sendWorkspaceDeletionNotification(admin, workspaceId, false);
+
+        LOGGER.info("Sending workspace deletion error notification message \n\tfor the user which login is " + admin.getLogin());
+
+        Locale locale = new Locale(admin.getLanguage());
+
+        Object[] args = {
+                workspaceId
+        };
+
+        String subject = getSubject("WorkspaceDeletion_title", locale);
+        String body = getBody("WorkspaceDeletionError_text", args, locale);
+
+        try {
+            sendMessage(admin, subject, body);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
     }
 
 
@@ -361,24 +393,6 @@ public class MailerBean implements IMailerLocal {
 
         try {
             sendMessage(account, subject, body);
-        } catch (MessagingException pMEx) {
-            logMessagingException(pMEx);
-        }
-    }
-
-    private void sendWorkspaceDeletionNotification(Account admin, String workspaceId, boolean hasSuccess) {
-
-        LOGGER.info("Sending workspace deletion notification emails \n\tfor the workspace " + workspaceId + " success : " + hasSuccess);
-
-        Locale locale = new Locale(admin.getLanguage());
-        Object[] args = {
-                workspaceId
-        };
-        String subject = getSubject("WorkspaceDeletion_title", locale);
-        String body = getBody(hasSuccess ? "WorkspaceDeletion_text" : "WorkspaceDeletionError_text", args, locale);
-
-        try {
-            sendMessage(admin, subject, body);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -534,7 +548,7 @@ public class MailerBean implements IMailerLocal {
         Locale locale = new Locale(worker.getLanguage());
 
         String subject = getSubject("Approval_title", locale);
-        
+
         Object[] args = {
                 pTask.getTitle(),
                 getPartRevisionPermalinkURL(partRevision),
