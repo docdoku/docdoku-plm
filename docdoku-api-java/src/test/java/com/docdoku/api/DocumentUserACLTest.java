@@ -57,7 +57,7 @@ public class DocumentUserACLTest {
     @BeforeClass
     public static void initTestData() throws ApiException {
 
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(DocumentUserACLTest.class.getName());
 
         account1 = TestUtils.createAccount();
         account2 = TestUtils.createAccount();

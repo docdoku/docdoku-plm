@@ -50,7 +50,7 @@ public class ProductInstanceBinaryApiTest {
 
     @BeforeClass
     public static void initProductInstance() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(ProductInstanceBinaryApiTest.class.getName());
         String workspaceId = workspace.getId();
         ApiClient client = TestConfig.REGULAR_USER_CLIENT;
 

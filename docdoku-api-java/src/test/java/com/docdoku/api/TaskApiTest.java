@@ -48,7 +48,7 @@ public class TaskApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(TaskApiTest.class.getName());
     }
     @AfterClass
     public static void deleteWorkspace() throws ApiException {

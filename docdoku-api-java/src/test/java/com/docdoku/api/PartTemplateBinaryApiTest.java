@@ -51,7 +51,7 @@ public class PartTemplateBinaryApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(PartTemplateBinaryApi.class.getName());
         PartTemplateCreationDTO templateCreation = new PartTemplateCreationDTO();
         templateCreation.setReference(TestUtils.randomString());
         template = partTemplatesApi.createPartMasterTemplate(workspace.getId(), templateCreation);

@@ -21,6 +21,9 @@
 package com.docdoku.api;
 
 import com.docdoku.api.client.ApiClient;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.models.AccountDTO;
+import com.docdoku.api.services.AccountsApi;
 
 /**
  * Config parser
@@ -55,15 +58,21 @@ public class TestConfig {
     static {
         parseProperties();
         createClients();
+        try {
+            initTestAccount();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
     }
+
 
     private static void parseProperties() {
         URL = System.getProperty("url") != null ? System.getProperty("url") : "http://localhost:8080/docdoku-server-rest/api";
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         NAME = System.getProperty("name") != null ? System.getProperty("name") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
-        ROOT_PASSWORD = System.getProperty("root_password") != null ? System.getProperty("root_password") : "password";
-        ROOT_LOGIN = System.getProperty("root_login") != null ? System.getProperty("root_login") : "admin";
+        ROOT_PASSWORD = System.getProperty("root_password") != null ? System.getProperty("root_password") : "root";
+        ROOT_LOGIN = System.getProperty("root_login") != null ? System.getProperty("root_login") : "root";
         // workspace argument is now deprecated (wont be used)
         WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test-api-java";
         EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
@@ -79,5 +88,12 @@ public class TestConfig {
         JWT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, LOGIN, PASSWORD, DEBUG);
         ROOT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG);
         REGULAR_USER_CLIENT = JWT_CLIENT;
+    }
+
+    private static void initTestAccount() throws ApiException {
+        AccountsApi accountsApi = new AccountsApi(REGULAR_USER_CLIENT);
+        AccountDTO account = accountsApi.getAccount();
+        account.setEmail(null);
+        accountsApi.updateAccount(account);
     }
 }

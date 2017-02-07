@@ -54,7 +54,7 @@ public class UploadDownloadConsistencyTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(UploadDownloadConsistencyTest.class.getName());
     }
 
     @AfterClass

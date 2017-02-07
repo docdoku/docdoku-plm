@@ -40,7 +40,7 @@ public class FoldersApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(FoldersApiTest.class.getName());
     }
 
     @AfterClass

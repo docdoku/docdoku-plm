@@ -264,17 +264,69 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
-    public void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage) {
+    public void sendWorkspaceIndexationSuccess(Account account, String workspaceId, String extraMessage) {
 
         Locale locale = new Locale(account.getLanguage());
 
         Object[] args = {
                 workspaceId,
-                pMessage
+                extraMessage
         };
 
-        String subject = getSubject(hasSuccess ? "Indexer_success_title" : "Indexer_failure_title", locale);
-        String body = getBody(hasSuccess ? "Indexer_success_text" : "Indexer_failure_text", args, locale);
+        String subject = getSubject("Indexer_success_title", locale);
+        String body = getBody("Indexer_success_text", args, locale);
+
+        try {
+            sendMessage(account, subject, body);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Asynchronous
+    @Override
+    public void sendWorkspaceIndexationFailure(Account account, String workspaceId, String extraMessage) {
+        Locale locale = new Locale(account.getLanguage());
+
+        Object[] args = {
+                workspaceId,
+                extraMessage
+        };
+
+        String subject = getSubject("Indexer_failure_title", locale);
+        String body = getBody("Indexer_failure_text", args, locale);
+
+        try {
+            sendMessage(account, subject, body);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Override
+    public void sendBulkIndexationSuccess(Account account) {
+        Locale locale = new Locale(account.getLanguage());
+
+        Object[] args = {};
+
+        String subject = getSubject("Indexer_bulk_success_title", locale);
+        String body = getBody("Indexer_bulk_success_text", args, locale);
+
+        try {
+            sendMessage(account, subject, body);
+        } catch (MessagingException pMEx) {
+            logMessagingException(pMEx);
+        }
+    }
+
+    @Override
+    public void sendBulkIndexationFailure(Account account, String failureMessage) {
+        Locale locale = new Locale(account.getLanguage());
+        Object[] args = {
+                failureMessage
+        };
+        String subject = getSubject("Indexer_bulk_failure_title", locale);
+        String body = getBody("Indexer_bulk_failure_text", args, locale);
 
         try {
             sendMessage(account, subject, body);
@@ -462,15 +514,11 @@ public class MailerBean implements IMailerLocal {
         String subject = getSubject("Approval_title", locale);
 
         Object[] args = {
-                getTaskUrl(task, pDocumentRevision.getWorkspaceId()),
-                pDocumentRevision.getWorkspaceId(),
-                String.valueOf(task.getWorkflowId()),
-                String.valueOf(task.getActivityStep()),
-                String.valueOf(task.getNum()),
                 task.getTitle(),
                 getDocumentRevisionPermalinkURL(pDocumentRevision),
-                pDocumentRevision,
-                task.getInstructions() == null ? "-" : task.getInstructions()
+                pDocumentRevision.getKey(),
+                task.getInstructions() == null ? "-" : task.getInstructions(),
+                getTaskUrl(task, pDocumentRevision.getWorkspaceId())
         };
 
         String body = getBody("Approval_document_text", args, locale);
@@ -486,19 +534,13 @@ public class MailerBean implements IMailerLocal {
         Locale locale = new Locale(worker.getLanguage());
 
         String subject = getSubject("Approval_title", locale);
-
-        String instructions = pTask.getInstructions() == null ? "-" : pTask.getInstructions();
-
+        
         Object[] args = {
-                getTaskUrl(pTask, partRevision.getWorkspaceId()),
-                partRevision.getWorkspaceId(),
-                String.valueOf(pTask.getWorkflowId()),
-                String.valueOf(pTask.getActivityStep()),
-                String.valueOf(pTask.getNum()),
                 pTask.getTitle(),
                 getPartRevisionPermalinkURL(partRevision),
-                partRevision,
-                instructions
+                partRevision.getKey(),
+                pTask.getInstructions() == null ? "-" : pTask.getInstructions(),
+                getTaskUrl(pTask, partRevision.getWorkspaceId())
         };
 
         String body = getBody("Approval_part_text", args, locale);
@@ -575,11 +617,6 @@ public class MailerBean implements IMailerLocal {
         LOGGER.log(Level.SEVERE, logMessage, pMEx);
     }
 
-    private void logUnsupportedEncodingException(UnsupportedEncodingException e) {
-        String logMessage = "Unsupported encoding: " + e.getMessage();
-        LOGGER.log(Level.SEVERE, logMessage, e);
-    }
-
     // Template utils methods
 
     private ResourceBundle getBundle(Locale pLocale) {
@@ -597,7 +634,7 @@ public class MailerBean implements IMailerLocal {
     private String getBody(String string, Object[] args, Locale pLocale) {
         String mailBodyTemplate = getString("MailBodyTemplate", pLocale);
         String body = format(string, args, pLocale);
-        return MessageFormat.format(mailBodyTemplate, new Object[]{body});
+        return MessageFormat.format(mailBodyTemplate, body);
     }
 
     private String getSubject(String string, Locale pLocale) {
@@ -615,7 +652,7 @@ public class MailerBean implements IMailerLocal {
 
     private void sendMessage(String email, String name, String subject, String content) throws MessagingException {
 
-        if(email == null || email.isEmpty()){
+        if (email == null || email.isEmpty()) {
             LOGGER.log(Level.WARNING, "Cannot send mail, email is empty");
             return;
         }
@@ -630,7 +667,8 @@ public class MailerBean implements IMailerLocal {
             message.setFrom();
             Transport.send(message);
         } catch (UnsupportedEncodingException e) {
-            logUnsupportedEncodingException(e);
+            String logMessage = "Unsupported encoding: " + e.getMessage();
+            LOGGER.log(Level.SEVERE, logMessage, e);
         }
 
     }

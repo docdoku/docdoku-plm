@@ -42,7 +42,7 @@ public class UserApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(UserApiTest.class.getName());
     }
 
     @AfterClass

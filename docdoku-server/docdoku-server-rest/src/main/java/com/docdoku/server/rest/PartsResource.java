@@ -213,7 +213,7 @@ public class PartsResource {
             @ApiParam(required = false, value = "Part files content") @QueryParam("content") String content,
             @ApiParam(required = false, value = "Part files attributes") @QueryParam("attributes") String attributes,
             @ApiParam(required = false, value = "Search mode (false for history / true for head only)") @QueryParam("fetchHeadOnly") boolean fetchHeadOnly)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException {
+            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
 

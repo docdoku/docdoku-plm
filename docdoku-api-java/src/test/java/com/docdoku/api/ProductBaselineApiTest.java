@@ -76,7 +76,7 @@ public class ProductBaselineApiTest {
 
     @BeforeClass
     public static void initStructure() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(ProductBaselineApiTest.class.getName());
         createParts();
         createLinks();
         checkinParts();

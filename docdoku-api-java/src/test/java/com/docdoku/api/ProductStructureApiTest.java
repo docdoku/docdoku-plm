@@ -58,7 +58,7 @@ public class ProductStructureApiTest {
 
     @BeforeClass
     public static void initProductStructure() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(ProductStructureApiTest.class.getName());
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(TestUtils.randomString());
         rootPart = partsApi.createNewPart(workspace.getId(), part);
@@ -71,7 +71,7 @@ public class ProductStructureApiTest {
     }
 
     @Test
-    public void testProductStructure() throws ApiException {
+    public void testProductStructure() throws ApiException, InterruptedException {
 
         generateStructure();
 
@@ -85,14 +85,14 @@ public class ProductStructureApiTest {
         Assert.assertEquals(partsAsLeaves.size(), leaves.size());
     }
 
-    private void generateStructure() throws ApiException {
+    private void generateStructure() throws ApiException, InterruptedException {
         createParts(rootPart, 0);
     }
 
     /**
      * Recursive method for structure generation
      */
-    private void createParts(PartRevisionDTO parent, int currentLevel) throws ApiException {
+    private void createParts(PartRevisionDTO parent, int currentLevel) throws ApiException, InterruptedException {
 
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(parent);
         List<PartRevisionDTO> currentLevelParts = new ArrayList<>();
@@ -113,6 +113,7 @@ public class ProductStructureApiTest {
             partsAsLeaves.add(lastIteration);
             partBinaryApi.uploadNativeCADFile(lastIteration.getWorkspaceId(), lastIteration.getNumber(),
                     lastIteration.getVersion(), lastIteration.getIteration(), cadFile);
+            Thread.sleep(1000);
         }
 
         lastIteration.setComponents(createLinks(currentLevelParts));

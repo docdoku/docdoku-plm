@@ -50,7 +50,7 @@ public class PartBinaryApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(PartBinaryApiTest.class.getName());
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(TestUtils.randomString());
         createdPart = partsApi.createNewPart(workspace.getId(), part);

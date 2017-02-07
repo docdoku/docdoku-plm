@@ -22,6 +22,8 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.query.DocumentSearchQuery;
@@ -31,10 +33,9 @@ import java.util.List;
 
 public interface IIndexerManagerLocal {
 
-    // todo : should throw if index for given workspace already exists
-    void createWorkspaceIndex(String workspaceId);
+    void createWorkspaceIndex(String workspaceId) throws AccountNotFoundException, NotAllowedException;
 
-    void deleteWorkspaceIndex(String workspaceId);
+    void deleteWorkspaceIndex(String workspaceId) throws AccountNotFoundException;
 
     void indexDocumentIteration(DocumentIteration documentIteration);
 
@@ -44,22 +45,16 @@ public interface IIndexerManagerLocal {
 
     void indexPartIterations(List<PartIteration> partIterations);
 
-    // todo : should throw
     void removeDocumentIterationFromIndex(DocumentIteration documentIteration);
 
-    // todo : should throw
     void removePartIterationFromIndex(PartIteration partIteration);
 
-    List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery);
+    List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery) throws AccountNotFoundException, NotAllowedException;
 
-    List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery);
+    List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery) throws AccountNotFoundException, NotAllowedException;
 
-    void indexAllWorkspaces();
+    void indexAllWorkspacesData();
 
-    void indexWorkspace(String workspaceId);
-
-    // todo : should throw
-    void removeWorkspaceFromIndex(String workspaceId);
-
+    void indexWorkspaceData(String workspaceId) throws AccountNotFoundException;
 
 }

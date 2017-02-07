@@ -55,7 +55,7 @@ public class EffectivityApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(EffectivityApiTest.class.getName());
     }
 
     @AfterClass

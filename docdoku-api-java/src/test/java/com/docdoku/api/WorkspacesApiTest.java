@@ -41,8 +41,9 @@ public class WorkspacesApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(WorkspacesApiTest.class.getName());
     }
+
     @AfterClass
     public static void deleteWorkspace() throws ApiException {
         TestUtils.deleteWorkspace(workspace);
@@ -80,7 +81,7 @@ public class WorkspacesApiTest {
     public void updateWorkspace() throws ApiException {
 
         WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
-        WorkspaceDTO workspace = TestUtils.createWorkspace();
+        WorkspaceDTO workspace = TestUtils.createWorkspace(WorkspacesApiTest.class.getName());
 
         String newDescription = "Updated by tests";
         workspace.setDescription(newDescription);

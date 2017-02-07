@@ -58,7 +58,7 @@ public class MultiThreadApiTest {
 
     @BeforeClass
     public static void initTestData() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(MultiThreadApiTest.class.getName());
     }
 
     @AfterClass

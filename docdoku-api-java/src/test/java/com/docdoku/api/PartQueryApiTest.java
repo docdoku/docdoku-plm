@@ -51,7 +51,7 @@ public class PartQueryApiTest {
 
     @BeforeClass
     public static void initParts() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(PartQueryApiTest.class.getName());
         part = new PartCreationDTO();
         part.setNumber(TestUtils.randomString());
         part.setName(TestUtils.randomString());

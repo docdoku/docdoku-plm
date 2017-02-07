@@ -58,7 +58,7 @@ public class WorkflowApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(WorkspacesApiTest.class.getName());
     }
 
     @AfterClass

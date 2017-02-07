@@ -48,7 +48,7 @@ public class ProductApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(ProductApiTest.class.getName());
     }
     @AfterClass
     public static void deleteWorkspace() throws ApiException {

@@ -22,6 +22,7 @@ package com.docdoku.server.rest;
 
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.query.DocumentSearchQuery;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IDocumentManagerLocal;
@@ -127,7 +128,7 @@ public class DocumentsResource {
             @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
             @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder,
             @ApiParam(required = false, value = "Search mode (false for history/ true for head only)") @QueryParam("fetchHeadOnly") boolean fetchHeadOnly
-    ) throws EntityNotFoundException, UserNotActiveException{
+    ) throws EntityNotFoundException, UserNotActiveException, NotAllowedException {
 
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);

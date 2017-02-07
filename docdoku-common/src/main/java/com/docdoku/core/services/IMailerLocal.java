@@ -50,7 +50,9 @@ public interface IMailerLocal {
 
     void sendDocumentRevisionWorkflowRelaunchedNotification(DocumentRevision pDocumentRevision);
 
-    void sendIndexerResult(Account account, String workspaceId, boolean hasSuccess, String pMessage);
+    void sendWorkspaceIndexationSuccess(Account account, String workspaceId, String extraMessage);
+
+    void sendWorkspaceIndexationFailure(Account account, String workspaceId, String extraMessage);
 
     void sendCredential(Account account);
 
@@ -60,4 +62,8 @@ public interface IMailerLocal {
     void sendUntaggedNotification(Collection<User> pSubscribers, DocumentRevision pDocR, Tag pTag);
     void sendTaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag);
     void sendUntaggedNotification(Collection<User> pSubscribers, PartRevision pPartR, Tag pTag);
+
+    void sendBulkIndexationSuccess(Account account);
+
+    void sendBulkIndexationFailure(Account account, String failureMessage);
 }

@@ -55,7 +55,7 @@ public class DocumentApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(DocumentApiTest.class.getName());
     }
 
     @AfterClass

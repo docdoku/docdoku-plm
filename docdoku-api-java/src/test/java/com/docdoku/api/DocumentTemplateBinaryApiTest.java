@@ -52,7 +52,7 @@ public class DocumentTemplateBinaryApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(DocumentTemplateBinaryApiTest.class.getName());
         DocumentTemplateCreationDTO templateCreation = new DocumentTemplateCreationDTO();
         templateCreation.setReference(TestUtils.randomString());
         template = documentTemplatesApi.createDocumentMasterTemplate(workspace.getId(), templateCreation);

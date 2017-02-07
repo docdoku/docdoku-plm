@@ -42,7 +42,7 @@ public class SharedPartApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(SharedPartApiTest.class.getName());
     }
     @AfterClass
     public static void deleteWorkspace() throws ApiException {

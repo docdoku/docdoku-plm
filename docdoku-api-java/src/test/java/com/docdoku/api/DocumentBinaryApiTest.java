@@ -50,7 +50,7 @@ public class DocumentBinaryApiTest {
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace();
+        workspace = TestUtils.createWorkspace(DocumentBinaryApiTest.class.getName());
 
         DocumentCreationDTO document = new DocumentCreationDTO();
         document.setReference(TestUtils.randomString());

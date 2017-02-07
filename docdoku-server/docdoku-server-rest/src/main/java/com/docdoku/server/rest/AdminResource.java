@@ -235,10 +235,10 @@ public class AdminResource implements Serializable {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Path("index/{workspaceId}")
-    public Response indexWorkspace(
-            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) {
-        indexManager.indexWorkspace(workspaceId);
-        return Response.status(Response.Status.ACCEPTED).build();
+    public Response indexWorkspaceData(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) throws AccountNotFoundException {
+        indexManager.indexWorkspaceData(workspaceId);
+        return Response.accepted().build();
 
     }
 
@@ -253,10 +253,7 @@ public class AdminResource implements Serializable {
     @Path("index-all")
     public Response indexAllWorkspaces()
             throws AccountNotFoundException {
-        Workspace[] administratedWorkspaces = userManager.getAdministratedWorkspaces();
-        for (Workspace workspace : administratedWorkspaces) {
-            indexManager.indexWorkspace(workspace.getId());
-        }
+        indexManager.indexAllWorkspacesData();
         return Response.status(Response.Status.ACCEPTED).build();
     }
 
