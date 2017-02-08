@@ -31,6 +31,15 @@
                 <max-pool-size>1</max-pool-size>
             </bean-pool>
         </ejb>
+        <ejb>
+            <ejb-name>IndexerClientProducer</ejb-name>
+            <jndi-name>ejb/IndexerClientProducer</jndi-name>
+            <bean-pool>
+                <steady-pool-size>1</steady-pool-size>
+                <resize-quantity>1</resize-quantity>
+                <max-pool-size>1</max-pool-size>
+            </bean-pool>
+        </ejb>
     </enterprise-beans>
 
     <disable-nonportable-jndi-names>true</disable-nonportable-jndi-names>

@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by morgan on 02/02/17.
+ * @author Morgan Guimard
  */
 public class IndexerMapping {
 
@@ -240,7 +240,7 @@ public class IndexerMapping {
                 Integer.valueOf(extractValue(source, ITERATION_KEY))
         );
     }
-    
+
     private static String extractValue(Map<String, Object> source, String key) {
         Object ret = source.get(key);
         if (ret instanceof List) {
