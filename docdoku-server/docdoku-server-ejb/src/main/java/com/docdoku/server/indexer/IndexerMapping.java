@@ -205,7 +205,7 @@ public class IndexerMapping {
     }
 
     private static XContentBuilder setField(XContentBuilder object, String field, int value) throws IOException {
-        object.field(field, "" + value);
+        object.field(field, value);
         return object;
     }
 
