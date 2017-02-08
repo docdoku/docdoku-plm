@@ -113,7 +113,7 @@ public class ProductStructureApiTest {
             partsAsLeaves.add(lastIteration);
             partBinaryApi.uploadNativeCADFile(lastIteration.getWorkspaceId(), lastIteration.getNumber(),
                     lastIteration.getVersion(), lastIteration.getIteration(), cadFile);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
 
         lastIteration.setComponents(createLinks(currentLevelParts));
