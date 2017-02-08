@@ -36,6 +36,7 @@ public class IndexerClientProducer {
 
     @PostConstruct
     public void open() {
+        LOGGER.log(Level.INFO, "Create elasticsearch client");
         Settings settings = Settings.builder()
                 .put("cluster.name", config.getClusterName()).build();
 
@@ -54,13 +55,17 @@ public class IndexerClientProducer {
     @PreDestroy
     public void close() {
         if (null != client) {
+            LOGGER.log(Level.INFO, "Closing elasticsearch client");
             client.close();
+        } else {
+            LOGGER.log(Level.INFO, "Cannot close a null client");
         }
     }
 
     @Produces
     @RequestScoped
     public Client produce() {
+        LOGGER.log(Level.INFO, "Producing client");
         return client;
     }
 
