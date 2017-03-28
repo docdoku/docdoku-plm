@@ -49,9 +49,9 @@ public interface IIndexerManagerLocal {
 
     void removePartIterationFromIndex(PartIteration partIteration);
 
-    List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery) throws AccountNotFoundException, NotAllowedException;
+    List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException;
 
-    List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery) throws AccountNotFoundException, NotAllowedException;
+    List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException;
 
     void indexAllWorkspacesData();
 

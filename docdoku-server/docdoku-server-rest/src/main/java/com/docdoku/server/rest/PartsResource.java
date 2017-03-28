@@ -212,12 +212,14 @@ public class PartsResource {
             @ApiParam(required = false, value = "Part tags") @QueryParam("tags") String tags,
             @ApiParam(required = false, value = "Part files content") @QueryParam("content") String content,
             @ApiParam(required = false, value = "Part files attributes") @QueryParam("attributes") String attributes,
+            @ApiParam(required = false, value = "Start offset", defaultValue = "0") @QueryParam("from") int from,
+            @ApiParam(required = false, value = "Max results", defaultValue = "10") @QueryParam("size") int size,
             @ApiParam(required = false, value = "Search mode (false for history / true for head only)") @QueryParam("fetchHeadOnly") boolean fetchHeadOnly)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
 
-        List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery);
+        List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery, from, size);
         List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
 
         for (PartRevision partRevision : partRevisions) {

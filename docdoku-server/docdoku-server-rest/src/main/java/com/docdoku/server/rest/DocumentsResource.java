@@ -127,12 +127,14 @@ public class DocumentsResource {
             @ApiParam(required = false, value = "Document modified to date") @QueryParam("modifiedTo") String modifiedTo,
             @ApiParam(required = false, value = "Document attributes") @QueryParam("attributes") String attributes,
             @ApiParam(required = false, value = "Folder") @QueryParam("folder") String folder,
+            @ApiParam(required = false, value = "Start offset", defaultValue = "0") @QueryParam("from") int from,
+            @ApiParam(required = false, value = "Max results", defaultValue = "10") @QueryParam("size") int size,
             @ApiParam(required = false, value = "Search mode (false for history/ true for head only)") @QueryParam("fetchHeadOnly") boolean fetchHeadOnly
     ) throws EntityNotFoundException, UserNotActiveException, NotAllowedException {
 
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);
-        DocumentRevision[] docRs = documentService.searchDocumentRevisions(documentSearchQuery);
+        DocumentRevision[] docRs = documentService.searchDocumentRevisions(documentSearchQuery, from, size);
         return mapToDTOs(docRs);
     }
 

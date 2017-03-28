@@ -173,7 +173,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery) throws AccountNotFoundException, NotAllowedException {
+    public List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException {
 
         String workspaceId = documentSearchQuery.getWorkspaceId();
 
@@ -188,6 +188,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                     .setTypes(IndexerMapping.DOCUMENT_TYPE)
                     .setSearchType(SearchType.QUERY_THEN_FETCH)
                     .setQuery(query)
+                    .setFrom(from)
+                    .setSize(size)
                     .get();
         } catch (NoNodeAvailableException e) {
             Account account = accountManager.getMyAccount();
@@ -211,7 +213,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery) throws AccountNotFoundException, NotAllowedException {
+    public List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException {
 
         String workspaceId = partSearchQuery.getWorkspaceId();
 
@@ -226,6 +228,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                     .setTypes(IndexerMapping.PART_TYPE)
                     .setSearchType(SearchType.QUERY_THEN_FETCH)
                     .setQuery(query)
+                    .setFrom(from)
+                    .setSize(size)
                     .get();
         } catch (NoNodeAvailableException e) {
             Account account = accountManager.getMyAccount();
