@@ -109,6 +109,7 @@ public class TitleBlockWriterTest {
         PDDocument loadedDocument = PDDocument.load(titleBlock);
         Assert.assertNotNull(loadedDocument);
         String text = new PDFTextStripper().getText(loadedDocument);
+        loadedDocument.close();
         Assert.assertFalse(text.isEmpty());
         Assert.assertTrue(text.contains(user.getLogin()));
         Assert.assertTrue(text.contains(documentIteration.getId()));
@@ -123,6 +124,8 @@ public class TitleBlockWriterTest {
 
         Assert.assertNotNull(loadedDocument);
         String text = new PDFTextStripper().getText(loadedDocument);
+
+        loadedDocument.close();
 
         Assert.assertFalse(text.isEmpty());
         Assert.assertTrue(text.contains(user.getLogin()));

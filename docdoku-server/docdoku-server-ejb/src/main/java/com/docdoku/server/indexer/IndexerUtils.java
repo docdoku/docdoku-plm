@@ -252,6 +252,8 @@ public class IndexerUtils {
 
     private static String pdfDocumentToString(InputStream inputStream) throws IOException {
         PDDocument pdf = PDDocument.load(inputStream);
-        return new PDFTextStripper().getText(pdf);
+        String documentAsString = new PDFTextStripper().getText(pdf);
+        pdf.close();
+        return documentAsString;
     }
 }
