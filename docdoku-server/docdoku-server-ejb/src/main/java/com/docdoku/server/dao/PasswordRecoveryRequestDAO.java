@@ -27,32 +27,32 @@ import javax.persistence.EntityManager;
 import java.util.Locale;
 
 public class PasswordRecoveryRequestDAO {
-    
+
     private EntityManager em;
     private Locale mLocale;
-    
+
     public PasswordRecoveryRequestDAO(Locale pLocale, EntityManager pEM) {
         em = pEM;
-        mLocale =pLocale;
+        mLocale = pLocale;
     }
-    
+
     public PasswordRecoveryRequestDAO(EntityManager pEM) {
-        em=pEM;
-        mLocale=Locale.getDefault();
+        em = pEM;
+        mLocale = Locale.getDefault();
     }
-    
-    public PasswordRecoveryRequest loadPasswordRecoveryRequest(String pPasswordRRUuid) throws PasswordRecoveryRequestNotFoundException {
-        PasswordRecoveryRequest passwdRR = em.find(PasswordRecoveryRequest.class,pPasswordRRUuid);
-        if (passwdRR == null) {
-            throw new PasswordRecoveryRequestNotFoundException(mLocale, pPasswordRRUuid);
+
+    public PasswordRecoveryRequest loadPasswordRecoveryRequest(String recoveryRequestUUID) throws PasswordRecoveryRequestNotFoundException {
+        PasswordRecoveryRequest recoveryRequest = em.find(PasswordRecoveryRequest.class, recoveryRequestUUID);
+        if (recoveryRequest == null) {
+            throw new PasswordRecoveryRequestNotFoundException(mLocale, recoveryRequestUUID);
         } else {
-            return passwdRR;
+            return recoveryRequest;
         }
     }
-    
 
-    public void removePasswordRecoveryRequest(PasswordRecoveryRequest pPasswdRRUuid){
+
+    public void removePasswordRecoveryRequest(PasswordRecoveryRequest pPasswdRRUuid) {
         em.remove(pPasswdRRUuid);
     }
-    
+
 }

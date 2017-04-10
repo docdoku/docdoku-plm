@@ -40,7 +40,7 @@ public interface IMailerLocal {
 
     void sendApproval(Collection<Task> pRunningTasks, DocumentRevision pDocumentRevision);
 
-    void sendPasswordRecovery(Account account, String passwordRRUuid);
+    void sendPasswordRecovery(Account account, String recoveryUUID);
 
     void sendApproval(Collection<Task> runningTasks, PartRevision partRevision);
 

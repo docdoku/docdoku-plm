@@ -92,7 +92,8 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void addUserInWorkspace(String pWorkspaceId, String pLogin) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {        Account account = checkAdmin(pWorkspaceId);
+    public void addUserInWorkspace(String pWorkspaceId, String pLogin) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, UserAlreadyExistsException, FolderAlreadyExistsException, CreationException {
+        Account account = checkAdmin(pWorkspaceId);
         UserDAO userDAO = new UserDAO(new Locale(account.getLanguage()), em);
         User userToAdd = em.find(User.class, new UserKey(pWorkspaceId, pLogin));
         Workspace workspace = em.getReference(Workspace.class, pWorkspaceId);
@@ -496,10 +497,10 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @Override
     public PasswordRecoveryRequest createPasswordRecoveryRequest(Account account) {
-        PasswordRecoveryRequest passwdRR = PasswordRecoveryRequest.createPasswordRecoveryRequest(account.getLogin());
-        em.persist(passwdRR);
-        mailer.sendPasswordRecovery(account, passwdRR.getUuid());
-        return passwdRR;
+        PasswordRecoveryRequest recoveryRequest = PasswordRecoveryRequest.createPasswordRecoveryRequest(account.getLogin());
+        em.persist(recoveryRequest);
+        mailer.sendPasswordRecovery(account, recoveryRequest.getUuid());
+        return recoveryRequest;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

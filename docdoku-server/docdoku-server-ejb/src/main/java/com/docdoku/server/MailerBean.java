@@ -193,13 +193,13 @@ public class MailerBean implements IMailerLocal {
 
     @Asynchronous
     @Override
-    public void sendPasswordRecovery(Account account, String passwordRRUuid) {
+    public void sendPasswordRecovery(Account account, String recoveryUUID) {
 
         LOGGER.info("Sending recovery message \n\tfor the user which login is " + account.getLogin());
 
         Locale locale = new Locale(account.getLanguage());
         Object[] args = {
-                getPasswordRecoveryUrl(passwordRRUuid),
+                getRecoveryUrl(recoveryUUID),
                 account.getLogin()
         };
 
@@ -620,7 +620,7 @@ public class MailerBean implements IMailerLocal {
         return configManager.getCodebase() + "/change-management/#" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
     }
 
-    private String getPasswordRecoveryUrl(String uuid) {
+    private String getRecoveryUrl(String uuid) {
         return configManager.getCodebase() + "/#recover/" + uuid;
     }
 

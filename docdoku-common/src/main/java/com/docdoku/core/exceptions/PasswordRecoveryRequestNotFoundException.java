@@ -24,30 +24,29 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
- *
  * @author Florent Garin
  */
 public class PasswordRecoveryRequestNotFoundException extends EntityNotFoundException {
-    private final String mPasswordRRUuid;
-    
-    
+    private final String mRecoveryUUID;
+
+
     public PasswordRecoveryRequestNotFoundException(String pMessage) {
         super(pMessage);
-        mPasswordRRUuid=null;
-    }
-    
-    public PasswordRecoveryRequestNotFoundException(Locale pLocale, String pPasswordRRUuid) {
-        this(pLocale, pPasswordRRUuid, null);
+        mRecoveryUUID = null;
     }
 
-    public PasswordRecoveryRequestNotFoundException(Locale pLocale, String pPasswordRRUuid, Throwable pCause) {
+    public PasswordRecoveryRequestNotFoundException(Locale pLocale, String recoveryUUID) {
+        this(pLocale, recoveryUUID, null);
+    }
+
+    public PasswordRecoveryRequestNotFoundException(Locale pLocale, String recoveryUUID, Throwable pCause) {
         super(pLocale, pCause);
-        mPasswordRRUuid=pPasswordRRUuid;
+        mRecoveryUUID = recoveryUUID;
     }
 
     @Override
     public String getLocalizedMessage() {
         String message = getBundleDefaultMessage();
-        return MessageFormat.format(message,mPasswordRRUuid);
+        return MessageFormat.format(message, mRecoveryUUID);
     }
 }
