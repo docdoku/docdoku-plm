@@ -108,6 +108,8 @@
       <property name="javax.persistence.schema-generation.scripts.create-target" value="create.sql"/>
       <property name="javax.persistence.schema-generation.scripts.drop-target" value="drop.sql"/>
       <property name="javax.persistence.sharedCache.mode" value="ALL"/>
+      <property name="eclipselink.logging.level" value="FINE"/>
+      <property name="eclipselink.logging.parameters" value="true"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -46,9 +46,13 @@ public class QueryDTO implements Serializable {
     @ApiModelProperty(value = "Query creation date")
     private Date creationDate;
 
-    @ApiModelProperty(value = "Query rule")
+    @ApiModelProperty(value = "Part iteration query rule")
     @XmlElement(nillable = false)
     private QueryRuleDTO queryRule;
+
+    @ApiModelProperty(value = "Path data query rule")
+    @XmlElement(nillable = true)
+    private QueryRuleDTO pathDataQueryRule;
 
     @ApiModelProperty(value = "List of select statements")
     private List<String> selects;
@@ -79,6 +83,14 @@ public class QueryDTO implements Serializable {
 
     public void setQueryRule(QueryRuleDTO queryRule) {
         this.queryRule = queryRule;
+    }
+
+    public QueryRuleDTO getPathDataQueryRule() {
+        return pathDataQueryRule;
+    }
+
+    public void setPathDataQueryRule(QueryRuleDTO pathDataQueryRule) {
+        this.pathDataQueryRule = pathDataQueryRule;
     }
 
     public List<String> getSelects() {

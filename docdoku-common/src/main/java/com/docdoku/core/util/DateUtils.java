@@ -30,21 +30,32 @@ import java.util.TimeZone;
  */
 public class DateUtils {
 
-    public DateUtils(){
+    public DateUtils() {
     }
 
     private static final java.lang.String GLOBAL_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-    private static final SimpleDateFormat SDF = new SimpleDateFormat(GLOBAL_DATE_FORMAT);
+    private static final java.lang.String SHORT_DATE_FORMAT = "yyyy-MM-dd";
+
+    private static final SimpleDateFormat GLOBAL_DATE_FORMAT_SDF = new SimpleDateFormat(GLOBAL_DATE_FORMAT);
+    private static final SimpleDateFormat SHORT_DATE_FORMAT_SDF = new SimpleDateFormat(SHORT_DATE_FORMAT);
 
     static {
-        SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        GLOBAL_DATE_FORMAT_SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SHORT_DATE_FORMAT_SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
     static public Date parse(String s) throws ParseException {
-        return SDF.parse(s);
+        if (s.length() == SHORT_DATE_FORMAT.length()) {
+            return SHORT_DATE_FORMAT_SDF.parse(s);
+        }
+        return GLOBAL_DATE_FORMAT_SDF.parse(s);
     }
 
     static public String format(Date d) {
-        return SDF.format(d);
+        return GLOBAL_DATE_FORMAT_SDF.format(d);
+    }
+
+    static public String formatShort(Date d) {
+        return SHORT_DATE_FORMAT_SDF.format(d);
     }
 }

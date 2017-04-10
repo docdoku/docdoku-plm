@@ -33,15 +33,15 @@ import java.util.List;
  *
  * @author Morgan Guimard
  */
-@Table(name="QUERY")
+@Table(name = "QUERY")
 @Entity
 @NamedQueries({
-        @NamedQuery(name="Query.findByWorkspace",query="SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId"),
-        @NamedQuery(name="Query.findByWorkspaceAndWorkspace",query="SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId AND q.name = :name")
+        @NamedQuery(name = "Query.findByWorkspace", query = "SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId"),
+        @NamedQuery(name = "Query.findByWorkspaceAndName", query = "SELECT q FROM Query q WHERE q.author.workspaceId = :workspaceId AND q.name = :name")
 })
 public class Query implements Serializable {
 
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private int id;
 
@@ -57,46 +57,51 @@ public class Query implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date creationDate;
 
-    @OneToOne(orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinColumn(name="QUERYRULE_ID")
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "QUERYRULE_ID", nullable = true)
     private QueryRule queryRule;
+
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "PATHDATA_QUERYRULE_ID", nullable = true)
+    private QueryRule pathDataQueryRule;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "QUERY_SELECTS",
-            joinColumns= {
+            joinColumns = {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private List<String> selects=new ArrayList<>();
+    private List<String> selects = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "QUERY_ORDER_BY",
-            joinColumns= {
+            joinColumns = {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private List<String> orderByList=new ArrayList<>();
+    private List<String> orderByList = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(name = "QUERY_GROUPED_BY",
-            joinColumns= {
+            joinColumns = {
                     @JoinColumn(name = "QUERY_ID", referencedColumnName = "ID")
             }
     )
-    private List<String> groupedByList=new ArrayList<>();
+    private List<String> groupedByList = new ArrayList<>();
 
 
     @OneToMany(mappedBy = "parentQuery", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<QueryContext> contexts =new ArrayList<>();
+    private List<QueryContext> contexts = new ArrayList<>();
 
     public Query() {
     }
 
-    public Query(User author, String name, Date creationDate, QueryRule queryRule, List<String> selects, List<String> orderByList, List<String> groupedByList, List<QueryContext> contexts) {
+    public Query(User author, String name, Date creationDate, QueryRule queryRule, QueryRule pathDataQueryRule, List<String> selects, List<String> orderByList, List<String> groupedByList, List<QueryContext> contexts) {
         this.author = author;
         this.name = name;
         this.creationDate = creationDate;
         this.queryRule = queryRule;
+        this.pathDataQueryRule = pathDataQueryRule;
         this.selects = selects;
         this.orderByList = orderByList;
         this.groupedByList = groupedByList;
@@ -141,6 +146,14 @@ public class Query implements Serializable {
 
     public QueryRule getQueryRule() {
         return queryRule;
+    }
+
+    public QueryRule getPathDataQueryRule() {
+        return pathDataQueryRule;
+    }
+
+    public void setPathDataQueryRule(QueryRule pathDataQueryRule) {
+        this.pathDataQueryRule = pathDataQueryRule;
     }
 
     public void setRules(QueryRule queryRule) {

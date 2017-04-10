@@ -27,10 +27,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.*;
 import com.docdoku.core.product.*;
 import com.docdoku.core.product.PartIteration.Source;
-import com.docdoku.core.query.PartSearchQuery;
-import com.docdoku.core.query.Query;
-import com.docdoku.core.query.QueryContext;
-import com.docdoku.core.query.QueryResultRow;
+import com.docdoku.core.query.*;
 import com.docdoku.core.security.ACL;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
@@ -2819,7 +2816,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
         Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
 
-        QueryDAO queryDAO = new QueryDAO(locale, em);
+        PartRevisionQueryDAO queryDAO = new PartRevisionQueryDAO(locale, em);
         List<PartRevision> parts = queryDAO.runQuery(workspace, query);
 
         ListIterator<PartRevision> ite = parts.listIterator();
@@ -3129,7 +3126,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         List<QueryResultRow> rows = new ArrayList<>();
         for (QueryContext queryContext : query.getContexts()) {
-            rows.addAll(filterPBS(workspaceId, queryContext, user));
+            rows.addAll(filterPBS(query, workspaceId, queryContext, user));
         }
         return rows;
     }
@@ -3280,7 +3277,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         return queryDAO.loadQuery(queryId);
     }
 
-    private List<QueryResultRow> filterPBS(String workspaceId, QueryContext queryContext, User user) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, WorkspaceNotEnabledException {
+    private List<QueryResultRow> filterPBS(Query query, String workspaceId, QueryContext queryContext, User user) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException, ProductInstanceMasterNotFoundException, ConfigurationItemNotFoundException, NotAllowedException, EntityConstraintException, PartMasterNotFoundException, WorkspaceNotEnabledException {
 
         String configurationItemId = queryContext.getConfigurationItemId();
         String serialNumber = queryContext.getSerialNumber();
@@ -3312,6 +3309,18 @@ public class ProductManagerBean implements IProductManagerLocal {
         }
 
         final ProductInstanceIteration finalProductInstanceIteration = productInstanceIteration;
+
+        List<String> filteredPathsFromQuery = null;
+        QueryRule pathDataQueryRule = query.getPathDataQueryRule();
+
+        boolean shouldFilterPathDataWithCriteriaBuilder = finalProductInstanceIteration != null && pathDataQueryRule != null;
+
+        if (shouldFilterPathDataWithCriteriaBuilder) {
+            filteredPathsFromQuery = new PathDataQueryDAO(locale, em).runQuery(finalProductInstanceIteration, query);
+        }
+
+        final List<String> finalFilteredPathsFromQuery = filteredPathsFromQuery;
+
 
         PSFilterVisitor psFilterVisitor = new PSFilterVisitor(em, user, filter) {
             @Override
@@ -3377,7 +3386,14 @@ public class ProductManagerBean implements IProductManagerLocal {
                     if (finalProductInstanceIteration != null) {
                         row.setPathDataIteration(lastPathDataIterationsMap.get(pathAsString));
                     }
-                    rows.add(row);
+
+                    if(shouldFilterPathDataWithCriteriaBuilder) {
+                        if (finalFilteredPathsFromQuery.contains(pathAsString)) {
+                            rows.add(row);
+                        }
+                    }else{
+                        rows.add(row);
+                    }
                 }
                 return true;
             }
