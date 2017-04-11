@@ -615,7 +615,7 @@ public class PartsResource {
     @Path("imports/{filename}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ImportDTO> getImports(
+    public Response getImports(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "File name") @PathParam("filename") String filename)
             throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException,
@@ -626,7 +626,9 @@ public class PartsResource {
         for (Import i : imports) {
             importDTOs.add(mapper.map(i, ImportDTO.class));
         }
-        return importDTOs;
+
+        return Response.ok(new GenericEntity<List<ImportDTO>>((List<ImportDTO>) importDTOs) {
+        }).build();
     }
 
     @GET
@@ -683,7 +685,7 @@ public class PartsResource {
     })
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public List<LightPartRevisionDTO> getImportPreview(
+    public Response getImportPreview(
             @Context HttpServletRequest request,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = false, value = "Auto check out parts flag") @QueryParam("autoCheckout") boolean autoCheckout,
@@ -712,8 +714,8 @@ public class PartsResource {
             result.add(mapper.map(partRevision, LightPartRevisionDTO.class));
         }
 
-        return result;
-
+        return Response.ok(new GenericEntity<List<LightPartRevisionDTO>>((List<LightPartRevisionDTO>) result) {
+        }).build();
     }
 
 

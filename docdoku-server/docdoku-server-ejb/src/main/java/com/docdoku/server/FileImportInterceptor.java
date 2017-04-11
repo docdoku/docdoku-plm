@@ -62,14 +62,8 @@ public class FileImportInterceptor {
         try { // Run the import
 
             Object proceed = ctx.proceed();
-
-            if (proceed.getClass().getName().equals(Future.class.getName())) {
-                // SuppressWarnings : unchecked
-                Future<ImportResult> result = (Future<ImportResult>) proceed;
-                importResult = result.get();
-            }
-
-
+            Future<ImportResult> result = (Future<ImportResult>) proceed;
+            importResult = result.get();
             return proceed;
 
         } catch (Exception e) {
