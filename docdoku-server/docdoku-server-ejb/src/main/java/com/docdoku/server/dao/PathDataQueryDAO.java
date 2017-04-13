@@ -87,6 +87,11 @@ public class PathDataQueryDAO {
 
         List<PathDataMaster> pathDataMasterList = productInstanceIteration.getPathDataMasterList();
 
+        // If no path data available, don't even try to run a query
+        if(pathDataMasterList.isEmpty()){
+            return new ArrayList<>();
+        }
+
         Set<Integer> pathIds =
                 pathDataMasterList.stream()
                         .map(PathDataMaster::getId)
