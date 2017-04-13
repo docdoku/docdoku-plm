@@ -243,14 +243,14 @@ public class PathDataQueryDAO {
 
     private Predicate getInstanceLongTextAttributePredicate(String field, String operator, List<String> values) {
         Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ilta.get("longTextValue"), operator, values, "string");
-        Predicate memberPredicate = ita.in(pdi.get("instanceAttributes"));
-        return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
+        Predicate memberPredicate = ilta.in(pdi.get("instanceAttributes"));
+        return cb.and(cb.equal(ilta.get("name"), field), valuesPredicate, memberPredicate);
     }
 
     private Predicate getInstancePartNumberAttributePredicate(String field, String operator, List<String> values) {
         Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ipna.get("partMasterValue").get("number"), operator, values, "string");
-        Predicate memberPredicate = ita.in(pdi.get("instanceAttributes"));
-        return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
+        Predicate memberPredicate = ipna.in(pdi.get("instanceAttributes"));
+        return cb.and(cb.equal(ipna.get("name"), field), valuesPredicate, memberPredicate);
     }
 
     private Predicate getInstanceTextAttributePredicate(String field, String operator, List<String> values) {
