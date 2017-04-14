@@ -51,6 +51,21 @@ public class DateUtils {
         return GLOBAL_DATE_FORMAT_SDF.parse(s);
     }
 
+    static public Date parse(String s, String timeZone) throws ParseException {
+        SimpleDateFormat sdf;
+
+        if (s.length() == SHORT_DATE_FORMAT.length()) {
+            sdf = new SimpleDateFormat(SHORT_DATE_FORMAT);
+        } else {
+            sdf = new SimpleDateFormat(GLOBAL_DATE_FORMAT);
+        }
+
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+
+        return sdf.parse(s);
+    }
+
+
     static public String format(Date d) {
         return GLOBAL_DATE_FORMAT_SDF.format(d);
     }

@@ -2816,7 +2816,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
         Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
 
-        PartRevisionQueryDAO queryDAO = new PartRevisionQueryDAO(locale, em);
+        PartRevisionQueryDAO queryDAO = new PartRevisionQueryDAO(locale, user.getTimeZone(), em);
         List<PartRevision> parts = queryDAO.runQuery(workspace, query);
 
         ListIterator<PartRevision> ite = parts.listIterator();
@@ -3316,7 +3316,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         boolean shouldFilterPathDataWithCriteriaBuilder = finalProductInstanceIteration != null && pathDataQueryRule != null;
 
         if (shouldFilterPathDataWithCriteriaBuilder) {
-            filteredPathsFromQuery = new PathDataQueryDAO(locale, em).runQuery(finalProductInstanceIteration, query);
+            filteredPathsFromQuery = new PathDataQueryDAO(locale, user.getTimeZone(), em).runQuery(finalProductInstanceIteration, query);
         }
 
         final List<String> finalFilteredPathsFromQuery = filteredPathsFromQuery;
@@ -3387,11 +3387,11 @@ public class ProductManagerBean implements IProductManagerLocal {
                         row.setPathDataIteration(lastPathDataIterationsMap.get(pathAsString));
                     }
 
-                    if(shouldFilterPathDataWithCriteriaBuilder) {
+                    if (shouldFilterPathDataWithCriteriaBuilder) {
                         if (finalFilteredPathsFromQuery.contains(pathAsString)) {
                             rows.add(row);
                         }
-                    }else{
+                    } else {
                         rows.add(row);
                     }
                 }

@@ -39,6 +39,7 @@ public class PartRevisionQueryDAO {
 
     private EntityManager em;
     private Locale mLocale;
+    private String mTimeZone;
 
     private CriteriaBuilder cb;
     private CriteriaQuery<PartRevision> cq;
@@ -57,9 +58,10 @@ public class PartRevisionQueryDAO {
 
     private static final Logger LOGGER = Logger.getLogger(PartRevisionQueryDAO.class.getName());
 
-    public PartRevisionQueryDAO(Locale pLocale, EntityManager pEM) {
+    public PartRevisionQueryDAO(Locale pLocale, String pTimeZone,  EntityManager pEM) {
         em = pEM;
         mLocale = pLocale;
+        mTimeZone = pTimeZone;
         cb = em.getCriteriaBuilder();
 
         cq = cb.createQuery(PartRevision.class);
@@ -194,16 +196,16 @@ public class PartRevisionQueryDAO {
     }
 
     private Predicate getAuthorPredicate(String field, String operator, List<String> values, String type) {
-        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get("author").get(field), operator, values, type);
+        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get("author").get(field), operator, values, type, mTimeZone);
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, List<String> values, String type) {
         if ("checkInDate".equals(field)) {
             Predicate lastIterationPredicate = cb.equal(cb.size(pr.get("partIterations")), pi.get("iteration"));
-            return cb.and(lastIterationPredicate, QueryPredicateBuilder.getExpressionPredicate(cb, pi.get("checkInDate"), operator, values, type));
+            return cb.and(lastIterationPredicate, QueryPredicateBuilder.getExpressionPredicate(cb, pi.get("checkInDate"), operator, values, type, mTimeZone));
         } else if ("status".equals(field)) {
             if (values.size() == 1) {
-                return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get(field), operator, values, "status");
+                return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get(field), operator, values, "status", mTimeZone);
             }
         } else if ("tags".equals(field)) {
             return getTagsPredicate(values);
@@ -211,7 +213,7 @@ public class PartRevisionQueryDAO {
             // should be ignored, returning always true for the moment
             return cb.and();
         }
-        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get(field), operator, values, type);
+        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get(field), operator, values, type, mTimeZone);
     }
 
     private Predicate getTagsPredicate(List<String> values) {
@@ -221,13 +223,13 @@ public class PartRevisionQueryDAO {
     }
 
     private Predicate getPartMasterPredicate(String field, String operator, List<String> values, String type) {
-        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get("partMaster").get(field), operator, values, type);
+        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get("partMaster").get(field), operator, values, type, mTimeZone);
     }
 
     // Instances Attributes
     private Predicate getInstanceURLAttributePredicate(String field, String operator, List<String> values) {
 
-        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, iua.get("urlValue"), operator, values, "string");
+        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, iua.get("urlValue"), operator, values, "string", mTimeZone);
         Predicate memberPredicate = iua.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(iua.get("name"), field), valuesPredicate, memberPredicate);
     }
@@ -250,7 +252,7 @@ public class PartRevisionQueryDAO {
     }
 
     private Predicate getInstanceNumberAttributePredicate(String field, String operator, List<String> values) {
-        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ina.get("numberValue"), operator, values, "double");
+        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ina.get("numberValue"), operator, values, "double", mTimeZone);
         Predicate memberPredicate = ina.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ina.get("name"), field), valuesPredicate, memberPredicate);
     }
@@ -273,25 +275,25 @@ public class PartRevisionQueryDAO {
     }
 
     private Predicate getInstanceDateAttributePredicate(String field, String operator, List<String> values) {
-        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ida.get("dateValue"), operator, values, "date");
+        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ida.get("dateValue"), operator, values, "date", mTimeZone);
         Predicate memberPredicate = ida.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ida.get("name"), field), valuesPredicate, memberPredicate);
     }
 
     private Predicate getInstanceLongTextAttributePredicate(String field, String operator, List<String> values) {
-        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ilta.get("longTextValue"), operator, values, "string");
+        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ilta.get("longTextValue"), operator, values, "string", mTimeZone);
         Predicate memberPredicate = ilta.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
     }
 
     private Predicate getInstancePartNumberAttributePredicate(String field, String operator, List<String> values) {
-        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ipna.get("partMasterValue").get("number"), operator, values, "string");
+        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ipna.get("partMasterValue").get("number"), operator, values, "string", mTimeZone);
         Predicate memberPredicate = ipna.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
     }
 
     private Predicate getInstanceTextAttributePredicate(String field, String operator, List<String> values) {
-        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ita.get("textValue"), operator, values, "string");
+        Predicate valuesPredicate = QueryPredicateBuilder.getExpressionPredicate(cb, ita.get("textValue"), operator, values, "string", mTimeZone);
         Predicate memberPredicate = ita.in(pi.get("instanceAttributes"));
         return cb.and(cb.equal(ita.get("name"), field), valuesPredicate, memberPredicate);
     }

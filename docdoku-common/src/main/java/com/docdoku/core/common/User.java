@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 /**
  * This class represents a user in the context of a specific workspace.
- * 
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since V1.0
@@ -74,6 +74,10 @@ public class User implements Serializable, Cloneable {
 
     public String getLanguage() {
         return account==null?null:account.getLanguage();
+    }
+
+    public String getTimeZone() {
+        return account==null?null:account.getTimeZone();
     }
 
     public boolean isAdministrator() {

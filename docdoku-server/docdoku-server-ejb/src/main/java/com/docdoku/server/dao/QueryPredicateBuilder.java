@@ -21,7 +21,7 @@ public class QueryPredicateBuilder {
     // Rule parsing
     // Safe casts for expressions
     @SuppressWarnings("unchecked")
-    public static Predicate getExpressionPredicate(CriteriaBuilder cb, Expression fieldExp, String operator, List<String> values, String type) {
+    public static Predicate getExpressionPredicate(CriteriaBuilder cb, Expression fieldExp, String operator, List<String> values, String type, String timeZone) {
 
         List<?> operands;
 
@@ -31,10 +31,9 @@ public class QueryPredicateBuilder {
                 break;
             case "date":
                 try {
-
                     List<Date> temp = new ArrayList<>();
                     for (String string : values) {
-                        temp.add(DateUtils.parse(string));
+                        temp.add(DateUtils.parse(string, timeZone));
                     }
                     operands = temp;
                 } catch (ParseException e) {
