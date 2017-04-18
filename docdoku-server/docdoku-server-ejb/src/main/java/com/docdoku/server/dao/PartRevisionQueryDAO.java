@@ -196,13 +196,17 @@ public class PartRevisionQueryDAO {
     }
 
     private Predicate getAuthorPredicate(String field, String operator, List<String> values, String type) {
-        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get("author").get(field), operator, values, type, mTimeZone);
+        return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get("author").get("account").get(field), operator, values, type, mTimeZone);
     }
 
     private Predicate getPartRevisionPredicate(String field, String operator, List<String> values, String type) {
         if ("checkInDate".equals(field)) {
             Predicate lastIterationPredicate = cb.equal(cb.size(pr.get("partIterations")), pi.get("iteration"));
             return cb.and(lastIterationPredicate, QueryPredicateBuilder.getExpressionPredicate(cb, pi.get("checkInDate"), operator, values, type, mTimeZone));
+        }
+        else if ("modificationDate".equals(field)) {
+            Predicate lastIterationPredicate = cb.equal(cb.size(pr.get("partIterations")), pi.get("iteration"));
+            return cb.and(lastIterationPredicate, QueryPredicateBuilder.getExpressionPredicate(cb, pi.get("modificationDate"), operator, values, type, mTimeZone));
         } else if ("status".equals(field)) {
             if (values.size() == 1) {
                 return QueryPredicateBuilder.getExpressionPredicate(cb, pr.get(field), operator, values, "status", mTimeZone);
