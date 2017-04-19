@@ -4,6 +4,8 @@ Commons IO         - Apache License Version 2.0, January 2004 - http://www.apach
 Commons Codec      - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Lucene             - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Apache POI         - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
+XMLBeans           - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
+Log4J              - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 JODConverter       - LGPL Version 2.1, http://www.gnu.org/licenses/old-licenses/lgpl-2.1.txt
 OkHttp             - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 Guava              - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
@@ -20,3 +22,4 @@ Underscore         - The MIT License - http://opensource.org/licenses/mit-licens
 pdfbox-layout      - The MIT License - http://opensource.org/licenses/mit-license.php
 pdfbox             - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
 FontAwesome font   - SIL OFL 1.1 - http://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL
+jose.4.j           - Apache License Version 2.0, January 2004 - http://www.apache.org/licenses/
