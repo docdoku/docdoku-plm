@@ -32,7 +32,6 @@ import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IPSFilterManagerLocal;
 import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.util.FileIO;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.ProductBaselineDTO;
 import com.docdoku.server.rest.dto.product.ProductInstanceCreationDTO;
@@ -58,6 +57,7 @@ import javax.ws.rs.core.Response;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.logging.Level;
@@ -1005,12 +1005,13 @@ public class ProductInstancesResource {
         }
 
         Part part = parts.iterator().next();
-        String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
-        String extension = FileIO.getExtension(part.getSubmittedFileName());
 
-        File importFile = Files.createTempFile("product-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
-        long length = BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        importerService.importIntoPathData(workspaceId, importFile, name + "." + extension, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
+        String fileName = URLDecoder.decode(part.getSubmittedFileName(), "UTF-8");
+        String tempFolderName = UUID.randomUUID().toString();
+
+        File importFile = Files.createTempFile(tempFolderName, fileName).toFile();
+        BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
+        importerService.importIntoPathData(workspaceId, importFile, fileName, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
 
         importFile.deleteOnExit();
 

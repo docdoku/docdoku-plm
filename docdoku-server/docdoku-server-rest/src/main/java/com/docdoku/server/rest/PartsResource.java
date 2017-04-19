@@ -56,6 +56,7 @@ import javax.ws.rs.core.*;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -591,12 +592,13 @@ public class PartsResource {
         }
 
         Part part = parts.iterator().next();
-        String name = FileIO.getFileNameWithoutExtension(part.getSubmittedFileName());
-        String extension = FileIO.getExtension(part.getSubmittedFileName());
 
-        File importFile = Files.createTempFile("part-" + name, "-import.tmp" + (extension == null ? "" : "." + extension)).toFile();
+        String fileName = URLDecoder.decode(part.getSubmittedFileName(), "UTF-8");
+        String tempFolderName = UUID.randomUUID().toString();
+
+        File importFile = Files.createTempFile(tempFolderName, fileName).toFile();
         BinaryResourceUpload.uploadBinary(new BufferedOutputStream(new FileOutputStream(importFile)), part);
-        importerService.importIntoParts(workspaceId, importFile, name + "." + extension, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
+        importerService.importIntoParts(workspaceId, importFile, fileName, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
 
         importFile.deleteOnExit();
 
