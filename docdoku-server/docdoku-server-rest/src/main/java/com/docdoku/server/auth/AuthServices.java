@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 public class AuthServices {
 
     private static final Logger LOGGER = Logger.getLogger(AuthServices.class.getName());
-    private static final String ACCOUNT_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/AccountManagerBean!com.docdoku.core.services.IAccountManagerLocal";
+    private static final String ACCOUNT_MANAGER = "java:app/docdoku-server-ejb/AccountManagerBean!com.docdoku.core.services.IAccountManagerLocal";
     private static final String JAVA_COMP_ENV = "java:comp/env";
 
     private static IAccountManagerLocal accountManager;

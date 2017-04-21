@@ -37,15 +37,15 @@ import java.util.logging.Logger;
 @ApplicationScoped
 public class ServiceLocator {
 
-    private static final String STORAGE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/BinaryStorageManagerBean!com.docdoku.core.services.IBinaryStorageManagerLocal";
-    private static final String PRODUCT_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ProductManagerBean!com.docdoku.core.services.IProductManagerLocal";
-    private static final String PRODUCT_INSTANCE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ProductInstanceManagerBean!com.docdoku.core.services.IProductInstanceManagerLocal";
-    private static final String USER_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/UserManagerBean!com.docdoku.core.services.IUserManagerLocal";
-    private static final String SHARE_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/ShareManagerBean!com.docdoku.core.services.IShareManagerLocal";
-    private static final String PART_WORKFLOW_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/PartWorkflowManagerBean!com.docdoku.core.services.IPartWorkflowManagerLocal";
-    private static final String DOCUMENT_WORKFLOW_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/DocumentWorkflowManagerBean!com.docdoku.core.services.IDocumentWorkflowManagerLocal";
-    private static final String CASCADE_ACTION_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/CascadeActionManagerBean!com.docdoku.core.services.ICascadeActionManagerLocal";
-    private static final String LOV_MANAGER = "java:global/docdoku-server-ear/docdoku-server-ejb/LOVManagerBean!com.docdoku.core.services.ILOVManagerLocal";
+    private static final String STORAGE_MANAGER = "java:app/docdoku-server-ejb/BinaryStorageManagerBean!com.docdoku.core.services.IBinaryStorageManagerLocal";
+    private static final String PRODUCT_MANAGER = "java:app/docdoku-server-ejb/ProductManagerBean!com.docdoku.core.services.IProductManagerLocal";
+    private static final String PRODUCT_INSTANCE_MANAGER = "java:app/docdoku-server-ejb/ProductInstanceManagerBean!com.docdoku.core.services.IProductInstanceManagerLocal";
+    private static final String USER_MANAGER = "java:app/docdoku-server-ejb/UserManagerBean!com.docdoku.core.services.IUserManagerLocal";
+    private static final String SHARE_MANAGER = "java:app/docdoku-server-ejb/ShareManagerBean!com.docdoku.core.services.IShareManagerLocal";
+    private static final String PART_WORKFLOW_MANAGER = "java:app/docdoku-server-ejb/PartWorkflowManagerBean!com.docdoku.core.services.IPartWorkflowManagerLocal";
+    private static final String DOCUMENT_WORKFLOW_MANAGER = "java:app/docdoku-server-ejb/DocumentWorkflowManagerBean!com.docdoku.core.services.IDocumentWorkflowManagerLocal";
+    private static final String CASCADE_ACTION_MANAGER = "java:app/docdoku-server-ejb/CascadeActionManagerBean!com.docdoku.core.services.ICascadeActionManagerLocal";
+    private static final String LOV_MANAGER = "java:app/docdoku-server-ejb/LOVManagerBean!com.docdoku.core.services.ILOVManagerLocal";
 
     private static final Logger LOGGER = Logger.getLogger(ServiceLocator.class.getName());
 
