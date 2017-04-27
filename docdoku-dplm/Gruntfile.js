@@ -20,7 +20,8 @@ module.exports = function(grunt){
                 strict:false,
                 globals: {
                     angular: true
-                }
+                },
+                reporterOutput: ''
             }
         },
 
