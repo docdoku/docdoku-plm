@@ -27,6 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * This class handles non-mapped exceptions (Most of runtime exceptions),
+ * and sends a HTTP response with code 500 and original cause in the Reason-Phrase header
+ *
  * @author Morgan Guimard
  */
 @Provider
@@ -42,8 +45,7 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
     @Override
     public Response toResponse(RuntimeException e) {
 
-        LOGGER.log(Level.SEVERE, e.getMessage());
-        LOGGER.log(Level.FINE, null, e);
+        LOGGER.log(Level.SEVERE, MESSAGE_PREFIX, e);
 
         Throwable cause = e;
         while (cause.getCause() != null) {
