@@ -220,6 +220,9 @@ public class PartsResource {
 
         PartSearchQuery partSearchQuery = SearchQueryParser.parsePartStringQuery(workspaceId, uri.getQueryParameters());
 
+        // Set default size
+        size = size == 0 ? 10 : size;
+
         List<PartRevision> partRevisions = productService.searchPartRevisions(partSearchQuery, from, size);
         List<PartRevisionDTO> partRevisionDTOs = new ArrayList<>();
 

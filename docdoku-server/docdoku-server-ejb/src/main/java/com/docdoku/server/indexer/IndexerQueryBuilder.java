@@ -101,6 +101,8 @@ public class IndexerQueryBuilder {
         String[] tags = searchQuery.getTags();
         SearchQuery.AbstractAttributeQuery[] attributes = searchQuery.getAttributes();
 
+        String fullText = searchQuery.getFullText();
+
         List<QueryBuilder> queries = new ArrayList<>();
 
         if (searchQuery.getVersion() != null) {
@@ -144,6 +146,10 @@ public class IndexerQueryBuilder {
             Stream.of(attributes)
                     .collect(Collectors.groupingBy(SearchQuery.AbstractAttributeQuery::getNameWithoutWhiteSpace))
                     .forEach((attributeName, attributeList) -> addAttributeToQueries(queries, attributeName, attributeList));
+        }
+
+        if(fullText != null && !fullText.isEmpty()){
+            queries.add(QueryBuilders.matchQuery(IndexerMapping.ALL_FIELDS, fullText));
         }
 
         return queries;

@@ -131,6 +131,8 @@ public class DocumentsResource {
             @ApiParam(required = false, value = "Max results", defaultValue = "10") @QueryParam("size") int size,
             @ApiParam(required = false, value = "Search mode (false for history/ true for head only)") @QueryParam("fetchHeadOnly") boolean fetchHeadOnly
     ) throws EntityNotFoundException, UserNotActiveException, NotAllowedException {
+        // Set default search size
+        size = size == 0 ? 10 : size;
 
         MultivaluedMap<String, String> params = uri.getQueryParameters();
         DocumentSearchQuery documentSearchQuery = SearchQueryParser.parseDocumentStringQuery(workspaceId, params);

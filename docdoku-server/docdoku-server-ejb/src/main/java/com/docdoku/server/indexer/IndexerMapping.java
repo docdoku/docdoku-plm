@@ -56,6 +56,7 @@ public class IndexerMapping {
     protected static final String STANDARD_PART_KEY = "standardPart";
     protected static final String PART_TYPE = "part";
     protected static final String DOCUMENT_TYPE = "document";
+    protected static final String ALL_FIELDS = "_all";
 
     private static final Logger LOGGER = Logger.getLogger(IndexerMapping.class.getName());
     private static final String DOCUMENT_MAPPING_RESOURCE = "/com/docdoku/server/indexer/document-mapping.json";
