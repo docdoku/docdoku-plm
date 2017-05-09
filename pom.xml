@@ -268,7 +268,7 @@
         <module>docdoku-server</module>
         <module>docdoku-api</module>
         <module>docdoku-api-java</module>
-        <module>docdoku-api-js</module>
+        <!--<module>docdoku-api-js</module>-->
         <module>docdoku-cli</module>
         <module>docdoku-dplm</module>
         <module>converter-dae</module>
