@@ -56,7 +56,7 @@ public interface CADConverter {
     /**
      * Convert the given CAD file to Wavefront OBJ format
      *
-     * @param cadFile
+     * @param cadFileName
      *            the CAD file to convert
      * @param tempDir
      *            a given temporary directory for converter operations
