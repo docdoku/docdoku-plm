@@ -30,7 +30,7 @@ import java.util.TimeZone;
  */
 public class DateUtils {
 
-    public DateUtils() {
+    private DateUtils() {
     }
 
     private static final java.lang.String GLOBAL_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
@@ -44,14 +44,14 @@ public class DateUtils {
         SHORT_DATE_FORMAT_SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    static public Date parse(String s) throws ParseException {
+    public static Date parse(String s) throws ParseException {
         if (s.length() == SHORT_DATE_FORMAT.length()) {
             return SHORT_DATE_FORMAT_SDF.parse(s);
         }
         return GLOBAL_DATE_FORMAT_SDF.parse(s);
     }
 
-    static public Date parse(String s, String timeZone) throws ParseException {
+    public static Date parse(String s, String timeZone) throws ParseException {
         SimpleDateFormat sdf;
 
         if (s.length() == SHORT_DATE_FORMAT.length()) {
@@ -66,11 +66,11 @@ public class DateUtils {
     }
 
 
-    static public String format(Date d) {
+    public static String format(Date d) {
         return GLOBAL_DATE_FORMAT_SDF.format(d);
     }
 
-    static public String formatShort(Date d) {
+    public static String formatShort(Date d) {
         return SHORT_DATE_FORMAT_SDF.format(d);
     }
 }

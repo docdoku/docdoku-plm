@@ -32,7 +32,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 /**
- * Helper class for file manipulation and information
+ * Helper class for file manipulation and information.
  *
  * @author Florent Garin
  */

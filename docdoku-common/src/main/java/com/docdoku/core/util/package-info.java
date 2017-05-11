@@ -19,8 +19,8 @@
  */
 
 /**
- * DocDokuPLM entity and core classes.
+ * Contains utility classes useful for file, date manipulations and ensuring naming conventions.
  *
  * @since 1.0
  */
-package com.docdoku.core;
+package com.docdoku.core.util;
