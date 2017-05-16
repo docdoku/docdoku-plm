@@ -50,7 +50,7 @@ public class AllCommandTest {
     private final static URL partFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/upload-part.txt");
     private final static URL putDocumentFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/put-document.txt");
     private final static URL putPartFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/put-part.txt");
-    private final static String NO_ERRORS_EXPECTED = "Should be no errors";
+    private final static String NO_ERRORS_EXPECTED = "Should be no errors, error(s): \n";
     private final static String OUTPUT_EXPECTED = "Should have an output";
 
     private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -77,7 +77,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         JsonReader reader = Json.createReader(new StringReader(programOutput));
@@ -99,7 +99,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         JsonReader reader = Json.createReader(new StringReader(programOutput));
@@ -126,7 +126,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         String[] splitOutput = programOutput.split("\n");
@@ -164,7 +164,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         String[] splitOutput = programOutput.split("\n");
@@ -196,7 +196,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         JsonReader reader = Json.createReader(new StringReader(programOutput));
@@ -232,7 +232,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         JsonReader reader = Json.createReader(new StringReader(programOutput));
@@ -252,7 +252,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         JsonReader reader = Json.createReader(new StringReader(programOutput));
@@ -274,7 +274,7 @@ public class AllCommandTest {
         String programOutput = outContent.toString();
         String programError = errContent.toString();
 
-        Assert.assertTrue(NO_ERRORS_EXPECTED, programError.isEmpty());
+        Assert.assertTrue(NO_ERRORS_EXPECTED + programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
 
         JsonReader reader = Json.createReader(new StringReader(programOutput));
