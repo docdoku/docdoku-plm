@@ -4,6 +4,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -43,20 +44,18 @@ public class IndexerClientProducer {
         String host = config.getHost();
         Integer port = config.getPort();
         String xPackSecurityUser = config.getXPackSecurityUser();
-
         builder.put("cluster.name", config.getClusterName());
-
-        if(xPackSecurityUser != null && !xPackSecurityUser.isEmpty()){
-            builder.put("xpack.security.user", xPackSecurityUser);
-        }
-
-        Settings settings = builder.build();
 
         try {
             InetSocketTransportAddress address = new InetSocketTransportAddress(InetAddress.getByName(host), port);
-            client = new PreBuiltTransportClient(settings).addTransportAddress(address);
+            if(xPackSecurityUser != null && !xPackSecurityUser.isEmpty()){
+                builder.put("xpack.security.user", xPackSecurityUser);
+                client = new PreBuiltXPackTransportClient(builder.build()).addTransportAddress(address);
+            } else {
+                client = new PreBuiltTransportClient(builder.build()).addTransportAddress(address);
+            }
         } catch (UnknownHostException e) {
-            client = new PreBuiltTransportClient(settings);
+            client = new PreBuiltTransportClient(builder.build());
             LOGGER.log(Level.SEVERE, "Cannot initialize ElasticSearch client, please verify the resource configuration", e);
         }
     }
