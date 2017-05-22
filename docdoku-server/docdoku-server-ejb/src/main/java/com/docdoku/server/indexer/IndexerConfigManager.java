@@ -57,4 +57,8 @@ public class IndexerConfigManager {
     public Integer getPort() {
         return Integer.parseInt(properties.getProperty("port"));
     }
+
+    public String getXPackSecurityUser() {
+        return properties.getProperty("xpack_security_user");
+    }
 }

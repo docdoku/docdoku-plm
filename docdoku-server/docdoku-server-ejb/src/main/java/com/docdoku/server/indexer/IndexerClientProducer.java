@@ -36,12 +36,21 @@ public class IndexerClientProducer {
 
     @PostConstruct
     public void open() {
-        LOGGER.log(Level.INFO, "Create elasticsearch client");
-        Settings settings = Settings.builder()
-                .put("cluster.name", config.getClusterName()).build();
+        LOGGER.log(Level.INFO, "Create ElasticSearch client");
+
+        Settings.Builder builder = Settings.builder();
 
         String host = config.getHost();
         Integer port = config.getPort();
+        String xPackSecurityUser = config.getXPackSecurityUser();
+
+        builder.put("cluster.name", config.getClusterName());
+
+        if(xPackSecurityUser != null && !xPackSecurityUser.isEmpty()){
+            builder.put("xpack.security.user", xPackSecurityUser);
+        }
+
+        Settings settings = builder.build();
 
         try {
             InetSocketTransportAddress address = new InetSocketTransportAddress(InetAddress.getByName(host), port);
