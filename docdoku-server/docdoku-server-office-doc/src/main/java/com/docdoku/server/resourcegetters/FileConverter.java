@@ -26,30 +26,27 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Properties;
 
 @Singleton
 public class FileConverter {
 
-    @Resource(name = "office.config")
-    private Properties properties;
+    @Inject
+    private OfficeConfig officeConfig;
 
     private OfficeManager officeManager;
 
     @PostConstruct
     private void init() {
-        String ooHome = properties.getProperty("office_home");
-        int ooPort = Integer.parseInt(properties.getProperty("office_port"));
         officeManager = new DefaultOfficeManagerConfiguration()
-                .setOfficeHome(new File(ooHome))
-                .setPortNumber(ooPort)
+                .setOfficeHome(new File(officeConfig.getOfficeHome()))
+                .setPortNumber(officeConfig.getOfficePort())
                 .buildOfficeManager();
         officeManager.start();
     }
