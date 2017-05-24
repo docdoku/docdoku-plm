@@ -26,6 +26,7 @@ import org.artofsolving.jodconverter.office.OfficeManager;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,38 +34,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @Singleton
 public class FileConverter {
 
-    private static final String OO_PROPERTIES_FILE = "/com/docdoku/server/resourcegetters/open-office.properties";
-    private static final String OO_HOME_KEY = "ooHome";
-    private static final String OO_PORT_KEY = "ooPort";
-    private static final Logger LOGGER = Logger.getLogger(FileConverter.class.getName());
+    @Resource(name = "office.config")
+    private Properties properties;
 
     private OfficeManager officeManager;
 
     @PostConstruct
     private void init() {
-
-        try (InputStream inputStream = FileConverter.class.getResourceAsStream(OO_PROPERTIES_FILE)) {
-
-            Properties properties = new Properties();
-
-            properties.load(inputStream);
-            String ooHome = properties.getProperty(OO_HOME_KEY);
-            int ooPort = Integer.parseInt(properties.getProperty(OO_PORT_KEY));
-            officeManager = new DefaultOfficeManagerConfiguration()
-                    .setOfficeHome(new File(ooHome))
-                    .setPortNumber(ooPort)
-                    .buildOfficeManager();
-            officeManager.start();
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            throw new RuntimeException(e);
-        }
+        String ooHome = properties.getProperty("office_home");
+        int ooPort = Integer.parseInt(properties.getProperty("office_port"));
+        officeManager = new DefaultOfficeManagerConfiguration()
+                .setOfficeHome(new File(ooHome))
+                .setPortNumber(ooPort)
+                .buildOfficeManager();
+        officeManager.start();
     }
 
     @PreDestroy
