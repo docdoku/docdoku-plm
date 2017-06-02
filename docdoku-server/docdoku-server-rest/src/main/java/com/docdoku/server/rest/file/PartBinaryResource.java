@@ -29,6 +29,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -306,7 +307,7 @@ public class PartBinaryResource {
             PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
             fullName = sharedEntity.getWorkspace().getId() +
                     "/parts/" +
-                    partRevision.getPartNumber() + "/" +
+                    FileIO.encode(partRevision.getPartNumber()) + "/" +
                     partRevision.getVersion() + "/" +
                     iteration + "/";
         } else {
@@ -316,7 +317,7 @@ public class PartBinaryResource {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
-            fullName = workspaceId + "/parts/" + partNumber + "/" + version + "/" + iteration + "/";
+            fullName = workspaceId + "/parts/" + FileIO.encode(partNumber) + "/" + version + "/" + iteration + "/";
         }
 
         String decodedFileName = fileName;

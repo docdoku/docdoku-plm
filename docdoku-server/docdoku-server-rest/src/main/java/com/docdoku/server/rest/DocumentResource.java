@@ -37,6 +37,7 @@ import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IDocumentWorkflowManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.sharing.SharedDocument;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.product.ProductInstanceMasterDTO;
@@ -568,7 +569,7 @@ public class DocumentResource {
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException,
             FileAlreadyExistsException, CreationException, StorageException {
 
-        String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
+        String fileFullName = workspaceId + "/documents/" + FileIO.encode(documentId) + "/" + documentVersion + "/" + docIteration + "/" + fileName;
         BinaryResource binaryResource = documentService.renameFileInDocument(fileFullName, fileDTO.getShortName());
         return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }
@@ -589,7 +590,7 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Document iteration") @PathParam("docIteration") int docIteration,
             @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
-        String fileFullName = workspaceId + "/documents/" + documentId + "/" + documentVersion + "/" + docIteration + "/" + fileName;
+        String fileFullName = workspaceId + "/documents/" + FileIO.encode(documentId) + "/" + documentVersion + "/" + docIteration + "/" + fileName;
         documentService.removeFileFromDocument(fileFullName);
         return Response.noContent().build();
     }

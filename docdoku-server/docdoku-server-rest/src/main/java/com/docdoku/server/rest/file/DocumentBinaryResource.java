@@ -29,6 +29,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -177,7 +178,7 @@ public class DocumentBinaryResource {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
 
-            fullName = workspaceId + "/documents/" + documentId + "/" + version + "/" + iteration + "/" + fileName;
+            fullName = workspaceId + "/documents/" + FileIO.encode(documentId) + "/" + version + "/" + iteration + "/" + fileName;
         }
 
         BinaryResource binaryResource = getBinaryResource(fullName);

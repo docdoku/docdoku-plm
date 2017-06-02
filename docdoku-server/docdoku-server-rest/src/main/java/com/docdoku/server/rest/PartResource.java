@@ -37,6 +37,7 @@ import com.docdoku.core.services.IProductInstanceManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.core.workflow.Workflow;
 import com.docdoku.server.rest.collections.VirtualInstanceCollection;
 import com.docdoku.server.rest.dto.*;
@@ -567,7 +568,7 @@ public class PartResource {
             @ApiParam(required = true, value = "File name") @PathParam("fileName") String fileName)
             throws EntityNotFoundException, UserNotActiveException {
         PartIterationKey partIKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
-        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
+        String fileFullName = workspaceId + "/parts/" + FileIO.encode(partNumber) + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
         productService.removeFileInPartIteration(partIKey, subType, fileFullName);
         return Response.noContent().build();
     }
@@ -595,7 +596,7 @@ public class PartResource {
             FileNotFoundException, NotAllowedException, FileAlreadyExistsException,
             StorageException, WorkspaceNotEnabledException {
 
-        String fileFullName = workspaceId + "/parts/" + partNumber + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
+        String fileFullName = workspaceId + "/parts/" + FileIO.encode(partNumber) + "/" + partVersion + "/" + partIteration + "/" + subType + "/" + fileName;
         BinaryResource binaryResource = productService.renameFileInPartIteration(subType, fileFullName, fileDTO.getShortName());
         return new FileDTO(true, binaryResource.getFullName(), binaryResource.getName());
     }

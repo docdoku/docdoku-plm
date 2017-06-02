@@ -21,6 +21,7 @@ package com.docdoku.core.util;
 
 import java.io.*;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -41,11 +42,11 @@ public class FileIO {
     private static final int CHUNK_SIZE = 1024 * 8;
     private static final int BUFFER_CAPACITY = 1024 * 16;
 
-
     private static final List<String> DOC_EXTENSIONS = Arrays.asList("odt", "html", "sxw", "swf", "sxc", "doc", "docx", "xls", "xlsx", "rtf", "txt", "ppt", "pptx", "odp", "wpd", "tsv", "sxi", "csv", "pdf");
     private static final List<String> AV_EXTENSIONS = Arrays.asList("mp3", "mpg", "flv", "mp4", "aac", "mov");
     private static final List<String> IMAGE_EXTENSIONS = Arrays.asList("jpg", "png", "gif", "psd", "jpeg", "psp", "tif");
     private static final List<String> ARCHIVE_EXTENSIONS = Arrays.asList("zip");
+    private static final String ENCODING_CHARSET = "UTF-8";
 
     private static final Logger LOGGER = Logger.getLogger(FileIO.class.getName());
 
@@ -224,6 +225,24 @@ public class FileIO {
             LOGGER.log(Level.INFO, null, e);
         }
         return false;
+    }
+
+    public static String encode(String toEncode) {
+        try {
+            return URLEncoder.encode(toEncode, ENCODING_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.SEVERE, "Cannot encode string " + toEncode, e);
+            return toEncode;
+        }
+    }
+
+    public static String decode(String toDecode) {
+        try {
+            return URLDecoder.decode(toDecode, ENCODING_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.SEVERE, "Cannot decode string " + toDecode, e);
+            return toDecode;
+        }
     }
 
 }

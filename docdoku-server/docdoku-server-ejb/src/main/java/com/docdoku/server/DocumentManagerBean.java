@@ -33,6 +33,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntityKey;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
@@ -136,7 +137,8 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         if (isCheckoutByUser(user, docR) && docR.getLastIteration().equals(document)) {
             BinaryResource binaryResource = null;
-            String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/" + document.getIteration() + "/" + pName;
+
+            String fullName = docR.getWorkspaceId() + "/documents/" + FileIO.encode(docR.getId()) + "/" + docR.getVersion() + "/" + document.getIteration() + "/" + pName;
 
             for (BinaryResource bin : document.getAttachedFiles()) {
                 if (bin.getFullName().equals(fullName)) {
@@ -646,7 +648,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         User user = userManager.checkWorkspaceWriteAccess(Folder.parseWorkspaceId(pParentFolder));
         Locale locale = new Locale(user.getLanguage());
-        checkNameValidity(pDocMId, locale);
+        checkDocumentIdValidity(pDocMId, locale);
 
         Folder folder = new FolderDAO(locale, em).loadFolder(pParentFolder);
         checkFolderWritingRight(user, folder);
@@ -688,11 +690,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             newDoc.setInstanceAttributes(attrs);
 
             BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
+            String encodedDocMId = FileIO.encode(docM.getId());
             for (BinaryResource sourceFile : template.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = docM.getWorkspaceId() + "/documents/" + docM.getId() + "/A/1/" + fileName;
+                String fullName = docM.getWorkspaceId() + "/documents/" + encodedDocMId + "/A/1/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
 
@@ -907,11 +910,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
         if (beforeLastDocument != null) {
             BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
+            String encodedDocRId = FileIO.encode(docR.getId());
             for (BinaryResource sourceFile : beforeLastDocument.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/" + newDoc.getIteration() + "/" + fileName;
+                String fullName = docR.getWorkspaceId() + "/documents/" + encodedDocRId + "/" + docR.getVersion() + "/" + newDoc.getIteration() + "/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 newDoc.addFile(targetFile);
@@ -1464,11 +1468,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         DocumentIteration firstIte = docR.createNextIteration(user);
         if (lastDoc != null) {
             BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
+            String encodedDocRId = FileIO.encode(docR.getId());
             for (BinaryResource sourceFile : lastDoc.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = docR.getWorkspaceId() + "/documents/" + docR.getId() + "/" + docR.getVersion() + "/1/" + fileName;
+                String fullName = docR.getWorkspaceId() + "/documents/" + encodedDocRId + "/" + docR.getVersion() + "/1/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstIte.addFile(targetFile);
@@ -2011,6 +2016,12 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
 
     private void checkNameValidity(String name, Locale locale) throws NotAllowedException {
         if (!NamingConvention.correct(name)) {
+            throw new NotAllowedException(locale, "NotAllowedException9", name);
+        }
+    }
+
+    private void checkDocumentIdValidity(String name, Locale locale) throws NotAllowedException {
+        if (!NamingConvention.correctDocumentId(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9", name);
         }
     }

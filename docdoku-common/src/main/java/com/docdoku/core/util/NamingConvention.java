@@ -25,7 +25,15 @@ package com.docdoku.core.util;
  * @author Florent Garin
  */
 public class NamingConvention {
-    
+
+    private static final char[] DOCUMENTS_FORBIDDEN_CHARS = {
+            '%'
+    };
+
+    private static final char[] PARTS_FORBIDDEN_CHARS = {
+            '%'
+    };
+
     private static final char[] FORBIDDEN_CHARS = {
             '$','&','+',',','/',':',';','=','?','@','"', '<', '>', '#','%','{','}','|','\\','^','~','[',']',' ', '*','`'
     };
@@ -82,5 +90,13 @@ public class NamingConvention {
     }
     public static boolean correctNameMask(String mask) {
         return correct(mask, FORBIDDEN_CHARS_MASK);
+    }
+
+    public static boolean correctDocumentId(String documentId) {
+        return correct(documentId, DOCUMENTS_FORBIDDEN_CHARS);
+    }
+
+    public static boolean correctPartNumber(String documentId) {
+        return correct(documentId, PARTS_FORBIDDEN_CHARS);
     }
 }

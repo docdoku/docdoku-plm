@@ -33,6 +33,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntityKey;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.util.FileIO;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.core.util.Tools;
 import com.docdoku.core.workflow.*;
@@ -194,7 +195,7 @@ public class ProductManagerBean implements IProductManagerLocal {
     public PartMaster createPartMaster(String pWorkspaceId, String pNumber, String pName, boolean pStandardPart, String pWorkflowModelId, String pPartRevisionDescription, String templateId, Map<String, String> pACLUserEntries, Map<String, String> pACLUserGroupEntries, Map<String, Collection<String>> userRoleMapping, Map<String, Collection<String>> groupRoleMapping) throws NotAllowedException, UserNotFoundException, WorkspaceNotFoundException, AccessRightException, WorkflowModelNotFoundException, PartMasterAlreadyExistsException, CreationException, PartMasterTemplateNotFoundException, FileAlreadyExistsException, RoleNotFoundException, UserGroupNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceWriteAccess(pWorkspaceId);
         Locale locale = new Locale(user.getLanguage());
-        checkNameValidity(pNumber, locale);
+        checkNumberValidity(pNumber, locale);
 
         PartMaster pm = new PartMaster(user.getWorkspace(), pNumber, user);
         pm.setName(pName);
@@ -283,7 +284,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = pWorkspaceId + "/parts/" + pm.getNumber() + "/A/1/nativecad/" + fileName;
+                String fullName = pWorkspaceId + "/parts/" + FileIO.encode(pm.getNumber()) + "/A/1/nativecad/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 ite.setNativeCADFile(targetFile);
@@ -433,11 +434,12 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         if (beforeLastPartIteration != null) {
             BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
+            String encodedPartNumber = FileIO.encode(partR.getPartNumber());
             for (BinaryResource sourceFile : beforeLastPartIteration.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/attachedfiles/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + encodedPartNumber + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/attachedfiles/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 newPartIteration.addAttachedFile(targetFile);
@@ -450,7 +452,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 long length = sourceFile.getContentLength();
                 int quality = sourceFile.getQuality();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + encodedPartNumber + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/" + fileName;
                 Geometry targetFile = new Geometry(quality, fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 newPartIteration.addGeometry(targetFile);
@@ -461,7 +463,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 String fileName = nativeCADFile.getName();
                 long length = nativeCADFile.getContentLength();
                 Date lastModified = nativeCADFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/nativecad/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + encodedPartNumber + "/" + partR.getVersion() + "/" + newPartIteration.getIteration() + "/nativecad/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 newPartIteration.setNativeCADFile(targetFile);
@@ -583,7 +585,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
 
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partI)) {
-            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/nativecad/" + pName;
+            String fullName = partR.getWorkspaceId() + "/parts/" + FileIO.encode(partR.getPartNumber()) + "/" + partR.getVersion() + "/" + partI.getIteration() + "/nativecad/" + pName;
             BinaryResource nativeCADBinaryResource = partI.getNativeCADFile();
 
             if (nativeCADBinaryResource == null) {
@@ -640,7 +642,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partI)) {
             Geometry geometryBinaryResource = null;
-            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + pName;
+            String fullName = partR.getWorkspaceId() + "/parts/" + FileIO.encode(partR.getPartNumber()) + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + pName;
 
             for (Geometry geo : partI.getGeometries()) {
                 if (geo.getFullName().equals(fullName)) {
@@ -680,7 +682,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         PartIteration partI = partR.getIteration(pPartIPK.getIteration());
         if (isCheckoutByUser(user, partR) && partR.getLastIteration().equals(partI)) {
             BinaryResource binaryResource = null;
-            String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + (subType != null ? subType + "/" : "") + pName;
+            String fullName = partR.getWorkspaceId() + "/parts/" + FileIO.encode(partR.getPartNumber()) + "/" + partR.getVersion() + "/" + partI.getIteration() + "/" + (subType != null ? subType + "/" : "") + pName;
 
             for (BinaryResource bin : partI.getAttachedFiles()) {
                 if (bin.getFullName().equals(fullName)) {
@@ -2153,11 +2155,12 @@ public class ProductManagerBean implements IProductManagerLocal {
         if (lastPartI != null) {
 
             BinaryResourceDAO binDAO = new BinaryResourceDAO(locale, em);
+            String encodedPartNumber = FileIO.encode(partR.getPartNumber());
             for (BinaryResource sourceFile : lastPartI.getAttachedFiles()) {
                 String fileName = sourceFile.getName();
                 long length = sourceFile.getContentLength();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + encodedPartNumber + "/" + partR.getVersion() + "/1/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.addAttachedFile(targetFile);
@@ -2192,7 +2195,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 long length = sourceFile.getContentLength();
                 int quality = sourceFile.getQuality();
                 Date lastModified = sourceFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + encodedPartNumber + "/" + partR.getVersion() + "/1/" + fileName;
                 Geometry targetFile = new Geometry(quality, fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.addGeometry(targetFile);
@@ -2208,7 +2211,7 @@ public class ProductManagerBean implements IProductManagerLocal {
                 String fileName = nativeCADFile.getName();
                 long length = nativeCADFile.getContentLength();
                 Date lastModified = nativeCADFile.getLastModified();
-                String fullName = partR.getWorkspaceId() + "/parts/" + partR.getPartNumber() + "/" + partR.getVersion() + "/1/nativecad/" + fileName;
+                String fullName = partR.getWorkspaceId() + "/parts/" + encodedPartNumber + "/" + partR.getVersion() + "/1/nativecad/" + fileName;
                 BinaryResource targetFile = new BinaryResource(fullName, length, lastModified);
                 binDAO.createBinaryResource(targetFile);
                 firstPartI.setNativeCADFile(targetFile);
@@ -3797,6 +3800,12 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     private void checkNameValidity(String name, Locale locale) throws NotAllowedException {
         if (!NamingConvention.correct(name)) {
+            throw new NotAllowedException(locale, "NotAllowedException9", name);
+        }
+    }
+
+    private void checkNumberValidity(String name, Locale locale) throws NotAllowedException {
+        if (!NamingConvention.correctPartNumber(name)) {
             throw new NotAllowedException(locale, "NotAllowedException9", name);
         }
     }
