@@ -20,11 +20,10 @@
 
 package com.docdoku.server.importers;
 
+import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
-import com.docdoku.core.product.PartRevision;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * PartImporter plugin interface
@@ -46,7 +45,7 @@ public interface PartImporter {
      * @param autoCheckout check out the part if not checked out
      * @param autoCheckin check in the modified parts after operation
      * @param permissiveUpdate todo
-     * @return an import result object
+     * @return an ImportResult result object
      */
     // TODO : replace java.io.File with java.io.InputStream
     ImportResult importFile(String workspaceId, File file, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
@@ -60,9 +59,9 @@ public interface PartImporter {
      * @param autoCheckout check out the part if not checked out
      * @param autoCheckin check in the modified parts after operation
      * @param permissiveUpdate todo
-     * @return an import result object
+     * @return an ImportPreview result object
      */
     // TODO : replace java.io.File with java.io.InputStream
-    List<PartRevision> dryRunImport(String workspaceId, File file, String originalFileName, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
+    ImportPreview dryRunImport(String workspaceId, File file, String originalFileName, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate);
 
 }

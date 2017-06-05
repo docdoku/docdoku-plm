@@ -27,7 +27,6 @@ import java.util.List;
 public class ImportResult {
 
     private File importedFile;
-    private String originalFileName;
     private List<String> warnings = new ArrayList<>();
     private List<String> errors = new ArrayList<>();
     private String stdOutput;
@@ -46,7 +45,6 @@ public class ImportResult {
 
     public ImportResult(File importedFile, String originalFileName, List<String> warnings, List<String> errors) {
         this.importedFile = importedFile;
-        this.originalFileName = originalFileName;
         this.warnings = warnings;
         this.errors = errors;
     }

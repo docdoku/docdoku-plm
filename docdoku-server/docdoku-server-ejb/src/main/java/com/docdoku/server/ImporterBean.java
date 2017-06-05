@@ -31,7 +31,6 @@ import com.docdoku.server.importers.PathDataImporter;
 
 import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
@@ -53,7 +52,6 @@ import java.util.logging.Logger;
 public class ImporterBean implements IImporterManagerLocal {
 
 
-
     private static final Logger LOGGER = Logger.getLogger(ImporterBean.class.getName());
 
     @Inject
@@ -70,7 +68,7 @@ public class ImporterBean implements IImporterManagerLocal {
     @Override
     @Asynchronous
     @FileImport
-    public Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception{
+    public Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception {
         PartImporter selectedImporter = null;
 
         for (PartImporter importer : partImporters) {
@@ -86,7 +84,7 @@ public class ImporterBean implements IImporterManagerLocal {
             result = selectedImporter.importFile(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
         } else {
             User user = userManager.whoAmI(workspaceId);
-            result = getNoImporterAvailableError(file, originalFileName,new Locale(user.getLanguage()));
+            result = getNoImporterAvailableError(file, originalFileName, new Locale(user.getLanguage()));
         }
 
         return new AsyncResult<>(result);
@@ -95,7 +93,7 @@ public class ImporterBean implements IImporterManagerLocal {
     @Override
     @Asynchronous
     @FileImport
-    public Future<ImportResult> importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception{
+    public Future<ImportResult> importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception {
         PathDataImporter selectedImporter = null;
 
         for (PathDataImporter importer : pathDataImporters) {
@@ -113,7 +111,7 @@ public class ImporterBean implements IImporterManagerLocal {
 
             User user = userManager.whoAmI(workspaceId);
             Locale locale = new Locale(user.getLanguage());
-            result = getNoImporterAvailableError(file, originalFileName,locale);
+            result = getNoImporterAvailableError(file, originalFileName, locale);
         }
 
         return new AsyncResult<>(result);
@@ -134,8 +132,7 @@ public class ImporterBean implements IImporterManagerLocal {
         ImportPreview result = null;
 
         if (selectedImporter != null) {
-            result = new ImportPreview();
-            result.setPartRevisions(selectedImporter.dryRunImport(workspaceId,file,originalFileName,autoCheckout, autoCheckin, permissiveUpdate));
+            result = selectedImporter.dryRunImport(workspaceId, file, originalFileName, autoCheckout, autoCheckin, permissiveUpdate);
         }
 
         return result;

@@ -681,16 +681,15 @@ public class PartsResource {
     @POST
     @Path("importPreview")
     @ApiOperation(value = "Get import preview",
-            response = LightPartRevisionDTO.class,
-            responseContainer = "List")
+            response = ImportPreviewDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of LightPartRevisionDTOs. It can be an empty list."),
+            @ApiResponse(code = 200, message = "Successful retrieval of ImportPreview."),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getImportPreview(
+    public ImportPreviewDTO getImportPreview(
             @Context HttpServletRequest request,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = false, value = "Auto check out parts flag") @QueryParam("autoCheckout") boolean autoCheckout,
@@ -714,13 +713,7 @@ public class PartsResource {
 
         importFile.deleteOnExit();
 
-        List<LightPartRevisionDTO> result = new ArrayList<>();
-        for (PartRevision partRevision : importPreview.getPartRevsToCheckout()) {
-            result.add(mapper.map(partRevision, LightPartRevisionDTO.class));
-        }
-
-        return Response.ok(new GenericEntity<List<LightPartRevisionDTO>>((List<LightPartRevisionDTO>) result) {
-        }).build();
+        return mapper.map(importPreview, ImportPreviewDTO.class);
     }
 
 

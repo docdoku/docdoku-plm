@@ -25,6 +25,7 @@ import java.util.List;
 
 /**
  * A class to stock dry run result, a preview of the import
+ *
  * @author Laurent Le Van
  * @since 29/06/2016
  */
@@ -33,23 +34,35 @@ public class ImportPreview {
     /**
      * Part revisions which will be checked out
      */
-    private List<PartRevision> partRevsToCheckout;
+    private List<PartRevision> partRevsToCheckout = new ArrayList<>();
 
-    public ImportPreview(){
-                this.partRevsToCheckout = new ArrayList<>();
+    /**
+     * Part revisions which will be created
+     */
+    private List<PartMaster> partsToCreate = new ArrayList<>();
+
+
+    public ImportPreview() {
     }
 
-    public ImportPreview(List<PartRevision> partRevisions){
-        this.partRevsToCheckout = partRevisions;
+    public ImportPreview(List<PartRevision> partRevsToCheckout, List<PartMaster> partsToCreate) {
+        this.partRevsToCheckout.addAll(partRevsToCheckout);
+        this.partsToCreate.addAll(partsToCreate);
     }
 
-    public List<PartRevision> getPartRevsToCheckout(){
+    public List<PartRevision> getPartRevsToCheckout() {
         return partRevsToCheckout;
     }
 
-    public void setPartRevisions(List<PartRevision> partRevsToCheckout){
+    public void setPartRevsToCheckout(List<PartRevision> partRevsToCheckout) {
         this.partRevsToCheckout = partRevsToCheckout;
     }
 
+    public List<PartMaster> getPartsToCreate() {
+        return partsToCreate;
+    }
 
+    public void setPartsToCreate(List<PartMaster> partsToCreate) {
+        this.partsToCreate = partsToCreate;
+    }
 }
