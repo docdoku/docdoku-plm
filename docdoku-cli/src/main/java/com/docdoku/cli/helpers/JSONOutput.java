@@ -75,7 +75,7 @@ public class JSONOutput extends CliOutput {
     @Override
     public void printWorkspaces(List<WorkspaceDTO> workspaceDTOs) {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
-        for(WorkspaceDTO workspaceDTO:workspaceDTOs){
+        for (WorkspaceDTO workspaceDTO : workspaceDTOs) {
             jsonArray.add(workspaceDTO.getId());
         }
         OUTPUT_STREAM.println(jsonArray.build().toString());
@@ -103,10 +103,10 @@ public class JSONOutput extends CliOutput {
         JsonArrayBuilder jsonArray = Json.createArrayBuilder();
         for (ProductBaselineDTO productBaseline : productBaselines) {
             JsonObject jsonBaseline = Json.createObjectBuilder()
-                .add("id", productBaseline.hashCode())
-                .add("name", productBaseline.getName())
-                .add("configurationItem", productBaseline.getConfigurationItemId())
-                .build();
+                    .add("id", productBaseline.hashCode())
+                    .add("name", productBaseline.getName())
+                    .add("configurationItem", productBaseline.getConfigurationItemId())
+                    .build();
             jsonArray.add(jsonBaseline);
         }
         OUTPUT_STREAM.println(jsonArray.build().toString());
@@ -130,12 +130,21 @@ public class JSONOutput extends CliOutput {
 
     @Override
     public void printAccount(AccountDTO accountDTO) {
-        JsonObject jsonObj = Json.createObjectBuilder()
-                .add("login", accountDTO.getLogin())
+        JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+
+        jsonObjectBuilder.add("login", accountDTO.getLogin())
                 .add("language", accountDTO.getLanguage())
-                .add("email", accountDTO.getEmail())
-                .add("timezone", accountDTO.getTimeZone())
-                .build();
+                .add("timezone", accountDTO.getTimeZone());
+
+        String email = accountDTO.getEmail();
+
+        if (null == email) {
+            jsonObjectBuilder.add("email", JsonValue.NULL);
+        } else {
+            jsonObjectBuilder.add("email", email);
+        }
+
+        JsonObject jsonObj = jsonObjectBuilder.build();
 
         OUTPUT_STREAM.println(jsonObj.toString());
     }
@@ -181,17 +190,17 @@ public class JSONOutput extends CliOutput {
             jsonStatusBuilder.add("isCheckedOut", user != null);
             jsonStatusBuilder.add("partNumber", pr.getNumber());
             jsonStatusBuilder.add("checkoutUser", login);
-            if(timeStamp != null) {
+            if (timeStamp != null) {
                 jsonStatusBuilder.add("checkoutDate", timeStamp);
-            }else{
+            } else {
                 jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
             }
             jsonStatusBuilder.add("workspace", pr.getWorkspaceId());
             jsonStatusBuilder.add("version", pr.getVersion());
 
-            if(pr.getDescription() != null) {
+            if (pr.getDescription() != null) {
                 jsonStatusBuilder.add("description", pr.getDescription());
-            }else{
+            } else {
                 jsonStatusBuilder.add("description", JsonValue.NULL);
             }
 
@@ -199,12 +208,9 @@ public class JSONOutput extends CliOutput {
 
             PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
 
-            if (lastIteration != null){
-
-            }
-            if(lastIteration.getNativeCADFile() != null) {
+            if (lastIteration != null) {
                 BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
-                if(nativeCADFile != null){
+                if (nativeCADFile != null) {
                     jsonStatusBuilder.add("cadFileName", nativeCADFile.getFullName());
                 }
             }
@@ -233,20 +239,20 @@ public class JSONOutput extends CliOutput {
             String login = userDTO != null ? userDTO.getLogin() : "";
             Date checkoutDate = documentRevisionDTO.getCheckOutDate();
             Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-            jsonStatusBuilder.add("isCheckedOut", checkoutDate != null );
+            jsonStatusBuilder.add("isCheckedOut", checkoutDate != null);
             jsonStatusBuilder.add("id", documentRevisionDTO.getDocumentMasterId());
             jsonStatusBuilder.add("checkoutUser", login);
-            if(timeStamp != null) {
+            if (timeStamp != null) {
                 jsonStatusBuilder.add("checkoutDate", timeStamp);
-            }else{
+            } else {
                 jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
             }
             jsonStatusBuilder.add("workspace", documentRevisionDTO.getWorkspaceId());
             jsonStatusBuilder.add("version", documentRevisionDTO.getVersion());
 
-            if(documentRevisionDTO.getDescription() != null) {
+            if (documentRevisionDTO.getDescription() != null) {
                 jsonStatusBuilder.add("description", documentRevisionDTO.getDescription());
-            }else{
+            } else {
                 jsonStatusBuilder.add("description", JsonValue.NULL);
             }
 
@@ -256,7 +262,7 @@ public class JSONOutput extends CliOutput {
 
             if (lastIterationDTO != null && lastIterationDTO.getAttachedFiles() != null) {
                 JsonArrayBuilder jsonFilesBuilder = Json.createArrayBuilder();
-                for(BinaryResourceDTO binaryResourceDTO:lastIterationDTO.getAttachedFiles())
+                for (BinaryResourceDTO binaryResourceDTO : lastIterationDTO.getAttachedFiles())
                     jsonFilesBuilder.add(binaryResourceDTO.getFullName());
 
                 jsonStatusBuilder.add("files", jsonFilesBuilder.build());
@@ -276,6 +282,6 @@ public class JSONOutput extends CliOutput {
 
     private DocumentIterationDTO getDocumentRevisionDTOLastIteration(DocumentRevisionDTO documentRevisionDTO) {
         int iterations = documentRevisionDTO.getDocumentIterations().size();
-        return documentRevisionDTO.getDocumentIterations().get(iterations-1);
+        return documentRevisionDTO.getDocumentIterations().get(iterations - 1);
     }
 }
