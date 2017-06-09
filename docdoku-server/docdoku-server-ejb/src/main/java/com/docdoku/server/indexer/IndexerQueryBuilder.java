@@ -25,6 +25,7 @@ import com.docdoku.core.query.PartSearchQuery;
 import com.docdoku.core.query.SearchQuery;
 import org.apache.lucene.search.join.ScoreMode;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -148,7 +149,7 @@ public class IndexerQueryBuilder {
                     .forEach((attributeName, attributeList) -> addAttributeToQueries(queries, attributeName, attributeList));
         }
 
-        if(fullText != null && !fullText.isEmpty()){
+        if (fullText != null && !fullText.isEmpty()) {
             queries.add(QueryBuilders.matchQuery(IndexerMapping.ALL_FIELDS, fullText));
         }
 
@@ -162,18 +163,30 @@ public class IndexerQueryBuilder {
         attributeQueryBuilder.must(QueryBuilders.nestedQuery(IndexerMapping.ATTRIBUTES_KEY,
                 QueryBuilders.termQuery(IndexerMapping.ATTRIBUTES_KEY + "." + IndexerMapping.ATTRIBUTE_NAME, attributeName), ScoreMode.None));
 
+        List<NestedQueryBuilder> nestedQueryBuilders = new ArrayList<>();
         BoolQueryBuilder valuesQuery = QueryBuilders.boolQuery();
 
         for (SearchQuery.AbstractAttributeQuery attr : attributeList) {
             String attributeValue = attr.toString();
             if (attributeValue != null && !attributeValue.isEmpty()) {
-                valuesQuery.should(QueryBuilders.nestedQuery(IndexerMapping.ATTRIBUTES_KEY,
+                nestedQueryBuilders.add(QueryBuilders.nestedQuery(IndexerMapping.ATTRIBUTES_KEY,
                         QueryBuilders.termQuery(IndexerMapping.ATTRIBUTES_KEY + "." + IndexerMapping.ATTRIBUTE_VALUE, attributeValue), ScoreMode.None));
+
             }
         }
 
-        if (valuesQuery.hasClauses()) {
-            attributeQueryBuilder.must(valuesQuery);
+        // Only request for attribute name if no values
+        // Use bool must if only one value passed
+        // Compound should queries if many values (but must not be empty)
+        if (!nestedQueryBuilders.isEmpty()) {
+            if (nestedQueryBuilders.size() == 1) {
+                attributeQueryBuilder.must(nestedQueryBuilders.get(0));
+            } else {
+                nestedQueryBuilders.forEach(valuesQuery::should);
+                attributeQueryBuilder.must(valuesQuery);
+                attributeQueryBuilder.mustNot(QueryBuilders.nestedQuery(IndexerMapping.ATTRIBUTES_KEY,
+                        QueryBuilders.termQuery(IndexerMapping.ATTRIBUTES_KEY + "." + IndexerMapping.ATTRIBUTE_VALUE, ""), ScoreMode.None));
+            }
         }
 
         queries.add(attributeQueryBuilder);
