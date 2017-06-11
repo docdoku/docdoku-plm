@@ -166,7 +166,7 @@ public class HumanOutput extends CliOutput{
         return new ConsoleProgressMonitorInputStream(maximum,in);
     }
 
-    private String fillWithEmptySpace(String txt, int totalChar){
+    private static String fillWithEmptySpace(String txt, int totalChar){
         StringBuilder b = new StringBuilder(txt);
         for(int i = 0; i < totalChar-txt.length();i++) {
             b.insert(0, ' ');

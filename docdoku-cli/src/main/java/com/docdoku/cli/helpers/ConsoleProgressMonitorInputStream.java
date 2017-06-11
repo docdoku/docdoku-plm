@@ -42,7 +42,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
     }
 
     @Override
-    public int read(byte b[]) throws IOException {
+    public int read(byte[] b) throws IOException {
         int length =  super.read(b, 0, b.length);
         totalRead += length;
 
@@ -50,7 +50,7 @@ public class ConsoleProgressMonitorInputStream extends FilterInputStream {
 
         String percentageToPrint;
         if(percentage==100) {
-            percentageToPrint = "" + percentage;
+            percentageToPrint = Integer.toString(percentage);
         } else {
             percentageToPrint = (percentage < 10) ? "  " + percentage : " " + percentage;
         }
