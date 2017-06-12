@@ -36,16 +36,16 @@ public class AccountsManager {
 
     public AccountsManager() throws IOException {
 
-        accountsFile = new File(System.getProperty("user.home"),ACCOUNTS_FILE);
+        accountsFile = new File(System.getProperty("user.home"), ACCOUNTS_FILE);
         accountsProps = new Properties();
 
-        if(!accountsFile.exists()){
+        if (!accountsFile.exists()) {
             accountsFile.createNewFile();
         }
 
-        try{
-            accountsProps.loadFromXML(new BufferedInputStream(new FileInputStream(accountsFile)));
-        }catch(IOException ex){
+        try (FileInputStream fis = new FileInputStream(accountsFile)) {
+            accountsProps.loadFromXML(new BufferedInputStream(fis));
+        } catch (IOException ex) {
             accountsFile.delete();
         }
 
@@ -56,7 +56,7 @@ public class AccountsManager {
         accountsProps.storeToXML(out, null);
     }
 
-    public String getUserLanguage(String userLogin){
+    public String getUserLanguage(String userLogin) {
         return accountsProps.getProperty(userLogin + "." + LANGUAGE_PROP);
     }
 
@@ -65,12 +65,12 @@ public class AccountsManager {
         saveIndex();
     }
 
-    public Locale getUserLocale(String userLogin){
-        if(userLogin == null || userLogin.isEmpty()){
+    public Locale getUserLocale(String userLogin) {
+        if (userLogin == null || userLogin.isEmpty()) {
             return Locale.getDefault();
-        }else{
+        } else {
             String userLanguage = getUserLanguage(userLogin);
-            if(userLanguage == null)
+            if (userLanguage == null)
                 return Locale.getDefault();
             else
                 return new Locale(getUserLanguage(userLogin));
@@ -78,6 +78,6 @@ public class AccountsManager {
     }
 
     public void saveAccount(AccountDTO accountDTO) throws IOException {
-        setUserLanguage(accountDTO.getLogin(),accountDTO.getLanguage());
+        setUserLanguage(accountDTO.getLogin(), accountDTO.getLanguage());
     }
 }
