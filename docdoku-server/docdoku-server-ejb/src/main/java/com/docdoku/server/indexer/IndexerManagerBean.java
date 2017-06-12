@@ -45,6 +45,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.NoNodeAvailableException;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.IndexNotFoundException;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -281,7 +282,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
             }
         } catch (NoNodeAvailableException e) {
             LOGGER.log(Level.WARNING, "Cannot index all workspaces: The ElasticSearch server doesn't seem to respond");
-            mailer.sendBulkIndexationFailure(account, getString("IndexerNotAvailableForRequest", new Locale(account.getLanguage())));
+            Locale locale = null != account ? new Locale(account.getLanguage()) : Locale.getDefault();
+            mailer.sendBulkIndexationFailure(account, getString("IndexerNotAvailableForRequest", locale));
         } catch (AccountNotFoundException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
@@ -390,9 +392,9 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
         indexerClient.admin().indices().prepareCreate(pIndex)
                 .setSettings(settings)
-                .addMapping(IndexerMapping.PART_TYPE, IndexerMapping.createPartIterationMapping())
-                .addMapping(IndexerMapping.DOCUMENT_TYPE, IndexerMapping.createDocumentIterationMapping())
-                .setSource(IndexerMapping.createSourceMapping())
+                .addMapping(IndexerMapping.PART_TYPE, IndexerMapping.createPartIterationMapping(), XContentType.JSON)
+                .addMapping(IndexerMapping.DOCUMENT_TYPE, IndexerMapping.createDocumentIterationMapping(), XContentType.JSON)
+                .setSource(IndexerMapping.createSourceMapping(), XContentType.JSON)
                 .execute().actionGet();
         LOGGER.log(Level.INFO, "Index created [" + pIndex + "]");
 
@@ -422,9 +424,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
         for (DocumentMaster docM : docMasterDAO.getAllByWorkspace(workspaceId)) {
             for (DocumentRevision docR : docM.getDocumentRevisions()) {
-                docR.getDocumentIterations().stream().filter(documentIteration -> documentIteration.getCheckInDate() != null).forEach(documentIteration -> {
-                    pBulkRequest.add(indexRequest(documentIteration));
-                });
+                docR.getDocumentIterations().stream().filter(documentIteration -> documentIteration.getCheckInDate() != null)
+                        .forEach(documentIteration -> pBulkRequest.add(indexRequest(documentIteration)));
             }
         }
         return pBulkRequest;
@@ -434,9 +435,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         PartMasterDAO partMasterDAO = new PartMasterDAO(em);
         for (PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)) {
             for (PartRevision partRev : partMaster.getPartRevisions()) {
-                partRev.getPartIterations().stream().filter(partIteration -> partIteration.getCheckInDate() != null).forEach(partIteration -> {
-                    pBulkRequest.add(indexRequest(partIteration));
-                });
+                partRev.getPartIterations().stream().filter(partIteration -> partIteration.getCheckInDate() != null)
+                        .forEach(partIteration -> pBulkRequest.add(indexRequest(partIteration)));
             }
         }
         return pBulkRequest;
