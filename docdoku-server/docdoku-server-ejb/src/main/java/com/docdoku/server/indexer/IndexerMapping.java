@@ -85,10 +85,11 @@ public class IndexerMapping {
         User author = documentMaster.getAuthor();
         Set<Tag> tags = documentRevision.getTags();
         List<InstanceAttribute> instanceAttributes = documentIteration.getInstanceAttributes();
-
+        XContentBuilder xContentBuilder = null;
         try {
+            xContentBuilder = XContentFactory.jsonBuilder();
 
-            XContentBuilder tmp = XContentFactory.jsonBuilder().startObject();
+            XContentBuilder tmp = xContentBuilder.startObject();
 
             setField(tmp, WORKSPACE_ID_KEY, documentIteration.getWorkspaceId());
             setField(tmp, DOCUMENT_ID_KEY, documentRevision.getDocumentMasterId());
@@ -109,6 +110,10 @@ public class IndexerMapping {
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "The document " + documentIteration + " can't be indexed.", e);
             return null;
+        } finally {
+            if (null != xContentBuilder) {
+                xContentBuilder.close();
+            }
         }
     }
 
@@ -119,10 +124,10 @@ public class IndexerMapping {
         User author = partMaster.getAuthor();
         Set<Tag> tags = partRevision.getTags();
         List<InstanceAttribute> instanceAttributes = partIteration.getInstanceAttributes();
-
+        XContentBuilder xContentBuilder = null;
         try {
-            XContentBuilder tmp = XContentFactory.jsonBuilder()
-                    .startObject();
+            xContentBuilder = XContentFactory.jsonBuilder();
+            XContentBuilder tmp = xContentBuilder.startObject();
 
             setField(tmp, WORKSPACE_ID_KEY, partIteration.getWorkspaceId());
             setField(tmp, PART_NUMBER_KEY, partIteration.getPartNumber());
@@ -144,6 +149,10 @@ public class IndexerMapping {
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "The part " + partIteration.getKey() + " can't be indexed.", e);
             return null;
+        } finally {
+            if (null != xContentBuilder) {
+                xContentBuilder.close();
+            }
         }
     }
 
