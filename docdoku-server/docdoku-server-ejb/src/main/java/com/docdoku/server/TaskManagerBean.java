@@ -193,8 +193,8 @@ public class TaskManagerBean implements ITaskManagerLocal {
             taskWrapper.setTask(documentRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(task.getKey())).findFirst().get());
             return taskWrapper;
         }
-        PartRevisionDAO PartRevisionDAO = new PartRevisionDAO(em);
-        PartRevision partRevision = PartRevisionDAO.getWorkflowHolder(task.getActivity().getWorkflow());
+        PartRevisionDAO partRevisionDAO = new PartRevisionDAO(em);
+        PartRevision partRevision = partRevisionDAO.getWorkflowHolder(task.getActivity().getWorkflow());
 
         if(partRevision!=null){
             taskWrapper.setHolderType("parts");
