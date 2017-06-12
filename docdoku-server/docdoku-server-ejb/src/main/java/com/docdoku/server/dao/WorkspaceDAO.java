@@ -342,6 +342,10 @@ public class WorkspaceDAO {
             em.remove(u);
         }
 
+        // Imports
+        em.createQuery("DELETE FROM Import i where i.user.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
         // Users
         em.createQuery("DELETE FROM User u where u.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
