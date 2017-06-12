@@ -44,17 +44,17 @@ public class MetaDirectoryManager {
     private static final String DIGEST_PROP = "digest";
 
     public MetaDirectoryManager(File workingDirectory) throws IOException {
-        this.metaDirectory=new File(workingDirectory,META_DIRECTORY_NAME);
-        if(!metaDirectory.exists()) {
+        this.metaDirectory = new File(workingDirectory, META_DIRECTORY_NAME);
+        if (!metaDirectory.exists()) {
             metaDirectory.mkdir();
         }
-        File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
+        File indexFile = new File(metaDirectory, INDEX_FILE_NAME);
         indexProps = loadPropertiesFromIndexFile(indexFile);
     }
 
     private void saveIndex() throws IOException {
-        File indexFile = new File(metaDirectory,INDEX_FILE_NAME);
-        if(!indexFile.exists()) {
+        File indexFile = new File(metaDirectory, INDEX_FILE_NAME);
+        if (!indexFile.exists()) {
             indexFile.createNewFile();
         }
         JsonWriter writer = Json.createWriter(new FileOutputStream(indexFile));
@@ -78,17 +78,17 @@ public class MetaDirectoryManager {
     }
 
     public void setIteration(String filePath, int iteration) throws IOException {
-        indexProps.setProperty(filePath + "." + ITERATION_PROP, iteration+"");
+        indexProps.setProperty(filePath + "." + ITERATION_PROP, iteration + "");
         saveIndex();
     }
 
     public void setLastModifiedDate(String filePath, long lastModifiedDate) throws IOException {
-        indexProps.setProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, lastModifiedDate+"");
+        indexProps.setProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, lastModifiedDate + "");
         saveIndex();
     }
 
     public void setWorkspace(String filePath, String workspaceId) throws IOException {
-        indexProps.setProperty(filePath + "." + WORKSPACE_PROP, workspaceId+"");
+        indexProps.setProperty(filePath + "." + WORKSPACE_PROP, workspaceId + "");
         saveIndex();
     }
 
@@ -97,24 +97,24 @@ public class MetaDirectoryManager {
         saveIndex();
     }
 
-    public long getLastModifiedDate(String filePath){
-        return Long.parseLong(indexProps.getProperty(filePath + "." + LAST_MODIFIED_DATE_PROP,"0"));
+    public long getLastModifiedDate(String filePath) {
+        return Long.parseLong(indexProps.getProperty(filePath + "." + LAST_MODIFIED_DATE_PROP, "0"));
     }
 
-    public String getPartNumber(String filePath){
+    public String getPartNumber(String filePath) {
         return indexProps.getProperty(filePath + "." + PART_NUMBER_PROP);
     }
 
-    public String getWorkspace(String filePath){
+    public String getWorkspace(String filePath) {
         return indexProps.getProperty(filePath + "." + WORKSPACE_PROP);
     }
 
-    public String getRevision(String filePath){
+    public String getRevision(String filePath) {
         return indexProps.getProperty(filePath + "." + REVISION_PROP);
     }
 
-    public int getIteration(String filePath){
-        return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP,"0"));
+    public int getIteration(String filePath) {
+        return Integer.parseInt(indexProps.getProperty(filePath + "." + ITERATION_PROP, "0"));
     }
 
     public void deleteEntryInfo(String filePath) throws IOException {
@@ -140,13 +140,13 @@ public class MetaDirectoryManager {
         return getPartNumber(filePath) != null;
     }
 
-    private JsonObject getPropertiesAsJsonObject(){
+    private JsonObject getPropertiesAsJsonObject() {
         JsonObjectBuilder json = Json.createObjectBuilder();
         Enumeration keys = indexProps.keys();
         while (keys.hasMoreElements()) {
-            String key = (String)keys.nextElement();
-            String value = (String)indexProps.get(key);
-            json.add(key,value);
+            String key = (String) keys.nextElement();
+            String value = (String) indexProps.get(key);
+            json.add(key, value);
         }
         return json.build();
     }
@@ -155,22 +155,26 @@ public class MetaDirectoryManager {
 
         Properties props = new Properties();
 
-        if(!file.exists()) {
+        if (!file.exists()) {
             return props;
         }
-
-        try{
-            JsonReader reader = Json.createReader(new FileInputStream(file));
+        JsonReader reader = null;
+        try (FileInputStream fis = new FileInputStream(file)) {
+            reader = Json.createReader(fis);
             JsonObject json = reader.readObject();
             Set<String> keys = json.keySet();
-            for(String key : keys){
-                props.setProperty(key,json.getString(key));
+            for (String key : keys) {
+                props.setProperty(key, json.getString(key));
             }
             return props;
 
-        } catch(IOException ex){
+        } catch (IOException ex) {
             file.delete();
             return props;
+        } finally {
+            if (null != reader) {
+                reader.close();
+            }
         }
 
     }
