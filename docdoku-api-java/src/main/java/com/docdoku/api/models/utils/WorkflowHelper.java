@@ -34,6 +34,9 @@ import java.util.Set;
  */
 public class WorkflowHelper {
 
+    private WorkflowHelper() {
+    }
+
     /**
      * Find the current activity in a workflow.
      *
