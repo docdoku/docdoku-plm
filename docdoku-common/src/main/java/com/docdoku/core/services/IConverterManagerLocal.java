@@ -28,5 +28,5 @@ import com.docdoku.core.product.PartIterationKey;
  * @author Florent Garin
  */
 public interface IConverterManagerLocal {
-    void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadFile) throws Exception;
+    void convertCADFileToOBJ(PartIterationKey pPartIPK, BinaryResource cadFile);
 }

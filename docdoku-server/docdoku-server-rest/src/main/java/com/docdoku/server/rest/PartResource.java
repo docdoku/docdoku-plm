@@ -337,12 +337,8 @@ public class PartResource {
         PartIteration partIteration = productService.getPartIteration(partIPK);
         BinaryResource nativeCADFile = partIteration.getNativeCADFile();
         if (nativeCADFile != null) {
-            try {
-                converterService.convertCADFileToOBJ(partIPK, nativeCADFile);
-                return Response.noContent().build();
-            } catch (Exception e) {
-                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-            }
+            converterService.convertCADFileToOBJ(partIPK, nativeCADFile);
+            return Response.noContent().build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
