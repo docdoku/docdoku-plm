@@ -193,9 +193,11 @@ public class IndexerUtils {
             if (POIFSFileSystem.hasPOIFSHeader(wordStream)) {
                 WordExtractor wordExtractor = new WordExtractor(wordStream);
                 strRet = wordExtractor.getText();
+                wordExtractor.close();
             } else {
                 XWPFWordExtractor wordXExtractor = new XWPFWordExtractor(new XWPFDocument(wordStream));
                 strRet = wordXExtractor.getText();
+                wordXExtractor.close();
             }
         }
 
@@ -209,9 +211,11 @@ public class IndexerUtils {
             if (POIFSFileSystem.hasPOIFSHeader(pptStream)) {
                 PowerPointExtractor pptExtractor = new PowerPointExtractor(pptStream);
                 strRet = pptExtractor.getText(true, true);
+                pptExtractor.close();
             } else {
                 XSLFPowerPointExtractor pptExtractor = new XSLFPowerPointExtractor(new XMLSlideShow(pptStream));
                 strRet = pptExtractor.getText(true, true, true);
+                pptExtractor.close();
             }
         }
 
@@ -226,6 +230,7 @@ public class IndexerUtils {
                 POIFSFileSystem excelFS = new POIFSFileSystem(excelStream);
                 ExcelExtractor excelExtractor = new ExcelExtractor(excelFS);
                 sb.append(excelExtractor.getText());
+                excelExtractor.close();
             } else { // New format
                 XSSFWorkbook workBook = new XSSFWorkbook(excelStream);
                 int numberOfSheets = workBook.getNumberOfSheets();
