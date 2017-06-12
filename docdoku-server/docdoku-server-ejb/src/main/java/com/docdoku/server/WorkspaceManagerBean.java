@@ -37,6 +37,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,9 +78,16 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Asynchronous
     public void deleteWorkspace(String workspaceId) {
-        try {
 
-            Workspace workspace = new WorkspaceDAO(em, storageManager).loadWorkspace(workspaceId);
+        Workspace workspace;
+        Account admin = null;
+        Exception exceptionThrown = null;
+
+        try {
+            WorkspaceDAO workspaceDAO = new WorkspaceDAO(em, storageManager);
+            workspace = workspaceDAO.loadWorkspace(workspaceId);
+            admin = workspace.getAdmin();
+
             String callerLogin = contextManager.getCallerPrincipalLogin();
 
             boolean isAllowedToDeleteWorkspace =
@@ -87,22 +95,35 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
                             workspace.getAdmin().getLogin().equals(callerLogin);
 
             if (isAllowedToDeleteWorkspace) {
-                doWorkspaceDeletion(workspace);
+                workspaceDAO.removeWorkspace(workspace);
                 indexerManager.deleteWorkspaceIndex(workspaceId);
+                mailerManager.sendWorkspaceDeletionNotification(admin, workspaceId);
             } else {
                 User user = userManager.whoAmI(workspaceId);
-                LOGGER.log(Level.SEVERE, "Caller (" + user.getLogin() + ") not authorized to delete workspace : (" + workspaceId + ")");
+                LOGGER.log(Level.SEVERE, "Caller (" + user.getLogin() + ") is not authorized to delete workspace : (" + workspaceId + ")");
                 throw new AccessRightException(new Locale(user.getLanguage()), user);
             }
 
-        } catch (UserNotFoundException | UserNotActiveException | AccessRightException e) {
+        } catch (UserNotFoundException | UserNotActiveException | AccessRightException | WorkspaceNotEnabledException e) {
             LOGGER.log(Level.SEVERE, "Caller not authorized to delete workspace : (" + workspaceId + ")", e);
+            exceptionThrown = e;
         } catch (WorkspaceNotFoundException e) {
             LOGGER.log(Level.WARNING, "Attempt to delete a workspace which does not exist : (" + workspaceId + ")", e);
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Exception deleting workspace " + workspaceId, e);
+            exceptionThrown = e;
+        } catch (StorageException | IOException e) {
+            LOGGER.log(Level.SEVERE, "Unhandled Exception deleting workspace " + workspaceId, e);
+            exceptionThrown = e;
+        } catch (FolderNotFoundException | AccountNotFoundException | EntityConstraintException e) {
+            LOGGER.log(Level.SEVERE, "Application Exception deleting workspace " + workspaceId, e);
+            exceptionThrown = e;
         }
+
+        if (null != exceptionThrown && null != admin) {
+            mailerManager.sendWorkspaceDeletionErrorNotification(admin, workspaceId);
+        }
+
     }
+
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     public Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException {
@@ -132,16 +153,4 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         return workspace;
     }
 
-    private void doWorkspaceDeletion(Workspace workspace) throws Exception {
-        Account admin = workspace.getAdmin();
-        String workspaceId = workspace.getId();
-        try {
-            new WorkspaceDAO(em, storageManager).removeWorkspace(workspace);
-        } catch (Exception e) {
-            mailerManager.sendWorkspaceDeletionErrorNotification(admin, workspaceId);
-            throw e;
-        }
-
-        mailerManager.sendWorkspaceDeletionNotification(admin, workspaceId);
-    }
 }
