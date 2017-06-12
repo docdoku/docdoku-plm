@@ -38,8 +38,8 @@ import java.util.zip.GZIPInputStream;
 
 public class FileHelper {
 
-    private static final int CHUNK_SIZE = 1024*8;
-    private static final int BUFFER_CAPACITY = 1024*32;
+    private static final int CHUNK_SIZE = 1024 * 8;
+    private static final int BUFFER_CAPACITY = 1024 * 32;
 
     private String login;
     private String password;
@@ -57,7 +57,7 @@ public class FileHelper {
         FilterInputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
-        try {
+        try (FileOutputStream fos = new FileOutputStream(pLocalFile)) {
             //Hack for NTLM proxy
             //perform a head method to negotiate the NTLM proxy authentication
             // Always replace trailing slashes with %20
@@ -65,15 +65,15 @@ public class FileHelper {
             URL url = new URL(pURL.replace(" ", "%20"));
 
             output.printInfo(
-                    LangHelper.getLocalizedMessage("DownloadingFile",locale)
-                    + " : "
-                    + pLocalFile.getName() + " "
-                    + LangHelper.getLocalizedMessage("From",locale) + " "
-                    + url.getHost());
+                    LangHelper.getLocalizedMessage("DownloadingFile", locale)
+                            + " : "
+                            + pLocalFile.getName() + " "
+                            + LangHelper.getLocalizedMessage("From", locale) + " "
+                            + url.getHost());
 
             performHeadHTTPMethod(url);
 
-            out = new BufferedOutputStream(new FileOutputStream(pLocalFile), BUFFER_CAPACITY);
+            out = new BufferedOutputStream(fos, BUFFER_CAPACITY);
 
             conn = (HttpURLConnection) url.openConnection();
             conn.setUseCaches(false);
@@ -90,13 +90,12 @@ public class FileHelper {
             MessageDigest md = MessageDigest.getInstance("MD5");
             InputStream connInputStream;
             if ("gzip".equals(conn.getContentEncoding())) {
-                connInputStream =new GZIPInputStream(conn.getInputStream());
-            }
-            else {
-                connInputStream =conn.getInputStream();
+                connInputStream = new GZIPInputStream(conn.getInputStream());
+            } else {
+                connInputStream = conn.getInputStream();
             }
 
-            in = output.getMonitor(conn.getContentLength(),new DigestInputStream(new BufferedInputStream(connInputStream, BUFFER_CAPACITY), md));
+            in = output.getMonitor(conn.getContentLength(), new DigestInputStream(new BufferedInputStream(connInputStream, BUFFER_CAPACITY), md));
 
             byte[] data = new byte[CHUNK_SIZE];
             int length;
@@ -109,13 +108,13 @@ public class FileHelper {
             byte[] digest = md.digest();
             return Base64.getEncoder().encodeToString(digest);
         } finally {
-            if(out!=null) {
+            if (out != null) {
                 out.close();
             }
-            if(in!=null) {
+            if (in != null) {
                 in.close();
             }
-            if(conn!=null) {
+            if (conn != null) {
                 conn.disconnect();
             }
         }
@@ -125,7 +124,7 @@ public class FileHelper {
         InputStream in = null;
         OutputStream out = null;
         HttpURLConnection conn = null;
-        try {
+        try (FileInputStream fis = new FileInputStream(pLocalFile)) {
             //Hack for NTLM proxy
             //perform a head method to negociate the NTLM proxy authentication
             URL url = new URL(pURL);
@@ -163,7 +162,7 @@ public class FileHelper {
             byte[] data = new byte[CHUNK_SIZE];
             int length;
             MessageDigest md = MessageDigest.getInstance("MD5");
-            in = output.getMonitor(pLocalFile.length(), new DigestInputStream(new BufferedInputStream(new FileInputStream(pLocalFile), BUFFER_CAPACITY),md));
+            in = output.getMonitor(pLocalFile.length(), new DigestInputStream(new BufferedInputStream(fis, BUFFER_CAPACITY), md));
             while ((length = in.read(data)) != -1) {
                 out.write(data, 0, length);
             }
@@ -176,13 +175,13 @@ public class FileHelper {
             byte[] digest = md.digest();
             return Base64.getEncoder().encodeToString(digest);
         } finally {
-            if(out!=null) {
+            if (out != null) {
                 out.close();
             }
-            if(in!=null) {
+            if (in != null) {
                 in.close();
             }
-            if(conn!=null) {
+            if (conn != null) {
                 conn.disconnect();
             }
         }
@@ -190,9 +189,10 @@ public class FileHelper {
 
     private void manageHTTPCode(HttpURLConnection conn) throws IOException, LoginException {
         int code = conn.getResponseCode();
-        switch (code){
-            case 401: case 403:
-                throw new LoginException(LangHelper.getLocalizedMessage("LoginError",locale));
+        switch (code) {
+            case 401:
+            case 403:
+                throw new LoginException(LangHelper.getLocalizedMessage("LoginError", locale));
             case 500:
                 throw new IOException(conn.getHeaderField("Reason-Phrase"));
             default:
@@ -228,7 +228,7 @@ public class FileHelper {
                 + URLEncoder.encode(pDocIPK.getWorkspaceId(), "UTF-8") + "/"
                 + "documents/"
                 + URLEncoder.encode(pDocIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + pDocIPK.getVersion()+ "/"
+                + pDocIPK.getVersion() + "/"
                 + pDocIPK.getIteration() + "/"
                 + pRemoteFileName;
     }
@@ -253,7 +253,7 @@ public class FileHelper {
                 + docIPK.getIteration();
     }
 
-    public static boolean confirmOverwrite(String fileName){
+    public static boolean confirmOverwrite(String fileName) {
         Console c = System.console();
         String response = c.readLine("The file '" + fileName + "' has been modified locally, do you want to overwrite it [y/N]?");
         return "y".equalsIgnoreCase(response);
@@ -271,7 +271,7 @@ public class FileHelper {
 
     public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevisionDTO pr, PartIterationDTO pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
         BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
-        String fileName =  nativeCADFile.getName();
+        String fileName = nativeCADFile.getName();
         UserDTO checkOutUser = pr.getCheckOutUser();
         PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
         PartIterationDTO partIPK = new PartIterationDTO();
@@ -280,45 +280,45 @@ public class FileHelper {
         partIPK.setVersion(pr.getVersion());
         partIPK.setIteration(pi.getIteration());
 
-        boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration()==pi.getIteration());
-        File localFile = new File(path,fileName);
+        boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration() == pi.getIteration());
+        File localFile = new File(path, fileName);
         MetaDirectoryManager meta = new MetaDirectoryManager(path);
 
-        if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
+        if (localFile.exists() && !force && localFile.lastModified() != meta.getLastModifiedDate(localFile.getAbsolutePath())) {
             boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
-            if(!confirm) {
+            if (!confirm) {
                 return;
             }
         }
         localFile.delete();
         String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
-        localFile.setWritable(writable,false);
+        localFile.setWritable(writable, false);
 
         saveMetadata(meta, partIPK, digest, localFile);
     }
 
     private void saveMetadata(MetaDirectoryManager meta, PartIterationDTO partIPK, String digest, File localFile) throws IOException {
-        String filePath=localFile.getAbsolutePath();
-        meta.setDigest(filePath,digest);
-        meta.setPartNumber(filePath,partIPK.getNumber());
-        meta.setWorkspace(filePath,partIPK.getWorkspaceId());
-        meta.setRevision(filePath,partIPK.getVersion());
-        meta.setIteration(filePath,partIPK.getIteration());
+        String filePath = localFile.getAbsolutePath();
+        meta.setDigest(filePath, digest);
+        meta.setPartNumber(filePath, partIPK.getNumber());
+        meta.setWorkspace(filePath, partIPK.getWorkspaceId());
+        meta.setRevision(filePath, partIPK.getVersion());
+        meta.setIteration(filePath, partIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 
     private void saveMetadata(MetaDirectoryManager meta, DocumentIterationDTO docIPK, String digest, File localFile) throws IOException {
-        String filePath=localFile.getAbsolutePath();
-        meta.setDigest(filePath,digest);
-        meta.setDocumentId(filePath,docIPK.getDocumentMasterId());
-        meta.setWorkspace(filePath,docIPK.getWorkspaceId());
-        meta.setRevision(filePath,docIPK.getVersion());
-        meta.setIteration(filePath,docIPK.getIteration());
+        String filePath = localFile.getAbsolutePath();
+        meta.setDigest(filePath, digest);
+        meta.setDocumentId(filePath, docIPK.getDocumentMasterId());
+        meta.setWorkspace(filePath, docIPK.getWorkspaceId());
+        meta.setRevision(filePath, docIPK.getVersion());
+        meta.setIteration(filePath, docIPK.getIteration());
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 
     public void downloadDocumentFiles(URL serverURL, File path, String workspace, String id, DocumentRevisionDTO dr, DocumentIterationDTO di, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        for(BinaryResourceDTO binaryResourceDTO:di.getAttachedFiles()){
+        for (BinaryResourceDTO binaryResourceDTO : di.getAttachedFiles()) {
             String fileName = binaryResourceDTO.getName();
             UserDTO checkOutUser = dr.getCheckOutUser();
             DocumentIterationDTO docIPK = new DocumentIterationDTO();
@@ -329,13 +329,13 @@ public class FileHelper {
 
             DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(dr);
 
-            boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration()==di.getIteration());
-            File localFile = new File(path,fileName);
+            boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration() == di.getIteration());
+            File localFile = new File(path, fileName);
             MetaDirectoryManager meta = new MetaDirectoryManager(path);
 
-            if(localFile.exists() && !force && localFile.lastModified()!=meta.getLastModifiedDate(localFile.getAbsolutePath())){
+            if (localFile.exists() && !force && localFile.lastModified() != meta.getLastModifiedDate(localFile.getAbsolutePath())) {
                 boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
-                if(!confirm) {
+                if (!confirm) {
                     return;
                 }
             }
@@ -364,7 +364,7 @@ public class FileHelper {
             return null;
         }
         int lastSlash = path.lastIndexOf("/");
-        return path.substring(lastSlash+1, path.length());
+        return path.substring(lastSlash + 1, path.length());
     }
 
 }
