@@ -23,6 +23,7 @@ package com.docdoku.server.ws;
 
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.json.JsonReader;
 import javax.websocket.DecodeException;
 import javax.websocket.Decoder;
 import javax.websocket.EndpointConfig;
@@ -41,15 +42,14 @@ public class WebSocketMessageDecoder implements Decoder.Text<WebSocketMessage> {
 
     @Override
     public WebSocketMessage decode(String messageAsString) throws DecodeException {
-        JsonObject jsObj = Json.createReader(new StringReader(messageAsString)).readObject();
-        return new WebSocketMessage(jsObj);
+        JsonObject jsonObj = readAsJson(messageAsString);
+        return new WebSocketMessage(jsonObj);
     }
-
 
     @Override
     public boolean willDecode(String s) {
-        JsonObject jsonObject = Json.createReader(new StringReader(s)).readObject();
-        return jsonObject.containsKey("type");
+        JsonObject jsonObj = readAsJson(s);
+        return jsonObj.containsKey("type");
     }
 
     @Override
@@ -62,4 +62,10 @@ public class WebSocketMessageDecoder implements Decoder.Text<WebSocketMessage> {
         // Nothing to do
     }
 
+    private JsonObject readAsJson(String s) {
+        JsonReader reader = Json.createReader(new StringReader(s));
+        JsonObject jsonObject = reader.readObject();
+        reader.close();
+        return jsonObject;
+    }
 }
