@@ -136,6 +136,7 @@ public class TaskApiTest {
                 .count());
 
         ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workspaceWorkflow.getWorkflow());
+        Assert.assertNotNull(currentActivity);
         List<TaskDTO> runningTasks = WorkflowHelper.getRunningTasks(currentActivity);
         TaskDTO firstRunningTasks = runningTasks.get(0);
         Assert.assertNotNull(firstRunningTasks);

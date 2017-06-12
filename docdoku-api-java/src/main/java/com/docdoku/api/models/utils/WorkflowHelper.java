@@ -75,16 +75,6 @@ public class WorkflowHelper {
     }
 
     /**
-     * Get all running tasks in a workflow
-     *
-     * @param workflow: the workflow to search in
-     * @return the list of running tasks for the given workflow
-     */
-    public static List<TaskDTO> getRunningTasks(WorkflowDTO workflow) {
-        return getRunningTasks(getCurrentActivity(workflow));
-    }
-
-    /**
      * Get all running tasks in an activity
      *
      * @param activity: the activity to search in

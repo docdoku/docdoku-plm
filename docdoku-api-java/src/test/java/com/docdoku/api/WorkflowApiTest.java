@@ -184,7 +184,7 @@ public class WorkflowApiTest {
 
         // Get first running task, assert our user is in assigned users
         ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workflow);
-        List<TaskDTO> runningTasks = WorkflowHelper.getRunningTasks(workflow);
+        List<TaskDTO> runningTasks = WorkflowHelper.getRunningTasks(currentActivity);
         TaskDTO firstTask = runningTasks.get(0);
 
         Assert.assertTrue(firstTask.getAssignedUsers().contains(me));
@@ -206,6 +206,7 @@ public class WorkflowApiTest {
         workflow = workflowsApi.getWorkflowInstance(workspace.getId(), workflow.getId());
 
         currentActivity = WorkflowHelper.getCurrentActivity(workflow);
+        Assert.assertNotNull(currentActivity);
         TaskDTO nextTask = WorkflowHelper.getRunningTasks(currentActivity).get(0);
         Assert.assertEquals("2nd task must be the next running task", createdFrom.getActivityModels().get(0).getTaskModels().get(1).getTitle(),nextTask.getTitle());
 
