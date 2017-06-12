@@ -22,6 +22,7 @@ package com.docdoku.server;
 
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IImporterManagerLocal;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -68,23 +70,16 @@ public class ImporterBean implements IImporterManagerLocal {
     @Override
     @Asynchronous
     @FileImport
-    public Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception {
-        PartImporter selectedImporter = null;
+    public Future<ImportResult> importIntoParts(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) {
 
-        for (PartImporter importer : partImporters) {
-            if (importer.canImportFile(file.getName())) {
-                selectedImporter = importer;
-                break;
-            }
-        }
+        PartImporter selectedImporter = selectPartImporter(file);
 
         ImportResult result;
 
         if (selectedImporter != null) {
             result = selectedImporter.importFile(workspaceId, file, revisionNote, autoCheckout, autoCheckin, permissiveUpdate);
         } else {
-            User user = userManager.whoAmI(workspaceId);
-            result = getNoImporterAvailableError(file, originalFileName, new Locale(user.getLanguage()));
+            result = getNoImporterAvailableError(file, originalFileName, getUserLocale(workspaceId));
         }
 
         return new AsyncResult<>(result);
@@ -93,57 +88,72 @@ public class ImporterBean implements IImporterManagerLocal {
     @Override
     @Asynchronous
     @FileImport
-    public Future<ImportResult> importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) throws Exception {
-        PathDataImporter selectedImporter = null;
-
-        for (PathDataImporter importer : pathDataImporters) {
-            if (importer.canImportFile(file.getName())) {
-                selectedImporter = importer;
-                break;
-            }
-        }
+    public Future<ImportResult> importIntoPathData(String workspaceId, File file, String originalFileName, String revisionNote, boolean autoFreezeAfterUpdate, boolean permissiveUpdate) {
+        PathDataImporter selectedImporter = selectPathDataImporter(file);
 
         ImportResult result;
 
         if (selectedImporter != null) {
             result = selectedImporter.importFile(workspaceId, file, revisionNote, autoFreezeAfterUpdate, permissiveUpdate);
         } else {
-
-            User user = userManager.whoAmI(workspaceId);
-            Locale locale = new Locale(user.getLanguage());
-            result = getNoImporterAvailableError(file, originalFileName, locale);
+            result = getNoImporterAvailableError(file, originalFileName, getUserLocale(workspaceId));
         }
 
         return new AsyncResult<>(result);
     }
 
+
     @Override
-    public ImportPreview dryRunImportIntoParts(String workspaceId, File file, String originalFileName, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws Exception {
+    public ImportPreview dryRunImportIntoParts(String workspaceId, File file, String originalFileName, boolean autoCheckout, boolean autoCheckin, boolean permissiveUpdate) throws ImportPreviewException {
 
+        PartImporter selectedImporter = selectPartImporter(file);
+
+        if (selectedImporter != null) {
+            return selectedImporter.dryRunImport(workspaceId, file, originalFileName, autoCheckout, autoCheckin, permissiveUpdate);
+        }
+
+        return null;
+
+    }
+
+    private Locale getUserLocale(String workspaceId) {
+        Locale locale;
+        try {
+            User user = userManager.whoAmI(workspaceId);
+            locale = new Locale(user.getLanguage());
+        } catch (ApplicationException e) {
+            LOGGER.log(Level.SEVERE, "Cannot fetch account info", e);
+            locale = Locale.getDefault();
+        }
+        return locale;
+    }
+
+    private PartImporter selectPartImporter(File file) {
         PartImporter selectedImporter = null;
-
         for (PartImporter importer : partImporters) {
             if (importer.canImportFile(file.getName())) {
                 selectedImporter = importer;
                 break;
             }
         }
-
-        ImportPreview result = null;
-
-        if (selectedImporter != null) {
-            result = selectedImporter.dryRunImport(workspaceId, file, originalFileName, autoCheckout, autoCheckin, permissiveUpdate);
-        }
-
-        return result;
-
+        return selectedImporter;
     }
 
-    public ImportResult getNoImporterAvailableError(File file, String fileName, Locale locale) {
+    private PathDataImporter selectPathDataImporter(File file) {
+        PathDataImporter selectedImporter = null;
+        for (PathDataImporter importer : pathDataImporters) {
+            if (importer.canImportFile(file.getName())) {
+                selectedImporter = importer;
+                break;
+            }
+        }
+        return selectedImporter;
+    }
+
+    private ImportResult getNoImporterAvailableError(File file, String fileName, Locale locale) {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
         errors.add(ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("NoImporterAvailable"));
-        ImportResult result = new ImportResult(file, fileName, warnings, errors);
-        return result;
+        return new ImportResult(file, fileName, warnings, errors);
     }
 }
