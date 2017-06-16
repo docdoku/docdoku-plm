@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by morgan on 4/7/17.
@@ -42,17 +41,21 @@ public class QueryPredicateBuilder {
                 break;
             case "double":
                 try {
-                    operands = values.stream()
-                            .map(Double::parseDouble)
-                            .collect(Collectors.toList());
+                    List<Double> operandValues = new ArrayList<>();
+                    for(String value:values){
+                        operandValues.add(Double.parseDouble(value));
+                    }
+                    operands = operandValues;
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException("Parsing exception for double " + values + " and operator " + operator);
                 }
                 break;
             case "status":
-                operands = values.stream()
-                        .map(PartRevisionStatus::valueOf)
-                        .collect(Collectors.toList());
+                List<PartRevisionStatus> operandValues = new ArrayList<>();
+                for(String value:values){
+                    operandValues.add(PartRevisionStatus.valueOf(value));
+                }
+                operands = operandValues;
                 break;
             default:
                 operands = values;
