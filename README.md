@@ -1,4 +1,4 @@
-<h1> Welcome to the DocDokuPLM project</h1><img src = "http://www.docdokuplm.com/wp-content/themes/docdokuplm2/library/images/plm_logo2.png" />
+<h1> Welcome to the DocDokuPLM project</h1>
 
 ## What is DocDokuPLM?
 
@@ -16,15 +16,15 @@ DocDokuPLM is a high end Open Source PLM solution.
 
 ## Project support
 
-The Project is lead by the DocDoku team and is part of the [OW2 Consortium](http://ow2.org/).
+The Project is lead by the DocDoku team.
 
 ## Setting Up
 
 You have a full description of the [Installation Guide](https://github.com/docdoku/docdoku-plm/wiki/Installation-Guide).
 
-To know how to use the PLM, you can look at the [Quick Starter Guide](https://github.com/docdoku/docdoku-plm/wiki/Quick-Starter-Guide) or at the [User Guide](http://docdokuplm.com/docdoku-plm/user-guide/en/2.0/).
+To know how to use the PLM, you can look at the [Quick Starter Guide](https://github.com/docdoku/docdoku-plm/wiki/Quick-Starter-Guide) or at the [User Guide](http://docdokuplm.com/docdoku-plm/user-guide/en/2.5/).
 
-## Coding 
+## Coding
 
 You may fork or just clone the code on [GitHub](https://github.com/docdoku/docdoku-plm) and then compile and package it with Maven.
 
@@ -34,4 +34,4 @@ You have more information in the [Development Guide](https://github.com/docdoku/
 
 AGPL version 3
 
-## [Cloud Hosting](http://docdokuplm.net)
+## [Cloud Hosting](https://docdokuplm.net)
