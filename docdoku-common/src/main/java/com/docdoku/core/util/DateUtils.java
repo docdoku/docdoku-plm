@@ -33,44 +33,33 @@ public class DateUtils {
     private DateUtils() {
     }
 
-    private static final java.lang.String GLOBAL_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
-    private static final java.lang.String SHORT_DATE_FORMAT = "yyyy-MM-dd";
-
-    private static final SimpleDateFormat GLOBAL_DATE_FORMAT_SDF = new SimpleDateFormat(GLOBAL_DATE_FORMAT);
-    private static final SimpleDateFormat SHORT_DATE_FORMAT_SDF = new SimpleDateFormat(SHORT_DATE_FORMAT);
-
-    static {
-        GLOBAL_DATE_FORMAT_SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
-        SHORT_DATE_FORMAT_SDF.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+    private static final String GLOBAL_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
+    private static final String SHORT_DATE_FORMAT = "yyyy-MM-dd";
+    private static final String TIMEZONE = "UTC";
 
     public static Date parse(String s) throws ParseException {
-        if (s.length() == SHORT_DATE_FORMAT.length()) {
-            return SHORT_DATE_FORMAT_SDF.parse(s);
-        }
-        return GLOBAL_DATE_FORMAT_SDF.parse(s);
+        return parse(s, TIMEZONE);
     }
 
     public static Date parse(String s, String timeZone) throws ParseException {
         SimpleDateFormat sdf;
 
         if (s.length() == SHORT_DATE_FORMAT.length()) {
-            sdf = new SimpleDateFormat(SHORT_DATE_FORMAT);
+            sdf = getSimpleDateFormat(SHORT_DATE_FORMAT, timeZone);
         } else {
-            sdf = new SimpleDateFormat(GLOBAL_DATE_FORMAT);
+            sdf = getSimpleDateFormat(GLOBAL_DATE_FORMAT, timeZone);
         }
-
-        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
 
         return sdf.parse(s);
     }
 
-
     public static String format(Date d) {
-        return GLOBAL_DATE_FORMAT_SDF.format(d);
+        return getSimpleDateFormat(GLOBAL_DATE_FORMAT, TIMEZONE).format(d);
     }
 
-    public static String formatShort(Date d) {
-        return SHORT_DATE_FORMAT_SDF.format(d);
+    private static SimpleDateFormat getSimpleDateFormat(String format, String timeZone) {
+        SimpleDateFormat sdf = new SimpleDateFormat(format);
+        sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+        return sdf;
     }
 }
