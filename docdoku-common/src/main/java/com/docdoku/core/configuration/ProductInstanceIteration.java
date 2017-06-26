@@ -45,7 +45,7 @@ import java.util.*;
 @IdClass(com.docdoku.core.configuration.ProductInstanceIterationKey.class)
 @Entity
 @NamedQueries({
-        @NamedQuery(name="ProductInstanceIteration.findByProductBaseline", query = "SELECT p FROM ProductInstanceIteration p WHERE p.basedOn = :productBaseline")
+        @NamedQuery(name = "ProductInstanceIteration.findByProductBaseline", query = "SELECT p FROM ProductInstanceIteration p WHERE p.basedOn = :productBaseline")
 })
 public class ProductInstanceIteration implements Serializable, FileHolder {
 
@@ -109,7 +109,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
             })
     private List<InstanceAttribute> instanceAttributes = new ArrayList<>();
 
-    @ManyToOne(optional=false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "PRODUCTBASELINE_ID", referencedColumnName = "ID")
     private ProductBaseline basedOn;
 
@@ -119,10 +119,10 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
                     @JoinColumn(name = "PATHDATAMASTER_ID", referencedColumnName = "ID")
             },
             joinColumns = {
-                    @JoinColumn(name="PRDINSTANCEITERATION_ITERATION", referencedColumnName="ITERATION"),
-                    @JoinColumn(name="PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName="PRDINSTANCEMASTER_SERIALNUMBER"),
-                    @JoinColumn(name="CONFIGURATIONITEM_ID", referencedColumnName="CONFIGURATIONITEM_ID"),
-                    @JoinColumn(name="WORKSPACE_ID", referencedColumnName="WORKSPACE_ID"),
+                    @JoinColumn(name = "PRDINSTANCEITERATION_ITERATION", referencedColumnName = "ITERATION"),
+                    @JoinColumn(name = "PRDINSTANCEMASTER_SERIALNUMBER", referencedColumnName = "PRDINSTANCEMASTER_SERIALNUMBER"),
+                    @JoinColumn(name = "CONFIGURATIONITEM_ID", referencedColumnName = "CONFIGURATIONITEM_ID"),
+                    @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID"),
             })
     private List<PathDataMaster> pathDataMasterList = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     /**
      * Set of optional usage links (actually their path from the root node)
-     * that have been included into the baseline.
+     * that have been excluded from the baseline.
      * <p>
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
@@ -312,7 +312,7 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
         this.pathDataMasterList = pathDataMasterList;
     }
 
-    public User getUpdateAuthor(){
+    public User getUpdateAuthor() {
         return this.getPartCollection().getAuthor();
     }
 
@@ -325,10 +325,11 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
 
     public Date getModificationDate() {
-        return (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+        return (modificationDate != null) ? (Date) modificationDate.clone() : null;
     }
+
     public void setModificationDate(Date modificationDate) {
-        this.modificationDate = (modificationDate!=null) ? (Date) modificationDate.clone() : null;
+        this.modificationDate = (modificationDate != null) ? (Date) modificationDate.clone() : null;
     }
 
     public List<BaselinedPart> getBaselinedPartsList() {
@@ -361,6 +362,10 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
     }
 
     public boolean isOptionalLinkRetained(String link) {
+        return !isOptionalLinkExcluded(link);
+    }
+
+    public boolean isOptionalLinkExcluded(String link) {
         return optionalUsageLinks.contains(link);
     }
 
@@ -402,10 +407,10 @@ public class ProductInstanceIteration implements Serializable, FileHolder {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o){
+        if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
 

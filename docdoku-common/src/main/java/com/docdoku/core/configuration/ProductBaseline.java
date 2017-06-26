@@ -106,7 +106,7 @@ public class ProductBaseline implements Serializable {
 
     /**
      * Set of optional usage links (actually their path from the root node)
-     * that have been included into the baseline.
+     * that have been excluded from the baseline.
      * <p>
      * Paths are strings made of ordered lists of usage link ids joined by "-".
      */
@@ -259,6 +259,10 @@ public class ProductBaseline implements Serializable {
     }
 
     public boolean isOptionalLinkRetained(String link) {
+        return !isOptionalLinkExcluded(link);
+    }
+
+    public boolean isOptionalLinkExcluded(String link) {
         return optionalUsageLinks.contains(link);
     }
 
