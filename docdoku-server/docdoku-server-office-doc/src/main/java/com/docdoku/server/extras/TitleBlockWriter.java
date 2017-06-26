@@ -57,6 +57,7 @@ public class TitleBlockWriter {
     private static final Integer DOCUMENT_TITLE_SIZE = 18;
     private static final Integer TITLE_MAP_SIZE = 14;
     private static final Integer TEXT_SIZE = 10;
+    private static final Integer SMALL_TEXT_SIZE = 9;
 
     private static final long PAGE_MARGIN_LEFT = 40;
     private static final long PAGE_MARGIN_RIGHT = 40;
@@ -78,7 +79,7 @@ public class TitleBlockWriter {
     private static final PDFont TEXT_BOLD_FONT = BaseFont.Helvetica.getBoldFont();
     private static final PDFont TEXT_ITALIC_FONT = BaseFont.Helvetica.getItalicFont();
 
-    private PDFont ICON_FONT;
+    private PDFont iconFont;
 
     private static final Logger LOGGER = Logger.getLogger(TitleBlockWriter.class.getName());
     private static final String ICON_FONT_FILE = "com/docdoku/server/extras/fonts/fontawesome-webfont.ttf";
@@ -142,7 +143,7 @@ public class TitleBlockWriter {
 
         String description = data.getDescription();
 
-        if(description != null && !description.isEmpty()){
+        if (description != null && !description.isEmpty()) {
             drawLightHorizontalSeparator();
             Paragraph descriptionParagraph = new Paragraph();
             descriptionParagraph.addText(description, TEXT_SIZE, TEXT_ITALIC_FONT);
@@ -255,7 +256,7 @@ public class TitleBlockWriter {
 
         Paragraph left = new Paragraph();
         document.add(new ColumnLayout(2, CELLS_SPACING));
-        left.addText(iconMessage, TEXT_SIZE, ICON_FONT);
+        left.addText(iconMessage, TEXT_SIZE, iconFont);
         space(left);
         left.addText(task.getTitle(), TEXT_SIZE, TEXT_BOLD_FONT);
 
@@ -283,7 +284,7 @@ public class TitleBlockWriter {
         document.add(ColumnLayout.NEWCOLUMN);
 
         Paragraph taskDetailsRight = new Paragraph();
-        taskDetailsRight.addText(task.getClosureComment(), TEXT_SIZE - 1, TEXT_ITALIC_FONT);
+        taskDetailsRight.addText(task.getClosureComment(), SMALL_TEXT_SIZE, TEXT_ITALIC_FONT);
         document.add(taskDetailsRight, new VerticalLayoutHint(Alignment.Left, 0, 0, 10, 10));
         taskDetailsRight.setMaxWidth(360.0f);
 
@@ -334,7 +335,7 @@ public class TitleBlockWriter {
 
         try (InputStream inputStream = TitleBlockWriter.class.getClassLoader()
                 .getResourceAsStream(ICON_FONT_FILE)) {
-            ICON_FONT = PDType0Font.load(pdDocument, inputStream);
+            iconFont = PDType0Font.load(pdDocument, inputStream);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
         }
