@@ -230,7 +230,9 @@ public class SearchQueryParser {
                         }
                         break;
                     case "tags":
-                        pTags = value.split(",");
+                        if (null != value) {
+                            pTags = value.split(",");
+                        }
                         break;
                     case "standardPart":
                         standardPart = Boolean.valueOf(value);
@@ -239,7 +241,9 @@ public class SearchQueryParser {
                         content = value;
                         break;
                     case "attributes":
-                        pAttributes = parseAttributeStringQuery(value);
+                        if (null != value) {
+                            pAttributes = parseAttributeStringQuery(value);
+                        }
                         break;
                     case "fetchHeadOnly":
                         fetchHeadOnly = Boolean.valueOf(value);
