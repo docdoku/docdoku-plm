@@ -45,6 +45,7 @@ import org.dozer.Mapper;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,7 @@ public class ExcelGenerator {
     private static final Logger LOGGER = Logger.getLogger(ExcelGenerator.class.getName());
 
     private Mapper mapper = DozerBeanMapperSingletonWrapper.getInstance();
+
     public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
         File excelFile = new File("export_parts.xls");
         //Blank workbook
@@ -109,9 +111,9 @@ public class ExcelGenerator {
                     // When the comment box is visible, have it show in a 1x3 space
                     ClientAnchor anchor = factory.createClientAnchor();
                     anchor.setCol1(cell.getColumnIndex());
-                    anchor.setCol2(cell.getColumnIndex()+1);
+                    anchor.setCol2(cell.getColumnIndex() + 1);
                     anchor.setRow1(row.getRowNum());
-                    anchor.setRow2(row.getRowNum()+1);
+                    anchor.setRow2(row.getRowNum() + 1);
 
                     Comment comment = drawing.createCellComment(anchor);
                     RichTextString str = factory.createRichTextString(commentsObj);
@@ -137,7 +139,7 @@ public class ExcelGenerator {
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
         // Set header style
-        for (int j=0; j<columns.length; j++) {
+        for (int j = 0; j < columns.length; j++) {
             Cell cell = sheet.getRow(0).getCell(j);
             cell.setCellStyle(headerStyle);
 
@@ -145,8 +147,8 @@ public class ExcelGenerator {
                 String comment = cell.getCellComment().getString().toString();
 
                 if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
-                    for (int k=0; k<queryResult.getRows().size(); k++) {
-                        Cell grayCell = sheet.getRow(k+1).getCell(j) != null ? sheet.getRow(k+1).getCell(j) : sheet.getRow(k+1).createCell(j);
+                    for (int k = 0; k < queryResult.getRows().size(); k++) {
+                        Cell grayCell = sheet.getRow(k + 1).getCell(j) != null ? sheet.getRow(k + 1).getCell(j) : sheet.getRow(k + 1).createCell(j);
                         grayCell.setCellStyle(headerStyle);
                     }
                 }
@@ -158,9 +160,11 @@ public class ExcelGenerator {
             FileOutputStream out = new FileOutputStream(excelFile);
             workbook.write(out);
             out.close();
-        } catch (Exception e) {
+            workbook.close();
+        } catch (IOException e) {
             LOGGER.log(Level.FINEST, null, e);
         }
+
         return excelFile;
 
     }
@@ -174,14 +178,12 @@ public class ExcelGenerator {
             if (!column.isEmpty()) {
                 if (column.trim().startsWith(QueryField.PART_REVISION_ATTRIBUTES_PREFIX)) {
                     columnTranslated = column.substring(column.indexOf(".") + 1);
-                }
-                else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
+                } else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                     columnTranslated = column.substring(column.indexOf(".") + 1);
-                }
-                else {
+                } else {
                     columnTranslated = LangHelper.getLocalizedMessage(column.trim(), locale);
                 }
-                headerFormatted[headerIndex++] = columnTranslated != null ? columnTranslated : column;
+                headerFormatted[headerIndex++] = columnTranslated.isEmpty() ? column : columnTranslated;
             }
         }
 
