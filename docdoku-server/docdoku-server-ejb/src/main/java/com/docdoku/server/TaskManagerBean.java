@@ -43,9 +43,10 @@ import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- *
  * @author Morgan Guimard
  */
 @DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -74,13 +75,12 @@ public class TaskManagerBean implements ITaskManagerLocal {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task[] assignedTasks = taskDAO.findAssignedTasks(workspaceId, userLogin);
-        List<TaskWrapper> taskWrappers = new ArrayList<>();
-        for(Task task : assignedTasks){
-            TaskWrapper taskWrapper = wrapTask(task, workspaceId);
-            if(taskWrapper != null) {
-                taskWrappers.add(taskWrapper);
-            }
-        }
+
+        List<TaskWrapper> taskWrappers = Stream.of(assignedTasks)
+                .map(task -> wrapTask(task, workspaceId))
+                .filter(taskWrapper -> taskWrapper != null)
+                .collect(Collectors.toList());
+
         return taskWrappers.toArray(new TaskWrapper[taskWrappers.size()]);
     }
 
@@ -90,13 +90,12 @@ public class TaskManagerBean implements ITaskManagerLocal {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task[] inProgressTasks = taskDAO.findInProgressTasks(workspaceId, userLogin);
-        List<TaskWrapper> taskWrappers = new ArrayList<>();
-        for(Task task : inProgressTasks){
-            TaskWrapper taskWrapper = wrapTask(task, workspaceId);
-            if(taskWrapper != null) {
-                taskWrappers.add(taskWrapper);
-            }
-        }
+
+        List<TaskWrapper> taskWrappers = Stream.of(inProgressTasks)
+                .map(task -> wrapTask(task, workspaceId))
+                .filter(taskWrapper -> taskWrapper != null)
+                .collect(Collectors.toList());
+
         return taskWrappers.toArray(new TaskWrapper[taskWrappers.size()]);
     }
 
@@ -107,8 +106,8 @@ public class TaskManagerBean implements ITaskManagerLocal {
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task task = taskDAO.loadTask(taskKey);
         TaskWrapper taskWrapper = wrapTask(task, workspaceId);
-        if(taskWrapper == null){
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        if (taskWrapper == null) {
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
         return taskWrapper;
     }
@@ -120,32 +119,29 @@ public class TaskManagerBean implements ITaskManagerLocal {
         TaskDAO taskDAO = new TaskDAO(new Locale(user.getLanguage()), em);
         Task task = taskDAO.loadTask(taskKey);
         TaskWrapper taskWrapper = wrapTask(task, workspaceId);
-        if(taskWrapper == null){
-            throw new AccessRightException(new Locale(user.getLanguage()),user);
+        if (taskWrapper == null) {
+            throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
-        switch (taskWrapper.getHolderType()){
+        switch (taskWrapper.getHolderType()) {
             case "documents":
                 DocumentRevisionKey documentRevisionKey = new DocumentRevisionKey(taskWrapper.getWorkspaceId(), taskWrapper.getHolderReference(), taskWrapper.getHolderVersion());
-                if("APPROVE".equals(action)){
-                        documentWorkflowService.approveTaskOnDocument(workspaceId, taskKey, documentRevisionKey, comment,signature);
-                    }
-                    else if("REJECT".equals(action)){
-                        documentWorkflowService.rejectTaskOnDocument(workspaceId, taskKey, documentRevisionKey, comment, signature);
-                    }
+                if ("APPROVE".equals(action)) {
+                    documentWorkflowService.approveTaskOnDocument(workspaceId, taskKey, documentRevisionKey, comment, signature);
+                } else if ("REJECT".equals(action)) {
+                    documentWorkflowService.rejectTaskOnDocument(workspaceId, taskKey, documentRevisionKey, comment, signature);
+                }
                 break;
             case "parts":
-                if("APPROVE".equals(action)){
-                    partWorkflowService.approveTaskOnPart(workspaceId,taskKey,comment,signature);
-                }
-                else if("reject".equals(action)){
+                if ("APPROVE".equals(action)) {
+                    partWorkflowService.approveTaskOnPart(workspaceId, taskKey, comment, signature);
+                } else if ("reject".equals(action)) {
                     partWorkflowService.rejectTaskOnPart(workspaceId, taskKey, comment, signature);
                 }
                 break;
             case "workspace-workflows":
-                if("APPROVE".equals(action)){
+                if ("APPROVE".equals(action)) {
                     workflowService.approveTaskOnWorkspaceWorkflow(workspaceId, taskKey, comment, signature);
-                }
-                else if("REJECT".equals(action)){
+                } else if ("REJECT".equals(action)) {
                     workflowService.rejectTaskOnWorkspaceWorkflow(workspaceId, taskKey, comment, signature);
                 }
                 break;
@@ -180,13 +176,13 @@ public class TaskManagerBean implements ITaskManagerLocal {
     }
 
 
-    private TaskWrapper wrapTask(Task task, String workspaceId){
+    private TaskWrapper wrapTask(Task task, String workspaceId) {
         TaskWrapper taskWrapper = new TaskWrapper(task, workspaceId);
 
         DocumentRevisionDAO documentRevisionDAO = new DocumentRevisionDAO(em);
         DocumentRevision documentRevision = documentRevisionDAO.getWorkflowHolder(task.getActivity().getWorkflow());
 
-        if(documentRevision!=null){
+        if (documentRevision != null) {
             taskWrapper.setHolderType("documents");
             taskWrapper.setHolderReference(documentRevision.getDocumentMasterId());
             taskWrapper.setHolderVersion(documentRevision.getVersion());
@@ -196,7 +192,7 @@ public class TaskManagerBean implements ITaskManagerLocal {
         PartRevisionDAO partRevisionDAO = new PartRevisionDAO(em);
         PartRevision partRevision = partRevisionDAO.getWorkflowHolder(task.getActivity().getWorkflow());
 
-        if(partRevision!=null){
+        if (partRevision != null) {
             taskWrapper.setHolderType("parts");
             taskWrapper.setHolderReference(partRevision.getPartNumber());
             taskWrapper.setHolderVersion(partRevision.getVersion());
@@ -204,8 +200,8 @@ public class TaskManagerBean implements ITaskManagerLocal {
             return taskWrapper;
         }
 
-        WorkspaceWorkflow workspaceWorkflowTarget = new WorkflowDAO(em).getWorkspaceWorkflowTarget(workspaceId,task.getActivity().getWorkflow());
-        if(workspaceWorkflowTarget!=null){
+        WorkspaceWorkflow workspaceWorkflowTarget = new WorkflowDAO(em).getWorkspaceWorkflowTarget(workspaceId, task.getActivity().getWorkflow());
+        if (workspaceWorkflowTarget != null) {
             taskWrapper.setHolderType("workspace-workflows");
             taskWrapper.setHolderReference(workspaceWorkflowTarget.getId());
             taskWrapper.setTask(workspaceWorkflowTarget.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(task.getKey())).findFirst().get());
