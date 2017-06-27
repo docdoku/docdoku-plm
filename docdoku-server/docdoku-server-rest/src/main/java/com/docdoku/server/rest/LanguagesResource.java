@@ -43,7 +43,7 @@ import javax.ws.rs.core.Response;
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
 public class LanguagesResource {
 
-    private final static String[] SUPPORTED_LANGUAGES = {"fr","en"};
+    private final static String[] SUPPORTED_LANGUAGES = {"fr","en", "ru"};
 
     public LanguagesResource() {
     }
