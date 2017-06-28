@@ -160,6 +160,11 @@ public class ExcelGenerator {
             FileOutputStream out = new FileOutputStream(excelFile);
             workbook.write(out);
             out.close();
+        } catch (IOException e) {
+            LOGGER.log(Level.FINEST, null, e);
+        }
+
+        try {
             workbook.close();
         } catch (IOException e) {
             LOGGER.log(Level.FINEST, null, e);
