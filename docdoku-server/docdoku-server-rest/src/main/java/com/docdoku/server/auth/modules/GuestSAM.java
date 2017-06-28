@@ -61,7 +61,7 @@ public class GuestSAM extends CustomSAM {
         try {
             callbackHandler.handle(callbacks);
         } catch (IOException | UnsupportedCallbackException e) {
-            throw new RuntimeException(e);
+            throw new AuthException(e.getMessage());
         }
 
         return AuthStatus.SUCCESS;
