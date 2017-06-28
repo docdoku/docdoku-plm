@@ -19,12 +19,13 @@
  */
 package com.docdoku.core.product;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * @author Morgan Guimard
  */
-public interface PartLink {
+public interface PartLink extends Serializable {
     int getId();
     Character getCode();
     String getFullId();
