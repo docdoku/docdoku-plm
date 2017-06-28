@@ -37,8 +37,12 @@ import java.nio.file.Files;
 @Singleton
 public class FileConverter {
 
+    private final OfficeConfig officeConfig;
+
     @Inject
-    private OfficeConfig officeConfig;
+    public FileConverter(OfficeConfig officeConfig) {
+        this.officeConfig = officeConfig;
+    }
 
     private OfficeManager officeManager;
 
