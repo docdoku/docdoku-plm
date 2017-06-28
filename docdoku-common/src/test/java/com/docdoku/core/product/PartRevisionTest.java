@@ -43,7 +43,7 @@ public class PartRevisionTest extends TestCase {
     private List<PartIteration> partIterations;
 
     @Before
-    public void setup() {
+    public void setUp() {
         partRevision = new PartRevision();
         user = Mockito.spy(new User());
         partIterations = new ArrayList<>();
