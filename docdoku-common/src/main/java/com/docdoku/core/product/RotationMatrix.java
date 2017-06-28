@@ -22,12 +22,13 @@ package com.docdoku.core.product;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Transient;
+import java.io.Serializable;
 
 /**
  * @author Charles Fallourd on 01/03/16.
  */
 @Embeddable
-public class RotationMatrix {
+public class RotationMatrix implements Serializable {
 
     private double m00, m01, m02, m10, m11, m12, m20, m21, m22;
 
