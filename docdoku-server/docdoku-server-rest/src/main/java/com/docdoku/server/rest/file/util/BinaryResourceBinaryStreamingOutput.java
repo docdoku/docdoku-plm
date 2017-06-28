@@ -58,7 +58,10 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
         // Slice the input stream considering offset and length
         try (InputStream in = input) {
             if (length > 0) {
-                in.skip(start);
+                long skip = in.skip(start);
+                if (skip != start) {
+                    LOGGER.log(Level.WARNING, "Could not skip requested bytes (skipped: " + skip + " on " + start + ")");
+                }
                 byte[] data = new byte[1024 * 8];
                 long remaining = length;
                 int nr;
@@ -70,8 +73,7 @@ public class BinaryResourceBinaryStreamingOutput implements StreamingOutput {
                     remaining -= nr;
                     output.write(data, 0, nr);
                 }
-            }
-            else{
+            } else {
                 ByteStreams.copy(in, output);
             }
         } catch (IOException e) {
