@@ -44,13 +44,16 @@ public class CustomServletContextListener implements ServletContextListener {
     @Inject
     private IAccountManagerLocal accountManager;
 
+    @Inject
+    private AuthConfig authConfig;
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
 
         LOGGER.log(Level.INFO, "Registering authentication provider");
 
         AuthConfigFactory.getFactory()
-                .registerConfigProvider(new CustomAuthConfigProvider(), "HttpServlet",
+                .registerConfigProvider(new CustomAuthConfigProvider(authConfig), "HttpServlet",
                         getAppContextID(sce.getServletContext()), "Custom authentication modules registration on HttpServlet layer");
 
     }

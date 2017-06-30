@@ -33,12 +33,15 @@ import javax.security.auth.message.config.ServerAuthConfig;
  */
 public class CustomAuthConfigProvider implements AuthConfigProvider {
 
-    public CustomAuthConfigProvider() {
+    private final AuthConfig authConfig;
+
+    public CustomAuthConfigProvider(AuthConfig authConfig) {
+       this.authConfig = authConfig;
     }
 
     @Override
     public ServerAuthConfig getServerAuthConfig(String layer, String appContext, CallbackHandler callbackHandler) throws AuthException {
-        return new CustomServerAuthConfig(layer, appContext, callbackHandler);
+        return new CustomServerAuthConfig(authConfig, layer, appContext, callbackHandler);
     }
 
     @Override

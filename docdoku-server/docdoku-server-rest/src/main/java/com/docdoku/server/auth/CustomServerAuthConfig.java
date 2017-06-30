@@ -27,10 +27,7 @@ import javax.security.auth.message.AuthException;
 import javax.security.auth.message.MessageInfo;
 import javax.security.auth.message.config.ServerAuthConfig;
 import javax.security.auth.message.config.ServerAuthContext;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,14 +46,27 @@ public class CustomServerAuthConfig implements ServerAuthConfig {
     /**
      * Declare modules to use (highest priority first)
      */
-    private List<CustomSAM> serverAuthModules = Arrays.asList(
-            new JWTSAM(),
-            new SessionSAM(),
-            new BasicHeaderSAM(),
-            new GuestSAM()
-    );
+    private final List<CustomSAM> serverAuthModules;
 
-    public CustomServerAuthConfig(String layer, String appContext, CallbackHandler handler) {
+    public CustomServerAuthConfig(AuthConfig authConfig, String layer, String appContext, CallbackHandler handler) {
+
+        List<CustomSAM> customSAMs = new ArrayList<>();
+
+        if(authConfig.isJwtEnabled()){
+            customSAMs.add(new JWTSAM());
+        }
+
+        if(authConfig.isBasicHeaderEnabled()){
+            customSAMs.add(new BasicHeaderSAM());
+        }
+
+        if(authConfig.isSessionEnabled()){
+            customSAMs.add(new SessionSAM());
+        }
+
+        customSAMs.add(new GuestSAM());
+
+        serverAuthModules = customSAMs;
 
         this.layer = layer;
         this.appContext = appContext;
