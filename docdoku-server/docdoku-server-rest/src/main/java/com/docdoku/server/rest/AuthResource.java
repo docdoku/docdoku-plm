@@ -27,6 +27,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.auth.AuthConfig;
 import com.docdoku.server.auth.jwt.JWTokenFactory;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.LoginRequestDTO;
@@ -64,6 +65,9 @@ public class AuthResource {
 
     @Inject
     private IContextManagerLocal contextManager;
+
+    @Inject
+    private AuthConfig authConfig;
 
     private static final Logger LOGGER = Logger.getLogger(AuthResource.class.getName());
     private Mapper mapper;
@@ -111,16 +115,25 @@ public class AuthResource {
             }
 
             UserGroupMapping userGroupMapping = accountManager.getUserGroupMapping(login);
-            session.setAttribute("login", login);
-            session.setAttribute("groups", userGroupMapping.getGroupName());
 
-            return Response.ok()
-                    .entity(mapper.map(account, AccountDTO.class))
-                    .header("jwt", JWTokenFactory.createToken(userGroupMapping))
-                    .build();
+            if (authConfig.isSessionEnabled()) {
+                session.setAttribute("login", login);
+                session.setAttribute("groups", userGroupMapping.getGroupName());
+            }
+
+            Response.ResponseBuilder responseBuilder = Response.ok()
+                    .entity(mapper.map(account, AccountDTO.class));
+
+            if (authConfig.isJwtEnabled()) {
+                responseBuilder.header("jwt", JWTokenFactory.createToken(userGroupMapping));
+            }
+
+            return responseBuilder.build();
 
         } else {
-            session.invalidate();
+            if (authConfig.isSessionEnabled()) {
+                session.invalidate();
+            }
             return Response.status(Response.Status.FORBIDDEN).build();
         }
 
@@ -171,13 +184,18 @@ public class AuthResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response logout(
             @Context HttpServletRequest request) {
-        request.getSession().invalidate();
+
+        if(authConfig.isSessionEnabled()) {
+            request.getSession().invalidate();
+        }
+
         try {
             request.logout();
         } catch (ServletException e) {
             LOGGER.log(Level.SEVERE, null, e);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
         }
+
         return Response.noContent().build();
     }
 }
