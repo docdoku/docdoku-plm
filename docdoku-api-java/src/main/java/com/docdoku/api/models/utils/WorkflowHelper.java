@@ -81,7 +81,7 @@ public class WorkflowHelper {
      * @return the list of running tasks for the given activity
      */
     public static List<TaskDTO> getRunningTasks(ActivityDTO activity) {
-        List<TaskDTO> tasks = new ArrayList<>();
+        List<TaskDTO> tasks = new ArrayList<TaskDTO>();
         for (TaskDTO task : activity.getTasks()) {
             if (TaskDTO.StatusEnum.IN_PROGRESS.equals(task.getStatus())) {
                 tasks.add(task);
@@ -97,7 +97,7 @@ public class WorkflowHelper {
      * @return the list of distinct involved roles
      */
     public static Set<RoleDTO> getRolesInvolved(WorkflowModelDTO workflowModel) {
-        Set<RoleDTO> roles = new HashSet<>();
+        Set<RoleDTO> roles = new HashSet<RoleDTO>();
         for (ActivityModelDTO activityModelDTO : workflowModel.getActivityModels()) {
             for (TaskModelDTO taskModelDTO : activityModelDTO.getTaskModels()) {
                 roles.add(taskModelDTO.getRole());
