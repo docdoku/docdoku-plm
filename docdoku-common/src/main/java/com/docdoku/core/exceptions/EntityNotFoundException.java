@@ -23,7 +23,10 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * @author Taylor LABEJOF
+ * Base class for implementing an Exception that represents a failed attempt
+ * to retrieve an entity because it has not been found in the persistent store.
+ *
+ * @author Taylor Labejof
  */
 public abstract class EntityNotFoundException extends ApplicationException {
 

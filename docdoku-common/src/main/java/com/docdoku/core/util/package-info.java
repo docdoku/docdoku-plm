@@ -19,7 +19,7 @@
  */
 
 /**
- * Contains utility classes useful for file, date manipulations and ensuring naming conventions.
+ * Contains utility classes useful for files, dates and naming conventions.
  *
  * @since 1.0
  */

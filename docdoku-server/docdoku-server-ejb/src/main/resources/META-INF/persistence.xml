@@ -32,7 +32,7 @@
     <class>com.docdoku.core.document.DocumentMaster</class>
     <class>com.docdoku.core.document.DocumentMasterTemplate</class>
     <class>com.docdoku.core.document.DocumentRevision</class>
-    <class>com.docdoku.core.document.Folder</class>
+    <class>com.docdoku.core.meta.Folder</class>
     <class>com.docdoku.core.document.IterationChangeSubscription</class>
     <class>com.docdoku.core.document.StateChangeSubscription</class>
     <class>com.docdoku.core.configuration.DocumentBaseline</class>

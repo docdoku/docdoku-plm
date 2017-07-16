@@ -32,12 +32,6 @@ import java.util.List;
  */
 public interface IAccountManagerLocal {
 
-    /**
-     * Get the account matching a login. ONLY USE IN LOCAL.
-     * @param pLogin Login you search
-     * @return The account matching the login
-     * @throws AccountNotFoundException If no account was found
-     */
     Account getAccount(String pLogin) throws AccountNotFoundException;
     String getRole(String pLogin);
 

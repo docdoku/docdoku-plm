@@ -69,7 +69,7 @@ public class Layer implements Serializable{
     joinColumns={
         @JoinColumn(name="LAYER_ID", referencedColumnName="ID")
     })
-    private Set<Marker> markers = new HashSet<Marker>();
+    private Set<Marker> markers = new HashSet<>();
         
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumns({

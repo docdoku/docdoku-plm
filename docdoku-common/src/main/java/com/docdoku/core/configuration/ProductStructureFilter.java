@@ -28,13 +28,14 @@ import com.docdoku.core.product.PartMaster;
 import java.util.List;
 
 /**
- * A product structure filter is used to select for a given {@link PartMaster}s
+ * A product structure filter is used to select for a given {@link PartMaster}
  * one or more candidate {@link PartIteration}s.
  *
  * It does the equivalent operation for a given {@link PartLink}.
  *
- * Contrary to {@link ProductConfigSpec} the filtering is not strict in the sens that
- * more than one {@link PartIteration} and {@link PartLink} can be returned.
+ * Contrary to {@link ProductConfigSpec} the filtering is not strict in the
+ * sens that more than one {@link PartIteration} and {@link PartLink}
+ * can be returned.
  *
  * @author Morgan Guimard
  */

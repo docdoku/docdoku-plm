@@ -23,7 +23,10 @@ package com.docdoku.core.exceptions;
 import java.util.Locale;
 
 /**
- * @author Taylor LABEJOF
+ * Base class for implementing an Exception that represents a failed attempt
+ * to create an entity because it already exists in the persistent store.
+ *
+ * @author Taylor Labejof
  */
 public abstract class EntityAlreadyExistsException extends ApplicationException {
 

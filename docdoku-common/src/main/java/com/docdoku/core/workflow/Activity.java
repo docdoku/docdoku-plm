@@ -29,9 +29,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * A base class which represents a group of {@link Task}
- * linked to a step of a {@link Workflow}.
- * It's the responsibility of the concrete implementation to decide how
+ * A base class which represents a group of {@link Task}s
+ * which forms a step of a {@link Workflow}.
+ * It is the responsibility of the concrete implementation to decide how
  * the workflow will progress to the next step and thus launch the execution
  * of the next Activity.
  *
@@ -54,7 +54,7 @@ public abstract class Activity implements Serializable, Cloneable {
     @JoinColumn(name="WORKFLOW_ID", referencedColumnName="ID")
     protected Workflow workflow;
 
-    @OneToMany(mappedBy="activity", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy="activity", orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy(value="num")
     protected List<Task> tasks=new LinkedList<>();
     protected String lifeCycleState;

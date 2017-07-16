@@ -29,7 +29,7 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
- * Abstract class for defining subscription made by users on documents.  
+ * Abstract class for defining subscription created by users on documents.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

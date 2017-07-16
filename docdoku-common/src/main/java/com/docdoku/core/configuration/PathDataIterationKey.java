@@ -23,7 +23,7 @@ package com.docdoku.core.configuration;
 import java.io.Serializable;
 
 /**
- * Identity class of {@link com.docdoku.core.configuration.PathDataIteration}.
+ * Identity class of {@link PathDataIteration} objects.
  *
  * @author Florent Garin
  */

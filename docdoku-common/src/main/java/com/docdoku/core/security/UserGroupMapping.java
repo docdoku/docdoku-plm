@@ -20,12 +20,21 @@
 
 package com.docdoku.core.security;
 
+import com.docdoku.core.common.UserGroup;
+
 import javax.persistence.Table;
 
 /**
- * Useful class for adding users to a security group. 
- * Actually, all users belong to, and only to, the "users" group.
- * 
+ * Useful class for managing security group as used by application servers.
+ * This class has nothing to do with {@link UserGroup} and the context-aware security
+ * model where a user may be granted full access on a given object and not be allowed
+ * to see another one. This class just defines static groups which will lead to one of
+ * the 3 global roles supported by the application: "users", "admin" and "guest".
+ *
+ * All regular users belong to, and only to, the "users" group.
+ * "admin" is for the superuser account who can perform administration tasks.
+ * "guest" role is for non logged users who access items that have been published.
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since   V1.0

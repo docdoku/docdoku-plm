@@ -20,22 +20,20 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
-import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.Folder;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 /**
- * Baselines refer to specific configurations of documents, they could be seen as
- * "snapshots in time" of folders with their content. More concretely, baselines are collections
- * of items (like documents and folders) at a given iteration.
+ * Baselines could be seen as "snapshots in time" of a set of documents.
+ * More concretely, baselines are collections of documents
+ * at a given iteration plus various metadata like {@code author},
+ * {@code type} or {@code description} for instance.
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  * @version 2.0, 25/08/14
  * @since V2.0
  */

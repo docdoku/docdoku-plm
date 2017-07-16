@@ -31,7 +31,7 @@ import java.io.Serializable;
  */
 
 @XmlRootElement
-@ApiModel(value = "FolderDTO", description = "This class is a representation of a {@link com.docdoku.core.document.Folder} entity")
+@ApiModel(value = "FolderDTO", description = "This class is a representation of a {@link com.docdoku.core.meta.Folder} entity")
 public class FolderDTO implements Serializable {
 
     @ApiModelProperty(value = "Folder full path")

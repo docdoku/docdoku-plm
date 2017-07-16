@@ -23,6 +23,14 @@ package com.docdoku.core.query;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * A QueryContext is the scope on which a {@link Query} is executed. So it is
+ * a constituent part of a query.
+ * It determines if the query will fetch parts from the whole catalog,
+ * a specific product or more precisely from a deliverable instance.
+ *
+ * @author Morgan Guimard
+ */
 @Table(name="QUERYCONTEXT")
 @Entity
 public class QueryContext implements Serializable{

@@ -34,7 +34,8 @@ import java.util.Date;
  * For example we could have:
  * project_X/documents/OUR ANSWER/A/1/AEAG_W08.doc
  *
- * {holder_version} and {file_type} are optional
+ * {holder_version} and {file_type} are optional and {holder_version}
+ * is actually made of two blocks (revision and iteration), like 'A/1' for instance.
  *
  * @author Florent Garin
  * @version 1.0, 02/06/08

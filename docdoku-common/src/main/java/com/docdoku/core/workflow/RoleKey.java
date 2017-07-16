@@ -23,6 +23,7 @@ package com.docdoku.core.workflow;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link Role} objects.
  *
  * @author Morgan Guimard
  */

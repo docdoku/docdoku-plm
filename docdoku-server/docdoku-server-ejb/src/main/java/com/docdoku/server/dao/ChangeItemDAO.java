@@ -24,7 +24,7 @@ import com.docdoku.core.change.ChangeItem;
 import com.docdoku.core.change.ChangeOrder;
 import com.docdoku.core.change.ChangeRequest;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.document.Folder;
+import com.docdoku.core.meta.Folder;
 import com.docdoku.core.exceptions.ChangeIssueNotFoundException;
 import com.docdoku.core.exceptions.ChangeOrderNotFoundException;
 import com.docdoku.core.exceptions.ChangeRequestNotFoundException;

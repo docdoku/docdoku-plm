@@ -30,10 +30,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Baseline refers to a specific configuration, it could be seen as
- * "snapshots in time" of configurations. More concretely, baselines are collections
- * of items (like parts) at a specified iteration.
- * Within a baseline, there must not be two different iterations of the same part.
+ * This class role is to capture {@code substituteLinks}
+ * and {@code optionalUsageLinks} in order to be easily applied at a later time,
+ * to create {@link ProductBaseline}.
  * 
  * @author Florent Garin
  * @version 2.0, 15/05/13

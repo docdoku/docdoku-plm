@@ -28,8 +28,9 @@ import java.io.Serializable;
 /**
  * Represents a CAD instance of a specific part defined in a
  * {@link PartUsageLink} {@link PartSubstituteLink}.
- * Using its attributes: translation and orientation on the three axis we'll be
- * able to create the mesh to render it.
+ *
+ * By using its attributes: translation and orientation on the three axis
+ * it will be possible to position the mesh to render it.
  * 
  * @author Florent Garin
  * @version 1.1, 20/07/12

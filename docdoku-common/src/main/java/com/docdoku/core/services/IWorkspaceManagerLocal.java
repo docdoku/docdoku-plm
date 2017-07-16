@@ -26,6 +26,8 @@ import com.docdoku.core.exceptions.*;
 /**
  *
  * @author Morgan Guimard
+ * @version 2.0, 13/09/14
+ * @since   V1.0
  */
 public interface IWorkspaceManagerLocal {
     long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException;

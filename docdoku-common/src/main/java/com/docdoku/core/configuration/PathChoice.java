@@ -21,11 +21,28 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.product.PartLink;
+import com.docdoku.core.product.PartIteration;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PathChoice {
+
+/**
+ * This class represents a potential link {@code partUsageLink} that should
+ * (otherwise why use this class?) probably have
+ * one or more substitution links.
+ * {@code resolvedPath} is the path that leads to the choice.
+ * This path is resolved in the sens that for each step the right
+ * {@link PartIteration} is identified.
+ *
+ * Instances of this class are not persisted.
+ *
+ * @author Morgan Guimard
+ * @version 2.0, 08/28/16
+ * @since 2.0
+ */
+public class PathChoice implements Serializable{
 
     private List<ResolvedPartLink> resolvedPath = new ArrayList<>();
     private PartLink partUsageLink;

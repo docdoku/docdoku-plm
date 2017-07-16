@@ -26,6 +26,8 @@ import com.docdoku.core.meta.TagKey;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link TagUserSubscription} objects.
+ *
  * @author Florent Garin on 12/09/16.
  */
 public class TagUserSubscriptionKey implements Serializable{

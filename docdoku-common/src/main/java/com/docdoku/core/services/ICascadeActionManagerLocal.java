@@ -25,7 +25,9 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.ConfigurationItemKey;
 
 /**
- * @author Charles Fallourd on 10/02/16.
+ * @author Charles Fallourd
+ * @version 2.5, 09/03/16
+ * @since   V2.5
  */
 public interface ICascadeActionManagerLocal {
 

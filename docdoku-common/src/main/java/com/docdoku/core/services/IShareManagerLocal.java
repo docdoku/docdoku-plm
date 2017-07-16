@@ -30,6 +30,6 @@ public interface IShareManagerLocal {
 
     SharedEntity findSharedEntityForGivenUUID(String pUuid) throws SharedEntityNotFoundException;
 
-    public void deleteSharedEntityIfExpired(SharedEntity pSharedEntity);
+    void deleteSharedEntityIfExpired(SharedEntity pSharedEntity);
 
 }

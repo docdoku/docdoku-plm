@@ -27,7 +27,7 @@ import java.util.Locale;
 
 /**
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  */
 public class ProductInstanceAlreadyExistsException extends EntityAlreadyExistsException {
     private final ProductInstanceMaster productInstanceMaster;

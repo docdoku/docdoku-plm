@@ -52,7 +52,7 @@ public class WorkflowModel implements Serializable, Cloneable {
 
 
 
-    @OneToMany(mappedBy = "workflowModel", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "workflowModel", orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("step ASC")
     private List<ActivityModel> activityModels=new LinkedList<>();
 

@@ -22,6 +22,7 @@ package com.docdoku.core.security;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link WorkspaceUserMembership} objects.
  *
  * @author Florent Garin
  */

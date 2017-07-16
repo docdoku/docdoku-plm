@@ -25,10 +25,13 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Identity class of {@link BaselinedPart} objects defined as an embeddable object in order
- * to be used inside the baselined parts map in the {@link PartCollection} class.
+ * Identity class of {@link BaselinedPart} objects defined as an embeddable
+ * object in order to be used inside the baselined parts map in
+ * the {@link PartCollection} class.
  *
  * @author Florent Garin
+ * @version 2.0, 25/08/14
+ * @since V2.0
  */
 @Embeddable
 public class BaselinedPartKey implements Serializable{

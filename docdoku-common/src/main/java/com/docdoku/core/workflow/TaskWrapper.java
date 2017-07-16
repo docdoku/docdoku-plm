@@ -23,6 +23,10 @@ package com.docdoku.core.workflow;
 import java.io.Serializable;
 
 /**
+ * This class is used to carry contextual information along the task itself.
+ *
+ * Instances of this class are not persisted.
+ *
  * @author Morgan Guimard
  */
 

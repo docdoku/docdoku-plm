@@ -21,6 +21,10 @@
 package com.docdoku.core.util;
 
 /**
+ * Document IDs, part numbers and other object identifiers
+ * and must conform to naming conventions.
+ *
+ * This class checks that these conventions are respected.
  *
  * @author Florent Garin
  */

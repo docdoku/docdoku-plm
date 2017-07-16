@@ -29,6 +29,10 @@ import java.util.List;
 
 /**
  * A list of values is basically a named collection of name-value pair.
+ * The list is ordered and the value of the {@link NameValuePair} is optional.
+ * Even if most of the time, we just want to define an enumeration type
+ * and thus omit the value part of the pair, specifying a value could be
+ * interesting for computation purpose.
  *
  * @author Florent Garin
  * @version 2.0, 27/02/15

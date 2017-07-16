@@ -35,8 +35,8 @@ import java.util.List;
 
 /**
  * A model object from which we can create a {@link PartMaster}.
- * Creating a part through a model offers the ability to enforce a input
- * mask for the part ID, as well as some insuring that the starting
+ * Creating a part through a model offers the ability to enforce an input
+ * mask for the part ID, as well as insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.
  * 
  * @author Florent Garin
@@ -198,6 +198,15 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
         this.attachedFile = attachedFile;
     }
 
+    public void setAttributeInstanceTemplates(List<InstanceAttributeTemplate> attributeInstanceTemplates) {
+        this.attributeInstanceTemplates = attributeInstanceTemplates;
+    }
+
+    public List<InstanceAttributeTemplate> getAttributeInstanceTemplates() {
+        return attributeInstanceTemplates;
+    }
+
+
     public ACL getAcl() {
         return acl;
     }
@@ -299,13 +308,5 @@ public class PartMasterTemplate implements Serializable, Comparable<PartMasterTe
         } else {
             return id.compareTo(pTemplate.id);
         }
-    }
-
-    public void setAttributeInstanceTemplates(List<InstanceAttributeTemplate> attributeInstanceTemplates) {
-        this.attributeInstanceTemplates = attributeInstanceTemplates;
-    }
-
-    public List<InstanceAttributeTemplate> getAttributeInstanceTemplates() {
-        return attributeInstanceTemplates;
     }
 }

@@ -34,8 +34,10 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * This class represents a state, identified by its iteration, of an instance of
+ * This class represents a state at a moment of time of an instance of
  * a product {@link ProductInstanceMaster}.
+ *
+ * The state is identified by its {@code iteration} number.
  *
  * @author Florent Garin
  * @version 2.0, 24/02/14

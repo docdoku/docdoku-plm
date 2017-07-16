@@ -29,22 +29,23 @@ import java.util.*;
  * @author Elisabel Généreux
  */
 public class BaselinedDocumentBinaryResourceCollection implements Serializable {
-    private String rootFoldername;
+
+    private String rootFolderName;
     private Set<BinaryResource> attachedFiles = new HashSet<>();
 
     public BaselinedDocumentBinaryResourceCollection() {
     }
 
-    public BaselinedDocumentBinaryResourceCollection(String rootFoldername) {
-        this.rootFoldername = rootFoldername;
+    public BaselinedDocumentBinaryResourceCollection(String rootFolderName) {
+        this.rootFolderName = rootFolderName;
     }
 
-    public String getRootFoldername() {
-        return rootFoldername;
+    public String getRootFolderName() {
+        return rootFolderName;
     }
 
-    public void setRootFoldername(String rootFoldername) {
-        this.rootFoldername = rootFoldername;
+    public void setRootFolderName(String rootFolderName) {
+        this.rootFolderName = rootFolderName;
     }
 
     public Set<BinaryResource> getAttachedFiles() {

@@ -35,7 +35,7 @@ import java.util.List;
  * 
  * All the effectivities that reference a given ConfigurationItem
  * must be of the same type.
- * Application logic should insure it's not possible to mix effectivity
+ * Application logic should insure it is not possible to mix effectivity
  * types for the same configuration item.
  * 
  * @author Florent Garin

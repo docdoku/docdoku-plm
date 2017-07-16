@@ -19,7 +19,13 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.product.PartIteration;
+
 /**
+ * ProductBaselineType is an enum representing the type of
+ * the {@link ProductBaseline} which informs on the algorithm used
+ * (at baseline creation time) in order
+ * to select the proper {@link PartIteration}.
  *
  * @author Morgan Guimard
  */

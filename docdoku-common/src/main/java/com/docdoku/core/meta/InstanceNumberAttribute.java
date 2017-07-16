@@ -24,7 +24,8 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 /**
- * Defines a numerical custom attribute of a document, part, product and other objects.
+ * Defines a numeric type custom attribute of a document, part,
+ * product and other objects.
  * 
  * @author Florent Garin
  * @version 1.0, 02/06/08

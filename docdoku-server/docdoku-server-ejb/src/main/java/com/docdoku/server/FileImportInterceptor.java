@@ -72,7 +72,7 @@ public class FileImportInterceptor {
             List<String> errors = new ArrayList<>();
             List<String> warnings = new ArrayList<>();
             errors.add("Unhandled exception");
-            importResult = new ImportResult(file, originalFileName, warnings, errors);
+            importResult = new ImportResult(file, warnings, errors);
             return null;
 
         } finally {

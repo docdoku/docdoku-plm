@@ -24,8 +24,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 
 /**
- * An Effectivity is an abstract subclass which is
- * a kind of qualification object.
+ * Effectivity is an abstract class which is a kind of qualification object.
  * <p>
  * Effectivities are primarily applied to {@link PartRevision} objects.
  *

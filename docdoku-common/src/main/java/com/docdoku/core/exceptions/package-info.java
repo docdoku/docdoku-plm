@@ -17,12 +17,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.docdoku.core.product;
 
 /**
+ * Provides exceptions returned by the business layer.
  *
- * @author Morgan Guimard
+ * @since 1.0
  */
-public enum PartRevisionStatus {
-    WIP, RELEASED, OBSOLETE
-}
+package com.docdoku.core.exceptions;

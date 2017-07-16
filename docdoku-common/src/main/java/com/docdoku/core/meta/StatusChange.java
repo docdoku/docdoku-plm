@@ -27,7 +27,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * Embeddable class to track status change.
+ * Actually it gathers an author {@code statusChangeAuthor}
+ * and a date {@code statusModificationDate} attributes.
+ *
  * @author Charles Fallourd
+ * @version 2.5, 27/02/15
+ * @since V2.5
  */
 @Embeddable
 public class StatusChange implements Serializable{

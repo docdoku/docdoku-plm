@@ -25,7 +25,11 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
- * @author Charles Fallourd on 01/03/16.
+ * A double precision floating point 3 by 3 matrix to support 3D rotations.
+ *
+ * @author Charles Fallourd
+ * @version 2.5, 01/03/16
+ * @since   V2.5
  */
 @Embeddable
 public class RotationMatrix implements Serializable {

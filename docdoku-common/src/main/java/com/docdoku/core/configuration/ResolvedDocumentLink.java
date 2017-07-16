@@ -18,18 +18,34 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.document;
+package com.docdoku.core.configuration;
+
+import com.docdoku.core.document.DocumentIteration;
+import com.docdoku.core.document.DocumentLink;
 
 import java.io.Serializable;
 
-public class DocumentIterationLink implements Serializable {
+/**
+ * This class is used to carry additional information along the document
+ * link itself. More precisely, this information is the target document
+ * iteration to consider which may vary according to the chosen
+ * resolution process.
+ *
+ * As a reminder, the stored {@link DocumentLink} targets
+ * a document revision not a document iteration.
+ *
+ * Instances of this class are not persisted.
+ *
+ * @author Morgan Guimard
+ */
+public class ResolvedDocumentLink implements Serializable {
     private DocumentLink documentLink;
     private DocumentIteration documentIteration;
 
-    public DocumentIterationLink() {
+    public ResolvedDocumentLink() {
     }
 
-    public DocumentIterationLink(DocumentLink documentLink, DocumentIteration documentIteration) {
+    public ResolvedDocumentLink(DocumentLink documentLink, DocumentIteration documentIteration) {
         this.documentLink = documentLink;
         this.documentIteration = documentIteration;
     }

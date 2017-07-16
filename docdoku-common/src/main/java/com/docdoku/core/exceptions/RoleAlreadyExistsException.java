@@ -26,7 +26,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 /**
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  */
 public class RoleAlreadyExistsException extends EntityAlreadyExistsException {
     private final Role mRole;

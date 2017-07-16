@@ -18,16 +18,14 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.  
  */
 
-package com.docdoku.core.exceptions;
+package com.docdoku.core.meta;
+
 
 /**
+ * Enumeration to define the possible status of a document or a part revision.
  *
- * @author Florent Garin
+ * @author Morgan Guimard
  */
-public class VaultException extends RuntimeException {
-    
-    public VaultException(Throwable pCause) {
-        super(pCause);
-    }
-   
+public enum RevisionStatus {
+    WIP, RELEASED, OBSOLETE
 }

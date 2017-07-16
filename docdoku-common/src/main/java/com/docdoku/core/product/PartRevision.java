@@ -21,6 +21,7 @@ package com.docdoku.core.product;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.meta.RevisionStatus;
 import com.docdoku.core.meta.StatusChange;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.security.ACL;
@@ -147,7 +148,7 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
 
     private boolean publicShared;
 
-    private PartRevisionStatus status= PartRevisionStatus.WIP;
+    private RevisionStatus status= RevisionStatus.WIP;
 
 
 
@@ -445,22 +446,22 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
         this.publicShared = publicShared;
     }
 
-    public PartRevisionStatus getStatus() {
+    public RevisionStatus getStatus() {
         return status;
     }
-    public void setStatus(PartRevisionStatus status) {
+    public void setStatus(RevisionStatus status) {
         this.status = status;
     }
 
     public boolean isReleased(){
-        return status== PartRevisionStatus.RELEASED;
+        return status== RevisionStatus.RELEASED;
     }
     public boolean isObsolete(){
-        return status== PartRevisionStatus.OBSOLETE;
+        return status== RevisionStatus.OBSOLETE;
     }
     public boolean release(User user){
-        if(this.status== PartRevisionStatus.WIP){
-            this.status= PartRevisionStatus.RELEASED;
+        if(this.status== RevisionStatus.WIP){
+            this.status= RevisionStatus.RELEASED;
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());
@@ -472,8 +473,8 @@ public class PartRevision implements Serializable, Comparable<PartRevision> {
 
     }
     public boolean markAsObsolete(User user){
-        if(this.status== PartRevisionStatus.RELEASED){
-            this.status= PartRevisionStatus.OBSOLETE;
+        if(this.status== RevisionStatus.RELEASED){
+            this.status= RevisionStatus.OBSOLETE;
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());

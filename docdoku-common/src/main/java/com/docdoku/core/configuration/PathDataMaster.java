@@ -27,6 +27,12 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Wrapper for data of multiple forms
+ * (attributes, binary files, document links...) localized on a precise part
+ * inside a product structure.
+ * Each evolution of data is tracked with the help of
+ * {@link PathDataIteration}.
+ *
  * @author Morgan Guimard
  */
 @Table(name="PATHDATAMASTER")

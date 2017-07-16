@@ -26,7 +26,7 @@ import java.util.UUID;
 
 /**
  * Represents a password recovery request. This class makes the link between
- * the UUID of the request and the user who asked it.
+ * the UUID of the request and the user who asked for it.
  * 
  * @author Florent Garin
  * @version 1.0, 01/04/11

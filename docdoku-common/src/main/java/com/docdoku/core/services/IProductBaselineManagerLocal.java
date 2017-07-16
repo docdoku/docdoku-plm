@@ -28,7 +28,7 @@ import java.util.Map;
 
 /**
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  * @version 2.0, 26/09/14
  * @since   V2.0
  */

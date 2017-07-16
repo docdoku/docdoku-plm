@@ -85,7 +85,7 @@ public class DocumentBaselineFileExportMessageBodyWriter implements MessageBodyW
 
     private void addToZip(BaselinedDocumentBinaryResourceCollection collection, BinaryResource binaryResource, ZipOutputStream zs) {
         try {
-            String folderName = collection.getRootFoldername() + "/attachedFiles";
+            String folderName = collection.getRootFolderName() + "/attachedFiles";
             addToZipFile(binaryResource, folderName, zs);
         } catch (IOException | StorageException e) {
             LOGGER.log(Level.SEVERE, "Something went wrong while adding file to zip", e);

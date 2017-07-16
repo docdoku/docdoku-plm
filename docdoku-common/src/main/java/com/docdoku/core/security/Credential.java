@@ -74,11 +74,11 @@ public class Credential implements java.io.Serializable {
     
     private static String md5Sum(String pText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes("UTF-8"));
-        StringBuffer hexString = new StringBuffer();
+        StringBuilder hexString = new StringBuilder();
         for (byte aDigest : digest) {
             String hex = Integer.toHexString(0xFF & aDigest);
             if (hex.length() == 1) {
-                hexString.append("0" + hex);
+                hexString.append("0").append(hex);
             } else {
                 hexString.append(hex);
             }

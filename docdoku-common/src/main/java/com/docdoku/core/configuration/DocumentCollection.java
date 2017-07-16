@@ -20,6 +20,7 @@
 package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
+import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentRevisionKey;
 
@@ -30,11 +31,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class maintains a collection of document iterations which cannot hold
- * more than one {@link com.docdoku.core.document.DocumentIteration} in
- * the same {@link com.docdoku.core.document.DocumentRevision}.
+ * This class maintains a collection of document iterations with no more
+ * than one {@link DocumentIteration} per each {@link DocumentRevision}.
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  * @version 2.0, 25/08/14
  * @since V2.0
  */

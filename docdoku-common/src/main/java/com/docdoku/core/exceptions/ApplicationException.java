@@ -24,6 +24,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
+ * Parent class for all application (non system) exceptions.
  *
  * @author Florent Garin
  */

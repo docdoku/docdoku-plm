@@ -28,6 +28,6 @@ import com.docdoku.core.gcm.GCMAccount;
  * @author Morgan Guimard
  */
 public interface IGCMSenderLocal {
-    public void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
+    void sendStateNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
     void sendIterationNotification(GCMAccount[] pGCGcmAccounts, DocumentRevision pDocumentRevision);
 }

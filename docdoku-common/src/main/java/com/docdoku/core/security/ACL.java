@@ -50,11 +50,11 @@ public class ACL implements Serializable, Cloneable{
     @Id
     private int id;
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="acl", fetch=FetchType.EAGER)
+    @OneToMany(cascade=CascadeType.ALL, orphanRemoval = true, mappedBy="acl", fetch=FetchType.EAGER)
     @MapKey(name="principal")
     private Map<User,ACLUserEntry> userEntries=new HashMap<User,ACLUserEntry>();
 
-    @OneToMany(cascade=CascadeType.ALL, mappedBy="acl", fetch=FetchType.EAGER)
+    @OneToMany(cascade=CascadeType.ALL, orphanRemoval = true, mappedBy="acl", fetch=FetchType.EAGER)
     @MapKey(name="principal")
     private Map<UserGroup,ACLUserGroupEntry> groupEntries=new HashMap<UserGroup,ACLUserGroupEntry>();
 

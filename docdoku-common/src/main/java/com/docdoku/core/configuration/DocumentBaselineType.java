@@ -19,7 +19,13 @@
  */
 package com.docdoku.core.configuration;
 
+import com.docdoku.core.document.DocumentIteration;
+
 /**
+ * DocumentBaselineType is an enum representing the type of
+ * the {@link DocumentBaseline} which informs on the algorithm used
+ * (at baseline creation time) in order
+ * to select the proper {@link DocumentIteration}.
  *
  * @author Morgan Guimard
  */

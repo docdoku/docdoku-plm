@@ -21,6 +21,7 @@ package com.docdoku.core.configuration;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.product.PartMaster;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,9 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class maintains a collection of part iterations which cannot hold
- * more than one {@link com.docdoku.core.product.PartIteration} linked
- * to the same {@link com.docdoku.core.product.PartMaster}.
+ * This class maintains a collection of part iterations with no more
+ * than one {@link PartIteration} per each {@link PartMaster}.
  *
  * PartCollection is a foundation for the definition of {@link ProductBaseline}
  * and {@link ProductInstanceIteration}.

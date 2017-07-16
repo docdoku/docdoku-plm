@@ -23,9 +23,16 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Represents an association between two parts
+ * inside a Product Breakdown Structure.
+ *
  * @author Morgan Guimard
+ * @version 2.5, 26/04/15
+ * @see PartUsageLink
+ * @see PartSubstituteLink
+ * @since   V2.5
  */
-public interface PartLink extends Serializable {
+public interface PartLink {
     int getId();
     Character getCode();
     String getFullId();

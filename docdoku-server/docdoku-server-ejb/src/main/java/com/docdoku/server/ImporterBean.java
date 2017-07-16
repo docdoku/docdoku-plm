@@ -154,6 +154,6 @@ public class ImporterBean implements IImporterManagerLocal {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
         errors.add(ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("NoImporterAvailable"));
-        return new ImportResult(file, fileName, warnings, errors);
+        return new ImportResult(file, warnings, errors);
     }
 }

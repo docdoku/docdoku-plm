@@ -28,10 +28,13 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Wraps data needed to perform a query on document or part revisions.
- * @author Taylor LABEJOF
+ * Wraps data needed to perform a basic query on document or part revisions.
+ *
+ * This class is abstract hence a dedicated child class should be used.
+ *
+ * @author Taylor Labejof
  */
-public class SearchQuery  implements Serializable {
+public abstract class SearchQuery implements Serializable {
 
     protected String workspaceId;
     protected String fullText;

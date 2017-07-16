@@ -25,7 +25,7 @@ import java.util.Locale;
 
 /**
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  */
 public class MilestoneNotFoundException extends EntityNotFoundException {
     private final int mChange;

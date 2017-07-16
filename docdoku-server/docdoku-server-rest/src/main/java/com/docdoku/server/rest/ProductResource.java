@@ -23,7 +23,7 @@ import com.docdoku.core.change.ModificationNotification;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.DocumentIterationLink;
+import com.docdoku.core.configuration.ResolvedDocumentLink;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -825,11 +825,11 @@ public class ProductResource {
 
         List<DocumentIterationLinkDTO> documentIterationLinkDTOs = new ArrayList<>();
         PartIterationKey partIterationKey = new PartIterationKey(workspaceId, partNumber, partVersion, partIteration);
-        List<DocumentIterationLink> documentIterationLinkList = productService.getDocumentLinksAsDocumentIterations(workspaceId, ciId, configSpec, partIterationKey);
-        for (DocumentIterationLink documentIterationLink : documentIterationLinkList) {
+        List<ResolvedDocumentLink> resolvedDocumentLinkList = productService.getDocumentLinksAsDocumentIterations(workspaceId, ciId, configSpec, partIterationKey);
+        for (ResolvedDocumentLink resolvedDocumentLink : resolvedDocumentLinkList) {
 
-            DocumentIteration documentIteration = documentIterationLink.getDocumentIteration();
-            DocumentLink documentLink = documentIterationLink.getDocumentLink();
+            DocumentIteration documentIteration = resolvedDocumentLink.getDocumentIteration();
+            DocumentLink documentLink = resolvedDocumentLink.getDocumentLink();
 
             DocumentIterationLinkDTO documentIterationLinkDTO = new DocumentIterationLinkDTO();
             documentIterationLinkDTO.setDocumentMasterId(documentIteration.getId());

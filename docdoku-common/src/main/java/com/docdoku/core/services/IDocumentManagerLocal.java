@@ -24,6 +24,7 @@ import com.docdoku.core.common.User;
 import com.docdoku.core.document.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.log.DocumentLog;
+import com.docdoku.core.meta.Folder;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.TagKey;
@@ -70,32 +71,8 @@ public interface IDocumentManagerLocal {
 
     void setDocumentPublicShared(DocumentRevisionKey pDocRPK, boolean isPublicShared) throws AccessRightException, NotAllowedException, WorkspaceNotFoundException, UserNotFoundException, DocumentRevisionNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 
-    /**
-     * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
-     *
-     * @param fullName Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
-     *                 data file will be returned
-     * @return The binary resource, a BinaryResource instance, that now needs to be created
-     * @throws UserNotFoundException
-     * @throws UserNotActiveException
-     * @throws WorkspaceNotFoundException
-     * @throws FileNotFoundException
-     * @throws NotAllowedException
-     * @throws AccessRightException
-     */
     BinaryResource getBinaryResource(String fullName) throws WorkspaceNotFoundException, NotAllowedException, FileNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
 
-    /**
-     * Returns the BinaryResource object given his Id. WARNING: You have to check access right before use it.
-     *
-     * @param fullName Id of the <a href="BinaryResource.html">BinaryResource</a> of which the
-     *                 data file will be returned
-     * @return The binary resource, a BinaryResource instance, that now needs to be created
-     * @throws UserNotFoundException
-     * @throws UserNotActiveException
-     * @throws WorkspaceNotFoundException
-     * @throws FileNotFoundException
-     */
     BinaryResource getTemplateBinaryResource(String fullName) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, FileNotFoundException, WorkspaceNotEnabledException;
 
     DocumentRevision checkInDocument(DocumentRevisionKey pDocRPK) throws WorkspaceNotFoundException, NotAllowedException, DocumentRevisionNotFoundException, AccessRightException, UserNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;

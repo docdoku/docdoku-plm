@@ -28,6 +28,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+
+/**
+ * A class that stores the result of a data import.
+ * In addition to persist if the import is complete or not this class
+ * keeps a track of all warning and error messages if any.
+ *
+ * @author Morgan Guimard
+ * @version 2.5, 11/05/17
+ * @since   V2.5
+ */
 @Entity
 @Table(name = "IMPORT")
 public class Import implements Serializable {
@@ -48,13 +58,13 @@ public class Import implements Serializable {
             joinColumns = {
                     @JoinColumn(name = "IMPORT_ID", referencedColumnName = "ID")
             })
-    private List<String> warnings ;
+    private List<String> warnings;
 
     @ElementCollection
     @CollectionTable(name="IMPORT_ERROR", joinColumns = {
             @JoinColumn(name = "IMPORT_ID", referencedColumnName = "ID")
     })
-    private List<String> errors ;
+    private List<String> errors;
 
     private String fileName;
 

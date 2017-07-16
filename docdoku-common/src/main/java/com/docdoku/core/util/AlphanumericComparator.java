@@ -40,12 +40,12 @@ import java.util.Comparator;
 public class AlphanumericComparator implements Comparator<CharSequence> {
 
     /**
-     * The collator used for comparison of the alpha part
+     * The collator used for comparison of the alpha part.
      */
     private final Collator collator;
 
     /**
-     * Create comparator using platform default collator.
+     * Creates comparator using platform default collator.
      * (equivalent to using Collator.getInstance())
      */
     public AlphanumericComparator() {
@@ -53,7 +53,7 @@ public class AlphanumericComparator implements Comparator<CharSequence> {
     }
 
     /**
-     * Create comparator using specified collator
+     * Creates comparator using specified collator.
      */
     public AlphanumericComparator(final Collator collator) {
         if (collator == null) {
@@ -73,7 +73,7 @@ public class AlphanumericComparator implements Comparator<CharSequence> {
     }
 
     /**
-     * Get subsequence of only characters or only digits, but not mixed
+     * Gets sub-sequence of only characters or only digits, but not mixed
      *
      * Fixed issue when last chars are numbers, and strings have different length.  E.g. "abc10" and "abc2"
      */
@@ -110,12 +110,12 @@ public class AlphanumericComparator implements Comparator<CharSequence> {
             if (isDigit(chunk1.charAt(0)) && isDigit(chunk2.charAt(0))) {
                 final int clen1 = chunk1.length();
                 final int clen2 = chunk2.length();
-                // count and skip leading zeros
+                // counts and skips leading zeros
                 int zeros1 = 0;
                 while (zeros1 < clen1 && chunk1.charAt(zeros1) == '0') {
                     ++zeros1;
                 }
-                // count and skip leading zeros
+                // counts and skips leading zeros
                 int zeros2 = 0;
                 while (zeros2 < clen2 && chunk2.charAt(zeros2) == '0') {
                     ++zeros2;
@@ -138,11 +138,11 @@ public class AlphanumericComparator implements Comparator<CharSequence> {
                 result = collator.compare(chunk1.toString(), chunk2.toString());
             }
         }
-        // if there was no difference at all, let the longer one be the greater one
+        // if there was no difference at all, lets the longer one be the greater one
         if (result == 0) {
             result = length1 - length2;
         }
-        // limit result to (-1, 0, or 1)
+        // limits result to (-1, 0, or 1)
         return Integer.signum(result);
     }
 

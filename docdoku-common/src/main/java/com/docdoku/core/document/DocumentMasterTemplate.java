@@ -34,8 +34,8 @@ import java.util.*;
 
 /**
  * A model object from which we can create a {@link DocumentMaster}.
- * Creating a document through a model offers the ability to enforce a input
- * mask for the document ID, as well as some insuring that the starting
+ * Creating a document through a model offers the ability to enforce an input
+ * mask for the document ID, as well insuring that the starting
  * iteration defines some custom attributes or has some specific binary files.
  * 
  * @author Florent Garin

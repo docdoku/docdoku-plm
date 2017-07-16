@@ -55,6 +55,8 @@ public class DocumentLog implements Serializable {
     public DocumentLog() {
     }
 
+    public int getId() { return id; }
+
     public int getDocumentIteration() {
         return documentIteration;
     }

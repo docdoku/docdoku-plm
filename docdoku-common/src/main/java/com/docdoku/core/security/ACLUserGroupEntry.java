@@ -26,8 +26,8 @@ import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 
 /**
- * Class that belongs to the ACL classe and makes the mapping between a group
- * and a associated permission.
+ * Class that belongs to the ACL class and makes the mapping between a group
+ * and an associated permission.
  *
  * @author Florent Garin
  * @version 1.1, 17/07/09

@@ -26,6 +26,7 @@ import java.io.Serializable;
 
 /**
  * Base class for all instance attributes.
+ * This class holds a value
  *
  * @author Florent Garin
  * @version 1.0, 02/06/08

@@ -29,7 +29,11 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Wraps data needed to perform a custom query on database.
+ * Query represents, without any surprise, a query which searches for parts.
+ * Queries can freely be constructed of compound selections,
+ * expressions, predicates, orderings.
+ * Moreover they can be saved, to be lately re-executed.
+ * They are private to the user who created them.
  *
  * @author Morgan Guimard
  */

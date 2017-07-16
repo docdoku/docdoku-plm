@@ -27,7 +27,7 @@ import com.docdoku.core.workflow.Workflow;
 
 /**
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  * @version 2.0, 15/10/14
  * @since   V2.0
  */

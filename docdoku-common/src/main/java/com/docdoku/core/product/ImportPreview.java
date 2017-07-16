@@ -20,16 +20,24 @@
 
 package com.docdoku.core.product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A class to stock dry run result, a preview of the import
+ * A class to store dry run result of a data import.
+ *
+ * A dry run informs of the actions that will be performed, parts to checkout,
+ * parts to create when the import will be executed for real.
+ *
+ * Instances of this class are not persisted.
  *
  * @author Laurent Le Van
- * @since 29/06/2016
+ *
+ * @version 2.5, 29/06/2016
+ * @since   V2.5
  */
-public class ImportPreview {
+public class ImportPreview implements Serializable {
 
     /**
      * Part revisions which will be checked out

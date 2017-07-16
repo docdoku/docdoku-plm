@@ -56,7 +56,7 @@ public abstract class ActivityModel implements Serializable, Cloneable {
     })
     protected WorkflowModel workflowModel;   
     
-    @OneToMany(mappedBy = "activityModel", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "activityModel", orphanRemoval = true, cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @OrderBy("num")
     protected List<TaskModel> taskModels=new LinkedList<>();
 

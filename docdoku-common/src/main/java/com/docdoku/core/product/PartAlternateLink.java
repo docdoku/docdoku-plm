@@ -23,7 +23,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- *
  * An Alternate object is a part that is interchangeable with another part
  * with respect to function and physical properties.
  * 

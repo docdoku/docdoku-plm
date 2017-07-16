@@ -19,13 +19,23 @@
  */
 package com.docdoku.core.product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * An ordered collection of {@link PartLink} useful to reference in
+ * an unambiguous manner a part inside a Product Breakdown Structure.
+ *
+ *
  * @author Elisabel Généreux
+ * @version 2.5, 29/04/15
+ * @see PartUsageLink
+ * @see PartSubstituteLink
+ * @see PartLink
+ * @since   V2.5
  */
-public class PartLinkList {
+public class PartLinkList implements Serializable{
 
     private List<PartLink> path = new ArrayList<>();
 

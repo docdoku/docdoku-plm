@@ -31,6 +31,9 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
+ * A state at a moment of time of a piece of data represented by
+ * a {@link PathDataMaster}.
+ *
  * @author Chadid Asmae
  */
 @Table(name="PATHDATAITERATION")

@@ -28,10 +28,10 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.InstanceAttribute;
 import com.docdoku.core.meta.InstanceDateAttribute;
 import com.docdoku.core.meta.InstanceListOfValuesAttribute;
+import com.docdoku.core.meta.RevisionStatus;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLinkList;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.product.PartRevisionStatus;
 import com.docdoku.core.query.QueryContext;
 import com.docdoku.core.query.QueryField;
 import com.docdoku.core.query.QueryResultRow;
@@ -178,7 +178,7 @@ public class QueryResultMessageBodyWriter implements MessageBodyWriter<QueryResu
             }
 
             if (selects.contains(QueryField.PART_REVISION_STATUS)) {
-                PartRevisionStatus status = part.getStatus();
+                RevisionStatus status = part.getStatus();
                 jg.write(QueryField.PART_REVISION_STATUS, status.toString());
             }
 

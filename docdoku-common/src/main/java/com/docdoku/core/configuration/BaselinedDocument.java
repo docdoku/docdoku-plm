@@ -30,7 +30,7 @@ import java.io.Serializable;
 /**
  * Class link that gathers a document collection and a given document iteration.
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  * @version 2.0, 25/08/14
  * @since V2.0
  */

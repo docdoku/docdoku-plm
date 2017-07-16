@@ -24,7 +24,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.document.Folder;
+import com.docdoku.core.meta.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartUsageLink;

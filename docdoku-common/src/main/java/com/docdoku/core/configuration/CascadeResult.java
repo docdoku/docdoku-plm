@@ -22,6 +22,14 @@ package com.docdoku.core.configuration;
 
 import java.io.Serializable;
 
+/**
+ * Encapsulates the result of a cascade operation made upon
+ * the Product Structure.
+ *
+ * @author Charles Fallourd
+ * @version 2.5, 12/04/16
+ * @since   V2.5
+ */
 public class CascadeResult implements Serializable{
 
     private int succeedAttempts;

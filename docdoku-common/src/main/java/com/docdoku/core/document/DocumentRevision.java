@@ -22,6 +22,8 @@ package com.docdoku.core.document;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Version;
+import com.docdoku.core.meta.Folder;
+import com.docdoku.core.meta.RevisionStatus;
 import com.docdoku.core.meta.StatusChange;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.security.ACL;
@@ -143,7 +145,7 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
 
     private boolean publicShared;
 
-    private DocumentRevisionStatus status = DocumentRevisionStatus.WIP;
+    private RevisionStatus status = RevisionStatus.WIP;
 
 
     @Embedded
@@ -429,25 +431,25 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
         this.publicShared = publicShared;
     }
 
-    public DocumentRevisionStatus getStatus() {
+    public RevisionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(DocumentRevisionStatus status) {
+    public void setStatus(RevisionStatus status) {
         this.status = status;
     }
 
     public boolean isReleased() {
-        return status == DocumentRevisionStatus.RELEASED;
+        return status == RevisionStatus.RELEASED;
     }
 
     public boolean isObsolete() {
-        return status == DocumentRevisionStatus.OBSOLETE;
+        return status == RevisionStatus.OBSOLETE;
     }
 
     public boolean release(User user) {
-        if (this.status == DocumentRevisionStatus.WIP) {
-            this.status = DocumentRevisionStatus.RELEASED;
+        if (this.status == RevisionStatus.WIP) {
+            this.status = RevisionStatus.RELEASED;
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());
@@ -460,8 +462,8 @@ public class DocumentRevision implements Serializable, Comparable<DocumentRevisi
     }
 
     public boolean markAsObsolete(User user) {
-        if (this.status == DocumentRevisionStatus.RELEASED) {
-            this.status = DocumentRevisionStatus.OBSOLETE;
+        if (this.status == RevisionStatus.RELEASED) {
+            this.status = RevisionStatus.OBSOLETE;
             StatusChange statusChange = new StatusChange();
             statusChange.setStatusChangeAuthor(user);
             statusChange.setStatusModificationDate(new Date());

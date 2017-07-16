@@ -182,6 +182,10 @@ public class PartUsageLink implements Serializable, Cloneable, PartLink {
         this.optional = optional;
     }
 
+    public void addSubstitute(PartSubstituteLink partSubstituteLink) {
+        substitutes.add(partSubstituteLink);
+    }
+
     @Override
     public PartUsageLink clone() {
         PartUsageLink clone;
@@ -207,9 +211,5 @@ public class PartUsageLink implements Serializable, Cloneable, PartLink {
         clone.cadInstances = clonedCADInstances;
 
         return clone;
-    }
-
-    public void addSubstitute(PartSubstituteLink partSubstituteLink) {
-        substitutes.add(partSubstituteLink);
     }
 }

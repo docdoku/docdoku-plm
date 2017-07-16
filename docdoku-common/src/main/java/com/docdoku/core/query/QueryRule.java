@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * QueryRule is the "where" element of a {@link Query}.
+ *
  * @author Morgan Guimard
  */
 @Table(name="QUERYRULE")

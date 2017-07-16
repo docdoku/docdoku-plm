@@ -24,6 +24,7 @@ import com.docdoku.core.common.UserGroupKey;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link ACLUserGroupEntry} objects.
  *
  * @author Florent Garin
  */

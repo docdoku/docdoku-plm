@@ -31,6 +31,8 @@ import java.util.Map;
 /**
  *
  * @author Florent Garin
+ * @version 2.0, 11/10/14
+ * @since   V1.0
  */
 public interface IWorkflowManagerLocal {
 

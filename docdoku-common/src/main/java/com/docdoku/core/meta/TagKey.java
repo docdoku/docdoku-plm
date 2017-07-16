@@ -23,9 +23,11 @@ package com.docdoku.core.meta;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link Tag} objects.
  *
  * @author Florent Garin
  */
+
 public class TagKey implements Serializable {
     
     private String workspace;

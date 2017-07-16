@@ -21,8 +21,11 @@
 package com.docdoku.core.product;
 
 /**
+ * Defines how the rotation of the geometry is expressed.
  *
- * @author Morgan Guimard
+ * @author Charles Fallourd
+ * @version 2.5, 12/04/16
+ * @since   V2.5
  */
 public enum RotationType {
     ANGLE, MATRIX

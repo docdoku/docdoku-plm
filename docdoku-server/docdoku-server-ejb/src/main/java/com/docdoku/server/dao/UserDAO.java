@@ -22,7 +22,7 @@ package com.docdoku.server.dao;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.UserKey;
 import com.docdoku.core.common.Workspace;
-import com.docdoku.core.document.Folder;
+import com.docdoku.core.meta.Folder;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.WorkspaceUserMembership;
 import com.docdoku.core.security.WorkspaceUserMembershipKey;

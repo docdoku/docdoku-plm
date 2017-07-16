@@ -21,10 +21,22 @@
 package com.docdoku.core.product;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ImportResult {
+
+/**
+ * Value object that wraps information about the result of an import.
+ *
+ * Instances of this class are not persisted.
+ *
+ * @author Laurent Le Van
+ *
+ * @version 2.5, 29/06/2016
+ * @since   V2.5
+ */
+public class ImportResult implements Serializable {
 
     private File importedFile;
     private List<String> warnings = new ArrayList<>();
@@ -33,29 +45,12 @@ public class ImportResult {
     private String errorOutput;
 
 
-    public ImportResult(File importedFile) {
-        this.importedFile = importedFile;
-    }
-
     public ImportResult(File importedFile, List<String> warnings, List<String> errors) {
-        this.importedFile = importedFile;
-        this.warnings = warnings;
-        this.errors=errors;
-    }
-
-    public ImportResult(File importedFile, String originalFileName, List<String> warnings, List<String> errors) {
         this.importedFile = importedFile;
         this.warnings = warnings;
         this.errors = errors;
     }
 
-    public ImportResult(File importedFile, List<String> warnings, List<String> errors, String stdOutput, String errorOutput) {
-        this.importedFile = importedFile;
-        this.warnings = warnings;
-        this.errors=errors;
-        this.stdOutput = stdOutput;
-        this.errorOutput = errorOutput;
-    }
 
     public File getImportedFile() {
         return importedFile;

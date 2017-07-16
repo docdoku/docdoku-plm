@@ -20,6 +20,13 @@
 
 package com.docdoku.core.product;
 
+/**
+ * Enumeration that lists all types of effectivities.
+ *
+ * @author Florent Garin
+ * @version 2.5, 12/01/17
+ * @since   V2.5
+ */
 public enum TypeEffectivity {
     SERIALNUMBERBASEDEFFECTIVITY, DATEBASEDEFFECTIVITY, LOTBASEDEFFECTIVITY
 }

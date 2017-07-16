@@ -27,7 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Helper class for file manipulation and information.
+ * Helper class for file manipulations and information extraction.
  *
  * @author Florent Garin
  */

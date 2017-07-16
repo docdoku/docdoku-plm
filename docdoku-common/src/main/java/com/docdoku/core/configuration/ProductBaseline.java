@@ -31,11 +31,12 @@ import java.util.*;
 
 /**
  * Baseline refers to a specific configuration, it could be seen as
- * "snapshots in time" of configurations. More concretely, baselines are collections
- * of items (like parts) at a specified iteration.
+ * "snapshots in time" of a configuration. More concretely, baselines are
+ * collections of items (like parts) at a specified iteration.
+ *
  * Within a baseline, there must not be two different iterations of the same part.
- * Because {@link com.docdoku.core.product.PartIteration} may reference documents
- * baselines capture also {@link com.docdoku.core.configuration.DocumentCollection}.
+ * Because {@link PartIteration} may reference documents
+ * baselines capture also {@link DocumentCollection}.
  *
  * @author Florent Garin
  * @version 2.0, 15/05/13

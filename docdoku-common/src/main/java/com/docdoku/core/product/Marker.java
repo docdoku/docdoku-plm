@@ -53,7 +53,7 @@ public class Marker implements Serializable{
     joinColumns={
         @JoinColumn(name="MARKER_ID", referencedColumnName="ID")
     })
-    private Set<Effectivity> effectivities = new HashSet<Effectivity>();
+    private Set<Effectivity> effectivities = new HashSet<>();
         
     @ManyToMany(fetch= FetchType.LAZY)
     @JoinTable(name="MARKER_PARTMASTER",
@@ -64,7 +64,7 @@ public class Marker implements Serializable{
     joinColumns={
         @JoinColumn(name="MARKER_ID", referencedColumnName="ID")
     })
-    private Set<PartMaster> relatedParts = new HashSet<PartMaster>();
+    private Set<PartMaster> relatedParts = new HashSet<>();
     
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -32,7 +32,14 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * This class is the model used to create roles in a workspace
+ * Role describes the profile needed to complete a task.
+ * It acts as a place holder that will be filled with real users
+ * (or user groups) when the {@link Workflow} will be started.
+ *
+ * {@code defaultAssignedUsers} and {@code defaultAssignedGroups} provide
+ * default mappings that could however be overridden.
+ *
+ * Roles are created at workspace level.
  *
  * @author Morgan Guimard
  */

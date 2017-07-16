@@ -26,6 +26,8 @@ import com.docdoku.core.admin.PlatformOptions;
 /**
  *
  * @author Morgan Guimard
+ * @version 2.5, 03/02/16
+ * @since   V2.5
  */
 public interface IPlatformOptionsManagerLocal {
     OperationSecurityStrategy getWorkspaceCreationStrategy();

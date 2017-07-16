@@ -25,8 +25,11 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 
 /**
- * Defines a text type custom attribute of a document, part, product and other objects.
- *
+ * Defines a text type custom attribute of a document, part, product
+ * and other objects.
+ * InstanceLongTextAttribute can store value of almost infinite size but if you
+ * are sure that the text is not longer than 255 characters it is recommended
+ * for better performance to rely on {@link InstanceTextAttribute}.
  * 
  * @author Florent Garin
  * @version 2.0, 29/08/16

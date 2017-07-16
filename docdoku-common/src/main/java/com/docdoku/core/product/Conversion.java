@@ -24,6 +24,13 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * A class that stores the result of a conversion process.
+ *
+ * @author Morgan Guimard
+ * @version 2.5, 11/05/17
+ * @since   V2.5
+ */
 @Entity
 @IdClass(PartIterationKey.class)
 public class Conversion implements Serializable {

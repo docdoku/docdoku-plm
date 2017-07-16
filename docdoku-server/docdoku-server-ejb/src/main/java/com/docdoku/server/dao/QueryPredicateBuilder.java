@@ -1,6 +1,6 @@
 package com.docdoku.server.dao;
 
-import com.docdoku.core.product.PartRevisionStatus;
+import com.docdoku.core.meta.RevisionStatus;
 import com.docdoku.core.util.DateUtils;
 
 import javax.persistence.criteria.CriteriaBuilder;
@@ -51,9 +51,9 @@ public class QueryPredicateBuilder {
                 }
                 break;
             case "status":
-                List<PartRevisionStatus> operandValues = new ArrayList<>();
+                List<RevisionStatus> operandValues = new ArrayList<>();
                 for(String value:values){
-                    operandValues.add(PartRevisionStatus.valueOf(value));
+                    operandValues.add(RevisionStatus.valueOf(value));
                 }
                 operands = operandValues;
                 break;

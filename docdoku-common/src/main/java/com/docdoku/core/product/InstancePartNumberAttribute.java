@@ -26,7 +26,8 @@ import com.docdoku.core.meta.InstanceAttribute;
 import javax.persistence.*;
 
 /**
- * Defines a custom attribute which holds a reference to an existing {@link PartMaster} object.
+ * Defines a custom attribute which holds a reference to an existing
+ * {@link PartMaster} object.
  * 
  * @author Florent Garin
  * @version 2.5, 26/09/16

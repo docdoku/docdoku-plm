@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Value object to represent one row of a {@link Query} result set.
+ *
+ * Instances of this class are not persisted.
+ *
  * @author Morgan Guimard
  */
 public class QueryResultRow {

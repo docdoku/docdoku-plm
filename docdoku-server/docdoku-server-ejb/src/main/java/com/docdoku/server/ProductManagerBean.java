@@ -3593,7 +3593,7 @@ public class ProductManagerBean implements IProductManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     @Override
-    public List<DocumentIterationLink> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, String configSpec, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
+    public List<ResolvedDocumentLink> getDocumentLinksAsDocumentIterations(String workspaceId, String configurationItemId, String configSpec, PartIterationKey partIterationKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, BaselineNotFoundException, PartIterationNotFoundException, ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user.getLanguage());
 
@@ -3619,19 +3619,19 @@ public class ProductManagerBean implements IProductManagerLocal {
 
         DocumentCollection documentCollection = baseline.getDocumentCollection();
         Map<BaselinedDocumentKey, BaselinedDocument> baselinedDocuments = documentCollection.getBaselinedDocuments();
-        List<DocumentIterationLink> documentIterationLinks = new ArrayList<>();
+        List<ResolvedDocumentLink> resolvedDocumentLinks = new ArrayList<>();
 
         for (Map.Entry<BaselinedDocumentKey, BaselinedDocument> map : baselinedDocuments.entrySet()) {
             BaselinedDocument baselinedDocument = map.getValue();
             DocumentIteration targetDocument = baselinedDocument.getTargetDocument();
             for (DocumentLink documentLink : partIteration.getLinkedDocuments()) {
                 if (documentLink.getTargetDocument().getKey().equals(targetDocument.getDocumentRevisionKey())) {
-                    documentIterationLinks.add(new DocumentIterationLink(documentLink, targetDocument));
+                    resolvedDocumentLinks.add(new ResolvedDocumentLink(documentLink, targetDocument));
                 }
             }
         }
 
-        return documentIterationLinks;
+        return resolvedDocumentLinks;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})

@@ -39,7 +39,7 @@ public class Workflow implements Serializable {
     @Id
     private int id;
 
-    @OneToMany(mappedBy = "workflow", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "workflow", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @OrderBy("step ASC")
     private List<Activity> activities = new LinkedList<>();
 

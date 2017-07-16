@@ -23,13 +23,19 @@ package com.docdoku.core.configuration;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartLink;
 
+import java.io.Serializable;
+
 /**
+ * Class that wraps a {@link PartLink} with the correct version
+ * of {@link PartIteration} that has been selected according to a config spec.
+ *
+ * Instances of this class are not persisted.
  *
  * @author Morgan Guimard
  * @version 2.0, 07/21/15
  * @since 2.0
  */
-public class ResolvedPartLink {
+public class ResolvedPartLink implements Serializable {
 
     private PartIteration partIteration;
     private PartLink partLink;

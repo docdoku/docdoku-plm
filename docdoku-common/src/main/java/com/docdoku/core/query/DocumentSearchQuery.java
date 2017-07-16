@@ -20,20 +20,20 @@
 
 package com.docdoku.core.query;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Wraps data needed to perform a query on documents.
+ * Wraps data needed to perform a basic query on document revisions.
+ * This class is not persisted and should be considered as value object.
  *
  * @author Florent Garin
  * @version 2.0, 03/01/2014
  * @since V2.0
  */
-public class DocumentSearchQuery extends SearchQuery implements Serializable {
-    protected String docMId;
-    protected String title;
-    protected String folder;
+public class DocumentSearchQuery extends SearchQuery {
+    private String docMId;
+    private String title;
+    private String folder;
 
     public DocumentSearchQuery() {
 

@@ -20,20 +20,23 @@
 
 package com.docdoku.core.query;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * Wraps data needed to perform a query on part revisions.
+ * Wraps data needed to perform a basic query on part revisions.
+ * Contrary to what the query builder through the {@link Query} class
+ * is capable of, the structure of a basic query is fix.
+ *
+ * This class is not persisted and should be considered as value object.
  *
  * @author Morgan Guimard
  * @version 2.0, 03/01/2014
  * @since V2.0
  */
-public class PartSearchQuery extends SearchQuery implements Serializable {
-    protected String partNumber;
-    protected String name;
-    protected Boolean standardPart;
+public class PartSearchQuery extends SearchQuery {
+    private String partNumber;
+    private String name;
+    private Boolean standardPart;
 
     public PartSearchQuery() {
 

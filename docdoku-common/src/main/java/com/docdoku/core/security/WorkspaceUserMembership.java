@@ -27,7 +27,6 @@ import java.io.Serializable;
 
 /**
  * Class that holds information on how a specific user belongs to a workspace.
- *   
  * 
  * @author Florent Garin
  * @version 1.1, 08/07/09

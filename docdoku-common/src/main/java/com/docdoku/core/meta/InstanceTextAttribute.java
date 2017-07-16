@@ -25,7 +25,9 @@ import javax.persistence.Table;
 
 /**
  * Defines a text type custom attribute of a document, part, product and other objects.
- * 
+ * Be aware that this type cannot accept text longer than 255 characters.
+ * {@link InstanceLongTextAttribute} has not that constraint.
+ *
  * @author Florent Garin
  * @version 1.0, 02/06/08
  * @since   V1.0

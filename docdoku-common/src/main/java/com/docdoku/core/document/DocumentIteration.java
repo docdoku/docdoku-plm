@@ -123,8 +123,7 @@ public class DocumentIteration implements Serializable, FileHolder, Comparable<D
 
         if (lastDoc != null) {
             newIteration = lastDoc.getIteration() + 1;
-            Date lastModificationDate = lastDoc.modificationDate;
-            modificationDate = lastModificationDate;
+            modificationDate = lastDoc.modificationDate;
         }
 
         setDocumentRevision(pDocumentRevision);

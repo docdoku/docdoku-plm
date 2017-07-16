@@ -25,9 +25,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author Morgan Guimard
+ * Convenience class to construct a resolved Product Structure.
  *
- * Helping class to construct a descriptive tree of a resolved configuration.
+ * @author Morgan Guimard
  */
 
 public class Component implements Serializable {

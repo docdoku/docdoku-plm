@@ -24,6 +24,9 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
+ * Represents a directional link between two parts in the context of
+ * an unambiguity location (named path) inside a product structure.
+ *
  * @author Morgan Guimard
  * @version 2.0, 29/04/15
  * @since   V2.0

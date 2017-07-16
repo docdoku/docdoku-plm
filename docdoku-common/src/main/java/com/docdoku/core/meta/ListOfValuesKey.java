@@ -23,6 +23,7 @@ package com.docdoku.core.meta;
 import java.io.Serializable;
 
 /**
+ * Identity class of {@link ListOfValues} objects.
  *
  * @author Florent Garin
  */

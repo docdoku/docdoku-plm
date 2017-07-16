@@ -24,8 +24,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
 
 /**
- * This class holds the definition of the custom attribute of the documents and parts
- * @author the template.
+ * This class holds the definition of a custom attribute of a document,
+ * a part or any other entity.
  * 
  * @author Florent Garin
  * @version 1.1, 23/01/12

@@ -21,7 +21,7 @@
 package com.docdoku.server.dao;
 
 import com.docdoku.core.document.DocumentRevision;
-import com.docdoku.core.document.Folder;
+import com.docdoku.core.meta.Folder;
 import com.docdoku.core.exceptions.CreationException;
 import com.docdoku.core.exceptions.EntityConstraintException;
 import com.docdoku.core.exceptions.FolderAlreadyExistsException;
