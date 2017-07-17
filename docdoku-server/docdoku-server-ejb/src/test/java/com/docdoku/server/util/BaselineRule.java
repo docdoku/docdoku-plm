@@ -24,6 +24,7 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.configuration.ProductBaselineType;
+import com.docdoku.core.meta.RevisionStatus;
 import com.docdoku.core.product.*;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
@@ -34,7 +35,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author Asmae CHADID on 19/12/14.
+ * @author Asmae Chadid
+ * @version 2.0, 19/12/14
+ * @since V2.0
  */
 public class BaselineRule implements TestRule {
 
@@ -66,7 +69,7 @@ public class BaselineRule implements TestRule {
             PartRevision revision = new PartRevision(partMaster, "A", user);
             iterationLists.add(new PartIteration(revision, user));
             revision.setPartIterations(iterationLists);
-            revision.setStatus(PartRevisionStatus.RELEASED);
+            revision.setStatus(RevisionStatus.RELEASED);
             revisions.add(revision);
             partMaster.setPartRevisions(revisions);
         }
