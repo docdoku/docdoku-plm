@@ -20,10 +20,12 @@
 
 package com.docdoku.core.security;
 
+import com.docdoku.core.util.HashUtils;
+import com.docdoku.core.util.Tools;
+
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import java.io.UnsupportedEncodingException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,7 +58,7 @@ public class Credential implements java.io.Serializable {
         Credential credential = new Credential();
         credential.login = pLogin;
         try {
-            credential.password=md5Sum(pClearPassword);
+            credential.password= HashUtils.md5Sum(pClearPassword);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException pEx) {
             LOGGER.log(Level.SEVERE, null, pEx);
         }
@@ -65,25 +67,11 @@ public class Credential implements java.io.Serializable {
 
     public boolean authenticate(String pPassword){
         try {
-            return password != null && pPassword != null && md5Sum(pPassword).equals(password);
+            return password != null && pPassword != null && HashUtils.md5Sum(pPassword).equals(password);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException pEx) {
             LOGGER.log(Level.SEVERE, null, pEx);
             return false;
         }
-    }
-    
-    private static String md5Sum(String pText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes("UTF-8"));
-        StringBuilder hexString = new StringBuilder();
-        for (byte aDigest : digest) {
-            String hex = Integer.toHexString(0xFF & aDigest);
-            if (hex.length() == 1) {
-                hexString.append("0").append(hex);
-            } else {
-                hexString.append(hex);
-            }
-        }
-        return hexString.toString();
     }
 
     public String getLogin() {

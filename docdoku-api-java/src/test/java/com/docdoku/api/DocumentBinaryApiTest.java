@@ -89,7 +89,7 @@ public class DocumentBinaryApiTest {
 
     private File documentDownload() throws ApiException {
         return documentBinaryApi.downloadDocumentFile(createdDocument.getWorkspaceId(), createdDocument.getDocumentMasterId(),
-                createdDocument.getVersion(), 1, "attached-file.md", "", null, null, null, null);
+                createdDocument.getVersion(), 1, "attached-file.md", null, null, null, null, null, null);
     }
 
 }

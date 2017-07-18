@@ -22,14 +22,14 @@ package com.docdoku.server.rest.exceptions;
 /**
  * @author Taylor LABEJOF
  */
-public class ExpiredLinkException extends RestApiException {
+public class SharedResourceAccessException extends RestApiException {
 
-    public ExpiredLinkException() {
+    public SharedResourceAccessException() {
         super();
     }
 
     @Override
     public String getMessage() {
-        return "This resource can not be found. Maybe the link has expired.";
+        return "This resource can not be found. The link may have expired or is protected by password";
     }
 }

@@ -23,15 +23,12 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.exceptions.FileNotFoundException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
-
-import java.io.InputStream;
 
 /**
  *
@@ -42,12 +39,9 @@ public interface IPublicEntityManagerLocal {
     DocumentRevision getPublicDocumentRevision(DocumentRevisionKey documentRevisionKey);
     BinaryResource getPublicBinaryResourceForDocument(String fullName) throws FileNotFoundException;
     BinaryResource getPublicBinaryResourceForPart(String fileName) throws FileNotFoundException;
-    BinaryResource getBinaryResourceForSharedPart(String fileName) throws FileNotFoundException;
-    BinaryResource getBinaryResourceForSharedDocument(String fileName) throws FileNotFoundException;
-    InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource) throws ConvertedResourceException;
+    BinaryResource getBinaryResourceForSharedEntity(String fileName) throws FileNotFoundException;
     boolean canAccess(PartIterationKey partIKey) throws PartRevisionNotFoundException;
     boolean canAccess(DocumentIterationKey partIKey) throws DocumentRevisionNotFoundException;
     BinaryResource getBinaryResourceForProductInstance(String fullName) throws FileNotFoundException;
     BinaryResource getBinaryResourceForPathData(String fullName) throws FileNotFoundException;
-    InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws ConvertedResourceException;
 }

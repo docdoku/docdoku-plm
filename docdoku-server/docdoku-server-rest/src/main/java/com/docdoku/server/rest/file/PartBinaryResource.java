@@ -25,12 +25,15 @@ import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
+import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.server.helpers.Streams;
+import com.docdoku.core.util.HashUtils;
+import com.docdoku.server.auth.AuthConfig;
+import com.docdoku.server.auth.jwt.JWTokenFactory;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadResponseBuilder;
@@ -52,10 +55,10 @@ import javax.ws.rs.core.Response;
 import java.io.*;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,8 +68,8 @@ import java.util.logging.Logger;
 public class PartBinaryResource {
 
     private static final Logger LOGGER = Logger.getLogger(PartBinaryResource.class.getName());
-    private static final String NATIVE_CAD_SUBTYPE = "nativecad";
-    private static final String ATTACHED_FILES_SUBTYPE = "attachedfiles";
+    public static final String NATIVE_CAD_SUBTYPE = "nativecad";
+    public static final String ATTACHED_FILES_SUBTYPE = "attachedfiles";
     private static final String UTF8_ENCODING = "UTF-8";
     @Inject
     private IBinaryStorageManagerLocal storageManager;
@@ -82,7 +85,8 @@ public class PartBinaryResource {
     private IPublicEntityManagerLocal publicEntityManager;
     @Inject
     private IOnDemandConverterManagerLocal onDemandConverterManager;
-
+    @Inject
+    private AuthConfig authConfig;
 
     public PartBinaryResource() {
     }
@@ -183,9 +187,8 @@ public class PartBinaryResource {
         }
     }
 
-    // Split on several methods because of Path conflict when we use regex
     @GET
-    @ApiOperation(value = "Download direct part file",
+    @ApiOperation(value = "Download part file",
             response = File.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Download success"),
@@ -196,35 +199,6 @@ public class PartBinaryResource {
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDirectPartFile(
             @Context Request request,
-            @HeaderParam("Range") String range,
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-            @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
-            PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
-            UnMatchingUuidException, ExpiredLinkException {
-
-        return downloadPartFile(request, range, null, workspaceId, partNumber, version, iteration, null, fileName, type, output, null);
-    }
-
-    @GET
-    @ApiOperation(value = "Download part file from uuid",
-            response = File.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Download success"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @Path("/{iteration}/{fileName}/uuid/{uuid}")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadPartFileWithUuid(
-            @Context Request request,
-            @HeaderParam("Range") String range,
-            @HeaderParam("Referer") String referer,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
@@ -232,42 +206,15 @@ public class PartBinaryResource {
             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
             @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
             @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
-            @ApiParam(required = true, value = "Resource token") @PathParam("uuid") final String uuid)
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Shared entity uuid") @QueryParam("uuid") final String uuid,
+            @ApiParam(required = false, value = "Password for private resource") @HeaderParam("password") String password,
+            @ApiParam(required = false, value = "Shared entity token") @QueryParam("token") String accessToken)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
             PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
-            UnMatchingUuidException, ExpiredLinkException {
-
-        return downloadPartFile(request, range, referer, workspaceId, partNumber, version, iteration, null, fileName, type, output, uuid);
+            UnMatchingUuidException, SharedResourceAccessException {
+        return downloadPartFile(request, workspaceId, partNumber, version, iteration, null, fileName, type, output, range, uuid, password, accessToken);
     }
-
-    @GET
-    @ApiOperation(value = "Download part file with subtype",
-            response = File.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Download success"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @Path("/{iteration}/{subType}/{fileName}/")
-    @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    public Response downloadPartFileWithSubtype(
-            @Context Request request,
-            @HeaderParam("Range") String range,
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
-            @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
-            @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
-            @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-            @ApiParam(required = true, value = "Sub type") @PathParam("subType") final String subType,
-            @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
-            @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
-            @ApiParam(required = false, value = "Output") @QueryParam("output") String output)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
-            PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
-            UnMatchingUuidException, ExpiredLinkException {
-
-        return downloadPartFile(request, range, null, workspaceId, partNumber, version, iteration, subType, fileName, type, output, null);
-    }
-
 
     @GET
     @ApiOperation(value = "Download part file",
@@ -277,73 +224,76 @@ public class PartBinaryResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("/{iteration}/{subType}/{fileName}/uuid/{uuid}")
+    @Path("/{iteration}/{subType}/{fileName}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadPartFile(
             @Context Request request,
-            @HeaderParam("Range") String range,
-            @HeaderParam("Referer") String referer,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") final String partNumber,
             @ApiParam(required = true, value = "Part version") @PathParam("version") final String version,
             @ApiParam(required = true, value = "Part iteration") @PathParam("iteration") final int iteration,
-            @ApiParam(required = true, value = "Sub type") @PathParam("subType") final String subType,
+            @ApiParam(required = true, value = "File sub type") @PathParam("subType") String subType,
             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
             @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
             @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
-            @PathParam("uuid") final String pUuid)
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Shared entity uuid") @QueryParam("uuid") final String uuid,
+            @ApiParam(required = false, value = "Password for private resource") @HeaderParam("password") String password,
+            @ApiParam(required = false, value = "Shared entity token") @QueryParam("token") String accessToken)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
             PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException,
-            UnMatchingUuidException, ExpiredLinkException {
+            UnMatchingUuidException, SharedResourceAccessException {
 
-        String fullName;
-        if (pUuid != null && !pUuid.isEmpty()) {
-
-            SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(pUuid);
-
-            // Check uuid & access right
-            checkUuidValidity(sharedEntity, workspaceId, partNumber, version, iteration, referer);
-
-            PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
-            fullName = sharedEntity.getWorkspace().getId() +
-                    "/parts/" +
-                    FileIO.encode(partRevision.getPartNumber()) + "/" +
-                    partRevision.getVersion() + "/" +
-                    iteration + "/";
-        } else {
-            // Check access right
-            PartIterationKey partIK = new PartIterationKey(workspaceId, partNumber, version, iteration);
-            if (!canAccess(partIK)) {
-                return Response.status(Response.Status.UNAUTHORIZED).build();
-            }
-
-            fullName = workspaceId + "/parts/" + FileIO.encode(partNumber) + "/" + version + "/" + iteration + "/";
-        }
-
+        BinaryResource binaryResource;
         String decodedFileName = fileName;
+        InputStream binaryContentInputStream;
 
         try {
             decodedFileName = URLDecoder.decode(fileName, UTF8_ENCODING);
         } catch (UnsupportedEncodingException e) {
-            LOGGER.log(Level.SEVERE, "Cannot decode filename");
-            LOGGER.log(Level.FINER, null, e);
+            LOGGER.log(Level.SEVERE, "Cannot decode filename", e);
         }
 
-        fullName += (subType != null && !subType.isEmpty()) ? subType + "/" + decodedFileName : decodedFileName;
+        String fullName = workspaceId + "/parts/" + FileIO.encode(partNumber) + "/" + version + "/" + iteration + "/";
 
-        return downloadPartFile(request, range, fullName, subType, type, output, pUuid);
-    }
+        if (subType != null && !subType.isEmpty()) {
+            fullName = fullName + subType + "/";
+        }
 
-
-    private Response downloadPartFile(Request request, String range, String fullName, String subType, String type, String output, String uuid)
-            throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException, PreconditionFailedException, NotModifiedException, RequestedRangeNotSatisfiableException {
-
-        BinaryResource binaryResource;
+        fullName = fullName + decodedFileName;
 
         if (uuid != null && !uuid.isEmpty()) {
-            binaryResource = publicEntityManager.getBinaryResourceForSharedPart(fullName);
+
+            SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
+
+            if (accessToken != null && !accessToken.isEmpty()) {
+                String decodedUUID = JWTokenFactory.validateSharedResourceToken(authConfig.getJWTKey(), accessToken);
+                if (null == decodedUUID || !decodedUUID.equals(sharedEntity.getUuid())) {
+                    throw new SharedResourceAccessException();
+                }
+            } else {
+                // Check uuid & access right
+                checkUuidValidity(sharedEntity, workspaceId, partNumber, version, iteration, password);
+            }
+
+            binaryResource = publicEntityManager.getBinaryResourceForSharedEntity(fullName);
+
         } else {
-            binaryResource = getBinaryResource(fullName);
+            // Check access right
+
+            if (accessToken != null && !accessToken.isEmpty()) {
+                String decodedEntityKey = JWTokenFactory.validateEntityToken(authConfig.getJWTKey(), accessToken);
+                boolean tokenValid = new PartRevisionKey(workspaceId, partNumber, version).toString().equals(decodedEntityKey);
+                if (!tokenValid) {
+                    throw new SharedResourceAccessException();
+                }
+                binaryResource = publicEntityManager.getBinaryResourceForSharedEntity(fullName);
+            } else {
+                if (!canAccess(new PartIterationKey(workspaceId, partNumber, version, iteration))) {
+                    throw new SharedResourceAccessException();
+                }
+                binaryResource = getBinaryResource(fullName);
+            }
         }
 
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
@@ -353,12 +303,9 @@ public class PartBinaryResource {
         if (rb != null) {
             return rb.build();
         }
-
-
-        InputStream binaryContentInputStream = null;
         try {
             if (ATTACHED_FILES_SUBTYPE.equals(subType) && output != null && !output.isEmpty()) {
-                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output, uuid);
+                binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
                 if (range == null || range.isEmpty()) {
                     binaryResourceDownloadMeta.setLength(0);
                 }
@@ -367,7 +314,6 @@ public class PartBinaryResource {
             }
             return BinaryResourceDownloadResponseBuilder.prepareResponse(binaryContentInputStream, binaryResourceDownloadMeta, range);
         } catch (StorageException | FileConversionException e) {
-            Streams.close(binaryContentInputStream);
             return BinaryResourceDownloadResponseBuilder.downloadError(e, fullName);
         }
     }
@@ -380,16 +326,9 @@ public class PartBinaryResource {
      * @return The binary resource stream in the wanted output
      * @throws com.docdoku.server.rest.exceptions.FileConversionException
      */
-    private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat, String uuid) throws FileConversionException {
+    private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
-            if (uuid != null && !uuid.isEmpty()) {
-                return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
-            }
-            if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-                return onDemandConverterManager.getPartConvertedResource(outputFormat, binaryResource);
-            } else {
-                return publicEntityManager.getPartConvertedResource(outputFormat, binaryResource);
-            }
+            return onDemandConverterManager.getPartConvertedResource(outputFormat, binaryResource);
         } catch (Exception e) {
             throw new FileConversionException(e);
         }
@@ -408,14 +347,14 @@ public class PartBinaryResource {
         return productService.getBinaryResource(fullName);
     }
 
-    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration, String referer)
-            throws UnMatchingUuidException, ExpiredLinkException, NotAllowedException {
+    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String partNumber, String version, int iteration, String password)
+            throws UnMatchingUuidException, SharedResourceAccessException, NotAllowedException {
         if (!(sharedEntity instanceof SharedPart)) {
             throw new UnMatchingUuidException();
         }
 
-        checkUuidReferer(sharedEntity, referer);
         checkUuidExpiredDate(sharedEntity);
+        checkUuidPassword(sharedEntity, password);
 
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
         PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
@@ -428,23 +367,25 @@ public class PartBinaryResource {
         }
     }
 
-    private void checkUuidExpiredDate(SharedEntity sharedEntity) throws ExpiredLinkException {
+    private void checkUuidPassword(SharedEntity sharedEntity, String password) throws SharedResourceAccessException {
+        String entityPassword = sharedEntity.getPassword();
+        if (entityPassword != null && !entityPassword.isEmpty()) {
+            try {
+                if (password == null || password.isEmpty() || !entityPassword.equals(HashUtils.md5Sum(password))) {
+                    throw new SharedResourceAccessException();
+                }
+            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+                throw new SharedResourceAccessException();
+            }
+        }
+    }
+
+    private void checkUuidExpiredDate(SharedEntity sharedEntity) throws SharedResourceAccessException {
         // Check shared entity expired
         if (sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()) {
             shareService.deleteSharedEntityIfExpired(sharedEntity);
-            throw new ExpiredLinkException();
+            throw new SharedResourceAccessException();
         }
     }
 
-    private void checkUuidReferer(SharedEntity sharedEntity, String referer) throws NotAllowedException {
-        if (referer == null || referer.isEmpty()) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException18");
-        }
-
-        String refererPath[] = referer.split("/");
-        String refererUUID = refererPath[refererPath.length - 1];
-        if (sharedEntity.getPassword() != null && !sharedEntity.getUuid().equals(refererUUID)) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException18");
-        }
-    }
 }

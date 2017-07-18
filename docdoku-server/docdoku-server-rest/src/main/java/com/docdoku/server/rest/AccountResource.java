@@ -162,7 +162,7 @@ public class AccountResource {
                     .entity(mapper.map(account, AccountDTO.class));
 
             if (authConfig.isJwtEnabled()) {
-                responseBuilder.header("jwt", JWTokenFactory.createToken(authConfig.getJWTKey(), new UserGroupMapping(login, UserGroupMapping.REGULAR_USER_ROLE_ID)));
+                responseBuilder.header("jwt", JWTokenFactory.createAuthToken(authConfig.getJWTKey(), new UserGroupMapping(login, UserGroupMapping.REGULAR_USER_ROLE_ID)));
             }
 
             return responseBuilder

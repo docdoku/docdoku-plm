@@ -87,7 +87,7 @@ public class UploadDownloadConsistencyTest {
                 lastIteration.getIteration(), file);
 
         File downloadedFile = documentBinaryApi.downloadDocumentFile(document.getWorkspaceId(), document.getDocumentMasterId(),
-                document.getVersion(), lastIteration.getIteration(), "attached-file.zip", "", null, null, null, null);
+                document.getVersion(), lastIteration.getIteration(), "attached-file.zip", null, null, null, null, null, null);
 
         List<String> downloadedEntries = getEntries(downloadedFile);
         Assert.assertTrue(new HashSet<>(originalEntries).equals(new HashSet<>(downloadedEntries)));

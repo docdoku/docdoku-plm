@@ -75,6 +75,7 @@ public class PartBinaryApiTest {
     private File partAttachedFileUpload() throws ApiException {
 
         URL fileURL = PartBinaryApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
+        Assert.assertNotNull(fileURL);
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =
@@ -89,13 +90,14 @@ public class PartBinaryApiTest {
     }
 
     private File partAttachedFileDownload() throws ApiException {
-        return partBinaryApi.downloadPartFileWithSubtype(createdPart.getWorkspaceId(), createdPart.getNumber(),
-                createdPart.getVersion(), 1, "attachedfiles", "attached-file.md", null, null, null);
+        return partBinaryApi.downloadPartFile(createdPart.getWorkspaceId(), createdPart.getNumber(),
+                createdPart.getVersion(), 1, "attachedfiles", "attached-file.md", null, null, null, null, null, null);
     }
 
     private File partNativeCADUpload() throws ApiException {
 
         URL fileURL = PartBinaryApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.md");
+        Assert.assertNotNull(fileURL);
         File file = new File(fileURL.getPath());
 
         ApiResponse<Void> response =
@@ -110,7 +112,7 @@ public class PartBinaryApiTest {
     }
 
     private File partNativeCADDownload() throws ApiException {
-        return partBinaryApi.downloadPartFileWithSubtype(createdPart.getWorkspaceId(), createdPart.getNumber(),
-                createdPart.getVersion(), 1, "nativecad", "attached-file.md", null, null, null);
+        return partBinaryApi.downloadPartFile(createdPart.getWorkspaceId(), createdPart.getNumber(),
+                createdPart.getVersion(), 1, "nativecad", "attached-file.md", null, null, null, null, null, null);
     }
 }

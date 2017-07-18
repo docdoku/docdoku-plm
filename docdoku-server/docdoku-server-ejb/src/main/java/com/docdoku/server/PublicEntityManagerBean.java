@@ -21,24 +21,21 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.BinaryResource;
-import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.document.DocumentRevisionKey;
-import com.docdoku.core.exceptions.ConvertedResourceException;
 import com.docdoku.core.exceptions.DocumentRevisionNotFoundException;
 import com.docdoku.core.exceptions.FileNotFoundException;
 import com.docdoku.core.exceptions.PartRevisionNotFoundException;
-import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.product.PartIterationKey;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IPublicEntityManagerLocal;
+import com.docdoku.server.converters.OnDemandConverter;
 import com.docdoku.server.dao.BinaryResourceDAO;
 import com.docdoku.server.dao.DocumentRevisionDAO;
 import com.docdoku.server.dao.PartRevisionDAO;
-import com.docdoku.server.converters.OnDemandConverter;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -49,8 +46,6 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.InputStream;
-import java.util.Locale;
 
 /**
  * EJB that trusts REST layer. Provide public documents, parts and binary resources services.
@@ -123,41 +118,10 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public BinaryResource getBinaryResourceForSharedPart(String fileName) throws FileNotFoundException {
+    public BinaryResource getBinaryResourceForSharedEntity(String fileName) throws FileNotFoundException {
         return new BinaryResourceDAO(em).loadBinaryResource(fileName);
     }
 
-    @Override
-    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public BinaryResource getBinaryResourceForSharedDocument(String fileName) throws FileNotFoundException {
-        return new BinaryResourceDAO(em).loadBinaryResource(fileName);
-    }
-
-    @Override
-    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public InputStream getPartConvertedResource(String outputFormat, BinaryResource binaryResource) throws ConvertedResourceException {
-
-        // todo : use authenticated user locale, or request locale, or default locale.
-        Locale locale = Locale.getDefault();
-        String workspaceId = binaryResource.getWorkspaceId();
-        String partNumber = binaryResource.getHolderId();
-        String partVersion = binaryResource.getHolderRevision();
-        PartRevision partRevision = getPublicPartRevision(new PartRevisionKey(workspaceId, partNumber, partVersion));
-        // todo : handle risk of NPE on partRevision
-        PartIteration partIteration = partRevision.getLastCheckedInIteration();
-        OnDemandConverter selectedOnDemandConverter = null;
-        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
-            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
-                selectedOnDemandConverter = onDemandConverter;
-                break;
-            }
-        }
-        if (selectedOnDemandConverter != null) {
-            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, partIteration, locale);
-        }
-
-        return null;
-    }
 
     @Override
     @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -185,29 +149,4 @@ public class PublicEntityManagerBean implements IPublicEntityManagerLocal {
         return new BinaryResourceDAO(em).loadBinaryResource(fullName);
     }
 
-    @Override
-    @RolesAllowed({UserGroupMapping.GUEST_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource) throws ConvertedResourceException {
-
-        // todo : use authenticated user locale, or request locale, or default locale.
-        Locale locale = Locale.getDefault();
-        String workspaceId = binaryResource.getWorkspaceId();
-        String documentMasterId = binaryResource.getHolderId();
-        String documentVersion = binaryResource.getHolderRevision();
-        DocumentRevision documentRevision = getPublicDocumentRevision(new DocumentRevisionKey(workspaceId, documentMasterId, documentVersion));
-        // todo : handle risk of NPE on documentRevision
-        DocumentIteration documentIteration = documentRevision.getLastCheckedInIteration();
-        OnDemandConverter selectedOnDemandConverter = null;
-        for (OnDemandConverter onDemandConverter : documentResourceGetters) {
-            if (onDemandConverter.canConvert(outputFormat, binaryResource)) {
-                selectedOnDemandConverter = onDemandConverter;
-                break;
-            }
-        }
-        if (selectedOnDemandConverter != null) {
-            return selectedOnDemandConverter.getConvertedResource(outputFormat, binaryResource, documentIteration, locale);
-        }
-
-        return null;
-    }
 }

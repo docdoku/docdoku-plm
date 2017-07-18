@@ -27,11 +27,14 @@ import com.docdoku.core.product.PartIteration;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.converters.OnDemandConverter;
+import com.docdoku.server.dao.BinaryResourceDAO;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.io.InputStream;
 import java.util.Locale;
 
@@ -58,13 +61,16 @@ public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
     @Inject
     private IUserManagerLocal userManager;
 
+    @PersistenceContext
+    private EntityManager em;
+
     @Override
     public InputStream getDocumentConvertedResource(String outputFormat, BinaryResource binaryResource)
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException {
 
-
         Locale locale = getCallerLocale(binaryResource);
-        DocumentIteration docI = documentService.findDocumentIterationByBinaryResource(binaryResource);
+        BinaryResourceDAO binaryResourceDAO = new BinaryResourceDAO(locale, em);
+        DocumentIteration docI = binaryResourceDAO.getDocumentHolder(binaryResource);
         OnDemandConverter selectedOnDemandConverter = selectOnDemandConverter(outputFormat, binaryResource);
 
         if (selectedOnDemandConverter != null) {
@@ -79,7 +85,8 @@ public class OnDemandConverterBean implements IOnDemandConverterManagerLocal {
             throws WorkspaceNotFoundException, UserNotActiveException, UserNotFoundException, ConvertedResourceException, WorkspaceNotEnabledException {
 
         Locale locale = getCallerLocale(binaryResource);
-        PartIteration partIteration = productService.findPartIterationByBinaryResource(binaryResource);
+        BinaryResourceDAO binaryResourceDAO = new BinaryResourceDAO(locale, em);
+        PartIteration partIteration = binaryResourceDAO.getPartHolder(binaryResource);
         OnDemandConverter selectedOnDemandConverter = selectOnDemandConverter(outputFormat, binaryResource);
 
         if (selectedOnDemandConverter != null) {

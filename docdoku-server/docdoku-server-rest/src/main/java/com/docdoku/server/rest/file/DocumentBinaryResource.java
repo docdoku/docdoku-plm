@@ -23,6 +23,7 @@ import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.document.DocumentIteration;
 import com.docdoku.core.document.DocumentIterationKey;
 import com.docdoku.core.document.DocumentRevision;
+import com.docdoku.core.document.DocumentRevisionKey;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.security.UserGroupMapping;
@@ -30,6 +31,9 @@ import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.core.util.HashUtils;
+import com.docdoku.server.auth.AuthConfig;
+import com.docdoku.server.auth.jwt.JWTokenFactory;
 import com.docdoku.server.helpers.Streams;
 import com.docdoku.server.rest.exceptions.*;
 import com.docdoku.server.rest.file.util.BinaryResourceDownloadMeta;
@@ -50,15 +54,14 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @RequestScoped
@@ -68,6 +71,7 @@ import java.util.logging.Logger;
 public class DocumentBinaryResource {
 
     private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
+    private static final String UTF8_ENCODING = "UTF-8";
 
     @Inject
     private IBinaryStorageManagerLocal storageManager;
@@ -81,6 +85,8 @@ public class DocumentBinaryResource {
     private IShareManagerLocal shareService;
     @Inject
     private IPublicEntityManagerLocal publicEntityManager;
+    @Inject
+    private AuthConfig authConfig;
 
     public DocumentBinaryResource() {
     }
@@ -137,13 +143,11 @@ public class DocumentBinaryResource {
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("/{iteration}/{fileName}{uuid:(/uuid/[^/]+?)?}")
+    @Path("/{iteration}/{fileName}")
     @Compress
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public Response downloadDocumentFile(
             @Context Request request,
-            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
-            @ApiParam(required = false, value = "referer") @HeaderParam("Referer") String referer,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") final String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") final String documentId,
             @ApiParam(required = true, value = "Workspace version") @PathParam("version") final String version,
@@ -151,37 +155,61 @@ public class DocumentBinaryResource {
             @ApiParam(required = true, value = "File name") @PathParam("fileName") final String fileName,
             @ApiParam(required = false, value = "Type") @QueryParam("type") String type,
             @ApiParam(required = false, value = "Output") @QueryParam("output") String output,
-            @ApiParam(required = false, value = "Resource token") @PathParam("uuid") final String pUuid)
+            @ApiParam(required = false, value = "Range") @HeaderParam("Range") String range,
+            @ApiParam(required = false, value = "Shared entity uuid") @QueryParam("uuid") final String uuid,
+            @ApiParam(required = false, value = "Password for private resource") @HeaderParam("password") String password,
+            @ApiParam(required = false, value = "Shared entity token") @QueryParam("token") String accessToken)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, NotAllowedException,
             NotModifiedException, PreconditionFailedException, RequestedRangeNotSatisfiableException,
-            UnMatchingUuidException, ExpiredLinkException {
+            UnMatchingUuidException, SharedResourceAccessException {
 
-        String fullName;
-        if (pUuid != null && !pUuid.isEmpty()) {
-            String uuid = pUuid.split("/")[2];
+        BinaryResource binaryResource;
+        String decodedFileName = fileName;
+        try {
+            decodedFileName = URLDecoder.decode(fileName, UTF8_ENCODING);
+        } catch (UnsupportedEncodingException e) {
+            LOGGER.log(Level.SEVERE, "Cannot decode filename", e);
+        }
+
+        String fullName = workspaceId + "/documents/" + FileIO.encode(documentId) + "/" + version + "/" + iteration + "/" + decodedFileName;
+
+        if (uuid != null && !uuid.isEmpty()) {
             SharedEntity sharedEntity = shareService.findSharedEntityForGivenUUID(uuid);
 
-            // Check uuid & access right
-            checkUuidValidity(sharedEntity, workspaceId, documentId, version, iteration, referer);
+            if (accessToken != null && !accessToken.isEmpty()) {
 
-            DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
-            fullName = sharedEntity.getWorkspace().getId() +
-                    "/documents/" +
-                    documentRevision.getId() + "/" +
-                    documentRevision.getVersion() + "/" +
-                    iteration + "/" + fileName;
+                String decodedUUID = JWTokenFactory.validateSharedResourceToken(authConfig.getJWTKey(), accessToken);
+
+                if (null == decodedUUID || !decodedUUID.equals(sharedEntity.getUuid())) {
+                    throw new SharedResourceAccessException();
+                }
+
+            } else {
+                // Check uuid & access right
+                checkUuidValidity(sharedEntity, workspaceId, documentId, version, iteration, password);
+            }
+
+            binaryResource = publicEntityManager.getBinaryResourceForSharedEntity(fullName);
 
         } else {
             // Check access right
-            DocumentIterationKey docIK = new DocumentIterationKey(workspaceId, documentId, version, iteration);
-            if (!canAccess(docIK)) {
-                return Response.status(Response.Status.UNAUTHORIZED).build();
+
+            if (accessToken != null && !accessToken.isEmpty()) {
+                String decodedEntityKey = JWTokenFactory.validateEntityToken(authConfig.getJWTKey(), accessToken);
+                boolean tokenValid = new DocumentRevisionKey(workspaceId, documentId, version).toString().equals(decodedEntityKey);
+                if (!tokenValid) {
+                    throw new SharedResourceAccessException();
+                }
+                binaryResource = publicEntityManager.getBinaryResourceForSharedEntity(fullName);
+            } else {
+                if (!canAccess(new DocumentIterationKey(workspaceId, documentId, version, iteration))) {
+                    throw new SharedResourceAccessException();
+                }
+                binaryResource = getBinaryResource(fullName);
             }
 
-            fullName = workspaceId + "/documents/" + FileIO.encode(documentId) + "/" + version + "/" + iteration + "/" + fileName;
         }
 
-        BinaryResource binaryResource = getBinaryResource(fullName);
         BinaryResourceDownloadMeta binaryResourceDownloadMeta = new BinaryResourceDownloadMeta(binaryResource, output, type);
 
         // Check cache precondition
@@ -196,7 +224,7 @@ public class DocumentBinaryResource {
 
             if (output != null && !output.isEmpty()) {
                 binaryContentInputStream = getConvertedBinaryResource(binaryResource, output);
-                if(range == null || range.isEmpty()) {
+                if (range == null || range.isEmpty()) {
                     binaryResourceDownloadMeta.setLength(0);
                 }
             } else {
@@ -234,11 +262,7 @@ public class DocumentBinaryResource {
      */
     private InputStream getConvertedBinaryResource(BinaryResource binaryResource, String outputFormat) throws FileConversionException {
         try {
-            if (contextManager.isCallerInRole(UserGroupMapping.REGULAR_USER_ROLE_ID)) {
-                return onDemandConverterManager.getDocumentConvertedResource(outputFormat, binaryResource);
-            } else {
-                return publicEntityManager.getDocumentConvertedResource(outputFormat, binaryResource);
-            }
+            return onDemandConverterManager.getDocumentConvertedResource(outputFormat, binaryResource);
         } catch (Exception e) {
             throw new FileConversionException(e);
         }
@@ -260,14 +284,14 @@ public class DocumentBinaryResource {
         }
     }
 
-    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String documentId, String version, int iteration, String referer)
-            throws UnMatchingUuidException, ExpiredLinkException, NotAllowedException {
+    private void checkUuidValidity(SharedEntity sharedEntity, String workspaceId, String documentId, String version, int iteration, String password)
+            throws UnMatchingUuidException, SharedResourceAccessException, NotAllowedException {
         if (!(sharedEntity instanceof SharedDocument)) {
             throw new UnMatchingUuidException();
         }
 
-        checkUuidReferer(sharedEntity, referer);
         checkUuidExpiredDate(sharedEntity);
+        checkUuidPassword(sharedEntity, password);
 
         String shareEntityWorkspaceId = sharedEntity.getWorkspace().getId();
         DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
@@ -280,23 +304,25 @@ public class DocumentBinaryResource {
         }
     }
 
-    private void checkUuidExpiredDate(SharedEntity sharedEntity) throws ExpiredLinkException {
+    private void checkUuidPassword(SharedEntity sharedEntity, String password) throws SharedResourceAccessException {
+        String entityPassword = sharedEntity.getPassword();
+        if (entityPassword != null && !entityPassword.isEmpty()) {
+            try {
+                if (password == null || password.isEmpty() || !entityPassword.equals(HashUtils.md5Sum(password))) {
+                    throw new SharedResourceAccessException();
+                }
+            } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+                throw new SharedResourceAccessException();
+            }
+        }
+    }
+
+    private void checkUuidExpiredDate(SharedEntity sharedEntity) throws SharedResourceAccessException {
         // Check shared entity expired
         if (sharedEntity.getExpireDate() != null && sharedEntity.getExpireDate().getTime() < new Date().getTime()) {
             shareService.deleteSharedEntityIfExpired(sharedEntity);
-            throw new ExpiredLinkException();
+            throw new SharedResourceAccessException();
         }
     }
 
-    private void checkUuidReferer(SharedEntity sharedEntity, String referer) throws NotAllowedException {
-        if (referer == null || referer.isEmpty()) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException18");
-        }
-
-        String refererPath[] = referer.split("/");
-        String refererUUID = refererPath[refererPath.length - 1];
-        if (sharedEntity.getPassword() != null && !sharedEntity.getUuid().equals(refererUUID)) {
-            throw new NotAllowedException(Locale.getDefault(), "NotAllowedException18");
-        }
-    }
 }

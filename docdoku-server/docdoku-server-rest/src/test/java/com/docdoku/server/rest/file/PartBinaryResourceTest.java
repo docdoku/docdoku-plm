@@ -240,7 +240,9 @@ public class PartBinaryResourceTest {
         Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(ResourceUtil.getFilePath(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1))));
         //When
         Mockito.when(publicEntityManager.getPublicBinaryResourceForPart(Matchers.anyString())).thenReturn(binaryResource);
-        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.RANGE, ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.FILE_TYPE, ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, null);
+        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
+                ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
+                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, null, null, null);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 206);
@@ -279,10 +281,12 @@ public class PartBinaryResourceTest {
         Mockito.when(productService.canAccess(Matchers.any(PartIterationKey.class))).thenReturn(false);
         File file = File.createTempFile(ResourceUtil.getFilePath(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1), ResourceUtil.TEMP_SUFFIX);
         Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(file));
-        Mockito.when(publicEntityManager.getBinaryResourceForSharedPart(Matchers.anyString())).thenReturn(binaryResource);
+        Mockito.when(publicEntityManager.getBinaryResourceForSharedEntity(Matchers.anyString())).thenReturn(binaryResource);
         Mockito.when(shareService.findSharedEntityForGivenUUID(ResourceUtil.SHARED_PART_ENTITY_UUID)).thenReturn(sharedPart);
         //When
-        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.RANGE, "shares/" + sharedPart.getUuid(), ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.FILE_TYPE, ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.SHARED_PART_ENTITY_UUID);
+        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
+                ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
+                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, ResourceUtil.SHARED_PART_ENTITY_UUID, null, null);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 206);
@@ -311,7 +315,9 @@ public class PartBinaryResourceTest {
         Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(new File(ResourceUtil.getFilePath(ResourceUtil.SOURCE_PART_STORAGE + ResourceUtil.TEST_PART_FILENAME1))));
         Mockito.when(publicEntityManager.getPublicBinaryResourceForPart(Matchers.anyString())).thenReturn(binaryResource);
         //When
-        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.RANGE, ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.FILE_TYPE, ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, null);
+        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
+                ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
+                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, null, null, null);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 206);
@@ -340,7 +346,9 @@ public class PartBinaryResourceTest {
         Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(file1));
         Mockito.when(publicEntityManager.getPublicBinaryResourceForPart(Matchers.anyString())).thenReturn(binaryResource);
         //When
-        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.RANGE, ResourceUtil.DOC_REFER, ResourceUtil.WORKSPACE_ID, ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, ResourceUtil.FILE_TYPE, ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, null);
+        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
+                ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
+                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, null, null, null);
 
         assertNotNull(response);
         assertEquals(response.getStatus(), 401);

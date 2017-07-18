@@ -21,6 +21,7 @@
 package com.docdoku.server.auth.jwt;
 
 import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.sharing.SharedEntity;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -56,20 +57,31 @@ public class JWTokenFactory {
 
     private static final String SUBJECT_LOGIN = "login";
     private static final String SUBJECT_GROUP_NAME = "groupName";
+    private static final String SHARED_ENTITY_UUID = "uuid";
+    private static final String ENTITY_KEY = "key";
 
     private JWTokenFactory() {
     }
 
-    public static String createToken(Key key, UserGroupMapping userGroupMapping) {
-
-        JwtClaims claims = new JwtClaims();
-
+    public static String createAuthToken(Key key, UserGroupMapping userGroupMapping) {
         JsonObjectBuilder subjectBuilder = Json.createObjectBuilder();
         subjectBuilder.add(SUBJECT_LOGIN, userGroupMapping.getLogin());
         subjectBuilder.add(SUBJECT_GROUP_NAME, userGroupMapping.getGroupName());
         JsonObject build = subjectBuilder.build();
+        return createToken(key, build);
+    }
 
-        claims.setSubject(build.toString());
+    public static String createSharedEntityToken(Key key, SharedEntity sharedEntity) {
+        JsonObjectBuilder subjectBuilder = Json.createObjectBuilder();
+        subjectBuilder.add(SHARED_ENTITY_UUID, sharedEntity.getUuid());
+        JsonObject build = subjectBuilder.build();
+        return createToken(key, build);
+    }
+
+    private static String createToken(Key key, JsonObject jsonClaims) {
+
+        JwtClaims claims = new JwtClaims();
+        claims.setSubject(jsonClaims.toString());
         claims.setExpirationTime(NumericDate.fromSeconds(NumericDate.now().getValue() + JWT_TOKEN_EXPIRES_TIME));
 
         JsonWebSignature jws = new JsonWebSignature();
@@ -86,7 +98,7 @@ public class JWTokenFactory {
         return null;
     }
 
-    public static JWTokenUserGroupMapping validateToken(Key key, String jwt) {
+    public static JWTokenUserGroupMapping validateAuthToken(Key key, String jwt) {
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setVerificationKey(key)
@@ -115,6 +127,27 @@ public class JWTokenFactory {
 
     }
 
+    public static String validateSharedResourceToken(Key key, String jwt) {
+
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setVerificationKey(key)
+                .setRelaxVerificationKeyValidation()
+                .build();
+
+        try {
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+            String subject = jwtClaims.getSubject();
+            JsonReader reader = Json.createReader(new StringReader(subject));
+            JsonObject subjectObject = reader.readObject(); // JsonParsingException
+            return subjectObject.getString(SHARED_ENTITY_UUID); // Npe
+        } catch (InvalidJwtException | MalformedClaimException | JsonParsingException | NullPointerException e) {
+            LOGGER.log(Level.SEVERE, "Cannot validate jwt token", e);
+        }
+
+        return null;
+
+    }
+
     public static void refreshTokenIfNeeded(Key key, HttpServletResponse response, JWTokenUserGroupMapping jwTokenUserGroupMapping) {
 
         try {
@@ -122,7 +155,7 @@ public class JWTokenFactory {
 
             if (NumericDate.now().getValue() + JWT_TOKEN_REFRESH_BEFORE >= expirationTime.getValue()) {
                 UserGroupMapping userGroupMapping = jwTokenUserGroupMapping.getUserGroupMapping();
-                response.addHeader("jwt", createToken(key, userGroupMapping));
+                response.addHeader("jwt", createAuthToken(key, userGroupMapping));
             }
 
         } catch (MalformedClaimException e) {
@@ -130,4 +163,33 @@ public class JWTokenFactory {
         }
 
     }
+
+    public static String createEntityToken(Key key, String entityKey) {
+        JsonObjectBuilder subjectBuilder = Json.createObjectBuilder();
+        subjectBuilder.add(ENTITY_KEY, entityKey);
+        JsonObject build = subjectBuilder.build();
+        return createToken(key, build);
+    }
+
+    public static String validateEntityToken(Key key, String jwt) {
+
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setVerificationKey(key)
+                .setRelaxVerificationKeyValidation()
+                .build();
+
+        try {
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+            String subject = jwtClaims.getSubject();
+            JsonReader reader = Json.createReader(new StringReader(subject));
+            JsonObject subjectObject = reader.readObject(); // JsonParsingException
+            return subjectObject.getString(ENTITY_KEY); // Npe
+        } catch (InvalidJwtException | MalformedClaimException | JsonParsingException | NullPointerException e) {
+            LOGGER.log(Level.SEVERE, "Cannot validate jwt token", e);
+        }
+
+        return null;
+
+    }
+
 }

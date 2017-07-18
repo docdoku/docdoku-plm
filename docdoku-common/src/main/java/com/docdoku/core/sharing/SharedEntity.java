@@ -22,11 +22,12 @@ package com.docdoku.core.sharing;
 
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
+import com.docdoku.core.util.HashUtils;
 
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
-import java.security.MessageDigest;
+import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.UUID;
@@ -84,8 +85,8 @@ public abstract class SharedEntity implements Serializable {
         this.expireDate = (expireDate!=null) ? (Date) expireDate.clone() : null;
         if(password != null){
             try{
-                this.password = md5Sum(password);
-            }catch(NoSuchAlgorithmException pEx){
+                this.password = HashUtils.md5Sum(password);
+            }catch(NoSuchAlgorithmException | UnsupportedEncodingException pEx){
                 Logger.getLogger(SharedEntity.class.getName()).log(Level.FINEST, null, pEx);
             }
         }
@@ -176,17 +177,4 @@ public abstract class SharedEntity implements Serializable {
         return result;
     }
 
-    private static String md5Sum(String pText) throws NoSuchAlgorithmException {
-        byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
-        StringBuilder hexString = new StringBuilder();
-        for (byte aDigest : digest) {
-            String hex = Integer.toHexString(0xFF & aDigest);
-            if (hex.length() == 1) {
-                hexString.append("0").append(hex);
-            } else {
-                hexString.append(hex);
-            }
-        }
-        return hexString.toString();
-    }
 }

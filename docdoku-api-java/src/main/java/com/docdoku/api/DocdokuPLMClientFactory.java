@@ -65,6 +65,8 @@ public class DocdokuPLMClientFactory {
 
     /**
      * Create a basic client, no debug
+     * <p>
+     * Soon to be deprecated, consider using createJWTClient instead
      **/
     public static ApiClient createBasicClient(String host, String login, String password) {
         return createBasicClient(host, login, password, false);
@@ -72,6 +74,8 @@ public class DocdokuPLMClientFactory {
 
     /**
      * Create a basic client, control debug
+     * <p>
+     * Soon to be deprecated, consider using createJWTClient instead
      **/
     public static ApiClient createBasicClient(String host, String login, String password, boolean debug) {
         ApiClient client = createClient(host, debug);
@@ -118,6 +122,8 @@ public class DocdokuPLMClientFactory {
 
     /**
      * Create a cookie client, no debug
+     *
+     * Soon to be deprecated, consider using createJWTClient instead
      **/
     public static ApiClient createCookieClient(String host, String login, String password) {
         return createCookieClient(host, login, password, false);
@@ -125,6 +131,8 @@ public class DocdokuPLMClientFactory {
 
     /**
      * Create a cookie client, control debug
+     *
+     * Soon to be deprecated, consider using createJWTClient instead
      **/
     public static ApiClient createCookieClient(String host, String login, String password, boolean debug) {
         final ApiClient client = createClient(host, debug);

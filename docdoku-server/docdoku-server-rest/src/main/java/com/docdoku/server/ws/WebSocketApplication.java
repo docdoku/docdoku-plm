@@ -124,7 +124,7 @@ public class WebSocketApplication {
         if (AUTH.equals(type)) {
             String jwt = message.getString("jwt");
 
-            JWTokenUserGroupMapping jwTokenUserGroupMapping = JWTokenFactory.validateToken(authConfig.getJWTKey(), jwt);
+            JWTokenUserGroupMapping jwTokenUserGroupMapping = JWTokenFactory.validateAuthToken(authConfig.getJWTKey(), jwt);
 
             if (null != jwTokenUserGroupMapping) {
                 UserGroupMapping userGroupMapping = jwTokenUserGroupMapping.getUserGroupMapping();

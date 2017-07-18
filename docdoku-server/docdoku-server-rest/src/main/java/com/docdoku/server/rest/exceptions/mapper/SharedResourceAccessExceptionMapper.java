@@ -19,7 +19,7 @@
  */
 package com.docdoku.server.rest.exceptions.mapper;
 
-import com.docdoku.server.rest.exceptions.ExpiredLinkException;
+import com.docdoku.server.rest.exceptions.SharedResourceAccessException;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,14 +32,14 @@ import java.util.logging.Logger;
  * @author Taylor LABEJOF
  */
 @Provider
-public class ExpiredLinkExceptionMapper implements ExceptionMapper<ExpiredLinkException> {
-    private static final Logger LOGGER = Logger.getLogger(ExpiredLinkExceptionMapper.class.getName());
+public class SharedResourceAccessExceptionMapper implements ExceptionMapper<SharedResourceAccessException>{
+    private static final Logger LOGGER = Logger.getLogger(SharedResourceAccessExceptionMapper.class.getName());
 
-    public ExpiredLinkExceptionMapper() {
+    public SharedResourceAccessExceptionMapper() {
     }
 
     @Override
-    public Response toResponse(ExpiredLinkException e) {
+    public Response toResponse(SharedResourceAccessException e) {
         LOGGER.log(Level.WARNING, e.getMessage());
         LOGGER.log(Level.FINE, null, e);
         return Response.status(Response.Status.NOT_FOUND)

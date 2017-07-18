@@ -100,10 +100,10 @@ public class AuthServices {
         return false;
     }
 
-    public static void addCORSHeaders(HttpServletResponse response){
+    public static void addCORSHeaders(HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "*");
-        response.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, x-accept-encoding");
-        response.setHeader("Access-Control-Expose-Headers", "jwt, x-archive-content-length");
+        response.setHeader("Access-Control-Allow-Headers", "origin, content-type, accept, authorization, x-accept-encoding, password");
+        response.setHeader("Access-Control-Expose-Headers", "jwt, x-archive-content-length, shared-entity-token, entity-token");
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, HEAD");
     }

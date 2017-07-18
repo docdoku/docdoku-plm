@@ -31,6 +31,9 @@ import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.sharing.SharedEntity;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.core.util.HashUtils;
+import com.docdoku.server.auth.AuthConfig;
+import com.docdoku.server.auth.jwt.JWTokenFactory;
 import com.docdoku.server.rest.dto.DocumentRevisionDTO;
 import com.docdoku.server.rest.dto.PartRevisionDTO;
 import io.swagger.annotations.*;
@@ -43,7 +46,8 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.security.MessageDigest;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @RequestScoped
@@ -66,6 +70,8 @@ public class SharedResource {
     @Inject
     private IContextManagerLocal contextManager;
 
+    @Inject
+    private AuthConfig authConfig;
 
     private Mapper mapper;
 
@@ -103,7 +109,8 @@ public class SharedResource {
         if (documentRevision != null) {
             DocumentRevisionDTO documentRevisionDTO = mapper.map(documentRevision, DocumentRevisionDTO.class);
             documentRevisionDTO.setRoutePath(documentRevision.getLocation().getRoutePath());
-            return Response.ok().entity(documentRevisionDTO).build();
+            String entityToken = JWTokenFactory.createEntityToken(authConfig.getJWTKey(), documentRevision.getKey().toString());
+            return Response.ok().header("entity-token", entityToken).entity(documentRevisionDTO).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -136,7 +143,8 @@ public class SharedResource {
         }
 
         if (partRevision != null) {
-            return Response.ok().entity(Tools.mapPartRevisionToPartDTO(partRevision)).build();
+            String entityToken = JWTokenFactory.createEntityToken(authConfig.getJWTKey(), partRevision.getKey().toString());
+            return Response.ok().header("entity-token", entityToken).entity(Tools.mapPartRevisionToPartDTO(partRevision)).build();
         } else {
             return Response.status(Response.Status.FORBIDDEN).build();
         }
@@ -170,8 +178,9 @@ public class SharedResource {
             return createPasswordProtectedResponse();
         }
 
+        String sharedEntityToken = JWTokenFactory.createSharedEntityToken(authConfig.getJWTKey(), sharedEntity);
         DocumentRevision documentRevision = ((SharedDocument) sharedEntity).getDocumentRevision();
-        return Response.ok().entity(mapper.map(documentRevision, DocumentRevisionDTO.class)).build();
+        return Response.ok().header("shared-entity-token", sharedEntityToken).entity(mapper.map(documentRevision, DocumentRevisionDTO.class)).build();
     }
 
     @GET
@@ -201,13 +210,21 @@ public class SharedResource {
             return createPasswordProtectedResponse();
         }
 
+        String sharedEntityToken = JWTokenFactory.createSharedEntityToken(authConfig.getJWTKey(), sharedEntity);
         PartRevision partRevision = ((SharedPart) sharedEntity).getPartRevision();
-        return Response.ok().entity(Tools.mapPartRevisionToPartDTO(partRevision)).build();
+        return Response.ok().header("shared-entity-token", sharedEntityToken).entity(Tools.mapPartRevisionToPartDTO(partRevision)).build();
 
     }
 
     private boolean checkPasswordAccess(String entityPassword, String password) {
-        return entityPassword == null || entityPassword.isEmpty() || entityPassword.equals(md5Sum(password));
+        if (entityPassword == null || entityPassword.isEmpty()) {
+            return true;
+        }
+        try {
+            return password != null && entityPassword.equals(HashUtils.md5Sum(password));
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            return false;
+        }
     }
 
     private Response createPasswordProtectedResponse() {
@@ -222,25 +239,6 @@ public class SharedResource {
                 .header("Reason-Phrase", "entity-expired")
                 .entity("{\"forbidden\":\"entity-expired\"}")
                 .build();
-    }
-
-    private String md5Sum(String pText) {
-        byte[] digest;
-        try {
-            digest = MessageDigest.getInstance("MD5").digest(pText.getBytes());
-        } catch (Exception e) {
-            return null;
-        }
-        StringBuilder hexString = new StringBuilder();
-        for (byte aDigest : digest) {
-            String hex = Integer.toHexString(0xFF & aDigest);
-            if (hex.length() == 1) {
-                hexString.append("0").append(hex);
-            } else {
-                hexString.append(hex);
-            }
-        }
-        return hexString.toString();
     }
 
 }

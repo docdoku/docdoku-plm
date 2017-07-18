@@ -133,7 +133,7 @@ public class MultiThreadApiTest {
         documentApi.checkInDocument(documentRevisionDTO.getWorkspaceId(), documentRevisionDTO.getDocumentMasterId(), documentRevisionDTO.getVersion());
 
         File downloaded = documentBinaryApi.downloadDocumentFile(documentRevisionDTO.getWorkspaceId(), documentRevisionDTO.getDocumentMasterId(),
-                documentRevisionDTO.getVersion(), 1, "attached-file.md", "", null, null, null, null);
+                documentRevisionDTO.getVersion(), 1, "attached-file.md", null, null, "", null, null, null);
 
         logger.log(Level.INFO, "Thread over [" + step + "]");
         Assert.assertTrue(FileUtils.contentEquals(original, downloaded));

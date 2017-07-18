@@ -147,7 +147,7 @@ public class WorkflowApiTest {
                 lastIteration.getVersion(), lastIteration.getIteration(), file);
 
         documentBinaryApi.downloadDocumentFile(lastIteration.getWorkspaceId(), lastIteration.getDocumentMasterId(),
-                lastIteration.getVersion(), lastIteration.getIteration(), "attached-file.zip", "", null, null, null, null);
+                lastIteration.getVersion(), lastIteration.getIteration(), "attached-file.zip", null, null, null, null, null, null);
 
         // Check in
         documentApi.checkInDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
