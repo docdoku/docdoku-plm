@@ -114,7 +114,7 @@ public class DocumentRevisionDAO {
     }
 
     public void createDocR(DocumentRevision pDocumentRevision) throws DocumentRevisionAlreadyExistsException, CreationException {
-        try {          
+        try {
             if(pDocumentRevision.getWorkflow()!=null){
                 WorkflowDAO workflowDAO = new WorkflowDAO(em);
                 workflowDAO.createWorkflow(pDocumentRevision.getWorkflow());
@@ -234,9 +234,7 @@ public class DocumentRevisionDAO {
         return query.getResultList();
     }
 
-    public List<DocumentRevision> getDocumentRevisionsFiltered(User user, String workspaceId, int start, int pMaxResults) {
-        int maxResults = (pMaxResults<1) ? pMaxResults : MAX_RESULTS;
-
+    public List<DocumentRevision> getDocumentRevisionsFiltered(User user, String workspaceId, int start, int maxResults) {
         String excludedFolders = workspaceId + "/~%";
 
         TypedQuery<DocumentRevision> query = em.createNamedQuery("DocumentRevision.findByWorkspace.filterACLEntry", DocumentRevision.class)
@@ -245,7 +243,7 @@ public class DocumentRevisionDAO {
                         .setParameter("excludedFolders", excludedFolders);
         if(start>-1 && maxResults >-1){
             query.setFirstResult(start)
-                .setMaxResults(maxResults);
+                .setMaxResults(Math.min(maxResults, MAX_RESULTS));
         }
         return query.getResultList();
     }
