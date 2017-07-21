@@ -2095,7 +2095,7 @@ public class ProductManagerBean implements IProductManagerLocal {
             throw new EntityConstraintException(locale, "EntityConstraintException21");
         }
 
-        // delete ElasticSearch Index for this revision iteration
+        // delete Elasticsearch Index for this revision iteration
         for (PartIteration partIteration : partR.getPartIterations()) {
             indexerManager.removePartIterationFromIndex(partIteration);
         }

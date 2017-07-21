@@ -110,13 +110,13 @@
             </dependency>
             <dependency>
                 <groupId>org.elasticsearch.client</groupId>
-                <artifactId>transport</artifactId>
+                <artifactId>rest</artifactId>
                 <version>5.4.0</version>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>x-pack-transport</artifactId>
-                <version>5.4.0</version>
+                <groupId>io.searchbox</groupId>
+                <artifactId>jest</artifactId>
+                <version>5.3.2</version>
             </dependency>
             <!-- Log4j -->
             <dependency>

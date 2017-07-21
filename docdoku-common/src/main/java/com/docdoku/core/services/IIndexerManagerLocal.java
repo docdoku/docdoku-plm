@@ -33,7 +33,7 @@ import java.util.List;
 
 public interface IIndexerManagerLocal {
 
-    void createWorkspaceIndex(String workspaceId) throws AccountNotFoundException, NotAllowedException;
+    void createWorkspaceIndex(String workspaceId);
 
     void deleteWorkspaceIndex(String workspaceId) throws AccountNotFoundException;
 
@@ -53,7 +53,7 @@ public interface IIndexerManagerLocal {
 
     List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException;
 
-    void indexAllWorkspacesData();
+    void indexAllWorkspacesData() throws AccountNotFoundException;
 
     void indexWorkspaceData(String workspaceId) throws AccountNotFoundException;
 

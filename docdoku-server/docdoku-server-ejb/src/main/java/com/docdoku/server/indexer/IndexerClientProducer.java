@@ -1,79 +1,72 @@
 package com.docdoku.server.indexer;
 
-import org.elasticsearch.client.Client;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
-import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient;
+import io.searchbox.client.JestClient;
+import io.searchbox.client.JestClientFactory;
+import io.searchbox.client.config.HttpClientConfig;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Stateless;
-import javax.enterprise.context.RequestScoped;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
+import javax.ejb.Singleton;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * This class hold and produce elastic search client.
+ * This class holds and produces elastic search rest client.
+ * Actually it returns Jest client (waiting for the official
+ * high level client to be released).
  * <p>
  * This class is managed by a pool size, see glassfish-ejb-jar.xml
  * Simply inject the client in your beans with `@Inject Client client;'
  *
  * @author Morgan Guimard
  */
-@Stateless(name = "IndexerClientProducer")
+@Singleton(name = "IndexerClientProducer")
 public class IndexerClientProducer {
 
     private static final Logger LOGGER = Logger.getLogger(IndexerClientProducer.class.getName());
 
-    private Client client;
+    private JestClient client;
 
     @Inject
     private IndexerConfigManager config;
 
     @PostConstruct
     public void open() {
-        LOGGER.log(Level.INFO, "Create ElasticSearch client");
+        LOGGER.log(Level.INFO, "Create Elasticsearch client");
 
-        Settings.Builder builder = Settings.builder();
+        String serverUri = config.getServerUri();
+        String username = config.getUserName();
+        String password = config.getPassword();
 
-        String host = config.getHost();
-        Integer port = config.getPort();
-        String xPackSecurityUser = config.getXPackSecurityUser();
-        builder.put("cluster.name", config.getClusterName());
 
-        try {
-            InetSocketTransportAddress address = new InetSocketTransportAddress(InetAddress.getByName(host), port);
-            if(xPackSecurityUser != null && !xPackSecurityUser.isEmpty()){
-                builder.put("xpack.security.user", xPackSecurityUser);
-                client = new PreBuiltXPackTransportClient(builder.build()).addTransportAddress(address);
-            } else {
-                client = new PreBuiltTransportClient(builder.build()).addTransportAddress(address);
-            }
-        } catch (UnknownHostException e) {
-            client = new PreBuiltTransportClient(builder.build());
-            LOGGER.log(Level.SEVERE, "Cannot initialize ElasticSearch client, please verify the resource configuration", e);
-        }
+        HttpClientConfig.Builder httpConfigBuilder=new HttpClientConfig.Builder(serverUri)
+                .multiThreaded(true)
+                .defaultMaxTotalConnectionPerRoute(8);
+
+        if(username !=null && password !=null)
+            httpConfigBuilder.defaultCredentials(username, password);
+
+        JestClientFactory factory = new JestClientFactory();
+        factory.setHttpClientConfig(httpConfigBuilder.build());
+        client = factory.getObject();
+
     }
 
     @PreDestroy
     public void close() {
-        if (null != client) {
-            LOGGER.log(Level.INFO, "Closing elasticsearch client");
-            client.close();
-        } else {
-            LOGGER.log(Level.INFO, "Cannot close a null client");
-        }
+        client.shutdownClient();
     }
 
+    @Lock(LockType.READ)
     @Produces
-    @RequestScoped
-    public Client produce() {
-        LOGGER.log(Level.INFO, "Producing client");
+    @ApplicationScoped
+    public JestClient produce() {
+        LOGGER.log(Level.INFO, "Producing Elasticsearch rest client");
         return client;
     }
 

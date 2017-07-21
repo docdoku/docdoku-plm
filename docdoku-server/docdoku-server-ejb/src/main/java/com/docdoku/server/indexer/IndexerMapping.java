@@ -15,14 +15,12 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.workflow.Workflow;
 import org.apache.commons.io.IOUtils;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -56,6 +54,7 @@ public class IndexerMapping {
     protected static final String STANDARD_PART_KEY = "standardPart";
     protected static final String PART_TYPE = "part";
     protected static final String DOCUMENT_TYPE = "document";
+    protected static final String DEFAULT_TYPE = "_default_";
     protected static final String ALL_FIELDS = "_all";
 
     private static final Logger LOGGER = Logger.getLogger(IndexerMapping.class.getName());
@@ -67,93 +66,62 @@ public class IndexerMapping {
     }
 
     public static String createDocumentIterationMapping() throws IOException {
-        return new String(loadContentBuilderFromResource(DOCUMENT_MAPPING_RESOURCE));
+        return loadContentBuilderFromResource(DOCUMENT_MAPPING_RESOURCE);
     }
 
     public static String createPartIterationMapping() throws IOException {
-        return new String(loadContentBuilderFromResource(PART_MAPPING_RESOURCE));
+        return loadContentBuilderFromResource(PART_MAPPING_RESOURCE);
     }
 
     public static String createSourceMapping() throws IOException {
-        return new String(loadContentBuilderFromResource(SOURCE_MAPPING_RESOURCE));
+        return loadContentBuilderFromResource(SOURCE_MAPPING_RESOURCE);
     }
 
-    public static XContentBuilder documentIterationToJSON(DocumentIteration documentIteration, Map<String, String> contentInputs) {
+    public static void documentIterationToJSON(XContentBuilder xcb, DocumentIteration documentIteration, Map<String, String> contentInputs) throws IOException {
 
         DocumentRevision documentRevision = documentIteration.getDocumentRevision();
         DocumentMaster documentMaster = documentRevision.getDocumentMaster();
         User author = documentMaster.getAuthor();
         Set<Tag> tags = documentRevision.getTags();
         List<InstanceAttribute> instanceAttributes = documentIteration.getInstanceAttributes();
-        XContentBuilder xContentBuilder = null;
-        try {
-            xContentBuilder = XContentFactory.jsonBuilder();
+        setField(xcb, WORKSPACE_ID_KEY, documentIteration.getWorkspaceId());
+        setField(xcb, DOCUMENT_ID_KEY, documentRevision.getDocumentMasterId());
+        setField(xcb, TITLE_KEY, documentIteration.getTitle());
+        setField(xcb, VERSION_KEY, documentIteration.getVersion());
+        setField(xcb, TYPE_KEY, documentMaster.getType());
+        setField(xcb, DESCRIPTION_KEY, documentRevision.getDescription());
+        setField(xcb, ITERATION_KEY, documentIteration.getIteration());
+        setField(xcb, CREATION_DATE_KEY, documentRevision.getCreationDate());
+        setField(xcb, MODIFICATION_DATE_KEY, documentIteration.getModificationDate());
+        setField(xcb, REVISION_NOTE_KEY, documentIteration.getRevisionNote());
+        setField(xcb, WORKFLOW_KEY, documentRevision.getWorkflow());
+        setField(xcb, FOLDER_KEY, documentRevision.getLocation().getShortName());
 
-            XContentBuilder tmp = xContentBuilder.startObject();
+        addCommonJSONFields(xcb, author, tags, instanceAttributes, contentInputs);
 
-            setField(tmp, WORKSPACE_ID_KEY, documentIteration.getWorkspaceId());
-            setField(tmp, DOCUMENT_ID_KEY, documentRevision.getDocumentMasterId());
-            setField(tmp, TITLE_KEY, documentIteration.getTitle());
-            setField(tmp, VERSION_KEY, documentIteration.getVersion());
-            setField(tmp, TYPE_KEY, documentMaster.getType());
-            setField(tmp, DESCRIPTION_KEY, documentRevision.getDescription());
-            setField(tmp, ITERATION_KEY, documentIteration.getIteration());
-            setField(tmp, CREATION_DATE_KEY, documentRevision.getCreationDate());
-            setField(tmp, MODIFICATION_DATE_KEY, documentIteration.getModificationDate());
-            setField(tmp, REVISION_NOTE_KEY, documentIteration.getRevisionNote());
-            setField(tmp, WORKFLOW_KEY, documentRevision.getWorkflow());
-            setField(tmp, FOLDER_KEY, documentRevision.getLocation().getShortName());
-
-            addCommonJSONFields(tmp, author, tags, instanceAttributes, contentInputs);
-
-            return tmp.endObject();
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "The document " + documentIteration + " can't be indexed.", e);
-            return null;
-        } finally {
-            if (null != xContentBuilder) {
-                xContentBuilder.close();
-            }
-        }
     }
 
-    public static XContentBuilder partIterationToJSON(PartIteration partIteration, Map<String, String> contentInputs) {
+    public static void partIterationToJSON(XContentBuilder xcb, PartIteration partIteration, Map<String, String> contentInputs) throws IOException {
 
         PartRevision partRevision = partIteration.getPartRevision();
         PartMaster partMaster = partRevision.getPartMaster();
         User author = partMaster.getAuthor();
         Set<Tag> tags = partRevision.getTags();
         List<InstanceAttribute> instanceAttributes = partIteration.getInstanceAttributes();
-        XContentBuilder xContentBuilder = null;
-        try {
-            xContentBuilder = XContentFactory.jsonBuilder();
-            XContentBuilder tmp = xContentBuilder.startObject();
+        setField(xcb, WORKSPACE_ID_KEY, partIteration.getWorkspaceId());
+        setField(xcb, PART_NUMBER_KEY, partIteration.getPartNumber());
+        setField(xcb, PART_NAME_KEY, partMaster.getName());
+        setField(xcb, TYPE_KEY, partMaster.getType());
+        setField(xcb, VERSION_KEY, partIteration.getPartVersion());
+        setField(xcb, DESCRIPTION_KEY, partRevision.getDescription());
+        setField(xcb, ITERATION_KEY, partIteration.getIteration());
+        setField(xcb, STANDARD_PART_KEY, partMaster.isStandardPart());
+        setField(xcb, CREATION_DATE_KEY, partIteration.getCreationDate());
+        setField(xcb, MODIFICATION_DATE_KEY, partIteration.getModificationDate());
+        setField(xcb, REVISION_NOTE_KEY, partIteration.getIterationNote());
+        setField(xcb, WORKFLOW_KEY, partRevision.getWorkflow());
 
-            setField(tmp, WORKSPACE_ID_KEY, partIteration.getWorkspaceId());
-            setField(tmp, PART_NUMBER_KEY, partIteration.getPartNumber());
-            setField(tmp, PART_NAME_KEY, partMaster.getName());
-            setField(tmp, TYPE_KEY, partMaster.getType());
-            setField(tmp, VERSION_KEY, partIteration.getPartVersion());
-            setField(tmp, DESCRIPTION_KEY, partRevision.getDescription());
-            setField(tmp, ITERATION_KEY, partIteration.getIteration());
-            setField(tmp, STANDARD_PART_KEY, partMaster.isStandardPart());
-            setField(tmp, CREATION_DATE_KEY, partIteration.getCreationDate());
-            setField(tmp, MODIFICATION_DATE_KEY, partIteration.getModificationDate());
-            setField(tmp, REVISION_NOTE_KEY, partIteration.getIterationNote());
-            setField(tmp, WORKFLOW_KEY, partRevision.getWorkflow());
-
-            addCommonJSONFields(tmp, author, tags, instanceAttributes, contentInputs);
-
-            return tmp.endObject();
-
-        } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "The part " + partIteration.getKey() + " can't be indexed.", e);
-            return null;
-        } finally {
-            if (null != xContentBuilder) {
-                xContentBuilder.close();
-            }
-        }
+        addCommonJSONFields(xcb, author, tags, instanceAttributes, contentInputs);
     }
 
     private static void addCommonJSONFields(XContentBuilder tmp, User author, Set<Tag> tags, List<InstanceAttribute> instanceAttributes, Map<String, String> contentInputs) throws IOException {
@@ -235,23 +203,29 @@ public class IndexerMapping {
         return null;
     }
 
-    public static DocumentIterationKey getDocumentIterationKey(Map<String, Object> source) {
+    public static DocumentIterationKey getDocumentIterationKey(Map<?, ?> source) {
+        //Jest returns the value as double...
+        int iteration=Double.valueOf(extractValue(source, ITERATION_KEY)).intValue();
+
         return new DocumentIterationKey(extractValue(source, WORKSPACE_ID_KEY),
                 extractValue(source, DOCUMENT_ID_KEY),
                 extractValue(source, VERSION_KEY),
-                Integer.valueOf(extractValue(source, ITERATION_KEY))
+                iteration
         );
     }
 
-    public static PartIterationKey getPartIterationKey(Map<String, Object> source) {
+    public static PartIterationKey getPartIterationKey(Map<?, ?> source) {
+        //Jest returns the value as double...
+        int iteration=Double.valueOf(extractValue(source, ITERATION_KEY)).intValue();
+
         return new PartIterationKey(extractValue(source, WORKSPACE_ID_KEY),
                 extractValue(source, PART_NUMBER_KEY),
                 extractValue(source, VERSION_KEY),
-                Integer.valueOf(extractValue(source, ITERATION_KEY))
+                iteration
         );
     }
 
-    private static String extractValue(Map<String, Object> source, String key) {
+    private static String extractValue(Map<?, ?> source, String key) {
         Object ret = source.get(key);
         if (ret instanceof List) {
             return ((List) ret).get(0).toString();
@@ -260,9 +234,9 @@ public class IndexerMapping {
         }
     }
 
-    private static byte[] loadContentBuilderFromResource(String resourceLocation) throws IOException {
+    private static String loadContentBuilderFromResource(String resourceLocation) throws IOException {
         try (InputStream is = IndexerMapping.class.getResourceAsStream(resourceLocation)) {
-            return IOUtils.toByteArray(is);
+            return IOUtils.toString(is, "UTF-8");
         }
     }
 

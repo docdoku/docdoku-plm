@@ -33,23 +33,15 @@ import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.*;
-import org.elasticsearch.ResourceAlreadyExistsException;
-import org.elasticsearch.action.bulk.BulkRequestBuilder;
-import org.elasticsearch.action.bulk.BulkResponse;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.search.SearchType;
-import org.elasticsearch.action.update.UpdateRequestBuilder;
-import org.elasticsearch.action.update.UpdateResponse;
-import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.NoNodeAvailableException;
+import io.searchbox.client.JestClient;
+import io.searchbox.core.*;
+import io.searchbox.indices.CreateIndex;
+import io.searchbox.indices.mapping.PutMapping;
+import io.searchbox.params.SearchType;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentType;
-import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.common.xcontent.*;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;
@@ -77,7 +69,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     private EntityManager em;
 
     @Inject
-    private Client indexerClient;
+    private JestClient esClient;
 
     @Inject
     private IAccountManagerLocal accountManager;
@@ -98,22 +90,13 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public void createWorkspaceIndex(String workspaceId) throws AccountNotFoundException, NotAllowedException {
-
+    public void createWorkspaceIndex(String workspaceId) {
         try {
             createIndex(IndexerUtils.formatIndexName(workspaceId));
-        } catch (NoNodeAvailableException e) {
-            // Non blocking exception
-            LOGGER.log(Level.WARNING, "Cannot create index for workspace [" + workspaceId + "] " +
-                    "The ElasticSearch server doesn't seem to respond");
         } catch (IOException e) {
-            // Non blocking exception
+            //Throw an application exception?
             LOGGER.log(Level.SEVERE, "Cannot create index for workspace [" + workspaceId + "]", e);
-        } catch (ResourceAlreadyExistsException e) {
-            Account account = accountManager.getMyAccount();
-            throw new NotAllowedException(new Locale(account.getLanguage()), "NotAllowedException68");
         }
-
     }
 
     @Override
@@ -142,7 +125,6 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void indexPartIteration(PartIteration partIteration) {
         doIndexPartIteration(partIteration);
-
     }
 
     @Override
@@ -156,9 +138,9 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void removeDocumentIterationFromIndex(DocumentIteration documentIteration) {
         try {
-            deleteRequest(documentIteration).execute().actionGet();
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot delete document " + documentIteration + ": The ElasticSearch server doesn't seem to respond");
+            esClient.execute(deleteRequest(documentIteration));
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Cannot delete document " + documentIteration + ": The Elasticsearch cluster does not seem to respond");
         }
     }
 
@@ -166,9 +148,9 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void removePartIterationFromIndex(PartIteration partIteration) {
         try {
-            deleteRequest(partIteration).execute().actionGet();
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot delete part iteration " + partIteration + ": The ElasticSearch server doesn't seem to respond");
+            esClient.execute(deleteRequest(partIteration));
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Cannot delete part iteration " + partIteration + ": The Elasticsearch cluster does not seem to respond");
         }
     }
 
@@ -177,38 +159,39 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     public List<DocumentRevision> searchDocumentRevisions(DocumentSearchQuery documentSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException {
 
         String workspaceId = documentSearchQuery.getWorkspaceId();
-
         QueryBuilder query = IndexerQueryBuilder.getSearchQueryBuilder(documentSearchQuery);
-
-        LOGGER.log(Level.INFO, query.toString());
-
-        SearchResponse searchResponse;
+        LOGGER.log(Level.FINE, query.toString());
+        SearchResult searchResult;
 
         try {
-            searchResponse = indexerClient.prepareSearch(IndexerUtils.formatIndexName(workspaceId))
-                    .setTypes(IndexerMapping.DOCUMENT_TYPE)
-                    .setSearchType(SearchType.QUERY_THEN_FETCH)
-                    .setQuery(query)
-                    .setFrom(from)
-                    .setSize(size)
-                    .get();
-        } catch (NoNodeAvailableException e) {
+            searchResult=esClient.execute(new Search.Builder(
+                            new SearchSourceBuilder()
+                                    .query(query)
+                                    .from(from)
+                                    .size(size)
+                                    .toString())
+                            .addIndex(IndexerUtils.formatIndexName(workspaceId))
+                            .addType(IndexerMapping.DOCUMENT_TYPE)
+                            .setSearchType(SearchType.QUERY_THEN_FETCH)
+                            .build()
+            );
+
+        } catch (IOException e) {
             Account account = accountManager.getMyAccount();
             throw new NotAllowedException(new Locale(account.getLanguage()), "IndexerNotAvailableForSearch");
         }
 
-        SearchHits hits = searchResponse.getHits();
+        List<SearchResult.Hit<Map,Void>> hits = searchResult.getHits(Map.class);
         Set<DocumentIterationKey> documentIterationKeys = new HashSet<>();
 
         if (hits != null) {
-            for (SearchHit hit : hits.getHits()) {
-                Map<String, Object> source = hit.getSource();
+            for (SearchResult.Hit<Map,Void> hit : hits) {
+                Map<?,?> source = hit.source;
                 documentIterationKeys.add(IndexerMapping.getDocumentIterationKey(source));
             }
         }
 
-        LOGGER.log(Level.INFO, "Results : " + documentIterationKeys.size());
-
+        LOGGER.log(Level.INFO, "Results: " + documentIterationKeys.size());
         return documentIterationKeysToDocumentRevisions(documentSearchQuery.isFetchHeadOnly(), documentIterationKeys);
     }
 
@@ -217,168 +200,112 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     public List<PartRevision> searchPartRevisions(PartSearchQuery partSearchQuery, int from, int size) throws AccountNotFoundException, NotAllowedException {
 
         String workspaceId = partSearchQuery.getWorkspaceId();
-
         QueryBuilder query = IndexerQueryBuilder.getSearchQueryBuilder(partSearchQuery);
-
-        LOGGER.log(Level.INFO, query.toString());
-
-        SearchResponse searchResponse;
+        LOGGER.log(Level.FINE, query.toString());
+        SearchResult searchResult;
 
         try {
-            searchResponse = indexerClient.prepareSearch(IndexerUtils.formatIndexName(workspaceId))
-                    .setTypes(IndexerMapping.PART_TYPE)
-                    .setSearchType(SearchType.QUERY_THEN_FETCH)
-                    .setQuery(query)
-                    .setFrom(from)
-                    .setSize(size)
-                    .get();
-        } catch (NoNodeAvailableException e) {
+            searchResult=esClient.execute(new Search.Builder(
+                            new SearchSourceBuilder()
+                                    .query(query)
+                                    .from(from)
+                                    .size(size)
+                                    .toString())
+                            .addIndex(IndexerUtils.formatIndexName(workspaceId))
+                            .addType(IndexerMapping.PART_TYPE)
+                            .setSearchType(SearchType.QUERY_THEN_FETCH)
+                            .build()
+            );
+
+        } catch (IOException e) {
             Account account = accountManager.getMyAccount();
             throw new NotAllowedException(new Locale(account.getLanguage()), "IndexerNotAvailableForSearch");
         }
 
-        SearchHits hits = searchResponse.getHits();
-
+        List<SearchResult.Hit<Map,Void>> hits = searchResult.getHits(Map.class);
         Set<PartIterationKey> partIterationKeys = new HashSet<>();
 
         if (hits != null) {
-            for (SearchHit hit : hits.getHits()) {
-                Map<String, Object> source = hit.getSource();
+            for (SearchResult.Hit<Map,Void> hit : hits) {
+                Map<?,?> source = hit.source;
                 partIterationKeys.add(IndexerMapping.getPartIterationKey(source));
             }
         }
 
-        LOGGER.log(Level.INFO, "Results : " + partIterationKeys.size());
-
+        LOGGER.log(Level.INFO, "Results: " + partIterationKeys.size());
         return partIterationKeysToPartRevisions(partSearchQuery.isFetchHeadOnly(), partIterationKeys);
     }
 
     @Override
     @Asynchronous
     @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID})
-    public void indexAllWorkspacesData() {
-        Account account = null;
+    public void indexAllWorkspacesData() throws AccountNotFoundException {
+        WorkspaceDAO wDAO = new WorkspaceDAO(em);
 
-        try {
-            account = accountManager.getMyAccount();
-            BulkRequestBuilder bulkRequest = indexerClient.prepareBulk();
-            WorkspaceDAO wDAO = new WorkspaceDAO(em);
-
-            for (Workspace workspace : wDAO.getAll()) {
-                bulkRequest = bulkWorkspaceRequestBuilder(bulkRequest, workspace.getId());
-            }
-
-            if (bulkRequest.numberOfActions() > 0) {
-                BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-                if (bulkResponse.hasFailures()) {
-                    String failureMessage = bulkResponse.buildFailureMessage();
-                    LOGGER.log(Level.SEVERE, "Failures while bulk indexing all workspaces: \n" + failureMessage);
-                    mailer.sendBulkIndexationFailure(account, failureMessage);
-                } else {
-                    mailer.sendBulkIndexationSuccess(account);
-                }
-            } else {
-                LOGGER.log(Level.INFO, "No actions for all workspaces index request, ignoring");
-            }
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot index all workspaces: The ElasticSearch server doesn't seem to respond");
-            Locale locale = null != account ? new Locale(account.getLanguage()) : Locale.getDefault();
-            mailer.sendBulkIndexationFailure(account, getString("IndexerNotAvailableForRequest", locale));
-        } catch (AccountNotFoundException e) {
-            LOGGER.log(Level.SEVERE, null, e);
+        for (Workspace workspace : wDAO.getAll()) {
+            indexWorkspaceData(workspace.getId());
         }
     }
 
     @Override
     @Asynchronous
     @RolesAllowed({UserGroupMapping.ADMIN_ROLE_ID, UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public void indexWorkspaceData(String workspaceId) {
-
-        Account account;
-
-        try {
-            account = accountManager.getMyAccount();
-        } catch (AccountNotFoundException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-            return;
-        }
+    public void indexWorkspaceData(String workspaceId) throws AccountNotFoundException {
+        Account account = accountManager.getMyAccount();
 
         try {
             // Clear workspace if exists, or recreate
             doDeleteWorkspaceIndex(workspaceId);
+            Bulk.Builder bb = new Bulk.Builder().defaultIndex(workspaceId);
+            bulkWorkspaceRequestBuilder(bb, workspaceId);
 
-            BulkRequestBuilder bulkRequest = indexerClient.prepareBulk();
-            bulkWorkspaceRequestBuilder(bulkRequest, workspaceId);
+            BulkResult result =esClient.execute(bb.build());
 
-            if (bulkRequest.numberOfActions() > 0) {
-
-                BulkResponse bulkResponse = bulkRequest.execute().actionGet();
-
-                if (bulkResponse.hasFailures()) {
-                    String failureMessage = bulkResponse.buildFailureMessage();
-                    LOGGER.log(Level.SEVERE, "Failures while bulk indexing workspace [" + workspaceId + "]: \n" + failureMessage);
-                    mailer.sendBulkIndexationFailure(account, failureMessage);
-                } else {
-                    mailer.sendBulkIndexationSuccess(account);
-                }
+            if (result.isSucceeded()) {
+                mailer.sendBulkIndexationSuccess(account);
             } else {
-                LOGGER.log(Level.INFO, "No data to index for workspace [" + workspaceId + "]");
+                String failureMessage = result.getErrorMessage();
+                LOGGER.log(Level.SEVERE, "Failures while bulk indexing workspace [" + workspaceId + "]: \n" + failureMessage);
+                mailer.sendBulkIndexationFailure(account, failureMessage);
             }
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot index all workspaces: The ElasticSearch server doesn't seem to respond");
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Cannot index the whole workspace: The Elasticsearch server does not seem to respond");
             mailer.sendBulkIndexationFailure(account, getString("IndexerNotAvailableForRequest", new Locale(account.getLanguage())));
-        } catch (AccountNotFoundException e) {
-            LOGGER.log(Level.SEVERE, null, e);
         }
     }
 
     private void doIndexDocumentIteration(DocumentIteration documentIteration) {
         try {
-            createIndex(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()));
-        } catch (ResourceAlreadyExistsException e) {
-            LOGGER.log(Level.INFO, "Index already exists");
+            esClient.execute(indexRequest(documentIteration));
+            LOGGER.log(Level.INFO, "Document iteration [" + documentIteration.getKey() + "] indexed");
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.INFO, "The ElasticSearch server doesn't seem to respond");
-            return;
+            LOGGER.log(Level.WARNING, "The document " + documentIteration.getKey() + " cannot be indexed.", e);
         }
 
-        UpdateResponse updateResponse = indexRequest(documentIteration).get();
-        LOGGER.log(Level.INFO, "Document iteration [" + documentIteration.getKey() + "] indexed : " + updateResponse.status());
     }
 
 
     private void doIndexPartIteration(PartIteration partIteration) {
-        String workspaceId = partIteration.getWorkspaceId();
         try {
-            createIndex(IndexerUtils.formatIndexName(workspaceId));
-        } catch (ResourceAlreadyExistsException e) {
-            LOGGER.log(Level.INFO, "Index already exists for workspace [" + workspaceId + "]");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, null, e);
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot create index for requested part iteration indexation, The ElasticSearch server doesn't seem to respond", e);
-            return;
+            esClient.execute(indexRequest(partIteration));
+            LOGGER.log(Level.INFO, "Part iteration [" + partIteration.getKey() + "] indexed");
+        }
+        catch (IOException e) {
+            LOGGER.log(Level.WARNING, "The part " + partIteration.getKey() + " cannot be indexed.", e);
         }
 
-        indexRequest(partIteration).get();
-        LOGGER.log(Level.INFO, "Part iteration [" + partIteration.getKey() + "] indexed");
     }
 
 
     private void doDeleteWorkspaceIndex(String workspaceId) throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
         try {
-            indexerClient.admin().indices().prepareDelete(IndexerUtils.formatIndexName(workspaceId)).execute().actionGet();
-            mailer.sendWorkspaceIndexationSuccess(account, workspaceId, null);
-        } catch (NoNodeAvailableException e) {
+            esClient.execute(new Delete.Builder(IndexerUtils.formatIndexName(workspaceId))
+                    .build());
+        } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Cannot delete index for workspace [" + workspaceId
-                    + "] : The ElasticSearch server doesn't seem to respond. Consider to delete it manually.");
+                    + "]: The Elasticsearch server does not seem to respond. Consider deleting it manually.");
             mailer.sendWorkspaceIndexationFailure(account, workspaceId, getString("IndexerNotAvailableForRequest", new Locale(account.getLanguage())));
-        } catch (IndexNotFoundException e) {
-            LOGGER.log(Level.WARNING, "Cannot delete index for workspace [" + workspaceId
-                    + "] : the index does not exists.");
         }
     }
 
@@ -390,73 +317,122 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                 .put("auto_expand_replicas", indexerConfigManager.getAutoExpandReplicas())
                 .build();
 
-        indexerClient.admin().indices().prepareCreate(pIndex)
-                .setSettings(settings)
-                .addMapping(IndexerMapping.PART_TYPE, IndexerMapping.createPartIterationMapping(), XContentType.JSON)
-                .addMapping(IndexerMapping.DOCUMENT_TYPE, IndexerMapping.createDocumentIterationMapping(), XContentType.JSON)
-                .setSource(IndexerMapping.createSourceMapping(), XContentType.JSON)
-                .execute().actionGet();
+        esClient.execute(new CreateIndex.Builder(pIndex)
+                .settings(settings.getAsMap())
+                .build());
+
+        esClient.execute(new PutMapping.Builder(pIndex,
+                IndexerMapping.DEFAULT_TYPE,
+                IndexerMapping.createSourceMapping()).build());
+
+        esClient.execute(new PutMapping.Builder(pIndex,
+                IndexerMapping.PART_TYPE,
+                IndexerMapping.createPartIterationMapping()).build());
+
+        esClient.execute(new PutMapping.Builder(pIndex,
+                IndexerMapping.DOCUMENT_TYPE,
+                IndexerMapping.createDocumentIterationMapping()).build());
+
         LOGGER.log(Level.INFO, "Index created [" + pIndex + "]");
 
     }
 
-    private BulkRequestBuilder bulkWorkspaceRequestBuilder(BulkRequestBuilder pBulkRequest, String workspaceId) {
-        BulkRequestBuilder bulkRequest = pBulkRequest;
+    private Bulk.Builder bulkWorkspaceRequestBuilder(Bulk.Builder pBulkRequest, String workspaceId) {
         String index = IndexerUtils.formatIndexName(workspaceId);
 
         try {
             createIndex(index);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Cannot create index for workspace [" + workspaceId + "]", e);
-        } catch (NoNodeAvailableException e) {
-            LOGGER.log(Level.WARNING, "Cannot create index for workspace [" + workspaceId + "] The ElasticSearch server doesn't seem to respond");
-        } catch (ResourceAlreadyExistsException e) {
-            LOGGER.log(Level.WARNING, "Index already exists for workspace [" + workspaceId + "]", e);
+            //Throw an application exception?
+            LOGGER.log(Level.SEVERE, "Cannot create index for workspace [" + workspaceId + "]", e);
         }
 
-        bulkRequest = bulkDocumentsIndexRequestBuilder(bulkRequest, workspaceId);
-        bulkRequest = bulkPartsIndexRequestBuilder(bulkRequest, workspaceId);
+        bulkDocumentsIndexRequestBuilder(pBulkRequest, workspaceId);
+        bulkPartsIndexRequestBuilder(pBulkRequest, workspaceId);
 
-        return bulkRequest;
+        return pBulkRequest;
     }
 
-    private BulkRequestBuilder bulkDocumentsIndexRequestBuilder(BulkRequestBuilder pBulkRequest, String workspaceId) {
+    private Bulk.Builder bulkDocumentsIndexRequestBuilder(Bulk.Builder pBulkRequest, String workspaceId) {
         DocumentMasterDAO docMasterDAO = new DocumentMasterDAO(em);
         for (DocumentMaster docM : docMasterDAO.getAllByWorkspace(workspaceId)) {
             for (DocumentRevision docR : docM.getDocumentRevisions()) {
                 docR.getDocumentIterations().stream().filter(documentIteration -> documentIteration.getCheckInDate() != null)
-                        .forEach(documentIteration -> pBulkRequest.add(indexRequest(documentIteration)));
+                        .forEach(documentIteration -> {
+                            try {
+                                pBulkRequest.addAction(indexRequest(documentIteration));
+                            } catch (IOException e) {
+                                LOGGER.log(Level.WARNING, "The document " + documentIteration + " cannot be indexed.", e);
+                            }
+                        });
             }
         }
         return pBulkRequest;
     }
 
-    private BulkRequestBuilder bulkPartsIndexRequestBuilder(BulkRequestBuilder pBulkRequest, String workspaceId) {
+    private Bulk.Builder bulkPartsIndexRequestBuilder(Bulk.Builder pBulkRequest, String workspaceId) {
         PartMasterDAO partMasterDAO = new PartMasterDAO(em);
         for (PartMaster partMaster : partMasterDAO.getAllByWorkspace(workspaceId)) {
             for (PartRevision partRev : partMaster.getPartRevisions()) {
                 partRev.getPartIterations().stream().filter(partIteration -> partIteration.getCheckInDate() != null)
-                        .forEach(partIteration -> pBulkRequest.add(indexRequest(partIteration)));
+                        .forEach(partIteration -> {
+                            try {
+                                pBulkRequest.addAction(indexRequest(partIteration));
+                            } catch (IOException e) {
+                                LOGGER.log(Level.WARNING, "The part " + partIteration.getKey() + " cannot be indexed.", e);
+                            }
+                        });
             }
         }
         return pBulkRequest;
     }
 
 
-    private UpdateRequestBuilder indexRequest(DocumentIteration documentIteration) throws NoNodeAvailableException {
+    private Update indexRequest(DocumentIteration documentIteration) throws IOException {
         Map<String, String> contentInputs = getContentInputs(documentIteration.getAttachedFiles());
-        XContentBuilder jsonDoc = IndexerMapping.documentIterationToJSON(documentIteration, contentInputs);
-        return indexerClient.prepareUpdate(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()),
-                IndexerMapping.DOCUMENT_TYPE, documentIteration.getKey().toString())
-                .setDocAsUpsert(true).setDoc(jsonDoc);
+        XContentBuilder xcb = null;
+        try {
+            xcb = XContentFactory.jsonBuilder()
+                    .startObject()
+                    .field("doc_as_upsert", true)
+                    .startObject("doc");
+            IndexerMapping.documentIterationToJSON(xcb, documentIteration, contentInputs);
+            xcb.endObject().endObject();
+            return new Update.Builder(xcb.string())
+                    .index(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()))
+                    .type(IndexerMapping.DOCUMENT_TYPE)
+                    .id(documentIteration.getKey().toString())
+                    .build();
+        }
+        finally {
+            if (xcb != null) {
+                xcb.close();
+            }
+        }
+
     }
 
-    private UpdateRequestBuilder indexRequest(PartIteration partIteration) {
+    private Update indexRequest(PartIteration partIteration) throws IOException {
         Map<String, String> contentInputs = getContentInputs(partIteration.getAttachedFiles());
-        XContentBuilder jsonDoc = IndexerMapping.partIterationToJSON(partIteration, contentInputs);
-        return indexerClient.prepareUpdate(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()),
-                IndexerMapping.PART_TYPE, partIteration.getKey().toString())
-                .setDocAsUpsert(true).setDoc(jsonDoc);
+        XContentBuilder xcb = null;
+        try {
+            xcb = XContentFactory.jsonBuilder()
+                    .startObject()
+                    .field("doc_as_upsert", true)
+                    .startObject("doc");
+            IndexerMapping.partIterationToJSON(xcb, partIteration, contentInputs);
+            xcb.endObject().endObject();
+            return new Update.Builder(xcb.string())
+                    .index(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()))
+                    .type(IndexerMapping.PART_TYPE)
+                    .id(partIteration.getKey().toString())
+                    .build();
+        }
+        finally {
+            if (xcb != null) {
+                xcb.close();
+            }
+        }
     }
 
     private Map<String, String> getContentInputs(Set<BinaryResource> attachedFiles) {
@@ -471,14 +447,18 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         return contentInputs;
     }
 
-    private DeleteRequestBuilder deleteRequest(DocumentIteration documentIteration) throws NoNodeAvailableException {
-        return indexerClient.prepareDelete(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()),
-                IndexerMapping.DOCUMENT_TYPE, documentIteration.getKey().toString());
+    private Delete deleteRequest(DocumentIteration documentIteration) {
+        return new Delete.Builder(documentIteration.getKey().toString())
+                .index(IndexerUtils.formatIndexName(documentIteration.getWorkspaceId()))
+                .type(IndexerMapping.DOCUMENT_TYPE)
+                .build();
     }
 
-    private DeleteRequestBuilder deleteRequest(PartIteration partIteration) throws NoNodeAvailableException {
-        return indexerClient.prepareDelete(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()),
-                IndexerMapping.PART_TYPE, partIteration.getKey().toString());
+    private Delete deleteRequest(PartIteration partIteration) {
+        return new Delete.Builder(partIteration.getKey().toString())
+                .index(IndexerUtils.formatIndexName(partIteration.getWorkspaceId()))
+                .type(IndexerMapping.PART_TYPE)
+                .build();
     }
 
     private String getString(String key, Locale locale) {

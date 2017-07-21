@@ -57,9 +57,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Utility methods for Search & Index Method using ElasticSearch API.
+ * Utility methods for Search & Index operations using Elasticsearch API.
  *
- * @author Taylor LABEJOF
+ * @author Taylor Labejof
  */
 public class IndexerUtils {
 

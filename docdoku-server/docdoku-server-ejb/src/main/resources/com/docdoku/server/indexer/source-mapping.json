@@ -1,31 +1,29 @@
 {
-  "mappings": {
-    "_default_": {
-      "_all": {
-        "enabled": "true"
-      },
-      "dynamic_templates": [
-        {
-          "content_string": {
-            "match": "content",
-            "match_mapping_type": "string",
-            "mapping": {
-              "type": "string",
-              "index": "analyzed"
-            }
-          }
-        },
-        {
-          "default_string": {
-            "match": "*",
-            "match_mapping_type": "string",
-            "mapping": {
-              "type": "string",
-              "index": "not_analyzed"
-            }
+  "_default_": {
+    "_all": {
+      "enabled": "true"
+    },
+    "dynamic_templates": [
+      {
+        "content_string": {
+          "match": "content",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "string",
+            "index": "analyzed"
           }
         }
-      ]
-    }
+      },
+      {
+        "default_string": {
+          "match": "*",
+          "match_mapping_type": "string",
+          "mapping": {
+            "type": "string",
+            "index": "not_analyzed"
+          }
+        }
+      }
+    ]
   }
 }

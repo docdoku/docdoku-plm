@@ -24,7 +24,7 @@ import javax.enterprise.context.ApplicationScoped;
 import java.util.Properties;
 
 /**
- * Retrieves Elastic search config from custom jndi resource
+ * Retrieves Elasticsearch config from custom jndi resource
  *
  * @author Morgan Guimard
  */
@@ -46,19 +46,12 @@ public class IndexerConfigManager {
         return properties.getProperty("auto_expand_replicas");
     }
 
-    public String getClusterName() {
-        return properties.getProperty("cluster_name");
+    public String getServerUri() {
+        return properties.getProperty("serverUri");
     }
 
-    public String getHost() {
-        return properties.getProperty("host");
-    }
+    public String getUserName() { return properties.getProperty("username"); }
 
-    public Integer getPort() {
-        return Integer.parseInt(properties.getProperty("port"));
-    }
+    public String getPassword() { return properties.getProperty("password"); }
 
-    public String getXPackSecurityUser() {
-        return properties.getProperty("xpack_security_user");
-    }
 }
