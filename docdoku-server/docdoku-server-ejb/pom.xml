@@ -72,7 +72,10 @@
             <groupId>io.searchbox</groupId>
             <artifactId>jest</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>vc.inreach.aws</groupId>
+            <artifactId>aws-signing-request-interceptor</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

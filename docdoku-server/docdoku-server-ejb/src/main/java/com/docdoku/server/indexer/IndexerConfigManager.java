@@ -54,4 +54,12 @@ public class IndexerConfigManager {
 
     public String getPassword() { return properties.getProperty("password"); }
 
+    public String getAWSService() { return properties.getProperty("awsService"); }
+
+    public String getAWSRegion() { return properties.getProperty("awsRegion"); }
+
+    public String getAWSAccessKey() { return properties.getProperty("awsAccessKey"); }
+
+    public String getAWSSecretKey() { return properties.getProperty("awsSecretKey"); }
+
 }

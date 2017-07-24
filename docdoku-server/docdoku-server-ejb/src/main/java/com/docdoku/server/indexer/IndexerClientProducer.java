@@ -1,8 +1,15 @@
 package com.docdoku.server.indexer;
 
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import vc.inreach.aws.request.AWSSigner;
+import vc.inreach.aws.request.AWSSigningRequestInterceptor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -12,6 +19,9 @@ import javax.ejb.Singleton;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,16 +52,45 @@ public class IndexerClientProducer {
         String serverUri = config.getServerUri();
         String username = config.getUserName();
         String password = config.getPassword();
+        String awsService = config.getAWSService();
+        String awsRegion = config.getAWSRegion();
+        String awsAccessKey = config.getAWSAccessKey();
+        String awsSecretKey = config.getAWSSecretKey();
 
-
-        HttpClientConfig.Builder httpConfigBuilder=new HttpClientConfig.Builder(serverUri)
+        HttpClientConfig.Builder httpConfigBuilder = new HttpClientConfig.Builder(serverUri)
                 .multiThreaded(true)
                 .defaultMaxTotalConnectionPerRoute(8);
 
-        if(username !=null && password !=null)
+        if (username != null && password != null)
             httpConfigBuilder.defaultCredentials(username, password);
 
-        JestClientFactory factory = new JestClientFactory();
+        JestClientFactory factory;
+        if (awsService != null && awsRegion != null && awsAccessKey != null && awsSecretKey != null) {
+            final BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
+            final AWSCredentialsProvider awsCredentialsProvider = new AWSCredentialsProvider() {
+                public AWSCredentials getCredentials () { return awsCredentials; }
+                public void refresh () {}
+            };
+
+            final AWSSigner awsSigner = new AWSSigner(awsCredentialsProvider, awsRegion, awsService, () -> LocalDateTime.now(ZoneOffset.UTC));
+            final AWSSigningRequestInterceptor requestInterceptor = new AWSSigningRequestInterceptor(awsSigner);
+
+            factory = new JestClientFactory() {
+                @Override
+                protected HttpClientBuilder configureHttpClient(HttpClientBuilder builder) {
+                    builder.addInterceptorLast(requestInterceptor);
+                    return builder;
+                }
+
+                @Override
+                protected HttpAsyncClientBuilder configureHttpClient(HttpAsyncClientBuilder builder) {
+                    builder.addInterceptorLast(requestInterceptor);
+                    return builder;
+                }
+            };
+        } else {
+            factory = new JestClientFactory();
+        }
         factory.setHttpClientConfig(httpConfigBuilder.build());
         client = factory.getObject();
 
