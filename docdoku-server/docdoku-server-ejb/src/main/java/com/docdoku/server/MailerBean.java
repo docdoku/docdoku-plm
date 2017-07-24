@@ -610,19 +610,19 @@ public class MailerBean implements IMailerLocal {
     // URIs
     // todo : move to properties file and format
     private String getDocumentRevisionPermalinkURL(DocumentRevision pDocR) {
-        return configManager.getCodebase() + "/documents/#" + pDocR.getWorkspaceId() + "/" + FileIO.encode(pDocR.getId()) + "/" + pDocR.getVersion();
+        return configManager.getCodebase() + "/documents/index.html#" + pDocR.getWorkspaceId() + "/" + FileIO.encode(pDocR.getId()) + "/" + pDocR.getVersion();
     }
 
     private String getPartRevisionPermalinkURL(PartRevision pPartR) {
-        return configManager.getCodebase() + "/parts/#" + pPartR.getWorkspaceId() + "/" + FileIO.encode(pPartR.getPartNumber()) + "/" + pPartR.getVersion();
+        return configManager.getCodebase() + "/parts/index.html#" + pPartR.getWorkspaceId() + "/" + FileIO.encode(pPartR.getPartNumber()) + "/" + pPartR.getVersion();
     }
 
     private String getTaskUrl(Task pTask, String workspaceId) {
-        return configManager.getCodebase() + "/change-management/#" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
+        return configManager.getCodebase() + "/change-management/index.html#" + workspaceId + "/tasks/" + pTask.getWorkflowId() + "-" + pTask.getActivityStep() + "-" + pTask.getNum();
     }
 
     private String getRecoveryUrl(String uuid) {
-        return configManager.getCodebase() + "/#recover/" + uuid;
+        return configManager.getCodebase() + "/index.html#recover/" + uuid;
     }
 
 
