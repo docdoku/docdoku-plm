@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>docdoku-plm</artifactId>
         <groupId>com.docdoku</groupId>
@@ -191,6 +191,9 @@
                             <apiPackage>com.docdoku.api.services</apiPackage>
                             <invokerPackage>com.docdoku.api.client</invokerPackage>
                             <modelPackage>com.docdoku.api.models</modelPackage>
+                            <configOptions>
+                                <serializableModel>true</serializableModel>
+                            </configOptions>
                             <library>okhttp-gson</library>
                         </configuration>
                     </execution>
@@ -274,7 +277,9 @@
                             <packages>com.docdoku.core.*</packages>
                         </group>
                     </groups>
-                    <sourcepath>${project.parent.basedir}/docdoku-common/src/main/java:${project.build.directory}/generated-sources/swagger/src/main/java/:${project.basedir}/src/main/java:${project.parent.basedir}/docdoku-server/docdoku-server-ext/src/main/java</sourcepath>
+                    <sourcepath>
+                        ${project.parent.basedir}/docdoku-common/src/main/java:${project.build.directory}/generated-sources/swagger/src/main/java/:${project.basedir}/src/main/java:${project.parent.basedir}/docdoku-server/docdoku-server-ext/src/main/java
+                    </sourcepath>
                 </configuration>
             </plugin>
         </plugins>
