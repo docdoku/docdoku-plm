@@ -1,8 +1,7 @@
 package com.docdoku.server.indexer;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.internal.StaticCredentialsProvider;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
@@ -21,7 +20,6 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -66,13 +64,9 @@ public class IndexerClientProducer {
 
         JestClientFactory factory;
         if (awsService != null && awsRegion != null && awsAccessKey != null && awsSecretKey != null) {
-            final BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsAccessKey, awsSecretKey);
-            final AWSCredentialsProvider awsCredentialsProvider = new AWSCredentialsProvider() {
-                public AWSCredentials getCredentials () { return awsCredentials; }
-                public void refresh () {}
-            };
 
-            final AWSSigner awsSigner = new AWSSigner(awsCredentialsProvider, awsRegion, awsService, () -> LocalDateTime.now(ZoneOffset.UTC));
+            final StaticCredentialsProvider staticCredentialsProvider = new StaticCredentialsProvider(new BasicAWSCredentials(awsAccessKey, awsSecretKey));
+            final AWSSigner awsSigner = new AWSSigner(staticCredentialsProvider, awsRegion, awsService, () -> LocalDateTime.now(ZoneOffset.UTC));
             final AWSSigningRequestInterceptor requestInterceptor = new AWSSigningRequestInterceptor(awsSigner);
 
             factory = new JestClientFactory() {

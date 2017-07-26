@@ -34,6 +34,7 @@ import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.IMailerLocal;
 import com.docdoku.server.dao.*;
 import io.searchbox.client.JestClient;
+import io.searchbox.client.JestResult;
 import io.searchbox.core.*;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.mapping.PutMapping;
@@ -138,7 +139,10 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void removeDocumentIterationFromIndex(DocumentIteration documentIteration) {
         try {
-            esClient.execute(deleteRequest(documentIteration));
+            DocumentResult result = esClient.execute(deleteRequest(documentIteration));
+            if (!result.isSucceeded()) {
+                LOGGER.log(Level.WARNING, "Cannot delete document " + documentIteration + ": " + result.getErrorMessage());
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Cannot delete document " + documentIteration + ": The Elasticsearch cluster does not seem to respond");
         }
@@ -148,7 +152,10 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public void removePartIterationFromIndex(PartIteration partIteration) {
         try {
-            esClient.execute(deleteRequest(partIteration));
+            DocumentResult result = esClient.execute(deleteRequest(partIteration));
+            if (!result.isSucceeded()) {
+                LOGGER.log(Level.WARNING, "Cannot delete part iteration " + partIteration + ": " + result.getErrorMessage());
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Cannot delete part iteration " + partIteration + ": The Elasticsearch cluster does not seem to respond");
         }
@@ -164,7 +171,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         SearchResult searchResult;
 
         try {
-            searchResult=esClient.execute(new Search.Builder(
+            searchResult = esClient.execute(new Search.Builder(
                             new SearchSourceBuilder()
                                     .query(query)
                                     .from(from)
@@ -181,18 +188,24 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
             throw new NotAllowedException(new Locale(account.getLanguage()), "IndexerNotAvailableForSearch");
         }
 
-        List<SearchResult.Hit<Map,Void>> hits = searchResult.getHits(Map.class);
-        Set<DocumentIterationKey> documentIterationKeys = new HashSet<>();
+        if (searchResult.isSucceeded()) {
 
-        if (hits != null) {
-            for (SearchResult.Hit<Map,Void> hit : hits) {
-                Map<?,?> source = hit.source;
-                documentIterationKeys.add(IndexerMapping.getDocumentIterationKey(source));
+            List<SearchResult.Hit<Map, Void>> hits = searchResult.getHits(Map.class);
+            Set<DocumentIterationKey> documentIterationKeys = new HashSet<>();
+
+            if (hits != null) {
+                for (SearchResult.Hit<Map, Void> hit : hits) {
+                    Map<?, ?> source = hit.source;
+                    documentIterationKeys.add(IndexerMapping.getDocumentIterationKey(source));
+                }
             }
-        }
 
-        LOGGER.log(Level.INFO, "Results: " + documentIterationKeys.size());
-        return documentIterationKeysToDocumentRevisions(documentSearchQuery.isFetchHeadOnly(), documentIterationKeys);
+            LOGGER.log(Level.INFO, "Results: " + documentIterationKeys.size());
+            return documentIterationKeysToDocumentRevisions(documentSearchQuery.isFetchHeadOnly(), documentIterationKeys);
+
+        } else {
+            throw new NotAllowedException(searchResult.getErrorMessage());
+        }
     }
 
     @Override
@@ -205,7 +218,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         SearchResult searchResult;
 
         try {
-            searchResult=esClient.execute(new Search.Builder(
+            searchResult = esClient.execute(new Search.Builder(
                             new SearchSourceBuilder()
                                     .query(query)
                                     .from(from)
@@ -222,18 +235,22 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
             throw new NotAllowedException(new Locale(account.getLanguage()), "IndexerNotAvailableForSearch");
         }
 
-        List<SearchResult.Hit<Map,Void>> hits = searchResult.getHits(Map.class);
-        Set<PartIterationKey> partIterationKeys = new HashSet<>();
+        if (searchResult.isSucceeded()) {
+            List<SearchResult.Hit<Map, Void>> hits = searchResult.getHits(Map.class);
+            Set<PartIterationKey> partIterationKeys = new HashSet<>();
 
-        if (hits != null) {
-            for (SearchResult.Hit<Map,Void> hit : hits) {
-                Map<?,?> source = hit.source;
-                partIterationKeys.add(IndexerMapping.getPartIterationKey(source));
+            if (hits != null) {
+                for (SearchResult.Hit<Map, Void> hit : hits) {
+                    Map<?, ?> source = hit.source;
+                    partIterationKeys.add(IndexerMapping.getPartIterationKey(source));
+                }
             }
-        }
 
-        LOGGER.log(Level.INFO, "Results: " + partIterationKeys.size());
-        return partIterationKeysToPartRevisions(partSearchQuery.isFetchHeadOnly(), partIterationKeys);
+            LOGGER.log(Level.INFO, "Results: " + partIterationKeys.size());
+            return partIterationKeysToPartRevisions(partSearchQuery.isFetchHeadOnly(), partIterationKeys);
+        } else {
+            throw new NotAllowedException(searchResult.getErrorMessage());
+        }
     }
 
     @Override
@@ -259,7 +276,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
             Bulk.Builder bb = new Bulk.Builder().defaultIndex(workspaceId);
             bulkWorkspaceRequestBuilder(bb, workspaceId);
 
-            BulkResult result =esClient.execute(bb.build());
+            BulkResult result = esClient.execute(bb.build());
 
             if (result.isSucceeded()) {
                 mailer.sendBulkIndexationSuccess(account);
@@ -276,8 +293,12 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
     private void doIndexDocumentIteration(DocumentIteration documentIteration) {
         try {
-            esClient.execute(indexRequest(documentIteration));
-            LOGGER.log(Level.INFO, "Document iteration [" + documentIteration.getKey() + "] indexed");
+            DocumentResult execute = esClient.execute(indexRequest(documentIteration));
+            if (execute.isSucceeded()) {
+                LOGGER.log(Level.INFO, "Document iteration [" + documentIteration.getKey() + "] indexed");
+            } else {
+                LOGGER.log(Level.WARNING, "The document " + documentIteration.getKey() + " cannot be indexed : \n" + execute.getErrorMessage());
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "The document " + documentIteration.getKey() + " cannot be indexed.", e);
         }
@@ -287,10 +308,13 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
     private void doIndexPartIteration(PartIteration partIteration) {
         try {
-            esClient.execute(indexRequest(partIteration));
-            LOGGER.log(Level.INFO, "Part iteration [" + partIteration.getKey() + "] indexed");
-        }
-        catch (IOException e) {
+            DocumentResult result = esClient.execute(indexRequest(partIteration));
+            if (!result.isSucceeded()) {
+                LOGGER.log(Level.WARNING, "Cannot index part iteration " + partIteration + ": " + result.getErrorMessage());
+            } else {
+                LOGGER.log(Level.INFO, "Part iteration [" + partIteration.getKey() + "] indexed");
+            }
+        } catch (IOException e) {
             LOGGER.log(Level.WARNING, "The part " + partIteration.getKey() + " cannot be indexed.", e);
         }
 
@@ -300,8 +324,11 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     private void doDeleteWorkspaceIndex(String workspaceId) throws AccountNotFoundException {
         Account account = accountManager.getMyAccount();
         try {
-            esClient.execute(new Delete.Builder(IndexerUtils.formatIndexName(workspaceId))
+            DocumentResult result = esClient.execute(new Delete.Builder(IndexerUtils.formatIndexName(workspaceId))
                     .build());
+            if (!result.isSucceeded()) {
+                LOGGER.log(Level.WARNING, "Cannot delete index for workspace [" + workspaceId + "] : " + result.getErrorMessage());
+            }
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Cannot delete index for workspace [" + workspaceId
                     + "]: The Elasticsearch server does not seem to respond. Consider deleting it manually.");
@@ -317,21 +344,44 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                 .put("auto_expand_replicas", indexerConfigManager.getAutoExpandReplicas())
                 .build();
 
-        esClient.execute(new CreateIndex.Builder(pIndex)
+        JestResult result = esClient.execute(new CreateIndex.Builder(pIndex)
                 .settings(settings.getAsMap())
                 .build());
 
-        esClient.execute(new PutMapping.Builder(pIndex,
+        if (!result.isSucceeded()) {
+            LOGGER.log(Level.SEVERE, "Cannot create index settings: " + result.getErrorMessage());
+            return;
+        }
+
+        result = esClient.execute(new PutMapping.Builder(pIndex,
                 IndexerMapping.DEFAULT_TYPE,
                 IndexerMapping.createSourceMapping()).build());
 
-        esClient.execute(new PutMapping.Builder(pIndex,
+
+        if (!result.isSucceeded()) {
+            LOGGER.log(Level.SEVERE, "Cannot create index DEFAULT_TYPE mappings: " + result.getErrorMessage());
+            return;
+        }
+
+        result = esClient.execute(new PutMapping.Builder(pIndex,
                 IndexerMapping.PART_TYPE,
                 IndexerMapping.createPartIterationMapping()).build());
 
-        esClient.execute(new PutMapping.Builder(pIndex,
+
+        if (!result.isSucceeded()) {
+            LOGGER.log(Level.SEVERE, "Cannot create index PART_TYPE mappings: " + result.getErrorMessage());
+            return;
+        }
+
+        result = esClient.execute(new PutMapping.Builder(pIndex,
                 IndexerMapping.DOCUMENT_TYPE,
                 IndexerMapping.createDocumentIterationMapping()).build());
+
+
+        if (!result.isSucceeded()) {
+            LOGGER.log(Level.SEVERE, "Cannot create index DOCUMENT_TYPE mappings: " + result.getErrorMessage());
+            return;
+        }
 
         LOGGER.log(Level.INFO, "Index created [" + pIndex + "]");
 
@@ -403,8 +453,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                     .type(IndexerMapping.DOCUMENT_TYPE)
                     .id(documentIteration.getKey().toString())
                     .build();
-        }
-        finally {
+        } finally {
             if (xcb != null) {
                 xcb.close();
             }
@@ -427,8 +476,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                     .type(IndexerMapping.PART_TYPE)
                     .id(partIteration.getKey().toString())
                     .build();
-        }
-        finally {
+        } finally {
             if (xcb != null) {
                 xcb.close();
             }
