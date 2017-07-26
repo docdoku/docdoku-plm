@@ -26,6 +26,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.auth.AuthConfig;
 import com.docdoku.server.auth.jwt.JWTokenFactory;
 import com.docdoku.server.rest.dto.AccountDTO;
 import com.docdoku.server.rest.dto.GCMAccountDTO;
@@ -69,6 +70,9 @@ public class AccountResource {
 
     @Inject
     private IContextManagerLocal contextManager;
+
+    @Inject
+    private AuthConfig authConfig;
 
     private static final Logger LOGGER = Logger.getLogger(AccountResource.class.getName());
 
@@ -153,9 +157,15 @@ public class AccountResource {
             session.setAttribute("login", login);
             session.setAttribute("groups", UserGroupMapping.REGULAR_USER_ROLE_ID);
 
-            return Response.ok()
-                    .entity(mapper.map(account, AccountDTO.class))
-                    .header("jwt", JWTokenFactory.createToken(new UserGroupMapping(login, UserGroupMapping.REGULAR_USER_ROLE_ID)))
+
+            Response.ResponseBuilder responseBuilder = Response.ok()
+                    .entity(mapper.map(account, AccountDTO.class));
+
+            if (authConfig.isJwtEnabled()) {
+                responseBuilder.header("jwt", JWTokenFactory.createToken(authConfig.getJWTKey(), new UserGroupMapping(login, UserGroupMapping.REGULAR_USER_ROLE_ID)));
+            }
+
+            return responseBuilder
                     .build();
 
         } else {

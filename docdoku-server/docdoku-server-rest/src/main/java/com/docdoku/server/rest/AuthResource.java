@@ -125,7 +125,7 @@ public class AuthResource {
                     .entity(mapper.map(account, AccountDTO.class));
 
             if (authConfig.isJwtEnabled()) {
-                responseBuilder.header("jwt", JWTokenFactory.createToken(userGroupMapping));
+                responseBuilder.header("jwt", JWTokenFactory.createToken(authConfig.getJWTKey(), userGroupMapping));
             }
 
             return responseBuilder.build();
@@ -185,7 +185,7 @@ public class AuthResource {
     public Response logout(
             @Context HttpServletRequest request) {
 
-        if(authConfig.isSessionEnabled()) {
+        if (authConfig.isSessionEnabled()) {
             request.getSession().invalidate();
         }
 

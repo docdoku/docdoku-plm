@@ -53,7 +53,7 @@ public class CustomServerAuthConfig implements ServerAuthConfig {
         List<CustomSAM> customSAMs = new ArrayList<>();
 
         if (authConfig.isJwtEnabled()) {
-            customSAMs.add(new JWTSAM());
+            customSAMs.add(new JWTSAM(authConfig.getJWTKey()));
         }
 
         if (authConfig.isBasicHeaderEnabled()) {

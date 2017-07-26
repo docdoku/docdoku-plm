@@ -34,6 +34,7 @@ import javax.security.auth.message.callback.GroupPrincipalCallback;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Key;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,8 +46,10 @@ import java.util.logging.Logger;
 public class JWTSAM extends CustomSAM {
 
     private static final Logger LOGGER = Logger.getLogger(JWTSAM.class.getName());
+    private Key key;
 
-    public JWTSAM() {
+    public JWTSAM(Key key) {
+        this.key = key;
     }
 
     @Override
@@ -67,8 +70,7 @@ public class JWTSAM extends CustomSAM {
             jwt = request.getParameter("jwtToken");
         }
 
-
-        UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(jwt);
+        UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(key, jwt);
 
         if (userGroupMapping != null) {
             CallerPrincipalCallback callerPrincipalCallback = new CallerPrincipalCallback(clientSubject, userGroupMapping.getLogin());
@@ -101,7 +103,7 @@ public class JWTSAM extends CustomSAM {
 
         // In query string (embedded resources)
         // todo restrict query string usage to files only ?
-        String token = request.getParameter("jwtToken") ;
+        String token = request.getParameter("jwtToken");
         return token != null && !token.isEmpty();
     }
 

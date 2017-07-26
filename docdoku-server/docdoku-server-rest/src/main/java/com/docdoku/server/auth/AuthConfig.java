@@ -20,10 +20,13 @@
 
 package com.docdoku.server.auth;
 
+import org.jose4j.keys.HmacKey;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import java.security.Key;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,15 +54,22 @@ public class AuthConfig {
     }
 
     public Boolean isJwtEnabled() {
-        return Boolean.parseBoolean(String.valueOf(properties.get("jwt.enabled")));
+        return Boolean.parseBoolean(properties.getProperty("jwt.enabled"));
     }
 
     public Boolean isBasicHeaderEnabled() {
-        return Boolean.parseBoolean(String.valueOf(properties.get("basic.header.enabled")));
+        return Boolean.parseBoolean(properties.getProperty("basic.header.enabled"));
     }
 
     public Boolean isSessionEnabled() {
-        return Boolean.parseBoolean(String.valueOf(properties.get("session.enabled")));
+        return Boolean.parseBoolean(properties.getProperty("session.enabled"));
     }
 
+    public Key getJWTKey() {
+        String secret = properties.getProperty("jwt.key");
+        if (null != secret && !secret.isEmpty()) {
+            return new HmacKey(secret.getBytes());
+        }
+        return null;
+    }
 }

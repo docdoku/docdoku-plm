@@ -21,7 +21,6 @@
 package com.docdoku.server.auth.jwt;
 
 import com.docdoku.core.security.UserGroupMapping;
-import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -31,6 +30,7 @@ import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
 
+import java.security.Key;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,21 +42,19 @@ import java.util.logging.Logger;
 public class JWTokenFactory {
 
     private static final Logger LOGGER = Logger.getLogger(JWTokenFactory.class.getName());
-    private static final String ALG = AlgorithmIdentifiers.RSA_USING_SHA256;
+    private static final String ALG = AlgorithmIdentifiers.HMAC_SHA256;
 
     private JWTokenFactory() {
     }
 
-    public static String createToken(UserGroupMapping userGroupMapping) {
-
-        RsaJsonWebKey rsaJsonWebKey = RsaJsonWebKeyFactory.createKey();
+    public static String createToken(Key key, UserGroupMapping userGroupMapping) {
 
         JwtClaims claims = new JwtClaims();
         claims.setSubject(userGroupMapping.getLogin() + ":" + userGroupMapping.getGroupName());
 
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
-        jws.setKey(rsaJsonWebKey.getPrivateKey());
+        jws.setKey(key);
         jws.setAlgorithmHeaderValue(ALG);
 
         try {
@@ -68,15 +66,14 @@ public class JWTokenFactory {
         return null;
     }
 
-    public static UserGroupMapping validateToken(String jwt) {
-
-        RsaJsonWebKey rsaJsonWebKey = RsaJsonWebKeyFactory.createKey();
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                .setRequireSubject()
-                .setVerificationKey(rsaJsonWebKey.getKey())
-                .build();
+    public static UserGroupMapping validateToken(Key key, String jwt) {
 
         String subject = null;
+
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setVerificationKey(key)
+                .setRelaxVerificationKeyValidation()
+                .build();
 
         try {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);

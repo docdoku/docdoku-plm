@@ -22,6 +22,7 @@ package com.docdoku.server.ws;
 
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.auth.AuthConfig;
 import com.docdoku.server.auth.jwt.JWTokenFactory;
 
 import javax.ejb.Stateless;
@@ -64,6 +65,9 @@ public class WebSocketApplication {
     @Inject
     private WebSocketSessionsManager webSocketSessionsManager;
 
+    @Inject
+    private AuthConfig authConfig;
+
     private List<Session> unAuthenticatedSessions = new ArrayList<>();
 
     private static final String AUTH = "AUTH";
@@ -92,8 +96,8 @@ public class WebSocketApplication {
 
     @OnMessage
     public void message(Session session, WebSocketMessage message) {
-        if(unAuthenticatedSessions.contains(session)){
-            authenticateOrClose(session,message);
+        if (unAuthenticatedSessions.contains(session)) {
+            authenticateOrClose(session, message);
             return;
         }
 
@@ -103,10 +107,10 @@ public class WebSocketApplication {
 
         WebSocketModule selectedModule = selectModule(message);
 
-        if(null != selectedModule){
+        if (null != selectedModule) {
             selectedModule.process(session, message);
-        }else{
-            LOGGER.log(Level.WARNING,"No modules for type " + message.getType());
+        } else {
+            LOGGER.log(Level.WARNING, "No modules for type " + message.getType());
         }
 
 
@@ -116,11 +120,11 @@ public class WebSocketApplication {
 
         String type = message.getType();
 
-        if(AUTH.equals(type)){
+        if (AUTH.equals(type)) {
             String jwt = message.getString("jwt");
 
-            UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(jwt);
-            if(null != userGroupMapping){
+            UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(authConfig.getJWTKey(), jwt);
+            if (null != userGroupMapping) {
                 String login = userGroupMapping.getLogin();
                 if (login != null) {
                     unAuthenticatedSessions.remove(session);
@@ -136,16 +140,16 @@ public class WebSocketApplication {
 
     }
 
-    private WebSocketModule selectModule(WebSocketMessage webSocketMessage){
-        for(WebSocketModule webSocketModule:webSocketModules){
-            if(webSocketModule.canDecode(webSocketMessage)){
+    private WebSocketModule selectModule(WebSocketMessage webSocketMessage) {
+        for (WebSocketModule webSocketModule : webSocketModules) {
+            if (webSocketModule.canDecode(webSocketMessage)) {
                 return webSocketModule;
             }
         }
         return null;
     }
 
-    private void closeSession(Session session){
+    private void closeSession(Session session) {
         try {
             session.close();
         } catch (IOException e) {
@@ -154,9 +158,9 @@ public class WebSocketApplication {
     }
 
     private void unTrackSession(Session session) {
-        if(unAuthenticatedSessions.contains(session)){
+        if (unAuthenticatedSessions.contains(session)) {
             unAuthenticatedSessions.remove(session);
-        }else {
+        } else {
             webSocketSessionsManager.removeSession(session);
         }
     }
