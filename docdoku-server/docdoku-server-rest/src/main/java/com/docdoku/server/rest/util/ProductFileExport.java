@@ -20,8 +20,12 @@
 
 package com.docdoku.server.rest.util;
 
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.configuration.ProductStructureFilter;
 import com.docdoku.core.product.ConfigurationItemKey;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * This class holds the context for a product export
@@ -39,6 +43,7 @@ public class ProductFileExport {
 
     private boolean exportNativeCADFile;
     private boolean exportDocumentLinks;
+    private Map<String, Set<BinaryResource>> binariesInTree;
 
 
     public ProductFileExport() {
@@ -90,5 +95,13 @@ public class ProductFileExport {
 
     public void setExportDocumentLinks(boolean exportDocumentLinks) {
         this.exportDocumentLinks = exportDocumentLinks;
+    }
+
+    public void setBinariesInTree(Map<String, Set<BinaryResource>> binariesInTree) {
+        this.binariesInTree = binariesInTree;
+    }
+
+    public Map<String, Set<BinaryResource>> getBinariesInTree() {
+        return binariesInTree;
     }
 }

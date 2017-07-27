@@ -20,10 +20,10 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.change.ModificationNotification;
+import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.User;
 import com.docdoku.core.configuration.*;
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.configuration.ResolvedDocumentLink;
 import com.docdoku.core.document.DocumentLink;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
@@ -38,6 +38,7 @@ import com.docdoku.server.rest.collections.InstanceCollection;
 import com.docdoku.server.rest.dto.*;
 import com.docdoku.server.rest.dto.baseline.BaselinedPartDTO;
 import com.docdoku.server.rest.dto.baseline.PathChoiceDTO;
+import com.docdoku.server.rest.interceptors.Compress;
 import com.docdoku.server.rest.util.FileDownloadTools;
 import com.docdoku.server.rest.util.ProductFileExport;
 import io.swagger.annotations.*;
@@ -205,7 +206,7 @@ public class ProductResource {
         List<PartRevisionDTO> partsRevisions = new ArrayList<>();
 
 
-        for (Component component: components) {
+        for (Component component : components) {
             PartIteration retainedIteration = component.getRetainedIteration();
             //If no iteration has been retained, then take the last revision (the first one).
             PartRevision partRevision = retainedIteration == null ? component.getPartMaster().getLastRevision() : retainedIteration.getPartRevision();
@@ -575,6 +576,7 @@ public class ProductResource {
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Path("{ciId}/export-files")
+    @Compress
     public Response exportProductFiles(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Configuration item id") @PathParam("ciId") String ciId,
@@ -582,7 +584,7 @@ public class ProductResource {
             @ApiParam(required = false, value = "Export native cad files flag") @QueryParam("exportNativeCADFiles") boolean exportNativeCADFiles,
             @ApiParam(required = false, value = "Export linked documents attached files flag") @QueryParam("exportDocumentLinks") boolean exportDocumentLinks)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, BaselineNotFoundException,
-            ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException {
+            ProductInstanceMasterNotFoundException, WorkspaceNotEnabledException, ConfigurationItemNotFoundException, NotAllowedException, PartMasterNotFoundException, EntityConstraintException {
 
         if (configSpecType == null) {
             configSpecType = "wip";
@@ -614,10 +616,24 @@ public class ProductResource {
         String fileName = FileDownloadTools.getFileName(ciId + "-" + configSpecType + "-export", "zip");
         String contentDisposition = FileDownloadTools.getContentDisposition("attachment", fileName);
 
+        Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(productFileExport.getBaselineId(), productFileExport.getConfigurationItemKey().getWorkspace(), productFileExport.getConfigurationItemKey(), productFileExport.getPsFilter(), productFileExport.isExportNativeCADFile(), productFileExport.isExportDocumentLinks());
+
+        productFileExport.setBinariesInTree(binariesInTree);
         return Response.ok()
                 .header("Content-Type", "application/download")
                 .header("Content-Disposition", contentDisposition)
+                .header("x-archive-content-length", getBinaryResourcesSize(binariesInTree))
                 .entity(productFileExport).build();
+    }
+
+    private Long getBinaryResourcesSize(Map<String, Set<BinaryResource>> binariesInTree) {
+        long sum = 0;
+        for (Map.Entry<String, Set<BinaryResource>> entry : binariesInTree.entrySet()) {
+            for (BinaryResource binaryResource : entry.getValue()) {
+                sum += binaryResource.getContentLength();
+            }
+        }
+        return sum;
     }
 
     @POST

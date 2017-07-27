@@ -79,7 +79,7 @@ public class ProductFileExportMessageBodyWriter implements MessageBodyWriter<Pro
 
         try {
 
-            Map<String, Set<BinaryResource>> binariesInTree = productService.getBinariesInTree(productFileExport.getBaselineId(), productFileExport.getConfigurationItemKey().getWorkspace(), productFileExport.getConfigurationItemKey(), productFileExport.getPsFilter(), productFileExport.isExportNativeCADFile(), productFileExport.isExportDocumentLinks());
+            Map<String, Set<BinaryResource>> binariesInTree = productFileExport.getBinariesInTree();
             Set<Map.Entry<String, Set<BinaryResource>>> entries = binariesInTree.entrySet();
             List<String> baselinedSourcesName = new ArrayList<>();
 
@@ -108,8 +108,7 @@ public class ProductFileExportMessageBodyWriter implements MessageBodyWriter<Pro
                 addProductInstanceDataToZip(zs, productFileExport.getConfigurationItemKey(), productFileExport.getSerialNumber(), baselinedSourcesName);
             }
 
-        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ConfigurationItemNotFoundException |
-                NotAllowedException | EntityConstraintException | PartMasterNotFoundException | ProductInstanceMasterNotFoundException |
+        } catch (UserNotFoundException | UserNotActiveException | WorkspaceNotFoundException | ProductInstanceMasterNotFoundException |
                 StorageException | WorkspaceNotEnabledException e) {
             LOGGER.log(Level.FINEST, null, e);
         }
