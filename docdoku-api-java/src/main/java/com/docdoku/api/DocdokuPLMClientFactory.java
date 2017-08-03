@@ -27,10 +27,14 @@ import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.models.LoginRequestDTO;
 import com.docdoku.api.services.AuthApi;
 import com.squareup.okhttp.Credentials;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.Response;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.List;
-import java.util.Map;
+import java.util.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class helps to create an ApiClient with several authentication methods
@@ -38,6 +42,8 @@ import java.util.Map;
  * @Author Morgan Guimard
  */
 public class DocdokuPLMClientFactory {
+
+    private static final Logger LOGGER = Logger.getLogger(DocdokuPLMClientFactory.class.getName());
 
     /**
      * Create a guest client, no debug
@@ -85,15 +91,26 @@ public class DocdokuPLMClientFactory {
      **/
     public static ApiClient createJWTClient(String host, String login, String password, boolean debug) {
 
-        ApiClient client = createClient(host, debug);
+        final ApiClient client = createClient(host, debug);
+
+        client.getHttpClient().networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Response response = chain.proceed(chain.request());
+                String jwt = response.header("jwt");
+                if (jwt != null && !jwt.isEmpty()) {
+                    LOGGER.log(Level.INFO, "JWT token received " + jwt);
+                    client.addDefaultHeader("Authorization", "Bearer " + jwt);
+                }
+                return response;
+            }
+        });
 
         try {
-            ApiResponse<AccountDTO> response = connect(client, login, password);
-            Map<String, List<String>> responseHeaders = response.getHeaders();
-            String token = responseHeaders.get("jwt").get(0);
-            client.addDefaultHeader("Authorization", "Bearer " + token);
+            connect(client, login, password);
+            LOGGER.log(Level.INFO, "Connected");
         } catch (ApiException e) {
-
+            LOGGER.log(Level.SEVERE, "Exception while trying to get a token", e);
         }
 
         return client;
@@ -110,15 +127,25 @@ public class DocdokuPLMClientFactory {
      * Create a cookie client, control debug
      **/
     public static ApiClient createCookieClient(String host, String login, String password, boolean debug) {
-        ApiClient client = createClient(host, debug);
+        final ApiClient client = createClient(host, debug);
+
+        client.getHttpClient().networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Response response = chain.proceed(chain.request());
+                String cookie = response.header("Set-Cookie");
+                if (cookie != null && !cookie.isEmpty()) {
+                    LOGGER.log(Level.INFO, "Cookie received " + cookie);
+                    client.addDefaultHeader("Cookie", cookie);
+                }
+                return response;
+            }
+        });
 
         try {
-            ApiResponse<AccountDTO> response = connect(client, login, password);
-            Map<String, List<String>> responseHeaders = response.getHeaders();
-            String cookie = responseHeaders.get("Set-Cookie").get(0);
-            client.addDefaultHeader("Cookie", cookie);
+            connect(client, login, password);
         } catch (ApiException e) {
-
+            LOGGER.log(Level.SEVERE, "Exception while trying to get a cookie", e);
         }
 
         return client;
@@ -129,5 +156,14 @@ public class DocdokuPLMClientFactory {
         loginRequest.setLogin(login);
         loginRequest.setPassword(password);
         return new AuthApi(client).loginWithHttpInfo(loginRequest);
+    }
+
+    public static String getTokenPayload(String token) {
+        String[] jwtParts = token.split("\\.");
+        return new String(base64UrlDecode(jwtParts[1]));
+    }
+
+    public static byte[] base64UrlDecode(String input) {
+        return Base64.getDecoder().decode(input);
     }
 }
