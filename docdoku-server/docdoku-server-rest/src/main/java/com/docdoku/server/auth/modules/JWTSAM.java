@@ -22,6 +22,7 @@ package com.docdoku.server.auth.modules;
 
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.server.auth.jwt.JWTokenFactory;
+import com.docdoku.server.auth.jwt.JWTokenUserGroupMapping;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
@@ -70,9 +71,11 @@ public class JWTSAM extends CustomSAM {
             jwt = request.getParameter("jwtToken");
         }
 
-        UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(key, jwt);
+        JWTokenUserGroupMapping jwTokenUserGroupMapping = JWTokenFactory.validateToken(key, jwt);
 
-        if (userGroupMapping != null) {
+        if (jwTokenUserGroupMapping != null) {
+
+            UserGroupMapping userGroupMapping = jwTokenUserGroupMapping.getUserGroupMapping();
             CallerPrincipalCallback callerPrincipalCallback = new CallerPrincipalCallback(clientSubject, userGroupMapping.getLogin());
             GroupPrincipalCallback groupPrincipalCallback = new GroupPrincipalCallback(clientSubject, new String[]{userGroupMapping.getGroupName()});
             Callback[] callbacks = new Callback[]{callerPrincipalCallback, groupPrincipalCallback};
@@ -82,6 +85,8 @@ public class JWTSAM extends CustomSAM {
             } catch (IOException | UnsupportedCallbackException e) {
                 throw new AuthException(e.getMessage());
             }
+
+            JWTokenFactory.refreshTokenIfNeeded(key, response, jwTokenUserGroupMapping);
 
             return AuthStatus.SUCCESS;
         }

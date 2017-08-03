@@ -25,11 +25,19 @@ import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.NumericDate;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumer;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.lang.JoseException;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
+import javax.json.stream.JsonParsingException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.StringReader;
 import java.security.Key;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +51,11 @@ public class JWTokenFactory {
 
     private static final Logger LOGGER = Logger.getLogger(JWTokenFactory.class.getName());
     private static final String ALG = AlgorithmIdentifiers.HMAC_SHA256;
+    private static final Long JWT_TOKEN_EXPIRES_TIME = 10 * 60l; // 10 minutes token lifetime
+    private static final Long JWT_TOKEN_REFRESH_BEFORE = 3 * 60l; // Deliver new token 3 minutes before expiration
+
+    private static final String SUBJECT_LOGIN = "login";
+    private static final String SUBJECT_GROUP_NAME = "groupName";
 
     private JWTokenFactory() {
     }
@@ -50,7 +63,14 @@ public class JWTokenFactory {
     public static String createToken(Key key, UserGroupMapping userGroupMapping) {
 
         JwtClaims claims = new JwtClaims();
-        claims.setSubject(userGroupMapping.getLogin() + ":" + userGroupMapping.getGroupName());
+
+        JsonObjectBuilder subjectBuilder = Json.createObjectBuilder();
+        subjectBuilder.add(SUBJECT_LOGIN, userGroupMapping.getLogin());
+        subjectBuilder.add(SUBJECT_GROUP_NAME, userGroupMapping.getGroupName());
+        JsonObject build = subjectBuilder.build();
+
+        claims.setSubject(build.toString());
+        claims.setExpirationTime(NumericDate.fromSeconds(NumericDate.now().getValue() + JWT_TOKEN_EXPIRES_TIME));
 
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
@@ -66,9 +86,7 @@ public class JWTokenFactory {
         return null;
     }
 
-    public static UserGroupMapping validateToken(Key key, String jwt) {
-
-        String subject = null;
+    public static JWTokenUserGroupMapping validateToken(Key key, String jwt) {
 
         JwtConsumer jwtConsumer = new JwtConsumerBuilder()
                 .setVerificationKey(key)
@@ -76,21 +94,40 @@ public class JWTokenFactory {
                 .build();
 
         try {
-            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
-            subject = jwtClaims.getSubject();
-        } catch (InvalidJwtException | MalformedClaimException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage());
-        }
 
-        if (subject != null && !subject.isEmpty()) {
-            String[] loginAndRole = subject.split(":");
-            if (loginAndRole.length == 2) {
-                return new UserGroupMapping(loginAndRole[0], loginAndRole[1]);
+            JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
+            String subject = jwtClaims.getSubject();
+
+            JsonReader reader = Json.createReader(new StringReader(subject));
+            JsonObject subjectObject = reader.readObject(); // JsonParsingException
+            String login = subjectObject.getString(SUBJECT_LOGIN); // Npe
+            String groupName = subjectObject.getString(SUBJECT_GROUP_NAME); // Npe
+
+            if (login != null && !login.isEmpty() && groupName != null && !groupName.isEmpty()) {
+                return new JWTokenUserGroupMapping(jwtClaims, new UserGroupMapping(login, groupName));
             }
+
+        } catch (InvalidJwtException | MalformedClaimException | JsonParsingException | NullPointerException e) {
+            LOGGER.log(Level.SEVERE, "Cannot validate jwt token", e);
         }
 
         return null;
 
     }
 
+    public static void refreshTokenIfNeeded(Key key, HttpServletResponse response, JWTokenUserGroupMapping jwTokenUserGroupMapping) {
+
+        try {
+            NumericDate expirationTime = jwTokenUserGroupMapping.getClaims().getExpirationTime();
+
+            if (NumericDate.now().getValue() + JWT_TOKEN_REFRESH_BEFORE >= expirationTime.getValue()) {
+                UserGroupMapping userGroupMapping = jwTokenUserGroupMapping.getUserGroupMapping();
+                response.addHeader("jwt", createToken(key, userGroupMapping));
+            }
+
+        } catch (MalformedClaimException e) {
+            LOGGER.log(Level.SEVERE, "Cannot get expiration time from claims", e);
+        }
+
+    }
 }

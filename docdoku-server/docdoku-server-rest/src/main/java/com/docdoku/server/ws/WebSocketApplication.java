@@ -24,6 +24,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.auth.AuthConfig;
 import com.docdoku.server.auth.jwt.JWTokenFactory;
+import com.docdoku.server.auth.jwt.JWTokenUserGroupMapping;
 
 import javax.ejb.Stateless;
 import javax.enterprise.inject.Any;
@@ -123,8 +124,10 @@ public class WebSocketApplication {
         if (AUTH.equals(type)) {
             String jwt = message.getString("jwt");
 
-            UserGroupMapping userGroupMapping = JWTokenFactory.validateToken(authConfig.getJWTKey(), jwt);
-            if (null != userGroupMapping) {
+            JWTokenUserGroupMapping jwTokenUserGroupMapping = JWTokenFactory.validateToken(authConfig.getJWTKey(), jwt);
+
+            if (null != jwTokenUserGroupMapping) {
+                UserGroupMapping userGroupMapping = jwTokenUserGroupMapping.getUserGroupMapping();
                 String login = userGroupMapping.getLogin();
                 if (login != null) {
                     unAuthenticatedSessions.remove(session);
