@@ -99,7 +99,7 @@ public class DocdokuPLMClientFactory {
                 Response response = chain.proceed(chain.request());
                 String jwt = response.header("jwt");
                 if (jwt != null && !jwt.isEmpty()) {
-                    LOGGER.log(Level.INFO, "JWT token received " + jwt);
+                    LOGGER.log(Level.FINEST, "JWT token received " + jwt);
                     client.addDefaultHeader("Authorization", "Bearer " + jwt);
                 }
                 return response;
@@ -108,7 +108,7 @@ public class DocdokuPLMClientFactory {
 
         try {
             connect(client, login, password);
-            LOGGER.log(Level.INFO, "Connected");
+            LOGGER.log(Level.FINEST, "Connected");
         } catch (ApiException e) {
             LOGGER.log(Level.SEVERE, "Exception while trying to get a token", e);
         }
@@ -135,7 +135,7 @@ public class DocdokuPLMClientFactory {
                 Response response = chain.proceed(chain.request());
                 String cookie = response.header("Set-Cookie");
                 if (cookie != null && !cookie.isEmpty()) {
-                    LOGGER.log(Level.INFO, "Cookie received " + cookie);
+                    LOGGER.log(Level.FINEST, "Cookie received " + cookie);
                     client.addDefaultHeader("Cookie", cookie);
                 }
                 return response;
