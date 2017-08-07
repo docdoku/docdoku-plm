@@ -106,18 +106,19 @@ public class JWTokenFactory {
                 .build();
 
         try {
-
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
             String subject = jwtClaims.getSubject();
 
-            JsonReader reader = Json.createReader(new StringReader(subject));
-            JsonObject subjectObject = reader.readObject(); // JsonParsingException
-            String login = subjectObject.getString(SUBJECT_LOGIN); // Npe
-            String groupName = subjectObject.getString(SUBJECT_GROUP_NAME); // Npe
+            try (JsonReader reader = Json.createReader(new StringReader(subject))) {
+                JsonObject subjectObject = reader.readObject(); // JsonParsingException
+                String login = subjectObject.getString(SUBJECT_LOGIN); // Npe
+                String groupName = subjectObject.getString(SUBJECT_GROUP_NAME); // Npe
 
-            if (login != null && !login.isEmpty() && groupName != null && !groupName.isEmpty()) {
-                return new JWTokenUserGroupMapping(jwtClaims, new UserGroupMapping(login, groupName));
+                if (login != null && !login.isEmpty() && groupName != null && !groupName.isEmpty()) {
+                    return new JWTokenUserGroupMapping(jwtClaims, new UserGroupMapping(login, groupName));
+                }
             }
+
 
         } catch (InvalidJwtException | MalformedClaimException | JsonParsingException | NullPointerException e) {
             LOGGER.log(Level.SEVERE, "Cannot validate jwt token", e);
@@ -137,9 +138,10 @@ public class JWTokenFactory {
         try {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
             String subject = jwtClaims.getSubject();
-            JsonReader reader = Json.createReader(new StringReader(subject));
-            JsonObject subjectObject = reader.readObject(); // JsonParsingException
-            return subjectObject.getString(SHARED_ENTITY_UUID); // Npe
+            try (JsonReader reader = Json.createReader(new StringReader(subject))) {
+                JsonObject subjectObject = reader.readObject(); // JsonParsingException
+                return subjectObject.getString(SHARED_ENTITY_UUID); // Npe
+            }
         } catch (InvalidJwtException | MalformedClaimException | JsonParsingException | NullPointerException e) {
             LOGGER.log(Level.SEVERE, "Cannot validate jwt token", e);
         }
@@ -181,9 +183,10 @@ public class JWTokenFactory {
         try {
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
             String subject = jwtClaims.getSubject();
-            JsonReader reader = Json.createReader(new StringReader(subject));
-            JsonObject subjectObject = reader.readObject(); // JsonParsingException
-            return subjectObject.getString(ENTITY_KEY); // Npe
+            try (JsonReader reader = Json.createReader(new StringReader(subject))) {
+                JsonObject subjectObject = reader.readObject(); // JsonParsingException
+                return subjectObject.getString(ENTITY_KEY); // Npe
+            }
         } catch (InvalidJwtException | MalformedClaimException | JsonParsingException | NullPointerException e) {
             LOGGER.log(Level.SEVERE, "Cannot validate jwt token", e);
         }

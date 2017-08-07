@@ -62,112 +62,109 @@ public class ExcelGenerator {
     public File generateXLSResponse(QueryResult queryResult, Locale locale, String baseURL) {
         File excelFile = new File("export_parts.xls");
         //Blank workbook
-        XSSFWorkbook workbook = new XSSFWorkbook();
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
 
-        //Create a blank sheet
-        XSSFSheet sheet = workbook.createSheet("Parts Data");
 
-        String header = String.join(";", queryResult.getQuery().getSelects());
-        String[] columns = header.split(";");
+            //Create a blank sheet
+            XSSFSheet sheet = workbook.createSheet("Parts Data");
 
-        Map<Integer, String[]> data = new HashMap<>();
-        String[] headerFormatted = createXLSHeaderRow(header, columns, locale);
-        data.put(1, headerFormatted);
+            String header = String.join(";", queryResult.getQuery().getSelects());
+            String[] columns = header.split(";");
 
-        Map<Integer, String[]> commentsData = new HashMap<>();
-        String[] headerComments = createXLSHeaderRowComments(header, columns);
-        commentsData.put(1, headerComments);
+            Map<Integer, String[]> data = new HashMap<>();
+            String[] headerFormatted = createXLSHeaderRow(header, columns, locale);
+            data.put(1, headerFormatted);
 
-        List<String> selects = queryResult.getQuery().getSelects();
-        int i = 1;
-        for (QueryResultRow row : queryResult.getRows()) {
-            i++;
-            data.put(i, createXLSRow(selects, row, baseURL));
-            commentsData.put(i, createXLSRowComments(selects, row));
-        }
+            Map<Integer, String[]> commentsData = new HashMap<>();
+            String[] headerComments = createXLSHeaderRowComments(header, columns);
+            commentsData.put(1, headerComments);
 
-        //Iterate over data and write to sheet
-        Set<Integer> keySet = data.keySet();
-        int rowNum = 0;
-
-        for (Integer key : keySet) {
-
-            Row row = sheet.createRow(rowNum++);
-            String[] objArr = data.get(key);
-            int cellNum = 0;
-            for (String obj : objArr) {
-                Cell cell = row.createCell(cellNum++);
-                cell.setCellValue(obj);
+            List<String> selects = queryResult.getQuery().getSelects();
+            int i = 1;
+            for (QueryResultRow row : queryResult.getRows()) {
+                i++;
+                data.put(i, createXLSRow(selects, row, baseURL));
+                commentsData.put(i, createXLSRowComments(selects, row));
             }
 
-            CreationHelper factory = workbook.getCreationHelper();
-            Drawing drawing = sheet.createDrawingPatriarch();
-            String[] commentsObjArr = commentsData.get(key);
-            cellNum = 0;
-            for (String commentsObj : commentsObjArr) {
-                if (commentsObj.length() > 0) {
-                    Cell cell = row.getCell(cellNum) != null ? row.getCell(cellNum) : row.createCell(cellNum);
+            //Iterate over data and write to sheet
+            Set<Integer> keySet = data.keySet();
+            int rowNum = 0;
 
-                    // When the comment box is visible, have it show in a 1x3 space
-                    ClientAnchor anchor = factory.createClientAnchor();
-                    anchor.setCol1(cell.getColumnIndex());
-                    anchor.setCol2(cell.getColumnIndex() + 1);
-                    anchor.setRow1(row.getRowNum());
-                    anchor.setRow2(row.getRowNum() + 1);
+            for (Integer key : keySet) {
 
-                    Comment comment = drawing.createCellComment(anchor);
-                    RichTextString str = factory.createRichTextString(commentsObj);
-                    comment.setString(str);
-
-                    // Assign the comment to the cell
-                    cell.setCellComment(comment);
+                Row row = sheet.createRow(rowNum++);
+                String[] objArr = data.get(key);
+                int cellNum = 0;
+                for (String obj : objArr) {
+                    Cell cell = row.createCell(cellNum++);
+                    cell.setCellValue(obj);
                 }
-                cellNum++;
+
+                CreationHelper factory = workbook.getCreationHelper();
+                Drawing drawing = sheet.createDrawingPatriarch();
+                String[] commentsObjArr = commentsData.get(key);
+                cellNum = 0;
+                for (String commentsObj : commentsObjArr) {
+                    if (commentsObj.length() > 0) {
+                        Cell cell = row.getCell(cellNum) != null ? row.getCell(cellNum) : row.createCell(cellNum);
+
+                        // When the comment box is visible, have it show in a 1x3 space
+                        ClientAnchor anchor = factory.createClientAnchor();
+                        anchor.setCol1(cell.getColumnIndex());
+                        anchor.setCol2(cell.getColumnIndex() + 1);
+                        anchor.setRow1(row.getRowNum());
+                        anchor.setRow2(row.getRowNum() + 1);
+
+                        Comment comment = drawing.createCellComment(anchor);
+                        RichTextString str = factory.createRichTextString(commentsObj);
+                        comment.setString(str);
+
+                        // Assign the comment to the cell
+                        cell.setCellComment(comment);
+                    }
+                    cellNum++;
+                }
             }
-        }
 
-        // Define header style
-        Font headerFont = workbook.createFont();
-        headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        headerFont.setFontHeightInPoints((short) 10);
-        headerFont.setFontName("Courier New");
-        headerFont.setItalic(true);
-        headerFont.setColor(IndexedColors.WHITE.getIndex());
-        CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFont(headerFont);
-        headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
-        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+            // Define header style
+            Font headerFont = workbook.createFont();
+            headerFont.setBoldweight(Font.BOLDWEIGHT_BOLD);
+            headerFont.setFontHeightInPoints((short) 10);
+            headerFont.setFontName("Courier New");
+            headerFont.setItalic(true);
+            headerFont.setColor(IndexedColors.WHITE.getIndex());
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFont(headerFont);
+            headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
 
-        // Set header style
-        for (int j = 0; j < columns.length; j++) {
-            Cell cell = sheet.getRow(0).getCell(j);
-            cell.setCellStyle(headerStyle);
+            // Set header style
+            for (int j = 0; j < columns.length; j++) {
+                Cell cell = sheet.getRow(0).getCell(j);
+                cell.setCellStyle(headerStyle);
 
-            if (cell.getCellComment() != null) {
-                String comment = cell.getCellComment().getString().toString();
+                if (cell.getCellComment() != null) {
+                    String comment = cell.getCellComment().getString().toString();
 
-                if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
-                    for (int k = 0; k < queryResult.getRows().size(); k++) {
-                        Cell grayCell = sheet.getRow(k + 1).getCell(j) != null ? sheet.getRow(k + 1).getCell(j) : sheet.getRow(k + 1).createCell(j);
-                        grayCell.setCellStyle(headerStyle);
+                    if (comment.equals(QueryField.CTX_PRODUCT_ID) || comment.equals(QueryField.CTX_SERIAL_NUMBER) || comment.equals(QueryField.PART_MASTER_NUMBER)) {
+                        for (int k = 0; k < queryResult.getRows().size(); k++) {
+                            Cell grayCell = sheet.getRow(k + 1).getCell(j) != null ? sheet.getRow(k + 1).getCell(j) : sheet.getRow(k + 1).createCell(j);
+                            grayCell.setCellStyle(headerStyle);
+                        }
                     }
                 }
             }
-        }
 
-        try {
             //Write the workbook in file system
-            FileOutputStream out = new FileOutputStream(excelFile);
-            workbook.write(out);
-            out.close();
-        } catch (IOException e) {
-            LOGGER.log(Level.FINEST, null, e);
-        }
+            try (FileOutputStream out = new FileOutputStream(excelFile)) {
+                workbook.write(out);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Cannot write file to file system", e);
+            }
 
-        try {
-            workbook.close();
         } catch (IOException e) {
-            LOGGER.log(Level.FINEST, null, e);
+            LOGGER.log(Level.SEVERE, "Cannot initialize workbook", e);
         }
 
         return excelFile;

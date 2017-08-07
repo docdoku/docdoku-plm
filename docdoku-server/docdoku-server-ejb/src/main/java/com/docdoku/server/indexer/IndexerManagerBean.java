@@ -440,10 +440,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
 
     private Update indexRequest(DocumentIteration documentIteration) throws IOException {
         Map<String, String> contentInputs = getContentInputs(documentIteration.getAttachedFiles());
-        XContentBuilder xcb = null;
-        try {
-            xcb = XContentFactory.jsonBuilder()
-                    .startObject()
+        try (XContentBuilder xcb = XContentFactory.jsonBuilder()) {
+            xcb.startObject()
                     .field("doc_as_upsert", true)
                     .startObject("doc");
             IndexerMapping.documentIterationToJSON(xcb, documentIteration, contentInputs);
@@ -453,20 +451,13 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                     .type(IndexerMapping.DOCUMENT_TYPE)
                     .id(documentIteration.getKey().toString())
                     .build();
-        } finally {
-            if (xcb != null) {
-                xcb.close();
-            }
         }
-
     }
 
     private Update indexRequest(PartIteration partIteration) throws IOException {
         Map<String, String> contentInputs = getContentInputs(partIteration.getAttachedFiles());
-        XContentBuilder xcb = null;
-        try {
-            xcb = XContentFactory.jsonBuilder()
-                    .startObject()
+        try (XContentBuilder xcb = XContentFactory.jsonBuilder()) {
+            xcb.startObject()
                     .field("doc_as_upsert", true)
                     .startObject("doc");
             IndexerMapping.partIterationToJSON(xcb, partIteration, contentInputs);
@@ -476,10 +467,6 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
                     .type(IndexerMapping.PART_TYPE)
                     .id(partIteration.getKey().toString())
                     .build();
-        } finally {
-            if (xcb != null) {
-                xcb.close();
-            }
         }
     }
 
