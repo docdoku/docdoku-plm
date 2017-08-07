@@ -81,7 +81,7 @@ public class DocumentBinaryResourceTest {
     BinaryResource binaryResource;
 
     @InjectMocks
-    DocumentBinaryResource documentBinaryResource = new DocumentBinaryResource(storageManager, documentService, contextManager, onDemandConverterManager, shareService, publicEntityManager, authConfig);
+    DocumentBinaryResource documentBinaryResource = new DocumentBinaryResource();
 
 
     @Before

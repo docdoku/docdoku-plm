@@ -62,19 +62,19 @@ import java.util.logging.Logger;
 @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 public class AccountResource {
 
+    @Inject
     private IAccountManagerLocal accountManager;
+    @Inject
     private IUserManagerLocal userManager;
+    @Inject
     private IContextManagerLocal contextManager;
+    @Inject
     private AuthConfig authConfig;
+
     private static final Logger LOGGER = Logger.getLogger(AccountResource.class.getName());
     private Mapper mapper;
 
-    @Inject
-    public AccountResource(IAccountManagerLocal accountManager, IUserManagerLocal userManager, IContextManagerLocal contextManager, AuthConfig authConfig) {
-        this.accountManager = accountManager;
-        this.userManager = userManager;
-        this.contextManager = contextManager;
-        this.authConfig = authConfig;
+    public AccountResource() {
     }
 
     @PostConstruct

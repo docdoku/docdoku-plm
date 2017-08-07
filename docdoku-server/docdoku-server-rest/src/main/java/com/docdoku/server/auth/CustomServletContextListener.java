@@ -38,11 +38,11 @@ import java.util.logging.Logger;
 public class CustomServletContextListener implements ServletContextListener {
 
     private static final Logger LOGGER = Logger.getLogger(CustomServletContextListener.class.getName());
-    private AuthConfig authConfig;
 
     @Inject
-    public CustomServletContextListener(AuthConfig authConfig) {
-        this.authConfig = authConfig;
+    private AuthConfig authConfig;
+
+    public CustomServletContextListener() {
     }
 
     @Override
