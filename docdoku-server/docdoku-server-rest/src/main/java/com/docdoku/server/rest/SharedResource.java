@@ -55,25 +55,24 @@ import java.util.Date;
 @Path("shared")
 public class SharedResource {
 
-    @Inject
     private IPublicEntityManagerLocal publicEntityManager;
-
-    @Inject
     private IDocumentManagerLocal documentManager;
-
-    @Inject
     private IProductManagerLocal productManager;
-
-    @Inject
     private IShareManagerLocal shareManager;
-
-    @Inject
     private IContextManagerLocal contextManager;
-
-    @Inject
     private AuthConfig authConfig;
 
     private Mapper mapper;
+
+    @Inject
+    public SharedResource(IPublicEntityManagerLocal publicEntityManager, IDocumentManagerLocal documentManager, IProductManagerLocal productManager, IShareManagerLocal shareManager, IContextManagerLocal contextManager, AuthConfig authConfig) {
+        this.publicEntityManager = publicEntityManager;
+        this.documentManager = documentManager;
+        this.productManager = productManager;
+        this.shareManager = shareManager;
+        this.contextManager = contextManager;
+        this.authConfig = authConfig;
+    }
 
     @PostConstruct
     public void init() {

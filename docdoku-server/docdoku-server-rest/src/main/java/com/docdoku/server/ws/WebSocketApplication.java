@@ -60,22 +60,26 @@ public class WebSocketApplication {
 
     private static final Logger LOGGER = Logger.getLogger(WebSocketApplication.class.getName());
 
-    @Inject
+    private Instance<WebSocketModule> webSocketModules;
+
     private IUserManagerLocal userManager;
 
-    @Inject
     private WebSocketSessionsManager webSocketSessionsManager;
 
-    @Inject
     private AuthConfig authConfig;
 
     private List<Session> unAuthenticatedSessions = new ArrayList<>();
 
-    private static final String AUTH = "AUTH";
-
     @Inject
-    @Any
-    private Instance<WebSocketModule> webSocketModules;
+    public WebSocketApplication(@Any Instance<WebSocketModule> webSocketModules, IUserManagerLocal userManager, WebSocketSessionsManager webSocketSessionsManager, AuthConfig authConfig) {
+        this.webSocketModules = webSocketModules;
+        this.userManager = userManager;
+        this.webSocketSessionsManager = webSocketSessionsManager;
+        this.authConfig = authConfig;
+    }
+
+
+    private static final String AUTH = "AUTH";
 
     @OnError
     public void error(Session session, Throwable error) {

@@ -57,22 +57,19 @@ import java.util.logging.Logger;
 @Api(value = "auth", description = "Operations about authentication")
 public class AuthResource {
 
-    @Inject
     private IAccountManagerLocal accountManager;
-
-    @Inject
     private IUserManagerLocal userManager;
-
-    @Inject
     private IContextManagerLocal contextManager;
-
-    @Inject
     private AuthConfig authConfig;
-
     private static final Logger LOGGER = Logger.getLogger(AuthResource.class.getName());
     private Mapper mapper;
 
-    public AuthResource() {
+    @Inject
+    public AuthResource(IAccountManagerLocal accountManager, IUserManagerLocal userManager, IContextManagerLocal contextManager, AuthConfig authConfig) {
+        this.accountManager = accountManager;
+        this.userManager = userManager;
+        this.contextManager = contextManager;
+        this.authConfig = authConfig;
     }
 
     @PostConstruct

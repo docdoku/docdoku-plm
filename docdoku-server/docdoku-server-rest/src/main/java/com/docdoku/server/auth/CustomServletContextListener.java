@@ -20,8 +20,6 @@
 
 package com.docdoku.server.auth;
 
-import com.docdoku.core.services.IAccountManagerLocal;
-
 import javax.inject.Inject;
 import javax.security.auth.message.config.AuthConfigFactory;
 import javax.servlet.ServletContext;
@@ -40,12 +38,12 @@ import java.util.logging.Logger;
 public class CustomServletContextListener implements ServletContextListener {
 
     private static final Logger LOGGER = Logger.getLogger(CustomServletContextListener.class.getName());
-
-    @Inject
-    private IAccountManagerLocal accountManager;
-
-    @Inject
     private AuthConfig authConfig;
+
+    @Inject
+    public CustomServletContextListener(AuthConfig authConfig) {
+        this.authConfig = authConfig;
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {

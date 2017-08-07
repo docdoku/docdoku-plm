@@ -73,22 +73,23 @@ public class DocumentBinaryResource {
     private static final Logger LOGGER = Logger.getLogger(DocumentBinaryResource.class.getName());
     private static final String UTF8_ENCODING = "UTF-8";
 
-    @Inject
     private IBinaryStorageManagerLocal storageManager;
-    @Inject
     private IDocumentManagerLocal documentService;
-    @Inject
     private IContextManagerLocal contextManager;
-    @Inject
     private IOnDemandConverterManagerLocal onDemandConverterManager;
-    @Inject
     private IShareManagerLocal shareService;
-    @Inject
     private IPublicEntityManagerLocal publicEntityManager;
-    @Inject
     private AuthConfig authConfig;
 
-    public DocumentBinaryResource() {
+    @Inject
+    public DocumentBinaryResource(IBinaryStorageManagerLocal storageManager, IDocumentManagerLocal documentService, IContextManagerLocal contextManager, IOnDemandConverterManagerLocal onDemandConverterManager, IShareManagerLocal shareService, IPublicEntityManagerLocal publicEntityManager, AuthConfig authConfig) {
+        this.storageManager = storageManager;
+        this.documentService = documentService;
+        this.contextManager = contextManager;
+        this.onDemandConverterManager = onDemandConverterManager;
+        this.shareService = shareService;
+        this.publicEntityManager = publicEntityManager;
+        this.authConfig = authConfig;
     }
 
     @POST

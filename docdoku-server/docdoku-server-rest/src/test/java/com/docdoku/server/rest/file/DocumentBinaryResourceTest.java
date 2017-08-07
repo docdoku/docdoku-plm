@@ -30,6 +30,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedDocument;
 import com.docdoku.core.util.Tools;
+import com.docdoku.server.auth.AuthConfig;
 import com.docdoku.server.rest.exceptions.SharedResourceAccessException;
 import com.docdoku.server.util.PartImpl;
 import com.docdoku.server.util.ResourceUtil;
@@ -59,8 +60,6 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 public class DocumentBinaryResourceTest {
 
-    @InjectMocks
-    DocumentBinaryResource documentBinaryResource = new DocumentBinaryResource();
 
     @Mock
     private IBinaryStorageManagerLocal storageManager;
@@ -76,8 +75,13 @@ public class DocumentBinaryResourceTest {
     private SessionContext ctx;
     @Mock
     private IPublicEntityManagerLocal publicEntityManager;
+    @Mock
+    private AuthConfig authConfig;
     @Spy
     BinaryResource binaryResource;
+
+    @InjectMocks
+    DocumentBinaryResource documentBinaryResource = new DocumentBinaryResource(storageManager, documentService, contextManager, onDemandConverterManager, shareService, publicEntityManager, authConfig);
 
 
     @Before

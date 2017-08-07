@@ -71,24 +71,27 @@ public class PartBinaryResource {
     public static final String NATIVE_CAD_SUBTYPE = "nativecad";
     public static final String ATTACHED_FILES_SUBTYPE = "attachedfiles";
     private static final String UTF8_ENCODING = "UTF-8";
-    @Inject
+
+
     private IBinaryStorageManagerLocal storageManager;
-    @Inject
     private IProductManagerLocal productService;
-    @Inject
     private IContextManagerLocal contextManager;
-    @Inject
     private IConverterManagerLocal converterService;
-    @Inject
     private IShareManagerLocal shareService;
-    @Inject
     private IPublicEntityManagerLocal publicEntityManager;
-    @Inject
     private IOnDemandConverterManagerLocal onDemandConverterManager;
-    @Inject
     private AuthConfig authConfig;
 
-    public PartBinaryResource() {
+    @Inject
+    public PartBinaryResource(IBinaryStorageManagerLocal storageManager, IProductManagerLocal productService, IContextManagerLocal contextManager, IConverterManagerLocal converterService, IShareManagerLocal shareService, IPublicEntityManagerLocal publicEntityManager, IOnDemandConverterManagerLocal onDemandConverterManager, AuthConfig authConfig) {
+        this.storageManager = storageManager;
+        this.productService = productService;
+        this.contextManager = contextManager;
+        this.converterService = converterService;
+        this.shareService = shareService;
+        this.publicEntityManager = publicEntityManager;
+        this.onDemandConverterManager = onDemandConverterManager;
+        this.authConfig = authConfig;
     }
 
     @POST
