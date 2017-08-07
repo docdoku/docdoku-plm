@@ -305,7 +305,7 @@ public class ChangeRequestsResource {
     @Path("{requestId}/affected-documents")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public ChangeRequestDTO saveChangeItemAffectedDocuments(
+    public ChangeRequestDTO saveChangeRequestAffectedDocuments(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Request id") @PathParam("requestId") int requestId,
             @ApiParam(required = true, value = "Document list to save as affected") DocumentIterationListDTO documentIterationListDTO)

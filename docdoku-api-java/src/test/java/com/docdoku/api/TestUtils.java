@@ -91,6 +91,14 @@ public class TestUtils {
         return new PartsApi(TestConfig.REGULAR_USER_CLIENT).createNewPart(workspaceId, part);
     }
 
+    public static DocumentRevisionDTO createDocument(String workspaceId, String documentTitle) throws ApiException {
+        DocumentCreationDTO document = new DocumentCreationDTO();
+        document.setReference(TestUtils.randomString());
+        document.setTitle(documentTitle);
+        DocumentRevisionDTO createdDocument = new FoldersApi(TestConfig.REGULAR_USER_CLIENT).createDocumentMasterInFolder(workspaceId, document, workspaceId);
+        return new DocumentApi(TestConfig.REGULAR_USER_CLIENT).checkInDocument(workspaceId, createdDocument.getDocumentMasterId(), createdDocument.getVersion());
+    }
+
     public static void assertUserCanEditDocument(ApiClient client, DocumentRevisionDTO document, boolean expect) {
         DocumentApi documentApi = new DocumentApi(client);
         try {

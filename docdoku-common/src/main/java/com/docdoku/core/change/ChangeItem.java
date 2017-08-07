@@ -89,13 +89,13 @@ public abstract class ChangeItem implements Serializable {
     protected ChangeItemCategory category;
 
     @ManyToMany
-    protected Set<PartIteration> affectedParts = new HashSet<>();
+    private Set<PartIteration> affectedParts = new HashSet<>();
 
     @ManyToMany
-    protected Set<DocumentIteration> affectedDocuments = new HashSet<>();
+    private Set<DocumentIteration> affectedDocuments = new HashSet<>();
 
     @ManyToMany(fetch=FetchType.EAGER)
-    protected Set<Tag> tags=new HashSet<>();
+    private Set<Tag> tags=new HashSet<>();
 
     public ChangeItem(Workspace pWorkspace, String pName, User pAuthor) {
         workspace=pWorkspace;
