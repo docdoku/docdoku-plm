@@ -31,6 +31,7 @@ import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedPart;
+import com.docdoku.server.rest.exceptions.SharedResourceAccessException;
 import com.docdoku.server.rest.file.util.BinaryResourceBinaryStreamingOutput;
 import com.docdoku.server.util.PartImpl;
 import com.docdoku.server.util.ResourceUtil;
@@ -286,7 +287,7 @@ public class PartBinaryResourceTest {
         //When
         Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
                 ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
-                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, ResourceUtil.SHARED_PART_ENTITY_UUID, null, null);
+                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, ResourceUtil.SHARED_PART_ENTITY_UUID, "password", null);
         //Then
         assertNotNull(response);
         assertEquals(response.getStatus(), 206);
@@ -346,13 +347,15 @@ public class PartBinaryResourceTest {
         Mockito.when(storageManager.getBinaryResourceInputStream(binaryResource)).thenReturn(new FileInputStream(file1));
         Mockito.when(publicEntityManager.getPublicBinaryResourceForPart(Matchers.anyString())).thenReturn(binaryResource);
         //When
-        Response response = partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
-                ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
-                ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, null, null, null);
+        try {
+            partBinaryResource.downloadPartFile(request, ResourceUtil.WORKSPACE_ID,
+                    ResourceUtil.PART_NUMBER, ResourceUtil.VERSION, ResourceUtil.ITERATION, "attached-files",
+                    ResourceUtil.TEST_PART_FILENAME1, ResourceUtil.FILE_TYPE, null, ResourceUtil.RANGE, null, null, null);
+            assertTrue(false);
+        } catch (SharedResourceAccessException e) {
+            assertTrue(true);
+        }
 
-        assertNotNull(response);
-        assertEquals(response.getStatus(), 401);
-        assertEquals(response.getStatusInfo(), Response.Status.UNAUTHORIZED);
         //delete tem files
         file.deleteOnExit();
         file1.deleteOnExit();
