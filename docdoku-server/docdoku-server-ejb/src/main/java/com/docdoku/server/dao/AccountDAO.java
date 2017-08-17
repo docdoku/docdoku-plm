@@ -47,12 +47,12 @@ public class AccountDAO {
         em=pEM;
     }
 
-    public void createAccount(Account pAccount, String pPassword) throws AccountAlreadyExistsException, CreationException {
+    public void createAccount(Account pAccount, String pPassword, String pAlgorithm) throws AccountAlreadyExistsException, CreationException {
         try{
             //the EntityExistsException is thrown only when flush occurs 
             em.persist(pAccount);
             em.flush();
-            Credential credential = Credential.createCredential(pAccount.getLogin(),pPassword);
+            Credential credential = Credential.createCredential(pAccount.getLogin(), pPassword, pAlgorithm);
             em.persist(credential);
             em.persist(new UserGroupMapping(pAccount.getLogin()));            
         }catch(EntityExistsException pEEEx){
@@ -65,15 +65,15 @@ public class AccountDAO {
         }
     }
     
-    public void updateAccount(Account pAccount, String pPassword){
+    public void updateAccount(Account pAccount, String pPassword, String pAlgorithm){
         em.merge(pAccount);
         if(pPassword!=null){
-            updateCredential(pAccount.getLogin(),pPassword);
+            updateCredential(pAccount.getLogin(),pPassword, pAlgorithm);
         }
     }
     
-    public void updateCredential(String pLogin, String pPassword){
-        Credential credential = Credential.createCredential(pLogin,pPassword);
+    public void updateCredential(String pLogin, String pPassword, String pAlgorithm){
+        Credential credential = Credential.createCredential(pLogin,pPassword, pAlgorithm);
         em.merge(credential);
     }
     
@@ -116,8 +116,8 @@ public class AccountDAO {
     }
 
 
-    public boolean authenticate(String login, String password){
+    public boolean authenticate(String login, String password, String pAlgorithm){
         Credential credential = em.find(Credential.class, login);
-        return credential != null && credential.authenticate(password);
+        return credential != null && credential.authenticate(password, pAlgorithm);
     }
 }

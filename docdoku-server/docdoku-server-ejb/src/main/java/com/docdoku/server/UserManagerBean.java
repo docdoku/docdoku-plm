@@ -70,6 +70,9 @@ public class UserManagerBean implements IUserManagerLocal {
     @Inject
     private IPlatformOptionsManagerLocal platformOptionsManager;
 
+    @Inject
+    private ConfigManager configManager;
+
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
@@ -491,7 +494,7 @@ public class UserManagerBean implements IUserManagerLocal {
         PasswordRecoveryRequestDAO passwdRRequestDAO = new PasswordRecoveryRequestDAO(em);
         PasswordRecoveryRequest passwdRR = passwdRRequestDAO.loadPasswordRecoveryRequest(pPasswdRRUuid);
         AccountDAO accountDAO = new AccountDAO(em);
-        accountDAO.updateCredential(passwdRR.getLogin(), pPassword);
+        accountDAO.updateCredential(passwdRR.getLogin(), pPassword, configManager.getDigestAlgorithm());
         passwdRRequestDAO.removePasswordRecoveryRequest(passwdRR);
     }
 

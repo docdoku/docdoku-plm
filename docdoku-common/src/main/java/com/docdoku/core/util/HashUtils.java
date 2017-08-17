@@ -29,7 +29,28 @@ import java.security.NoSuchAlgorithmException;
  */
 public class HashUtils {
     public static String md5Sum(String pText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
-        byte[] digest = MessageDigest.getInstance("MD5").digest(pText.getBytes("UTF-8"));
+        return digest(pText, "MD5");
+    }
+
+    public static String sha256Sum(String pText) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        return digest(pText,"SHA-256");
+    }
+
+    /**
+     * Computes a hash function using the supplied algorithm and s
+     * the result as a string representation using
+     * hex as the encoding and UTF-8 as the character set.
+     *
+     * @param pText
+     * @param pAlgorithm
+     *
+     * @return hashed string result.
+     *
+     * @throws NoSuchAlgorithmException
+     * @throws UnsupportedEncodingException
+     */
+    public static String digest(String pText, String pAlgorithm) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+        byte[] digest = MessageDigest.getInstance(pAlgorithm).digest(pText.getBytes("UTF-8"));
         StringBuilder hexString = new StringBuilder();
         for (byte aDigest : digest) {
             String hex = Integer.toHexString(0xFF & aDigest);

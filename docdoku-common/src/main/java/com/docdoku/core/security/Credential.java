@@ -54,20 +54,20 @@ public class Credential implements java.io.Serializable {
     public Credential() {
     }
     
-    public static Credential createCredential(String pLogin, String pClearPassword){
+    public static Credential createCredential(String pLogin, String pClearPassword, String pAlgorithm){
         Credential credential = new Credential();
         credential.login = pLogin;
         try {
-            credential.password= HashUtils.md5Sum(pClearPassword);
+            credential.password= HashUtils.digest(pClearPassword, pAlgorithm);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException pEx) {
             LOGGER.log(Level.SEVERE, null, pEx);
         }
         return credential;
     }
 
-    public boolean authenticate(String pPassword){
+    public boolean authenticate(String pPassword, String pAlgorithm){
         try {
-            return password != null && pPassword != null && HashUtils.md5Sum(pPassword).equals(password);
+            return password != null && pPassword != null && HashUtils.digest(pPassword, pAlgorithm).equals(password);
         } catch (NoSuchAlgorithmException | UnsupportedEncodingException pEx) {
             LOGGER.log(Level.SEVERE, null, pEx);
             return false;

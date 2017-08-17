@@ -22,6 +22,7 @@ package com.docdoku.server;
 
 import javax.annotation.Resource;
 import javax.enterprise.context.ApplicationScoped;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -36,11 +37,15 @@ public class ConfigManager {
     private Properties properties;
 
     public String getCodebase(){
-        return String.valueOf(properties.get("codebase"));
+        return properties.getProperty("codebase");
     }
 
     public String getVaultPath(){
-        return String.valueOf(properties.get("vaultPath"));
+        return properties.getProperty("vaultPath");
+    }
+
+    public String getDigestAlgorithm() {
+        return Optional.ofNullable(properties.getProperty("digestAlgorithm")).orElse("MD5");
     }
 
 }

@@ -62,6 +62,9 @@ public class AccountManagerBean implements IAccountManagerLocal {
     @Inject
     private IPlatformOptionsManagerLocal platformOptionsManager;
 
+    @Inject
+    private ConfigManager configManager;
+
     private static final Logger LOGGER = Logger.getLogger(AccountManagerBean.class.getName());
 
     public AccountManagerBean() {
@@ -72,7 +75,7 @@ public class AccountManagerBean implements IAccountManagerLocal {
         AccountDAO accountDAO = new AccountDAO(em);
         Account account = null;
 
-        if(accountDAO.authenticate(login, password)){
+        if(accountDAO.authenticate(login, password, configManager.getDigestAlgorithm())){
 
             try {
                 account = getAccount(login);
@@ -95,7 +98,7 @@ public class AccountManagerBean implements IAccountManagerLocal {
         Date now = new Date();
         Account account = new Account(pLogin, pName, pEmail, pLanguage, now, pTimeZone);
         account.setEnabled(registrationStrategy.equals(OperationSecurityStrategy.NONE));
-        new AccountDAO(new Locale(pLanguage), em).createAccount(account, pPassword);
+        new AccountDAO(new Locale(pLanguage), em).createAccount(account, pPassword, configManager.getDigestAlgorithm());
         mailer.sendCredential(account);
         return account;
     }
@@ -124,7 +127,7 @@ public class AccountManagerBean implements IAccountManagerLocal {
         account.setLanguage(pLanguage);
         account.setTimeZone(pTimeZone);
         if (pPassword != null) {
-            accountDAO.updateCredential(account.getLogin(), pPassword);
+            accountDAO.updateCredential(account.getLogin(), pPassword, configManager.getDigestAlgorithm());
         }
         return account;
     }
@@ -226,7 +229,7 @@ public class AccountManagerBean implements IAccountManagerLocal {
         otherAccount.setLanguage(pLanguage);
         otherAccount.setTimeZone(pTimeZone);
         if (pPassword != null) {
-            accountDAO.updateCredential(otherAccount.getLogin(), pPassword);
+            accountDAO.updateCredential(otherAccount.getLogin(), pPassword, configManager.getDigestAlgorithm());
         }
         return otherAccount;
     }
