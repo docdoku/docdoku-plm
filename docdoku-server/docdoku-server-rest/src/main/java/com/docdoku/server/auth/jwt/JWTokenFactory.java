@@ -85,6 +85,7 @@ public class JWTokenFactory {
         claims.setExpirationTime(NumericDate.fromSeconds(NumericDate.now().getValue() + JWT_TOKEN_EXPIRES_TIME));
 
         JsonWebSignature jws = new JsonWebSignature();
+        jws.setDoKeyValidation(false);
         jws.setPayload(claims.toJson());
         jws.setKey(key);
         jws.setAlgorithmHeaderValue(ALG);
