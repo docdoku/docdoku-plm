@@ -55,7 +55,6 @@ public class AuthConfig {
             InitialContext ctx = new InitialContext();
             properties = (Properties) ctx.lookup("auth.config");
             KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-            keyGen.init(128);
             defaultKey = keyGen.generateKey();
         } catch (NamingException e) {
             LOGGER.log(Level.SEVERE, "Cannot initialize auth configuration", e);

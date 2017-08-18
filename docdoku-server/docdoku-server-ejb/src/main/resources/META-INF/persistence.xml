@@ -10,7 +10,6 @@
     <class>com.docdoku.core.common.User</class>
     <class>com.docdoku.core.common.UserGroup</class>
     <class>com.docdoku.core.common.Workspace</class>
-    <class>com.docdoku.core.workflow.WorkspaceWorkflow</class>
     <class>com.docdoku.core.change.ChangeItem</class>
     <class>com.docdoku.core.change.ChangeIssue</class>
     <class>com.docdoku.core.change.ChangeOrder</class>
@@ -85,6 +84,7 @@
     <class>com.docdoku.core.sharing.SharedEntity</class>
     <class>com.docdoku.core.sharing.SharedPart</class>
     <class>com.docdoku.core.sharing.SharedDocument</class>
+    <class>com.docdoku.core.workflow.WorkspaceWorkflow</class>
     <class>com.docdoku.core.workflow.Activity</class>
     <class>com.docdoku.core.workflow.ActivityModel</class>
     <class>com.docdoku.core.workflow.ParallelActivity</class>
@@ -101,6 +101,8 @@
     <class>com.docdoku.core.query.QueryContext</class>
     <class>com.docdoku.core.product.PathToPathLink</class>
     <class>com.docdoku.core.meta.StatusChange</class>
+
+    <class>com.docdoku.server.storage.CryptoConverter</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
