@@ -19,21 +19,12 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.common.Account;
-import com.docdoku.core.common.Workspace;
-import com.docdoku.core.exceptions.*;
-import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IAccountManagerLocal;
-import com.docdoku.core.services.IContextManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.server.auth.AuthConfig;
-import com.docdoku.server.auth.jwt.JWTokenFactory;
-import com.docdoku.server.rest.dto.AccountDTO;
-import com.docdoku.server.rest.dto.GCMAccountDTO;
-import com.docdoku.server.rest.dto.WorkspaceDTO;
-import io.swagger.annotations.*;
-import org.dozer.DozerBeanMapperSingletonWrapper;
-import org.dozer.Mapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.DeclareRoles;
@@ -44,16 +35,44 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import org.dozer.DozerBeanMapperSingletonWrapper;
+import org.dozer.Mapper;
+
+import com.docdoku.core.common.Account;
+import com.docdoku.core.common.Workspace;
+import com.docdoku.core.exceptions.AccountAlreadyExistsException;
+import com.docdoku.core.exceptions.AccountNotFoundException;
+import com.docdoku.core.exceptions.CreationException;
+import com.docdoku.core.exceptions.EntityAlreadyExistsException;
+import com.docdoku.core.exceptions.EntityNotFoundException;
+import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.security.UserGroupMapping;
+import com.docdoku.core.services.IAccountManagerLocal;
+import com.docdoku.core.services.IContextManagerLocal;
+import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.server.auth.AuthConfig;
+import com.docdoku.server.auth.jwt.JWTokenFactory;
+import com.docdoku.server.rest.dto.AccountDTO;
+import com.docdoku.server.rest.dto.GCMAccountDTO;
+import com.docdoku.server.rest.dto.WorkspaceDTO;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @RequestScoped
 @Path("accounts")
@@ -113,9 +132,9 @@ public class AccountResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public AccountDTO updateAccount(
             @ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
-            throws AccountNotFoundException {
+            throws AccountNotFoundException, NotAllowedException {
 	if (accountManager.authenticateAccount(contextManager.getCallerPrincipalLogin(), accountDTO.getPassword()) == null) {
-	    throw new AccountNotFoundException("Account update ignored: invalid password");
+	    throw new NotAllowedException(new Locale(accountDTO.getLanguage()), "NotAllowedException68");
 	}
         Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         return mapper.map(account, AccountDTO.class);
