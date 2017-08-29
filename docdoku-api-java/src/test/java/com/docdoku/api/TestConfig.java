@@ -94,6 +94,7 @@ public class TestConfig {
         AccountsApi accountsApi = new AccountsApi(REGULAR_USER_CLIENT);
         AccountDTO account = accountsApi.getAccount();
         account.setEmail(null);
+        account.setPassword(PASSWORD);
         accountsApi.updateAccount(account);
     }
 }

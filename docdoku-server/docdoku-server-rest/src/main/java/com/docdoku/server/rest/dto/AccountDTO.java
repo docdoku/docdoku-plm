@@ -20,18 +20,22 @@
 
 package com.docdoku.server.rest.dto;
 
+import java.io.Serializable;
+
+import javax.xml.bind.annotation.XmlRootElement;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
-
 @XmlRootElement
-@ApiModel(value="AccountDTO", description="This class is the representation of an {@link com.docdoku.core.common.Account} entity")
+@ApiModel(value = "AccountDTO", description = "This class is the representation of an {@link com.docdoku.core.common.Account} entity")
 public class AccountDTO implements Serializable {
 
     @ApiModelProperty(value = "Login of the account")
     private String login;
+
+    @ApiModelProperty(value = "Password of the account")
+    private String password;
 
     @ApiModelProperty(value = "Name of the account")
     private String name;
@@ -58,66 +62,74 @@ public class AccountDTO implements Serializable {
     }
 
     public String getLogin() {
-        return login;
+	return login;
     }
 
     public void setLogin(String login) {
-        this.login = login;
+	this.login = login;
+    }
+
+    public void setPassword(String password) {
+	this.password = password;
+    }
+
+    public String getPassword() {
+	return this.password;
     }
 
     public String getName() {
-        return name;
+	return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+	this.name = name;
     }
 
     public String getEmail() {
-        return email;
+	return email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+	this.email = email;
     }
 
     public String getLanguage() {
-        return language;
+	return language;
     }
 
     public void setLanguage(String language) {
-        this.language = language;
+	this.language = language;
     }
 
     public String getTimeZone() {
-        return timeZone;
+	return timeZone;
     }
 
     public void setTimeZone(String timeZone) {
-        this.timeZone = timeZone;
+	this.timeZone = timeZone;
     }
 
     public boolean isAdmin() {
-        return admin;
+	return admin;
     }
 
     public void setAdmin(boolean admin) {
-        this.admin = admin;
+	this.admin = admin;
     }
 
     public String getNewPassword() {
-        return newPassword;
+	return newPassword;
     }
 
     public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
+	this.newPassword = newPassword;
     }
 
     public boolean isEnabled() {
-        return enabled;
+	return enabled;
     }
 
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+	this.enabled = enabled;
     }
 }

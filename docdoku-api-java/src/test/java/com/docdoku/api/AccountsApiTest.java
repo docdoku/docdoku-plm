@@ -54,6 +54,7 @@ public class AccountsApiTest {
         AccountsApi accountsApi = new AccountsApi(TestConfig.REGULAR_USER_CLIENT);
         AccountDTO account = accountsApi.getAccount();
         account.setName(newName);
+        account.setPassword(TestConfig.PASSWORD);
 
         AccountDTO updatedAccount = accountsApi.updateAccount(account);
         Assert.assertEquals(updatedAccount.getName(), newName);

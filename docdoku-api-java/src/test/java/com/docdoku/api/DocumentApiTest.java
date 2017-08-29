@@ -154,6 +154,7 @@ public class DocumentApiTest {
 
         AccountDTO account = accountsApi.getAccount();
         account.setName(TestUtils.randomString());
+        account.setPassword(TestConfig.PASSWORD);
         accountsApi.updateAccount(account);
 
         // Create a document

@@ -114,6 +114,9 @@ public class AccountResource {
     public AccountDTO updateAccount(
             @ApiParam(required = true, value = "Updated account") AccountDTO accountDTO)
             throws AccountNotFoundException {
+	if (accountManager.authenticateAccount(contextManager.getCallerPrincipalLogin(), accountDTO.getPassword()) == null) {
+	    throw new AccountNotFoundException("Account update ignored: invalid password");
+	}
         Account account = accountManager.updateAccount(accountDTO.getName(), accountDTO.getEmail(), accountDTO.getLanguage(), accountDTO.getNewPassword(), accountDTO.getTimeZone());
         return mapper.map(account, AccountDTO.class);
     }
@@ -192,7 +195,6 @@ public class AccountResource {
 
         return Response.ok(new GenericEntity<List<WorkspaceDTO>>((List<WorkspaceDTO>) workspaceDTOs) {
         }).build();
-
     }
 
     @PUT
