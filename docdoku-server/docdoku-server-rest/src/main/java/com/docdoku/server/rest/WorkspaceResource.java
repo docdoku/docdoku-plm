@@ -47,10 +47,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequestScoped
 @Api(value = "workspaces", description = "Operations about workspaces")
@@ -742,6 +739,52 @@ public class WorkspaceResource {
                 .add("activegroups", activeGroupsCount)
                 .add("inactivegroups", inactiveGroupsCount).build();
     }
+
+    @GET
+    @ApiOperation(value = "Get workspace customizations",
+            response = WorkspaceCustomizationDTO.class)
+    @Path("/{workspaceId}/customizations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieve of workspace customizations"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public WorkspaceCustomizationDTO getWorkspaceCustomizations(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) {
+        
+        // mock the result
+        List<String> mock = Arrays.asList("pr.number", "pr.version",
+                "pr.iteration", "pr.type", "pr.name", "pr.author",
+                "pr.modificationDate", "pr.lifecycleSate", "pr.checkoutUser", "pr.acl");
+
+        WorkspaceCustomizationDTO workspaceCustomizationDTO = new WorkspaceCustomizationDTO();
+        workspaceCustomizationDTO.setPartTableColumns(mock);
+        return workspaceCustomizationDTO;
+    }
+
+    @PUT
+    @ApiOperation(value = "Update workspace customizations",
+            response = Response.class)
+    @Path("/{workspaceId}/customizations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful update of workspace customizations"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateWorkspaceCustomizations(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Customization values", required = true) WorkspaceCustomizationDTO workspaceCustomizationDTO) {
+        List<String> partTableColumns = workspaceCustomizationDTO.getPartTableColumns();
+        // Do something with it :!)
+        // this list must be retrieved with the same order
+        // workspaceManager.updateTableColumns(workspaceId,partTableColumns);
+        return Response.ok().build();
+    }
+
 
     // Sub resources
     @ApiOperation(value = "DocumentsResource")
