@@ -752,16 +752,34 @@ public class WorkspaceResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public WorkspaceCustomizationDTO getWorkspaceCustomizations(
-            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) {
-        
-        // mock the result
-        List<String> mock = Arrays.asList("pr.number", "pr.version",
-                "pr.iteration", "pr.type", "pr.name", "pr.author",
-                "pr.modificationDate", "pr.lifecycleSate", "pr.checkoutUser", "pr.acl");
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) throws EntityNotFoundException {
+
+        // mock 200 OK result
+        List<String> mock = Arrays.asList(
+                "pr.number",
+                "pr.version",
+                "pr.iteration",
+                "pr.modificationDate"
+                /*,
+                "attr-URL.AURL",
+                "attr-NUMBER.ANUMBER",
+                "attr-LONG_TEXT.ALONGTEXT",
+                "attr-DATE.ADATE",
+                "attr-BOOLEAN.ABOOLEAN",
+                "attr-TEXT.ATEXT"*/
+        );
 
         WorkspaceCustomizationDTO workspaceCustomizationDTO = new WorkspaceCustomizationDTO();
         workspaceCustomizationDTO.setPartTableColumns(mock);
         return workspaceCustomizationDTO;
+
+        // mock 404 result
+       /* throw new EntityNotFoundException(Locale.getDefault()) {
+            @Override
+            public String getLocalizedMessage() {
+                return "Some error message ...";
+            }
+        };*/
     }
 
     @PUT
@@ -777,12 +795,18 @@ public class WorkspaceResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateWorkspaceCustomizations(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-            @ApiParam(value = "Customization values", required = true) WorkspaceCustomizationDTO workspaceCustomizationDTO) {
-        List<String> partTableColumns = workspaceCustomizationDTO.getPartTableColumns();
+            @ApiParam(value = "Customization values", required = true) WorkspaceCustomizationDTO workspaceCustomizationDTO) throws AccessRightException {
+
         // Do something with it :!)
         // this list must be retrieved with the same order
-        // workspaceManager.updateTableColumns(workspaceId,partTableColumns);
+        // This list must not be empty, an exception should be thrown
+        List<String> partTableColumns = workspaceCustomizationDTO.getPartTableColumns();
+
+        // Mock 200 result
         return Response.ok().build();
+
+        // Mock 40x result
+        //throw new AccessRightException(Locale.getDefault(), contextManager.getCallerPrincipalLogin());
     }
 
 
