@@ -40,7 +40,7 @@ import java.util.List;
  * @version 1.1, 18/05/11
  * @since V1.1
  */
-@Table(name = "PARTMASTER")
+@Table(name = "PARTMASTER", indexes = {@Index(name = "INDEX_WKS", columnList = "WORKSPACE_ID")})
 @IdClass(PartMasterKey.class)
 @Entity
 @NamedQueries({
@@ -54,6 +54,7 @@ public class PartMaster implements Serializable {
     private String number = "";
 
     @Id
+    @JoinColumn(name = "WORKSPACE_ID")
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
 

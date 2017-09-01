@@ -38,7 +38,7 @@ import java.util.*;
  * @version 1.0, 02/06/08
  * @since   V1.0
  */
-@Table(name = "DOCUMENTITERATION")
+@Table(name = "DOCUMENTITERATION", indexes = {@Index(name = "INDEX_WKS_ID_VERSION", columnList = "WORKSPACE_ID, DOCUMENTMASTER_ID, DOCUMENTREVISION_VERSION")})
 @javax.persistence.IdClass(com.docdoku.core.document.DocumentIterationKey.class)
 @NamedQueries ({
     @NamedQuery(name="DocumentIteration.findByBinaryResource", query = "SELECT d FROM DocumentIteration d WHERE :binaryResource member of d.attachedFiles")

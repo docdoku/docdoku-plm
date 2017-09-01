@@ -40,7 +40,7 @@ import java.util.*;
  * @version 1.1, 31/10/11
  * @since   V1.1
  */
-@Table(name="PARTREVISION")
+@Table(name="PARTREVISION", indexes = {@Index(name = "INDEX_WKS_PARTNUMBER", columnList = "WORKSPACE_ID, PARTMASTER_PARTNUMBER")})
 @IdClass(PartRevisionKey.class)
 @Entity
 @NamedQueries({

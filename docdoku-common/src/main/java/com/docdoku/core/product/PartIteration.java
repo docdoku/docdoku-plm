@@ -40,7 +40,7 @@ import java.util.*;
  * @version 1.1, 18/05/11
  * @since   V1.1
  */
-@Table(name="PARTITERATION")
+@Table(name="PARTITERATION", indexes = {@Index(name = "INDEX_WKS_PARTNUMBER_VERSION", columnList = "WORKSPACE_ID, PARTMASTER_PARTNUMBER, PARTREVISION_VERSION")})
 @IdClass(com.docdoku.core.product.PartIterationKey.class)
 @NamedQueries({
         @NamedQuery(name="PartIteration.findUsedByAsSubstitute", query="SELECT p FROM PartIteration p JOIN p.components l JOIN l.substitutes s WHERE s.substitute = :partMaster"),

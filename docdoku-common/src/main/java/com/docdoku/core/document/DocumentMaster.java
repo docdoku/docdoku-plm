@@ -39,7 +39,7 @@ import java.util.List;
  * @version 1.1, 23/01/12
  * @since   V1.0
  */
-@Table(name="DOCUMENTMASTER")
+@Table(name="DOCUMENTMASTER", indexes = {@Index(name = "INDEX_WKS", columnList = "WORKSPACE_ID")})
 @IdClass(com.docdoku.core.document.DocumentMasterKey.class)
 @Entity
 @NamedQueries ({
@@ -52,6 +52,7 @@ public class DocumentMaster implements Serializable, Comparable<DocumentMaster> 
     private String id="";
 
     @Id
+    @JoinColumn(name = "WORKSPACE_ID")
     @ManyToOne(optional=false, fetch=FetchType.EAGER)
     private Workspace workspace;
 
