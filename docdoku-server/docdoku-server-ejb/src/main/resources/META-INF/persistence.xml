@@ -4,6 +4,7 @@
   <persistence-unit name="DocDoku-PU" transaction-type="JTA">
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
     <class>com.docdoku.core.admin.PlatformOptions</class>
+    <class>com.docdoku.core.admin.WorkspaceOptions</class>
     <class>com.docdoku.core.common.Account</class>
     <class>com.docdoku.core.common.BinaryResource</class>
     <class>com.docdoku.core.common.Organization</class>

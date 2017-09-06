@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.admin.WorkspaceOptions;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
@@ -247,7 +248,7 @@ public class WorkspaceResource {
             throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException,
             AccountNotFoundException, AccessRightException {
 
-        Workspace workspace = userManager.updateWorkspace(workspaceId, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
+        Workspace workspace = workspaceManager.updateWorkspace(workspaceId, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
@@ -418,7 +419,7 @@ public class WorkspaceResource {
         } else {
             account = accountManager.getMyAccount();
         }
-        Workspace workspace = userManager.createWorkspace(workspaceDTO.getId(), account, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
+        Workspace workspace = workspaceManager.createWorkspace(workspaceDTO.getId(), account, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
 
         return mapper.map(workspace, WorkspaceDTO.class);
     }
@@ -742,7 +743,7 @@ public class WorkspaceResource {
 
     @GET
     @ApiOperation(value = "Get workspace customizations",
-            response = WorkspaceCustomizationDTO.class)
+            response = WorkspaceOptionsDTO.class)
     @Path("/{workspaceId}/customizations")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieve of workspace customizations"),
@@ -751,35 +752,16 @@ public class WorkspaceResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public WorkspaceCustomizationDTO getWorkspaceCustomizations(
+    public WorkspaceOptionsDTO getWorkspaceOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) throws EntityNotFoundException {
 
-        // mock 200 OK result
-        List<String> mock = Arrays.asList(
-                "pr.number",
-                "pr.version",
-                "pr.iteration",
-                "pr.modificationDate"
-                /*,
-                "attr-URL.AURL",
-                "attr-NUMBER.ANUMBER",
-                "attr-LONG_TEXT.ALONGTEXT",
-                "attr-DATE.ADATE",
-                "attr-BOOLEAN.ABOOLEAN",
-                "attr-TEXT.ATEXT"*/
-        );
+        WorkspaceOptions workspaceOptions = workspaceManager.getWorkspaceOptions(workspaceId);
+        if(workspaceOptions == null){
+            workspaceOptions=new WorkspaceOptions();
+            workspaceOptions.setDefaults();
+        }
 
-        WorkspaceCustomizationDTO workspaceCustomizationDTO = new WorkspaceCustomizationDTO();
-        workspaceCustomizationDTO.setPartTableColumns(mock);
-        return workspaceCustomizationDTO;
-
-        // mock 404 result
-       /* throw new EntityNotFoundException(Locale.getDefault()) {
-            @Override
-            public String getLocalizedMessage() {
-                return "Some error message ...";
-            }
-        };*/
+        return mapper.map(workspaceOptions, WorkspaceOptionsDTO.class);
     }
 
     @PUT
@@ -793,20 +775,16 @@ public class WorkspaceResource {
     })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateWorkspaceCustomizations(
+    public Response updateWorkspaceOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-            @ApiParam(value = "Customization values", required = true) WorkspaceCustomizationDTO workspaceCustomizationDTO) throws AccessRightException {
+            @ApiParam(value = "Customization values", required = true) WorkspaceOptionsDTO workspaceOptionsDTO) throws AccessRightException, AccountNotFoundException {
 
-        // Do something with it :!)
-        // this list must be retrieved with the same order
-        // This list must not be empty, an exception should be thrown
-        List<String> partTableColumns = workspaceCustomizationDTO.getPartTableColumns();
+        List<String> partTableColumns = workspaceOptionsDTO.getPartTableColumns();
+        List<String> documentTableColumns = workspaceOptionsDTO.getDocumentTableColumns();
 
-        // Mock 200 result
-        return Response.ok().build();
+        workspaceManager.updateWorkspaceOptions(new WorkspaceOptions(new Workspace(workspaceId),partTableColumns,documentTableColumns));
+        return Response.noContent().build();
 
-        // Mock 40x result
-        //throw new AccessRightException(Locale.getDefault(), contextManager.getCallerPrincipalLogin());
     }
 
 

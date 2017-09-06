@@ -20,13 +20,17 @@
 package com.docdoku.server;
 
 
+import com.docdoku.core.admin.OperationSecurityStrategy;
+import com.docdoku.core.admin.WorkspaceOptions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
+import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.AccountDAO;
+import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.DeclareRoles;
@@ -64,6 +68,9 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     @Inject
     private IIndexerManagerLocal indexerManager;
+
+    @Inject
+    private IPlatformOptionsManagerLocal platformOptionsManager;
 
     private static final Logger LOGGER = Logger.getLogger(WorkspaceManagerBean.class.getName());
 
@@ -150,6 +157,112 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     public Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
         workspace.setEnabled(enabled);
+        return workspace;
+    }
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, NotAllowedException {
+        if (!NamingConvention.correct(pID)) {
+            throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9", pID);
+        }
+        OperationSecurityStrategy workspaceCreationStrategy = platformOptionsManager.getWorkspaceCreationStrategy();
+        Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
+        workspace.setEnabled(workspaceCreationStrategy.equals(OperationSecurityStrategy.NONE));
+        new WorkspaceDAO(em).createWorkspace(workspace);
+        User userToCreate = new User(workspace, pAdmin);
+        UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
+        userDAO.createUser(userToCreate);
+        userDAO.addUserMembership(workspace, userToCreate);
+
+        try {
+            indexerManager.createWorkspaceIndex(pID);
+        } catch (Exception e) { // TODO review exception thrown
+            throw new WorkspaceAlreadyExistsException(new Locale(pAdmin.getLanguage()), workspace);
+        }
+
+        return workspace;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException {
+
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            return new WorkspaceDAO(em).loadWorkspace(workspaceId);
+        }
+
+        String login = contextManager.getCallerPrincipalLogin();
+
+        User[] users = new UserDAO(em).getUsers(login);
+        Account account = new AccountDAO(em).loadAccount(login);
+        Locale locale = new Locale(account.getLanguage());
+
+        Workspace workspace = null;
+        for (User user : users) {
+            if (user.getWorkspace().getId().equals(workspaceId)) {
+                workspace = user.getWorkspace();
+                break;
+            }
+        }
+
+        if (workspace == null) {
+            throw new WorkspaceNotFoundException(locale, workspaceId);
+        }
+
+        return workspace;
+    }
+
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public WorkspaceOptions getWorkspaceOptions(String workspaceId) throws AccountNotFoundException, WorkspaceNotFoundException {
+
+        WorkspaceOptions settings = new WorkspaceDAO(em).loadWorkspaceOptions(workspaceId);
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            return settings;
+        }
+
+        String login = contextManager.getCallerPrincipalLogin();
+
+        User[] users = new UserDAO(em).getUsers(login);
+        Account account = new AccountDAO(em).loadAccount(login);
+        Locale locale = new Locale(account.getLanguage());
+
+        Workspace workspace = null;
+        for (User user : users) {
+            if (user.getWorkspace().getId().equals(workspaceId)) {
+                workspace = user.getWorkspace();
+                break;
+            }
+        }
+
+        if (workspace == null) {
+            throw new WorkspaceNotFoundException(locale, workspaceId);
+        }
+        return settings;
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public void updateWorkspaceOptions(WorkspaceOptions pWorkspaceOptions) throws AccessRightException, AccountNotFoundException {
+        Workspace wks=em.find(Workspace.class,pWorkspaceOptions.getWorkspace().getId());
+        pWorkspaceOptions.setWorkspace(wks);
+        Account account = userManager.checkAdmin(wks);
+        new WorkspaceDAO(new Locale(account.getLanguage()), em).updateWorkspaceOptions(pWorkspaceOptions);
+    }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    public Workspace updateWorkspace(String workspaceId, String description, boolean isFolderLocked) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+        Account account = userManager.checkAdmin(workspaceId);
+        Locale locale = new Locale(account.getLanguage());
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+
+        workspace.setDescription(description);
+        workspace.setFolderLocked(isFolderLocked);
+
         return workspace;
     }
 

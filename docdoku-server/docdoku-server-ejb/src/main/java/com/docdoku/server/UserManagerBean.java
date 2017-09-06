@@ -19,12 +19,10 @@
  */
 package com.docdoku.server;
 
-import com.docdoku.core.admin.OperationSecurityStrategy;
 import com.docdoku.core.common.*;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.security.*;
 import com.docdoku.core.services.*;
-import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.*;
 import com.docdoku.server.events.*;
 
@@ -66,9 +64,6 @@ public class UserManagerBean implements IUserManagerLocal {
 
     @Inject
     private IMailerLocal mailer;
-
-    @Inject
-    private IPlatformOptionsManagerLocal platformOptionsManager;
 
     @Inject
     private ConfigManager configManager;
@@ -163,71 +158,6 @@ public class UserManagerBean implements IUserManagerLocal {
     public UserGroup createUserGroup(String pId, String workspaceId) throws UserGroupAlreadyExistsException, AccessRightException, AccountNotFoundException, CreationException, WorkspaceNotFoundException {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
         return createUserGroup(pId, workspace);
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws WorkspaceAlreadyExistsException, FolderAlreadyExistsException, UserAlreadyExistsException, CreationException, NotAllowedException {
-        if (!NamingConvention.correct(pID)) {
-            throw new NotAllowedException(new Locale(pAdmin.getLanguage()), "NotAllowedException9", pID);
-        }
-        OperationSecurityStrategy workspaceCreationStrategy = platformOptionsManager.getWorkspaceCreationStrategy();
-        Workspace workspace = new Workspace(pID, pAdmin, pDescription, pFolderLocked);
-        workspace.setEnabled(workspaceCreationStrategy.equals(OperationSecurityStrategy.NONE));
-        new WorkspaceDAO(em).createWorkspace(workspace);
-        User userToCreate = new User(workspace, pAdmin);
-        UserDAO userDAO = new UserDAO(new Locale(pAdmin.getLanguage()), em);
-        userDAO.createUser(userToCreate);
-        userDAO.addUserMembership(workspace, userToCreate);
-
-        try {
-            indexerManager.createWorkspaceIndex(pID);
-        } catch (Exception e) { // TODO review exception thrown
-            throw new WorkspaceAlreadyExistsException(new Locale(pAdmin.getLanguage()), workspace);
-        }
-
-        return workspace;
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public Workspace[] getAdministratedWorkspaces() throws AccountNotFoundException {
-        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            return new AccountDAO(em).getAllWorkspaces();
-        } else {
-            Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
-            Workspace[] workspaces = new AccountDAO(em).getAdministratedWorkspaces(account);
-            return Stream.of(workspaces).filter(Workspace::isEnabled).toArray(Workspace[]::new);
-        }
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public Workspace getWorkspace(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException {
-
-        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
-            return new WorkspaceDAO(em).loadWorkspace(workspaceId);
-        }
-
-        String login = contextManager.getCallerPrincipalLogin();
-
-        User[] users = new UserDAO(em).getUsers(login);
-        Account account = new AccountDAO(em).loadAccount(login);
-        Locale locale = new Locale(account.getLanguage());
-
-        Workspace workspace = null;
-        for (User user : users) {
-            if (user.getWorkspace().getId().equals(workspaceId)) {
-                workspace = user.getWorkspace();
-                break;
-            }
-        }
-
-        if (workspace == null) {
-            throw new WorkspaceNotFoundException(locale, workspaceId);
-        }
-
-        return workspace;
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -468,26 +398,6 @@ public class UserManagerBean implements IUserManagerLocal {
         }
     }
 
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    @Override
-    public void updateWorkspace(Workspace pWorkspace) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
-        Account account = checkAdmin(pWorkspace);
-        new WorkspaceDAO(new Locale(account.getLanguage()), em).updateWorkspace(pWorkspace);
-    }
-
-    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
-    public Workspace updateWorkspace(String workspaceId, String description, boolean isFolderLocked) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
-        Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
-        Locale locale = new Locale(account.getLanguage());
-        WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
-        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
-        checkAdmin(workspace, account);
-        workspace.setDescription(description);
-        workspace.setFolderLocked(isFolderLocked);
-
-        return workspace;
-    }
-
 
     @Override
     public void recoverPassword(String pPasswdRRUuid, String pPassword) throws PasswordRecoveryRequestNotFoundException {
@@ -656,4 +566,17 @@ public class UserManagerBean implements IUserManagerLocal {
         User user = checkWorkspaceReadAccess(pWorkspaceId);
         return new UserDAO(new Locale(user.getLanguage()), em).findAllUsers(pWorkspaceId);
     }
+
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    @Override
+    public Workspace[] getAdministratedWorkspaces() throws AccountNotFoundException {
+        if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
+            return new AccountDAO(em).getAllWorkspaces();
+        } else {
+            Account account = new AccountDAO(em).loadAccount(contextManager.getCallerPrincipalLogin());
+            Workspace[] workspaces = new AccountDAO(em).getAdministratedWorkspaces(account);
+            return Stream.of(workspaces).filter(Workspace::isEnabled).toArray(Workspace[]::new);
+        }
+    }
+
 }

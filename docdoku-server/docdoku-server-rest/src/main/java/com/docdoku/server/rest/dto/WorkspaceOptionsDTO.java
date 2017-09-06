@@ -28,15 +28,18 @@ import java.io.Serializable;
 import java.util.List;
 
 @XmlRootElement
-@ApiModel(value = "WorkspaceCustomizationDTO"
-        //description = "This class is the representation of an {@link com.docdoku.core.common.WorkspaceCustomizationDTO} entity"
+@ApiModel(value = "WorkspaceOptionsDTO",
+        description = "This class is the representation of a {@link com.docdoku.core.admin.WorkspaceOptions} entity"
 )
-public class WorkspaceCustomizationDTO implements Serializable {
+public class WorkspaceOptionsDTO implements Serializable {
 
     @ApiModelProperty(value = "Part table columns")
     private List<String> partTableColumns;
 
-    public WorkspaceCustomizationDTO() {
+    @ApiModelProperty(value = "Document table columns")
+    private List<String> documentTableColumns;
+
+    public WorkspaceOptionsDTO() {
     }
 
     public List<String> getPartTableColumns() {
@@ -45,5 +48,13 @@ public class WorkspaceCustomizationDTO implements Serializable {
 
     public void setPartTableColumns(List<String> partTableColumns) {
         this.partTableColumns = partTableColumns;
+    }
+
+    public List<String> getDocumentTableColumns() {
+        return documentTableColumns;
+    }
+
+    public void setDocumentTableColumns(List<String> documentTableColumns) {
+        this.documentTableColumns = documentTableColumns;
     }
 }

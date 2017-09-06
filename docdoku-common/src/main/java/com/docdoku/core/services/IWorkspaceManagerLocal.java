@@ -20,6 +20,8 @@
 
 package com.docdoku.core.services;
 
+import com.docdoku.core.admin.WorkspaceOptions;
+import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 
@@ -34,4 +36,10 @@ public interface IWorkspaceManagerLocal {
     void deleteWorkspace(String workspaceId);
     Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
     Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException;
+    Workspace getWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException;
+    Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException,  NotAllowedException;
+    Workspace updateWorkspace(String workspaceId, String description, boolean isFolderLocked) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
+    void updateWorkspaceOptions(WorkspaceOptions pWorkspaceOptions) throws AccessRightException, AccountNotFoundException;
+    WorkspaceOptions getWorkspaceOptions(String workspaceId) throws AccountNotFoundException, WorkspaceNotFoundException;
+
 }

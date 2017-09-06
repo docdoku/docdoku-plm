@@ -24,14 +24,18 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
+ * Class that holds setting options of the whole system (platform level).
+ * Only one instance of the class must exist.
  *
  * @author Morgan Guimard
+ * @version 2.5, 02/06/16
+ * @since V2.5
  */
 @Table(name = "PLATFORMOPTIONS")
 @Entity
 public class PlatformOptions implements Serializable {
 
-    public static final int UNIQUE_ID = 1 ;
+    public static final int UNIQUE_ID = 1;
 
     @Id
     private int id = UNIQUE_ID;
