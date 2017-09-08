@@ -101,7 +101,9 @@
     <class>com.docdoku.core.query.QueryContext</class>
     <class>com.docdoku.core.product.PathToPathLink</class>
     <class>com.docdoku.core.meta.StatusChange</class>
-
+    <class>com.docdoku.core.hooks.Webhook</class>
+    <class>com.docdoku.core.hooks.SimpleWebhook</class>
+    <class>com.docdoku.core.hooks.SNSWebhook</class>
     <class>com.docdoku.server.storage.CryptoConverter</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>

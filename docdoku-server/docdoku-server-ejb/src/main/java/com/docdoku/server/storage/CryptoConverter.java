@@ -40,29 +40,30 @@ import java.util.logging.Logger;
 @Converter
 public class CryptoConverter implements AttributeConverter<String, String> {
 
-    private final static Logger LOGGER = Logger.getLogger(CryptoConverter.class.getName());
-    private final static String ALGORITHM = "AES/CBC/PKCS5Padding";
+    private static final Logger LOGGER = Logger.getLogger(CryptoConverter.class.getName());
+    private static final String ALGORITHM = "AES/CBC/PKCS5Padding";
 
     private static Key key;
+
     //PostConstruct event not yet available on converters
     static {
-        try{
+        try {
             InitialContext ctx = new InitialContext();
             Properties props = (Properties) ctx.lookup("security.config");
 
-            String keystoreLocation=props.getProperty("keystoreLocation");
-            String keystorePass=props.getProperty("keystorePass");
-            String keyAlias=props.getProperty("keyAlias");
+            String keystoreLocation = props.getProperty("keystoreLocation");
+            String keystorePass = props.getProperty("keystorePass");
+            String keyAlias = props.getProperty("keyAlias");
 
-            String keystoreType= Optional.ofNullable(props.getProperty("keystoreType")).orElse("JCEKS");
-            String keyPass=Optional.ofNullable(props.getProperty("keyPass")).orElse(keystorePass);
+            String keystoreType = Optional.ofNullable(props.getProperty("keystoreType")).orElse("JCEKS");
+            String keyPass = Optional.ofNullable(props.getProperty("keyPass")).orElse(keystorePass);
 
             KeyStore ks = KeyStore.getInstance(keystoreType);
             try (InputStream fis = new BufferedInputStream(new FileInputStream(keystoreLocation))) {
                 ks.load(fis, keystorePass.toCharArray());
             }
             key = ks.getKey(keyAlias, keyPass.toCharArray());
-        }catch (Exception ex){
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Keystore loading failed", ex);
         }
     }
@@ -90,8 +91,8 @@ public class CryptoConverter implements AttributeConverter<String, String> {
             Cipher c = Cipher.getInstance(ALGORITHM);
             String[] strData = storedData.split("\\.");
             byte[] iv = Base64.getDecoder().decode(strData[0]);
-            c.init(Cipher.DECRYPT_MODE, key,new IvParameterSpec(iv));
-            return new String(c.doFinal(Base64.getDecoder().decode(strData[1])),"UTF-8");
+            c.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+            return new String(c.doFinal(Base64.getDecoder().decode(strData[1])), "UTF-8");
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Cannot decrypt, returns the value as stored", ex);
             return storedData;
