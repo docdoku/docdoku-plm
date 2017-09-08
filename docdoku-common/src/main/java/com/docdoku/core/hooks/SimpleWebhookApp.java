@@ -1,17 +1,11 @@
 package com.docdoku.core.hooks;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Table(name = "SIMPLEWEBHOOK")
 @Entity
-public class SimpleWebhook {
-
-    @Id
-    @OneToOne(orphanRemoval = true)
-    private Webhook webhook;
+public class SimpleWebhookApp extends WebhookApp {
 
     private String method;
 
@@ -19,15 +13,13 @@ public class SimpleWebhook {
 
     private String authorization;
 
-
-    public SimpleWebhook(Webhook webhook, String method, String authorization, String uri) {
-        this.webhook = webhook;
+    public SimpleWebhookApp(String method, String authorization, String uri) {
         this.method = method;
         this.authorization = authorization;
         this.uri = uri;
     }
 
-    public SimpleWebhook() {
+    public SimpleWebhookApp() {
     }
 
     public String getMethod() {

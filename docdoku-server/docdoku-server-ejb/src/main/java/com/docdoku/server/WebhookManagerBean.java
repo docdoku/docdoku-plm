@@ -22,6 +22,8 @@ package com.docdoku.server;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.hooks.SNSWebhookApp;
+import com.docdoku.core.hooks.SimpleWebhookApp;
 import com.docdoku.core.hooks.Webhook;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IContextManagerLocal;
@@ -62,17 +64,13 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
     public Webhook createWebhook(String workspaceId, String name, boolean active)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException, AccessRightException, AccountNotFoundException {
-
         Account account = userManager.checkAdmin(workspaceId);
-
         WorkspaceDAO workspaceDAO = new WorkspaceDAO(new Locale(account.getLanguage()), em);
         Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
-
-        Webhook webhook = new Webhook(name, active, workspace);
+        Webhook webhook = new Webhook(new SimpleWebhookApp(), name, active, workspace);
         new WebhookDAO(new Locale(account.getLanguage()), em).createWebhook(webhook);
         return webhook;
     }
-
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
@@ -88,7 +86,6 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
         Account account = userManager.checkAdmin(workspaceId);
         Locale locale = new Locale(account.getLanguage());
         Webhook webhook = new WebhookDAO(locale, em).loadWebhook(id);
-        // Check workspaceId concordance
         if (!webhook.getWorkspace().getId().equals(workspaceId)) {
             throw new WebhookNotFoundException(locale, id);
         }
@@ -97,15 +94,11 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public void enableWebhook(String workspaceId, int id, boolean enable) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, WebhookNotFoundException {
-        Account account = userManager.checkAdmin(workspaceId);
-        Locale locale = new Locale(account.getLanguage());
-        Webhook webhook = new WebhookDAO(locale, em).loadWebhook(id);
-        // Check workspaceId concordance
-        if (!webhook.getWorkspace().getId().equals(workspaceId)) {
-            throw new WebhookNotFoundException(locale, id);
-        }
-        webhook.setActive(enable);
+    public Webhook updateWebHook(String workspaceId, int id, String name, boolean active) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+        Webhook webHook = getWebHook(workspaceId, id);
+        webHook.setActive(active);
+        webHook.setName(name);
+        return webHook;
     }
 
     @Override
@@ -115,11 +108,28 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
         Locale locale = new Locale(account.getLanguage());
         WebhookDAO webhookDAO = new WebhookDAO(locale, em);
         Webhook webhook = webhookDAO.loadWebhook(id);
-        // Check workspaceId concordance
         if (!webhook.getWorkspace().getId().equals(workspaceId)) {
             throw new WebhookNotFoundException(locale, id);
         }
         webhookDAO.removeWebook(webhook);
+    }
+
+    @Override
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public SimpleWebhookApp configureSimpleWebhook(String workspaceId, Integer webhookId, String method, String uri, String authorization) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+        Webhook webHook = getWebHook(workspaceId, webhookId);
+        SimpleWebhookApp app = new SimpleWebhookApp(method, authorization, uri);
+        webHook.setWebhookApp(app);
+        return app;
+    }
+
+    @Override
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public SNSWebhookApp configureSNSWebhook(String workspaceId, Integer webhookId, String topicArn, String region, String awsAccount, String awsSecret) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+        Webhook webHook = getWebHook(workspaceId, webhookId);
+        SNSWebhookApp app = new SNSWebhookApp(topicArn, region, awsAccount, awsSecret);
+        webHook.setWebhookApp(app);
+        return app;
     }
 
 }

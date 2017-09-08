@@ -46,8 +46,6 @@ public class WebhookDAO {
     }
 
     public void removeWebook(Webhook w) {
-        // remove options before
-
         // then
         em.remove(w);
         em.flush();

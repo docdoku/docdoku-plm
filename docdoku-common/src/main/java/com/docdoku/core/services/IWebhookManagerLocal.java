@@ -20,6 +20,8 @@
 package com.docdoku.core.services;
 
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.hooks.SNSWebhookApp;
+import com.docdoku.core.hooks.SimpleWebhookApp;
 import com.docdoku.core.hooks.Webhook;
 
 import java.util.List;
@@ -31,9 +33,14 @@ public interface IWebhookManagerLocal {
     Webhook createWebhook(String workspaceId, String name, boolean active) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException, AccessRightException, AccountNotFoundException;
 
     List<Webhook> getWebHooks(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+
     Webhook getWebHook(String workspaceId, int id) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, WebhookNotFoundException;
 
-    void enableWebhook(String workspaceId, int id, boolean enable) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, WebhookNotFoundException;
+    Webhook updateWebHook(String workspaceId, int id, String name, boolean active) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException;
 
     void deleteWebhook(String workspaceId, int id) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, WebhookNotFoundException;
+
+    SimpleWebhookApp configureSimpleWebhook(String workspaceId, Integer webhookId, String method, String uri, String authorization) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException;
+
+    SNSWebhookApp configureSNSWebhook(String workspaceId, Integer webhookId, String topicArn, String region, String awsAccount, String awsSecret) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException;
 }

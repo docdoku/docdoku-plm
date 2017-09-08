@@ -4,10 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @XmlRootElement
 @ApiModel(value = "WebhookDTO", description = "This class is a representation of a {@link com.docdoku.core.hooks.Webhook} entity")
-public class WebhookDTO {
+public class WebhookDTO implements Serializable {
 
     @ApiModelProperty(value = "Webhook id")
     private int id;

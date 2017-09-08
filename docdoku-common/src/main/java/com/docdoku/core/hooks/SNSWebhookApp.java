@@ -1,32 +1,25 @@
 package com.docdoku.core.hooks;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@Table(name = "SNSWEBHOOK")
+@Table(name = "SNSWEBHOOKAPP")
 @Entity
-public class SNSWebhook {
-
-    @Id
-    @OneToOne(orphanRemoval = true)
-    private Webhook webhook;
+public class SNSWebhookApp extends WebhookApp {
 
     private String topicArn;
     private String region;
     private String awsAccount;
     private String awsSecret;
 
-    public SNSWebhook(Webhook webhook, String topicArn, String region, String awsAccount, String awsSecret) {
-        this.webhook = webhook;
+    public SNSWebhookApp(String topicArn, String region, String awsAccount, String awsSecret) {
         this.topicArn = topicArn;
         this.region = region;
         this.awsAccount = awsAccount;
         this.awsSecret = awsSecret;
     }
 
-    public SNSWebhook() {
+    public SNSWebhookApp() {
     }
 
     public String getTopicArn() {

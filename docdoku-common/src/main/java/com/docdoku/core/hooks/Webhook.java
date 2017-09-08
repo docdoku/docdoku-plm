@@ -10,21 +10,24 @@ import java.io.Serializable;
 @NamedQueries({
         @NamedQuery(name = "Webhook.findByWorkspace", query = "SELECT distinct(w) FROM Webhook w WHERE w.workspace.id = :workspaceId")
 })
-
 public class Webhook implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String name;
+    protected String name;
 
-    private boolean active;
+    protected boolean active;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    private Workspace workspace;
+    protected Workspace workspace;
 
-    public Webhook(String name, boolean active, Workspace workspace) {
+    @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private WebhookApp webhookApp;
+
+    public Webhook(WebhookApp webhookApp, String name, boolean active, Workspace workspace) {
+        this.webhookApp = webhookApp;
         this.name = name;
         this.active = active;
         this.workspace = workspace;
@@ -61,11 +64,15 @@ public class Webhook implements Serializable {
         return workspace;
     }
 
-    public String getWorkspaceId() {
-        return workspace.getId();
-    }
-
     public void setWorkspace(Workspace workspace) {
         this.workspace = workspace;
+    }
+
+    public WebhookApp getWebhookApp() {
+        return webhookApp;
+    }
+
+    public void setWebhookApp(WebhookApp webhookApp) {
+        this.webhookApp = webhookApp;
     }
 }
