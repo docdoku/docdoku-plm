@@ -49,7 +49,7 @@ public class WebhookApiTest {
 
     @AfterClass
     public static void deleteWorkspace() throws ApiException {
-        // TestUtils.deleteWorkspace(workspace);
+        TestUtils.deleteWorkspace(workspace);
     }
 
     @Test
