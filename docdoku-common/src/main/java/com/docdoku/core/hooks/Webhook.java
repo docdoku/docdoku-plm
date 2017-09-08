@@ -5,21 +5,26 @@ import com.docdoku.core.common.Workspace;
 import javax.persistence.*;
 import java.io.Serializable;
 
-@MappedSuperclass
-public abstract class Webhook implements Serializable {
+@Table(name = "WEBHOOK")
+@Entity
+@NamedQueries({
+        @NamedQuery(name = "Webhook.findByWorkspace", query = "SELECT distinct(w) FROM Webhook w WHERE w.workspace.id = :workspaceId")
+})
+
+public class Webhook implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected int id;
+    private int id;
 
-    protected String name;
+    private String name;
 
-    protected boolean active;
+    private boolean active;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    protected Workspace workspace;
+    private Workspace workspace;
 
-    protected Webhook(String name, boolean active, Workspace workspace) {
+    public Webhook(String name, boolean active, Workspace workspace) {
         this.name = name;
         this.active = active;
         this.workspace = workspace;
@@ -54,6 +59,10 @@ public abstract class Webhook implements Serializable {
 
     public Workspace getWorkspace() {
         return workspace;
+    }
+
+    public String getWorkspaceId() {
+        return workspace.getId();
     }
 
     public void setWorkspace(Workspace workspace) {

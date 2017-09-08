@@ -126,6 +126,9 @@ public class WorkspaceResource {
     private EffectivityResource effectivities;
 
     @Inject
+    private WebhookResource webhooks;
+
+    @Inject
     private IDocumentManagerLocal documentService;
 
     @Inject
@@ -888,4 +891,9 @@ public class WorkspaceResource {
         return effectivities;
     }
 
+    @ApiOperation(value = "WebhookResource")
+    @Path("/{workspaceId}/webhooks")
+    public WebhookResource webhooks() {
+        return webhooks;
+    }
 }
