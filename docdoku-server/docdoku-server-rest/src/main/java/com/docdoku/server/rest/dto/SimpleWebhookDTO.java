@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @XmlRootElement
 @ApiModel(value = "SimpleWebhookDTO", description = "This class is a representation of a {@link com.docdoku.core.hooks.SimpleWebhookApp} entity")
-public class SimpleWebhookDTO implements Serializable{
+public class SimpleWebhookDTO implements Serializable {
 
     @ApiModelProperty(value = "SimpleWebhookDTO webhook")
     private WebhookDTO webhook;

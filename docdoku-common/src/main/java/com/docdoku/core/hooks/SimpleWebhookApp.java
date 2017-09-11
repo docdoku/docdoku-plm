@@ -2,10 +2,14 @@ package com.docdoku.core.hooks;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "SIMPLEWEBHOOK")
 @Entity
 public class SimpleWebhookApp extends WebhookApp {
+
+    public static final String APP_NAME = "SIMPLEWEBHOOK";
 
     private String method;
 
@@ -20,6 +24,15 @@ public class SimpleWebhookApp extends WebhookApp {
     }
 
     public SimpleWebhookApp() {
+    }
+
+    @Override
+    public List<WebhookAppParameter> getParameters() {
+        List<WebhookAppParameter> parameters = new ArrayList<>();
+        parameters.add(new WebhookAppParameter("method", method));
+        parameters.add(new WebhookAppParameter("uri", uri));
+        parameters.add(new WebhookAppParameter("authorization", authorization));
+        return parameters;
     }
 
     public String getMethod() {
@@ -44,5 +57,10 @@ public class SimpleWebhookApp extends WebhookApp {
 
     public void setAuthorization(String authorization) {
         this.authorization = authorization;
+    }
+
+    @Override
+    public String getAppName() {
+        return APP_NAME;
     }
 }

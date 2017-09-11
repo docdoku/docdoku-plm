@@ -24,10 +24,12 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.hooks.SNSWebhookApp;
 import com.docdoku.core.hooks.SimpleWebhookApp;
 import com.docdoku.core.hooks.Webhook;
+import com.docdoku.core.hooks.WebhookApp;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWebhookManagerLocal;
 import com.docdoku.server.rest.dto.SNSWebhookDTO;
 import com.docdoku.server.rest.dto.SimpleWebhookDTO;
+import com.docdoku.server.rest.dto.WebhookAppParameterDTO;
 import com.docdoku.server.rest.dto.WebhookDTO;
 import io.swagger.annotations.*;
 import org.dozer.DozerBeanMapperSingletonWrapper;
@@ -117,8 +119,10 @@ public class WebhookResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Webhook definition") WebhookDTO webhookDTO
     ) throws AccessRightException, UserNotActiveException, AccountNotFoundException, WorkspaceNotFoundException,
-            UserNotFoundException, WorkspaceNotEnabledException {
+            UserNotFoundException, WorkspaceNotEnabledException, WebhookNotFoundException {
         Webhook webHook = webhookManager.createWebhook(workspaceId, webhookDTO.getName(), webhookDTO.isActive());
+        WebhookApp webhookApp = configureWebhook(workspaceId, webHook.getId(), webhookDTO);
+        webHook.setWebhookApp(webhookApp);
         return mapper.map(webHook, WebhookDTO.class);
     }
 
@@ -138,9 +142,68 @@ public class WebhookResource {
             @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") Integer webhookId,
             @ApiParam(required = true, value = "Webhook definition") WebhookDTO webhookDTO
     ) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException, WebhookNotFoundException {
-
         Webhook webHook = webhookManager.updateWebHook(workspaceId, webhookId, webhookDTO.getName(), webhookDTO.isActive());
+        WebhookApp webhookApp = configureWebhook(workspaceId, webhookId, webhookDTO);
+        webHook.setWebhookApp(webhookApp);
         return mapper.map(webHook, WebhookDTO.class);
+    }
+
+    private WebhookApp configureWebhook(String workspaceId, Integer webhookId, WebhookDTO webhookDTO) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+        List<WebhookAppParameterDTO> parameters = webhookDTO.getParameters();
+        String appName = webhookDTO.getAppName();
+        if (parameters != null && !parameters.isEmpty()) {
+            switch (appName) {
+                case SimpleWebhookApp.APP_NAME:
+                    return updateSimpleWebhook(workspaceId, webhookId, parameters);
+                case SNSWebhookApp.APP_NAME:
+                    return updateSNSWebhook(workspaceId, webhookId, parameters);
+                default:
+                    throw new IllegalArgumentException();
+            }
+        }
+        return null;
+    }
+
+    private WebhookApp updateSNSWebhook(String workspaceId, Integer webhookId, List<WebhookAppParameterDTO> parameters)
+            throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+        String region = null;
+        String topicArn = null;
+        String awsAccount = null;
+        String awsSecret = null;
+        for (WebhookAppParameterDTO parameter : parameters) {
+            if (parameter.getName().equals("topicArn")) {
+                topicArn = parameter.getValue();
+            }
+            if (parameter.getName().equals("region")) {
+                region = parameter.getValue();
+            }
+            if (parameter.getName().equals("awsAccount")) {
+                awsAccount = parameter.getValue();
+            }
+            if (parameter.getName().equals("awsSecret")) {
+                awsSecret = parameter.getValue();
+            }
+        }
+        return webhookManager.configureSNSWebhook(workspaceId, webhookId, topicArn, region, awsAccount, awsSecret);
+    }
+
+    private WebhookApp updateSimpleWebhook(String workspaceId, Integer webhookId, List<WebhookAppParameterDTO> parameters)
+            throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+        String method = null;
+        String uri = null;
+        String authorization = null;
+        for (WebhookAppParameterDTO parameter : parameters) {
+            if (parameter.getName().equals("method")) {
+                method = parameter.getValue();
+            }
+            if (parameter.getName().equals("uri")) {
+                uri = parameter.getValue();
+            }
+            if (parameter.getName().equals("authorization")) {
+                authorization = parameter.getValue();
+            }
+        }
+        return webhookManager.configureSimpleWebhook(workspaceId, webhookId, method, uri, authorization);
     }
 
     @DELETE

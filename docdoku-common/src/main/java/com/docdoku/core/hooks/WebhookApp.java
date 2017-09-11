@@ -3,6 +3,7 @@ package com.docdoku.core.hooks;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import java.io.Serializable;
+import java.util.List;
 
 @XmlSeeAlso({SimpleWebhookApp.class, SNSWebhookApp.class})
 @Inheritance
@@ -24,4 +25,9 @@ public abstract class WebhookApp implements Serializable {
     public void setId(int id) {
         this.id = id;
     }
+
+    public abstract List<WebhookAppParameter> getParameters();
+
+    public abstract String getAppName();
+
 }

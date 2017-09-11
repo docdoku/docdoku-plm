@@ -2,10 +2,14 @@ package com.docdoku.core.hooks;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 
 @Table(name = "SNSWEBHOOKAPP")
 @Entity
 public class SNSWebhookApp extends WebhookApp {
+
+    public static final String APP_NAME = "SNSWEBHOOK";
 
     private String topicArn;
     private String region;
@@ -20,6 +24,21 @@ public class SNSWebhookApp extends WebhookApp {
     }
 
     public SNSWebhookApp() {
+    }
+
+    @Override
+    public List<WebhookAppParameter> getParameters() {
+        List<WebhookAppParameter> parameters = new ArrayList<>();
+        parameters.add(new WebhookAppParameter("topicArn", topicArn));
+        parameters.add(new WebhookAppParameter("region", region));
+        parameters.add(new WebhookAppParameter("awsAccount", awsAccount));
+        parameters.add(new WebhookAppParameter("awsSecret", awsSecret));
+        return parameters;
+    }
+
+    @Override
+    public String getAppName() {
+        return APP_NAME;
     }
 
     public String getTopicArn() {

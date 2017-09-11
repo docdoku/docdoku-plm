@@ -4,6 +4,7 @@ import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.List;
 
 @Table(name = "WEBHOOK")
 @Entity
@@ -74,5 +75,13 @@ public class Webhook implements Serializable {
 
     public void setWebhookApp(WebhookApp webhookApp) {
         this.webhookApp = webhookApp;
+    }
+
+    public List<WebhookAppParameter> getParameters() {
+        return webhookApp.getParameters();
+    }
+
+    public String getAppName() {
+        return webhookApp.getAppName();
     }
 }

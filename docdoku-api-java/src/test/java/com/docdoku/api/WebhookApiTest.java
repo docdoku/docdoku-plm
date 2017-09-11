@@ -22,10 +22,7 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.ApiResponse;
-import com.docdoku.api.models.SNSWebhookDTO;
-import com.docdoku.api.models.SimpleWebhookDTO;
-import com.docdoku.api.models.WebhookDTO;
-import com.docdoku.api.models.WorkspaceDTO;
+import com.docdoku.api.models.*;
 import com.docdoku.api.services.WebhookApi;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -34,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(JUnit4.class)
@@ -122,6 +120,81 @@ public class WebhookApiTest {
         Assert.assertNotNull(snsApp);
         Assert.assertEquals("My account", snsApp.getAwsAccount());
 
+    }
+
+    @Test
+    public void directSimpleWebhookCreationTest() throws ApiException {
+
+        // Simple web hook
+        WebhookDTO webhookDTO = new WebhookDTO();
+        webhookDTO.setName("A simple post to an URI");
+        webhookDTO.setActive(true);
+        webhookDTO.setAppName("SIMPLEWEBHOOK");
+        List<WebhookAppParameterDTO> parameters = new ArrayList<>();
+
+        WebhookAppParameterDTO method = new WebhookAppParameterDTO();
+        method.setName("method");
+        method.setValue("POST");
+        parameters.add(method);
+
+        WebhookAppParameterDTO uri = new WebhookAppParameterDTO();
+        uri.setName("uri");
+        uri.setValue("http://localhost:9001");
+        parameters.add(uri);
+
+        WebhookAppParameterDTO authorization = new WebhookAppParameterDTO();
+        authorization.setName("authorization");
+        authorization.setValue("some authorization field");
+        parameters.add(authorization);
+
+        webhookDTO.setParameters(parameters);
+
+        WebhookDTO webhook = webhookApi.createWebhook(workspace.getId(), webhookDTO);
+
+        Assert.assertNotNull(webhook);
+        Assert.assertEquals(parameters, webhook.getParameters());
 
     }
+
+
+    @Test
+    public void directSNSWebhookCreationTest() throws ApiException {
+
+        // Simple web hook
+        WebhookDTO webhookDTO = new WebhookDTO();
+        webhookDTO.setName("A simple post to an URI");
+        webhookDTO.setActive(true);
+        webhookDTO.setAppName("SNSWEBHOOK");
+        List<WebhookAppParameterDTO> parameters = new ArrayList<>();
+
+        WebhookAppParameterDTO topicArn = new WebhookAppParameterDTO();
+        topicArn.setName("topicArn");
+        topicArn.setValue("some topic arn");
+        parameters.add(topicArn);
+
+        WebhookAppParameterDTO region = new WebhookAppParameterDTO();
+        region.setName("region");
+        region.setValue("us-west-2");
+        parameters.add(region);
+
+        WebhookAppParameterDTO awsAccount = new WebhookAppParameterDTO();
+        awsAccount.setName("awsAccount");
+        awsAccount.setValue("some awsAccount");
+        parameters.add(awsAccount);
+
+        WebhookAppParameterDTO awsSecret = new WebhookAppParameterDTO();
+        awsSecret.setName("awsSecret");
+        awsSecret.setValue("some awsSecret");
+        parameters.add(awsSecret);
+
+        webhookDTO.setParameters(parameters);
+
+        WebhookDTO webhook = webhookApi.createWebhook(workspace.getId(), webhookDTO);
+
+        Assert.assertNotNull(webhook);
+        Assert.assertEquals(parameters, webhook.getParameters());
+
+    }
+
+
 }
