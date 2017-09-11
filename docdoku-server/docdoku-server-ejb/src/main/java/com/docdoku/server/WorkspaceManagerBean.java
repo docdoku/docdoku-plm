@@ -24,9 +24,11 @@ import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.notification.NotificationOptions;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.server.dao.AccountDAO;
+import com.docdoku.server.dao.NotificationOptionsDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
 import javax.annotation.security.DeclareRoles;
@@ -151,6 +153,24 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
         Workspace workspace = new WorkspaceDAO(em).loadWorkspace(workspaceId);
         workspace.setEnabled(enabled);
         return workspace;
+    }
+
+    @Override
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    public void setNotificationOptions(String workspaceId, boolean sendEmails) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        Account account = userManager.checkAdmin(workspaceId);
+        Locale locale = new Locale(account.getLanguage());
+        NotificationOptionsDAO notificationOptionsDAO = new NotificationOptionsDAO(locale, em);
+        notificationOptionsDAO.updateNotificationOptions(workspaceId, sendEmails);
+    }
+
+    @Override
+    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
+    public NotificationOptions getNotificationOptions(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        Account account = userManager.checkAdmin(workspaceId);
+        Locale locale = new Locale(account.getLanguage());
+        NotificationOptionsDAO notificationOptionsDAO = new NotificationOptionsDAO(locale, em);
+        return notificationOptionsDAO.getNotificationOptionsOrNew(workspaceId);
     }
 
 }

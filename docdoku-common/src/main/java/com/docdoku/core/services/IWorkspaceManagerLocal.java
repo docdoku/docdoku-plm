@@ -22,16 +22,23 @@ package com.docdoku.core.services;
 
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
+import com.docdoku.core.notification.NotificationOptions;
 
 /**
- *
  * @author Morgan Guimard
  * @version 2.0, 13/09/14
- * @since   V1.0
+ * @since V1.0
  */
 public interface IWorkspaceManagerLocal {
     long getDiskUsageInWorkspace(String workspaceId) throws AccountNotFoundException;
+
     void deleteWorkspace(String workspaceId);
+
     Workspace changeAdmin(String workspaceId, String login) throws WorkspaceNotFoundException, AccountNotFoundException, UserNotFoundException, UserNotActiveException, AccessRightException, WorkspaceNotEnabledException;
+
     Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException;
+
+    void setNotificationOptions(String workspaceId, boolean sendEmails) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+
+    NotificationOptions getNotificationOptions(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
 }

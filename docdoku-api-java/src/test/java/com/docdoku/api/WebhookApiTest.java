@@ -99,7 +99,7 @@ public class WebhookApiTest {
         WebhookDTO webhook = webhookApi.createWebhook(workspace.getId(), webhookDTO);
 
         SimpleWebhookDTO simpleWebhookDTO = new SimpleWebhookDTO();
-        simpleWebhookDTO.setMethod("GET");
+        simpleWebhookDTO.setMethod("POST");
         simpleWebhookDTO.setUri("http://localhost:8080");
         simpleWebhookDTO.setAuthorization("some authorization header");
 

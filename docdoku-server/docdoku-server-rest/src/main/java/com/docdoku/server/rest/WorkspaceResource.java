@@ -23,6 +23,7 @@ import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
+import com.docdoku.core.notification.NotificationOptions;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
@@ -744,6 +745,43 @@ public class WorkspaceResource {
                 .add("groups", groupsCount)
                 .add("activegroups", activeGroupsCount)
                 .add("inactivegroups", inactiveGroupsCount).build();
+    }
+
+    @GET
+    @ApiOperation(value = "Get notification options for workspace",
+            response = NotificationOptionsDTO.class
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval of notification options"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Path("/{workspaceId}/notification-options")
+    @Produces(MediaType.APPLICATION_JSON)
+    public NotificationOptionsDTO getNotificationOptions(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
+            throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        NotificationOptions notificationOptions = workspaceManager.getNotificationOptions(workspaceId);
+        return mapper.map(notificationOptions, NotificationOptionsDTO.class);
+    }
+
+    @PUT
+    @ApiOperation(value = "Set notification options for workspace",
+            response = Response.class
+    )
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful update of notification options"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Path("/{workspaceId}/notification-options")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateNotificationOptions(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Notification options", required = true) NotificationOptionsDTO notificationOptionsDTO
+    ) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        workspaceManager.setNotificationOptions(workspaceId, notificationOptionsDTO.isSendEmails());
+        return Response.noContent().build();
     }
 
     // Sub resources
