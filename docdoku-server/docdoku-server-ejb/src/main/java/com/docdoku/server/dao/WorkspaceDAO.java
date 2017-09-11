@@ -356,6 +356,10 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM Webhook w where w.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
+        // Notification options
+        em.createQuery("DELETE FROM NotificationOptions n where n.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+
         // Finally delete the workspace
         em.remove(workspace);
 
