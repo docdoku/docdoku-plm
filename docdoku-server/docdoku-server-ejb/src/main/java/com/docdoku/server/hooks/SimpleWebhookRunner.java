@@ -75,8 +75,6 @@ public class SimpleWebhookRunner implements WebhookRunner {
         objectBuilder.add("name", new String(name.getBytes(), encoding));
         objectBuilder.add("subject", new String(subject.getBytes(), encoding));
         objectBuilder.add("content", new String(content.getBytes(), encoding));
-        String payload = objectBuilder.build().toString();
-        LOGGER.log(Level.INFO, payload);
-        return new StringEntity(payload);
+        return new StringEntity(objectBuilder.build().toString());
     }
 }
