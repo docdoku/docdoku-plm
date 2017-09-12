@@ -9,7 +9,8 @@ import java.util.List;
 @Table(name = "WEBHOOK")
 @Entity
 @NamedQueries({
-        @NamedQuery(name = "Webhook.findByWorkspace", query = "SELECT distinct(w) FROM Webhook w WHERE w.workspace.id = :workspaceId")
+        @NamedQuery(name = "Webhook.findByWorkspace", query = "SELECT distinct(w) FROM Webhook w WHERE w.workspace.id = :workspaceId"),
+        @NamedQuery(name = "Webhook.findActiveByWorkspace", query = "SELECT distinct(w) FROM Webhook w WHERE w.workspace.id = :workspaceId AND w.active = true")
 })
 public class Webhook implements Serializable {
 

@@ -27,7 +27,7 @@ import com.docdoku.core.product.PartMaster;
 import com.docdoku.core.product.PartMasterKey;
 import com.docdoku.core.product.PartUsageLink;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
-import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.INotifierLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
 import com.docdoku.server.rest.dto.*;
@@ -57,7 +57,7 @@ public class PartResourceTest {
     @Mock
     private EntityManager em;
     @Mock
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
     @Mock
     private IUserManagerLocal userManager;
     @Spy

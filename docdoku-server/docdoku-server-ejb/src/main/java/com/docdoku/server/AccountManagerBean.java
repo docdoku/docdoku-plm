@@ -27,7 +27,7 @@ import com.docdoku.core.gcm.GCMAccount;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IContextManagerLocal;
-import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.INotifierLocal;
 import com.docdoku.core.services.IPlatformOptionsManagerLocal;
 import com.docdoku.server.dao.AccountDAO;
 import com.docdoku.server.dao.GCMAccountDAO;
@@ -57,7 +57,7 @@ public class AccountManagerBean implements IAccountManagerLocal {
     private IContextManagerLocal contextManager;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @Inject
     private IPlatformOptionsManagerLocal platformOptionsManager;

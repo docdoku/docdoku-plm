@@ -20,6 +20,7 @@
 package com.docdoku.server;
 
 import com.docdoku.core.common.Account;
+import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.hooks.SNSWebhookApp;
@@ -130,6 +131,14 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
         SNSWebhookApp app = new SNSWebhookApp(topicArn, region, awsAccount, awsSecret);
         webHook.setWebhookApp(app);
         return app;
+    }
+
+    @Override
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
+    public List<Webhook> getActiveWebHooks(String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException {
+        User user = userManager.checkWorkspaceReadAccess(workspaceId);
+        WebhookDAO webhookDAO = new WebhookDAO(new Locale(user.getLanguage()), em);
+        return webhookDAO.loadActiveWebhooks(workspaceId);
     }
 
 }

@@ -43,4 +43,6 @@ public interface IWebhookManagerLocal {
     SimpleWebhookApp configureSimpleWebhook(String workspaceId, Integer webhookId, String method, String uri, String authorization) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException;
 
     SNSWebhookApp configureSNSWebhook(String workspaceId, Integer webhookId, String topicArn, String region, String awsAccount, String awsSecret) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException;
+
+    List<Webhook> getActiveWebHooks(String workspaceId) throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException, WorkspaceNotEnabledException;
 }

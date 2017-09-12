@@ -73,7 +73,7 @@ public class ProductManagerBean implements IProductManagerLocal {
     private EntityManager em;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -305,7 +305,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         new PartMasterDAO(locale, em).createPartM(pm);
 
         if (runningTasks != null) {
-            mailer.sendApproval(runningTasks, newRevision);
+            mailer.sendApproval(newRevision.getWorkspaceId(), runningTasks, newRevision);
         }
 
         return pm;
@@ -2306,7 +2306,7 @@ public class ProductManagerBean implements IProductManagerLocal {
         partRevisionDAO.createPartR(partR);
 
         if (runningTasks != null) {
-            mailer.sendApproval(runningTasks, partR);
+            mailer.sendApproval(partR.getWorkspaceId(), runningTasks, partR);
         }
 
         return partR;

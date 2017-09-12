@@ -46,7 +46,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IDocumentWorkflowManagerLocal.class)
 @Stateless(name = "DocumentWorkflowManagerBean")
 public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLocal {
@@ -61,7 +61,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     private IDocumentManagerLocal documentManager;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @Inject
     private IGCMSenderLocal gcmNotifier;
@@ -70,7 +70,7 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @Override
     public Workflow getCurrentWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkflowNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
-        if(!documentManager.canUserAccess(user, documentRevisionKey)) {
+        if (!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
@@ -83,20 +83,20 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
     @Override
     public Workflow[] getAbortedWorkflow(DocumentRevisionKey documentRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, DocumentRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getDocumentMaster().getWorkspace());
-        if(!documentManager.canUserAccess(user, documentRevisionKey)) {
+        if (!documentManager.canUserAccess(user, documentRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
         Locale locale = new Locale(user.getLanguage());
         DocumentRevision docR = new DocumentRevisionDAO(locale, em).loadDocR(documentRevisionKey);
-        List<Workflow> abortedWorkflowList= docR.getAbortedWorkflows();
+        List<Workflow> abortedWorkflowList = docR.getAbortedWorkflows();
         return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
-    public DocumentRevision approveTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevision approveTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
 
         DocumentRevision documentRevision = documentManager.getDocumentRevision(documentRevisionKey);
@@ -109,12 +109,12 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         task.approve(user, pComment, docR.getLastIteration().getIteration(), pSignature);
         int currentStep = workflow.getCurrentStep();
 
-        if (previousStep != currentStep){
+        if (previousStep != currentStep) {
             SubscriptionDAO subscriptionDAO = new SubscriptionDAO(em);
 
             Collection<User> subscribers = subscriptionDAO.getStateChangeEventSubscribers(docR);
             if (!subscribers.isEmpty()) {
-                mailer.sendStateNotification(subscribers, docR);
+                mailer.sendStateNotification(docR.getWorkspaceId(), subscribers, docR);
             }
 
             GCMAccount[] gcmAccounts = subscriptionDAO.getStateChangeEventSubscribersGCMAccount(docR);
@@ -127,20 +127,20 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         runningTasks.forEach(Task::start);
 
         em.flush();
-        mailer.sendApproval(runningTasks, docR);
+        mailer.sendApproval(docR.getWorkspaceId(), runningTasks, docR);
         return docR;
     }
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @CheckActivity
     @Override
-    public DocumentRevision rejectTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey,  String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
+    public DocumentRevision rejectTaskOnDocument(String workspaceId, TaskKey pTaskKey, DocumentRevisionKey documentRevisionKey, String pComment, String pSignature) throws WorkspaceNotFoundException, TaskNotFoundException, NotAllowedException, UserNotFoundException, UserNotActiveException, WorkflowNotFoundException, AccessRightException, DocumentRevisionNotFoundException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(documentRevisionKey.getWorkspaceId());
 
         DocumentRevision documentRevision = documentManager.getDocumentRevision(documentRevisionKey);
         Task task = documentRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
 
-        DocumentRevision docR = checkTaskAccess(user,task);
+        DocumentRevision docR = checkTaskAccess(user, task);
 
         task.reject(user, pComment, docR.getLastIteration().getIteration(), pSignature);
 
@@ -148,34 +148,35 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         Activity currentActivity = task.getActivity();
         Activity relaunchActivity = currentActivity.getRelaunchActivity();
 
-        if(currentActivity.isStopped() && relaunchActivity != null){
-            relaunchWorkflow(docR,relaunchActivity.getStep());
+        if (currentActivity.isStopped() && relaunchActivity != null) {
+            relaunchWorkflow(docR, relaunchActivity.getStep());
             em.flush();
             // Send mails for running tasks
-            mailer.sendApproval(docR.getWorkflow().getRunningTasks(), docR);
+            mailer.sendApproval(docR.getWorkspaceId(), docR.getWorkflow().getRunningTasks(), docR);
             // Send notification for relaunch
-            mailer.sendDocumentRevisionWorkflowRelaunchedNotification(docR);
+            mailer.sendDocumentRevisionWorkflowRelaunchedNotification(docR.getWorkspaceId(), docR);
         }
         return docR;
     }
 
     /**
      * Check if a user can approve or reject a task
+     *
      * @param user The specific user
      * @param task The specific task
      * @return The document concern by the task
      * @throws WorkflowNotFoundException If no workflow was find for this task
-     * @throws NotAllowedException If you can not make this task
+     * @throws NotAllowedException       If you can not make this task
      */
-    private DocumentRevision checkTaskAccess(User user,Task task) throws WorkflowNotFoundException, NotAllowedException {
+    private DocumentRevision checkTaskAccess(User user, Task task) throws WorkflowNotFoundException, NotAllowedException {
         Locale locale = new Locale(user.getLanguage());
         Workflow workflow = task.getActivity().getWorkflow();
         DocumentRevision docR = new WorkflowDAO(em).getDocumentTarget(workflow);
-        if(docR == null){
-            throw new WorkflowNotFoundException(locale,workflow.getId());
+        if (docR == null) {
+            throw new WorkflowNotFoundException(locale, workflow.getId());
         }
-        if(!task.isInProgress()){
-            throw new NotAllowedException(locale,"NotAllowedException15");
+        if (!task.isInProgress()) {
+            throw new NotAllowedException(locale, "NotAllowedException15");
         }
         if (!task.isPotentialWorker(user)) {
             throw new NotAllowedException(locale, "NotAllowedException14");
@@ -186,10 +187,10 @@ public class DocumentWorkflowManagerBean implements IDocumentWorkflowManagerLoca
         if (docR.isCheckedOut()) {
             throw new NotAllowedException(locale, "NotAllowedException16");
         }
-        return  docR;
+        return docR;
     }
 
-    private void relaunchWorkflow(DocumentRevision docR, int activityStep){
+    private void relaunchWorkflow(DocumentRevision docR, int activityStep) {
         Workflow workflow = docR.getWorkflow();
         // Clone new workflow
         Workflow relaunchedWorkflow = new WorkflowDAO(em).duplicateWorkflow(workflow);

@@ -26,7 +26,7 @@ import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.PartRevision;
-import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.INotifierLocal;
 import com.docdoku.core.services.INotificationManagerLocal;
 import com.docdoku.server.events.*;
 
@@ -47,7 +47,7 @@ public class SubscriptionManager {
     private INotificationManagerLocal notificationService;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     private void onRemoveTag(@Observes @Removed TagEvent event) throws UserNotFoundException, AccessRightException, UserNotActiveException, TagNotFoundException, WorkspaceNotFoundException, WorkspaceNotEnabledException {
         Tag tag = event.getObservedTag();
@@ -71,9 +71,9 @@ public class SubscriptionManager {
         DocumentRevision doc =  event.getTaggableDocument();
         PartRevision part = event.getTaggablePart();
         if(doc !=null)
-            mailer.sendTaggedNotification(subscribers, doc, event.getObservedTag());
+            mailer.sendTaggedNotification(doc.getWorkspaceId(), subscribers, doc, event.getObservedTag());
         else if(part !=null)
-            mailer.sendTaggedNotification(subscribers, part, event.getObservedTag());
+            mailer.sendTaggedNotification(part.getWorkspaceId(), subscribers, part, event.getObservedTag());
     }
 
     private void onUntagItem(@Observes @Untagged TagEvent event){
@@ -82,9 +82,9 @@ public class SubscriptionManager {
         DocumentRevision doc =  event.getTaggableDocument();
         PartRevision part = event.getTaggablePart();
         if(doc !=null)
-            mailer.sendUntaggedNotification(subscribers, doc, event.getObservedTag());
+            mailer.sendUntaggedNotification(doc.getWorkspaceId(), subscribers, doc, event.getObservedTag());
         else if(part != null)
-            mailer.sendUntaggedNotification(subscribers, part, event.getObservedTag());
+            mailer.sendUntaggedNotification(part.getWorkspaceId(), subscribers, part, event.getObservedTag());
     }
 
 

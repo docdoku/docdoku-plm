@@ -70,6 +70,11 @@ public class CryptoConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String attrValue) {
+        
+        if (attrValue == null || attrValue.isEmpty()) {
+            return attrValue;
+        }
+
         try {
             Cipher c = Cipher.getInstance(ALGORITHM);
             c.init(Cipher.ENCRYPT_MODE, key);

@@ -60,4 +60,9 @@ public class WebhookDAO {
         em.persist(webhook);
         em.flush();
     }
+
+    public List<Webhook> loadActiveWebhooks(String workspaceId) {
+        return em.createNamedQuery("Webhook.findActiveByWorkspace", Webhook.class)
+                .setParameter("workspaceId", workspaceId).getResultList();
+    }
 }

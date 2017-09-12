@@ -62,7 +62,7 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     private IContextManagerLocal contextManager;
 
     @Inject
-    private IMailerLocal mailerManager;
+    private INotifierLocal mailerManager;
 
     @Inject
     private IIndexerManagerLocal indexerManager;

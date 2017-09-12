@@ -69,7 +69,7 @@ public class DocumentManagerBeanTest {
     @Mock
     private IContextManagerLocal contextManager;
     @Mock
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
     @Mock
     private IGCMSenderLocal gcmNotifier;
     @Mock

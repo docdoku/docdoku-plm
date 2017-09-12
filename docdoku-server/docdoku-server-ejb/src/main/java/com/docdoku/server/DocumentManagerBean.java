@@ -72,7 +72,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
     private IContextManagerLocal contextManager;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @Inject
     private IGCMSenderLocal gcmNotifier;
@@ -775,7 +775,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         new DocumentRevisionDAO(locale, em).createDocR(docR);
 
         if (runningTasks != null) {
-            mailer.sendApproval(runningTasks, docR);
+            mailer.sendApproval(docR.getWorkspaceId(), runningTasks, docR);
         }
         return docR;
     }
@@ -1078,7 +1078,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
             lastIteration.setCheckInDate(new Date());
 
             if (!subscribers.isEmpty()) {
-                mailer.sendIterationNotification(subscribers, docR);
+                mailer.sendIterationNotification(docR.getWorkspaceId(), subscribers, docR);
             }
 
             if (gcmAccounts.length != 0) {
@@ -1568,7 +1568,7 @@ public class DocumentManagerBean implements IDocumentManagerLocal {
         docRDAO.createDocR(docR);
 
         if (runningTasks != null) {
-            mailer.sendApproval(runningTasks, docR);
+            mailer.sendApproval(docR.getWorkspaceId(), runningTasks, docR);
         }
 
         return new DocumentRevision[]{originalDocR, docR};

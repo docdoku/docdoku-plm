@@ -24,7 +24,7 @@ import com.docdoku.core.exceptions.*;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.product.PartRevisionKey;
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.INotifierLocal;
 import com.docdoku.core.services.IPartWorkflowManagerLocal;
 import com.docdoku.core.services.IProductManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
@@ -47,7 +47,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID,UserGroupMapping.ADMIN_ROLE_ID})
+@DeclareRoles({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
 @Local(IPartWorkflowManagerLocal.class)
 @Stateless(name = "PartWorkflowManagerBean")
 public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
@@ -62,13 +62,13 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
     private IProductManagerLocal productManager;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
     @Override
     public Workflow getCurrentWorkflow(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(!productManager.canUserAccess(user, partRevisionKey)) {
+        if (!productManager.canUserAccess(user, partRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
@@ -81,13 +81,13 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
     @Override
     public Workflow[] getAbortedWorkflow(PartRevisionKey partRevisionKey) throws UserNotFoundException, UserNotActiveException, WorkspaceNotFoundException, PartRevisionNotFoundException, AccessRightException, WorkspaceNotEnabledException {
         User user = userManager.checkWorkspaceReadAccess(partRevisionKey.getPartMaster().getWorkspace());
-        if(!productManager.canUserAccess(user, partRevisionKey)) {
+        if (!productManager.canUserAccess(user, partRevisionKey)) {
             throw new AccessRightException(new Locale(user.getLanguage()), user);
         }
 
         Locale locale = new Locale(user.getLanguage());
         PartRevision partR = new PartRevisionDAO(locale, em).loadPartR(partRevisionKey);
-        List<Workflow> abortedWorkflowList= partR.getAbortedWorkflows();
+        List<Workflow> abortedWorkflowList = partR.getAbortedWorkflows();
 
         return abortedWorkflowList.toArray(new Workflow[abortedWorkflowList.size()]);
     }
@@ -99,17 +99,17 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
         Workflow workflow = task.getActivity().getWorkflow();
-        PartRevision partRevision = checkTaskAccess(user,task);
+        PartRevision partRevision = checkTaskAccess(user, task);
         task = partRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
 
-        task.approve(user,pComment, partRevision.getLastIteration().getIteration(), pSignature);
+        task.approve(user, pComment, partRevision.getLastIteration().getIteration(), pSignature);
 
         Collection<Task> runningTasks = workflow.getRunningTasks();
         for (Task runningTask : runningTasks) {
             runningTask.start();
         }
         em.flush();
-        mailer.sendApproval(runningTasks, partRevision);
+        mailer.sendApproval(pWorkspaceId, runningTasks, partRevision);
         return partRevision;
     }
 
@@ -119,43 +119,44 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         User user = userManager.checkWorkspaceReadAccess(pWorkspaceId);
 
         Task task = new TaskDAO(new Locale(user.getLanguage()), em).loadTask(pTaskKey);
-        PartRevision partRevision = checkTaskAccess(user,task);
+        PartRevision partRevision = checkTaskAccess(user, task);
         task = partRevision.getWorkflow().getTasks().stream().filter(pTask -> pTask.getKey().equals(pTaskKey)).findFirst().get();
 
-        task.reject(user,pComment, partRevision.getLastIteration().getIteration(), pSignature);
+        task.reject(user, pComment, partRevision.getLastIteration().getIteration(), pSignature);
 
         // Relaunch Workflow ?
         Activity currentActivity = task.getActivity();
         Activity relaunchActivity = currentActivity.getRelaunchActivity();
 
-        if(currentActivity.isStopped() && relaunchActivity != null){
-            relaunchWorkflow(partRevision,relaunchActivity.getStep());
+        if (currentActivity.isStopped() && relaunchActivity != null) {
+            relaunchWorkflow(partRevision, relaunchActivity.getStep());
             em.flush();
             // Send mails for running tasks
-            mailer.sendApproval(partRevision.getWorkflow().getRunningTasks(), partRevision);
+            mailer.sendApproval(pWorkspaceId, partRevision.getWorkflow().getRunningTasks(), partRevision);
             // Send notification for relaunch
-            mailer.sendPartRevisionWorkflowRelaunchedNotification(partRevision);
+            mailer.sendPartRevisionWorkflowRelaunchedNotification(pWorkspaceId, partRevision);
         }
         return partRevision;
     }
 
     /**
      * Check if a user can approve or reject a task
+     *
      * @param user The specific user
      * @param task The specific task
      * @return The part concern by the task
      * @throws WorkflowNotFoundException If no workflow was find for this task
-     * @throws NotAllowedException If you can not make this task
+     * @throws NotAllowedException       If you can not make this task
      */
-    private PartRevision checkTaskAccess(User user,Task task) throws WorkflowNotFoundException, NotAllowedException {
+    private PartRevision checkTaskAccess(User user, Task task) throws WorkflowNotFoundException, NotAllowedException {
         Locale locale = new Locale(user.getLanguage());
         Workflow workflow = task.getActivity().getWorkflow();
         PartRevision partR = new WorkflowDAO(em).getPartTarget(workflow);
-        if(partR == null){
-            throw new WorkflowNotFoundException(locale,workflow.getId());
+        if (partR == null) {
+            throw new WorkflowNotFoundException(locale, workflow.getId());
         }
-        if(!task.isInProgress()){
-            throw new NotAllowedException(locale,"NotAllowedException15");
+        if (!task.isInProgress()) {
+            throw new NotAllowedException(locale, "NotAllowedException15");
         }
         if (!task.isPotentialWorker(user)) {
             throw new NotAllowedException(locale, "NotAllowedException14");
@@ -169,7 +170,7 @@ public class PartWorkflowManagerBean implements IPartWorkflowManagerLocal {
         return partR;
     }
 
-    private void relaunchWorkflow(PartRevision partR, int activityStep){
+    private void relaunchWorkflow(PartRevision partR, int activityStep) {
         Workflow workflow = partR.getWorkflow();
         // Clone new workflow
         Workflow relaunchedWorkflow = new WorkflowDAO(em).duplicateWorkflow(workflow);

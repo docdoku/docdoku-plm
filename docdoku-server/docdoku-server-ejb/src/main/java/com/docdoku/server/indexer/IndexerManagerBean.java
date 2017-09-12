@@ -31,7 +31,7 @@ import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IIndexerManagerLocal;
-import com.docdoku.core.services.IMailerLocal;
+import com.docdoku.core.services.INotifierLocal;
 import com.docdoku.server.dao.*;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -76,7 +76,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     private IAccountManagerLocal accountManager;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @Inject
     private IndexerConfigManager indexerConfigManager;

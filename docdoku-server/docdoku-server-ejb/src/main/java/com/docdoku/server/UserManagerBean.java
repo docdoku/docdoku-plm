@@ -65,7 +65,7 @@ public class UserManagerBean implements IUserManagerLocal {
     private IContextManagerLocal contextManager;
 
     @Inject
-    private IMailerLocal mailer;
+    private INotifierLocal mailer;
 
     @Inject
     private IPlatformOptionsManagerLocal platformOptionsManager;
