@@ -151,17 +151,18 @@ public class WebhookResource {
     private WebhookApp configureWebhook(String workspaceId, Integer webhookId, WebhookDTO webhookDTO) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         List<WebhookAppParameterDTO> parameters = webhookDTO.getParameters();
         String appName = webhookDTO.getAppName();
-        if (parameters != null && !parameters.isEmpty()) {
+        if (appName != null && parameters != null && !parameters.isEmpty()) {
             switch (appName) {
                 case SimpleWebhookApp.APP_NAME:
                     return updateSimpleWebhook(workspaceId, webhookId, parameters);
                 case SNSWebhookApp.APP_NAME:
                     return updateSNSWebhook(workspaceId, webhookId, parameters);
                 default:
-                    throw new IllegalArgumentException();
+                    break;
             }
         }
-        return null;
+        // default case, use simple http webhook
+        return webhookManager.configureSimpleWebhook(workspaceId, webhookId, "POST", null, null);
     }
 
     private WebhookApp updateSNSWebhook(String workspaceId, Integer webhookId, List<WebhookAppParameterDTO> parameters)
