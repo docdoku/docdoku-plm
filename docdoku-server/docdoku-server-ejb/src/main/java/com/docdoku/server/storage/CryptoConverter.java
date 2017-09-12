@@ -70,7 +70,7 @@ public class CryptoConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToDatabaseColumn(String attrValue) {
-        
+
         if (attrValue == null || attrValue.isEmpty()) {
             return attrValue;
         }
@@ -92,6 +92,11 @@ public class CryptoConverter implements AttributeConverter<String, String> {
 
     @Override
     public String convertToEntityAttribute(String storedData) {
+
+        if (storedData == null || storedData.isEmpty()) {
+            return storedData;
+        }
+
         try {
             Cipher c = Cipher.getInstance(ALGORITHM);
             String[] strData = storedData.split("\\.");
