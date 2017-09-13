@@ -26,6 +26,7 @@ import com.docdoku.core.notification.TagUserSubscription;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.INotificationManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.server.rest.dto.TagSubscriptionDTO;
 import com.docdoku.server.rest.dto.UserDTO;
 import io.swagger.annotations.*;
@@ -53,6 +54,9 @@ import java.util.logging.Logger;
 @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
 public class UserResource {
 
+
+    @Inject
+    private IWorkspaceManagerLocal workspaceManager;
 
     @Inject
     private IUserManagerLocal userManager;
@@ -128,7 +132,7 @@ public class UserResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId)
             throws EntityNotFoundException {
 
-        Workspace workspace = userManager.getWorkspace(workspaceId);
+        Workspace workspace = workspaceManager.getWorkspace(workspaceId);
         UserDTO userDTO = mapper.map(workspace.getAdmin(), UserDTO.class);
         userDTO.setWorkspaceId(workspaceId);
         return userDTO;

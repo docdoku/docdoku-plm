@@ -32,10 +32,7 @@ import com.docdoku.core.meta.InstanceAttributeTemplate;
 import com.docdoku.core.meta.Tag;
 import com.docdoku.core.product.*;
 import com.docdoku.core.security.*;
-import com.docdoku.core.services.IConverterManagerLocal;
-import com.docdoku.core.services.IProductInstanceManagerLocal;
-import com.docdoku.core.services.IProductManagerLocal;
-import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.services.*;
 import com.docdoku.core.sharing.SharedPart;
 import com.docdoku.core.util.FileIO;
 import com.docdoku.core.workflow.Workflow;
@@ -71,7 +68,7 @@ public class PartResource {
     private IProductInstanceManagerLocal productInstanceService;
 
     @Inject
-    private IUserManagerLocal userManager;
+    private IWorkspaceManagerLocal workspaceManager;
 
     @Inject
     private IConverterManagerLocal converterService;
@@ -920,7 +917,7 @@ public class PartResource {
         String componentNumber = componentDTO.getNumber();
         PartMasterKey partMasterKey = new PartMasterKey(workspaceId, componentNumber);
         if (productService.partMasterExists(partMasterKey)) {
-            return new PartMaster(userManager.getWorkspace(workspaceId), componentNumber);
+            return new PartMaster(workspaceManager.getWorkspace(workspaceId), componentNumber);
         } else {
             return productService.createPartMaster(workspaceId, componentDTO.getNumber(), componentDTO.getName(), componentDTO.isStandardPart(), null, componentDTO.getDescription(), null, null, null, null, null);
         }

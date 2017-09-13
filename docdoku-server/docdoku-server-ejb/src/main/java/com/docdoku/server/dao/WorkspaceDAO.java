@@ -20,6 +20,7 @@
 
 package com.docdoku.server.dao;
 
+import com.docdoku.core.admin.WorkspaceOptions;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
@@ -63,9 +64,14 @@ public class WorkspaceDAO {
         storageManager = pStorageManager;
     }
 
-    public void updateWorkspace(Workspace pWorkspace) {
-        em.merge(pWorkspace);
+    public void updateWorkspaceOptions(WorkspaceOptions settings){
+        em.merge(settings);
     }
+
+    public WorkspaceOptions loadWorkspaceOptions(String pID){
+        return em.find(WorkspaceOptions.class, pID);
+    }
+
 
     public void createWorkspace(Workspace pWorkspace) throws WorkspaceAlreadyExistsException, CreationException, FolderAlreadyExistsException {
         try {
@@ -360,6 +366,11 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM NotificationOptions n where n.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
+        // Finally delete the workspace and its settings
+        // Options
+        em.createQuery("DELETE FROM WorkspaceOptions wo where wo.workspace = :workspace")
+                .setParameter("workspace", workspace).executeUpdate();
+       
         // Finally delete the workspace
         em.remove(workspace);
 

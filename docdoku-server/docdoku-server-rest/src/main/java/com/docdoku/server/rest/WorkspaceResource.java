@@ -19,6 +19,7 @@
  */
 package com.docdoku.server.rest;
 
+import com.docdoku.core.admin.WorkspaceOptions;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
@@ -48,10 +49,7 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequestScoped
 @Api(value = "workspaces", description = "Operations about workspaces")
@@ -254,7 +252,7 @@ public class WorkspaceResource {
             throws WorkspaceNotFoundException, UserNotFoundException, UserNotActiveException,
             AccountNotFoundException, AccessRightException {
 
-        Workspace workspace = userManager.updateWorkspace(workspaceId, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
+        Workspace workspace = workspaceManager.updateWorkspace(workspaceId, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
         return Response.ok(mapper.map(workspace, WorkspaceDTO.class)).build();
     }
 
@@ -425,7 +423,7 @@ public class WorkspaceResource {
         } else {
             account = accountManager.getMyAccount();
         }
-        Workspace workspace = userManager.createWorkspace(workspaceDTO.getId(), account, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
+        Workspace workspace = workspaceManager.createWorkspace(workspaceDTO.getId(), account, workspaceDTO.getDescription(), workspaceDTO.isFolderLocked());
 
         return mapper.map(workspace, WorkspaceDTO.class);
     }
@@ -746,6 +744,53 @@ public class WorkspaceResource {
                 .add("activegroups", activeGroupsCount)
                 .add("inactivegroups", inactiveGroupsCount).build();
     }
+
+    @GET
+    @ApiOperation(value = "Get workspace customizations",
+            response = WorkspaceOptionsDTO.class)
+    @Path("/{workspaceId}/customizations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieve of workspace customizations"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public WorkspaceOptionsDTO getWorkspaceOptions(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) throws EntityNotFoundException {
+
+        WorkspaceOptions workspaceOptions = workspaceManager.getWorkspaceOptions(workspaceId);
+        if(workspaceOptions == null){
+            workspaceOptions=new WorkspaceOptions();
+            workspaceOptions.setDefaults();
+        }
+
+        return mapper.map(workspaceOptions, WorkspaceOptionsDTO.class);
+    }
+
+    @PUT
+    @ApiOperation(value = "Update workspace customizations",
+            response = Response.class)
+    @Path("/{workspaceId}/customizations")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful update of workspace customizations"),
+            @ApiResponse(code = 401, message = "Unauthorized"),
+            @ApiResponse(code = 500, message = "Internal server error")
+    })
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateWorkspaceOptions(
+            @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
+            @ApiParam(value = "Customization values", required = true) WorkspaceOptionsDTO workspaceOptionsDTO) throws AccessRightException, AccountNotFoundException {
+
+        List<String> partTableColumns = workspaceOptionsDTO.getPartTableColumns();
+        List<String> documentTableColumns = workspaceOptionsDTO.getDocumentTableColumns();
+
+        workspaceManager.updateWorkspaceOptions(new WorkspaceOptions(new Workspace(workspaceId),partTableColumns,documentTableColumns));
+        return Response.noContent().build();
+
+    }
+
 
     @GET
     @ApiOperation(value = "Get notification options for workspace",
