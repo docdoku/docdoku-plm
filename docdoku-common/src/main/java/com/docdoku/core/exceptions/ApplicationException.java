@@ -20,66 +20,68 @@
 
 package com.docdoku.core.exceptions;
 
+import com.docdoku.core.util.PropertiesLoader;
+
 import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
 /**
  * Parent class for all application (non system) exceptions.
  *
  * @author Florent Garin
  */
-public abstract class ApplicationException extends Exception{
-    
-    private static final String DEFAULT_BUNDLE_NAME = "com.docdoku.core.i18n.LocalStrings";
-    private ResourceBundle mResourceBundle;
+public abstract class ApplicationException extends Exception {
 
-    public ApplicationException(String pMessage, Throwable pCause, String pBundleName) {
-        super(pMessage, pCause);
-        mResourceBundle=ResourceBundle.getBundle(pBundleName, Locale.getDefault());
-    }
-    
+    private static final String BUNDLE_BASE_NAME = "/com/docdoku/core/i18n/LocalStrings";
+    private Properties properties;
+
     public ApplicationException(String pMessage) {
         super(pMessage);
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, Locale.getDefault());
+        loadFile(Locale.getDefault());
     }
-    
+
     public ApplicationException(String pMessage, Throwable pCause) {
         super(pMessage, pCause);
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, Locale.getDefault());
+        loadFile(Locale.getDefault());
     }
-    
+
     public ApplicationException(Locale pLocale) {
         super();
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
+        loadFile(pLocale);
     }
-    
+
     public ApplicationException(Locale pLocale, Throwable pCause) {
         super(pCause);
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
+        loadFile(pLocale);
     }
-     public void setLocale(Locale pLocale){
-        mResourceBundle=ResourceBundle.getBundle(DEFAULT_BUNDLE_NAME, pLocale);
+
+    public void setLocale(Locale pLocale) {
+        loadFile(pLocale);
     }
-    
-    protected String getBundleDefaultMessage(){
+
+    protected String getBundleDefaultMessage() {
         return getBundleMessage(getClass().getSimpleName());
     }
-    
-    protected String getBundleMessage(String pKey){
-        return mResourceBundle.getString(pKey);
+
+    protected String getBundleMessage(String pKey) {
+        return properties.getProperty(pKey);
     }
-    
+
     @Override
     public String getMessage() {
-        String detailMessage=super.getMessage();
-        return detailMessage==null?getLocalizedMessage():detailMessage;
+        String detailMessage = super.getMessage();
+        return detailMessage == null ? getLocalizedMessage() : detailMessage;
     }
-    
+
     @Override
-     public abstract String getLocalizedMessage();
+    public abstract String getLocalizedMessage();
 
     @Override
     public String toString() {
         return getMessage();
+    }
+
+    private void loadFile(Locale locale) {
+        properties = PropertiesLoader.loadPropertiesFile(locale, BUNDLE_BASE_NAME, getClass());
     }
 }

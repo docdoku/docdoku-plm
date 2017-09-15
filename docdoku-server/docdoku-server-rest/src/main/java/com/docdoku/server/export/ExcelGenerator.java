@@ -183,7 +183,7 @@ public class ExcelGenerator {
                 } else if (column.trim().startsWith(QueryField.PATH_DATA_ATTRIBUTES_PREFIX)) {
                     columnTranslated = column.substring(column.indexOf(".") + 1);
                 } else {
-                    columnTranslated = LangHelper.getLocalizedMessage(column.trim(), locale);
+                    columnTranslated = new LangHelper(locale).getLocalizedMessage(column.trim());
                 }
                 headerFormatted[headerIndex++] = columnTranslated.isEmpty() ? column : columnTranslated;
             }

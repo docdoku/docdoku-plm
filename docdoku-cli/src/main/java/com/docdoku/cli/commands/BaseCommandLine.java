@@ -24,7 +24,6 @@ import com.docdoku.api.DocdokuPLMClientFactory;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
-import com.docdoku.cli.helpers.LangHelper;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
@@ -54,21 +53,21 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
     protected ApiClient client;
 
-    private void promptForUser(Locale locale) {
+    private void promptForUser() {
         Console c = System.console();
         if (c == null) {
             return;
         }
 
-        user = c.readLine(LangHelper.getLocalizedMessage("PromptUser", locale) + " '" + host + "': ");
+        user = c.readLine(langHelper.getLocalizedMessage("PromptUser") + " '" + host + "': ");
     }
 
-    private void promptForPassword(Locale locale) {
+    private void promptForPassword() {
         Console c = System.console();
         if (c == null) {
             return;
         }
-        password = new String(c.readPassword(LangHelper.getLocalizedMessage("PromptPassword", locale) + " '" + user + "@" + host + "': "));
+        password = new String(c.readPassword(langHelper.getLocalizedMessage("PromptPassword") + " '" + user + "@" + host + "': "));
     }
 
     @Override
@@ -77,10 +76,10 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
         Locale userLocale = new AccountsManager().getUserLocale(user);
         output = CliOutput.getOutput(format, userLocale);
         if (user == null && format.equals(CliOutput.formats.HUMAN)) {
-            promptForUser(userLocale);
+            promptForUser();
         }
         if (password == null && format.equals(CliOutput.formats.HUMAN)) {
-            promptForPassword(userLocale);
+            promptForPassword();
         }
 
         String apiBasePath = getServerURL().toString() + "/api";

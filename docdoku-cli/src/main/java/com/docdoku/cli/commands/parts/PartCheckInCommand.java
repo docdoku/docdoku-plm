@@ -20,13 +20,13 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.api.models.*;
+import com.docdoku.api.models.BinaryResourceDTO;
+import com.docdoku.api.models.PartIterationDTO;
+import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -35,24 +35,23 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
  * @author Florent Garin
  */
 public class PartCheckInCommand extends BaseCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the part to check in ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
+    @Option(metaVar = "<revision>", name = "-r", aliases = "--revision", usage = "specify revision of the part to check in ('A', 'B'...); if not specified the part identity (number and revision) corresponding to the cad file will be selected")
     private String revision;
 
     @Option(metaVar = "<partnumber>", name = "-o", aliases = "--part", usage = "the part number of the part to check in; if not specified choose the part corresponding to the cad file")
     private String partNumber;
 
-    @Argument(metaVar = "[<cadfile> | <dir>]", index=0, usage = "specify the cad file of the part to check in or the path where cad files are stored (default is working directory)")
+    @Argument(metaVar = "[<cadfile> | <dir>]", index = 0, usage = "specify the cad file of the part to check in or the path where cad files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-n", aliases = "--no-upload", usage="do not upload the cad file of the part if any")
+    @Option(name = "-n", aliases = "--no-upload", usage = "do not upload the cad file of the part if any")
     private boolean noUpload;
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
     @Option(metaVar = "<message>", name = "-m", aliases = "--message", usage = "a message specifying the iteration modifications")
@@ -61,13 +60,13 @@ public class PartCheckInCommand extends BaseCommandLine {
     @Override
     public void execImpl() throws Exception {
 
-        if(partNumber==null || revision==null){
+        if (partNumber == null || revision == null) {
             loadMetadata();
         }
 
         PartApi partApi = new PartApi(client);
 
-        PartRevisionDTO pr = partApi.getPartRevision(workspace,partNumber,revision);
+        PartRevisionDTO pr = partApi.getPartRevision(workspace, partNumber, revision);
         PartIterationDTO pi = LastIterationHelper.getLastIteration(pr);
 
         PartRevisionDTO partRPK = new PartRevisionDTO();
@@ -81,50 +80,50 @@ public class PartCheckInCommand extends BaseCommandLine {
         partIPK.setVersion(revision);
         partIPK.setIteration(pi.getIteration());
 
-        if(!noUpload){
+        if (!noUpload) {
             BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
-            if(nativeCADFile!=null){
+            if (nativeCADFile != null) {
 
-                String fileName =  nativeCADFile.getName();
-                File localFile = new File(path,fileName);
-                if(localFile.exists()){
-                    FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+                String fileName = nativeCADFile.getName();
+                File localFile = new File(path, fileName);
+                if (localFile.exists()) {
+                    FileHelper fh = new FileHelper(user, password, output, langHelper);
                     fh.uploadNativeCADFile(getServerURL(), localFile, partIPK);
-                    localFile.setWritable(false,false);
+                    localFile.setWritable(false, false);
                 }
             }
         }
 
-        if(message != null && !message.isEmpty()){
+        if (message != null && !message.isEmpty()) {
             pi.setIterationNote(message);
-            partApi.updatePartIteration(workspace,partNumber,revision, pi.getIteration(), pi);
+            partApi.updatePartIteration(workspace, partNumber, revision, pi.getIteration(), pi);
         }
 
-        output.printInfo(LangHelper.getLocalizedMessage("CheckingInPart",user)  + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
+        output.printInfo(langHelper.getLocalizedMessage("CheckingInPart") + " : " + partNumber + " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
 
-        partApi.checkIn(workspace,partNumber,revision);
+        partApi.checkIn(workspace, partNumber, revision);
 
     }
 
     private void loadMetadata() throws IOException {
-        if(path.isDirectory()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1",user));
+        if (path.isDirectory()) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(partNumber==null || strRevision==null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2",user));
+        if (partNumber == null || strRevision == null) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2"));
         }
         revision = strRevision;
         //once partNumber and revision have been inferred, set path to folder where files are stored
         //in order to implement perform the rest of the treatment
-        path=path.getParentFile();
+        path = path.getParentFile();
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartCheckInCommandDescription",user);
+        return langHelper.getLocalizedMessage("PartCheckInCommandDescription");
     }
 }

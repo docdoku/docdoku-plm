@@ -20,42 +20,40 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.services.DocumentsApi;
 import com.docdoku.api.services.FoldersApi;
+import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
 import java.util.List;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class DocumentListCommand extends BaseCommandLine {
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
-    @Option(name="-f", aliases = "--folder", usage="remote folder to list, default is workspace root folder")
+    @Option(name = "-f", aliases = "--folder", usage = "remote folder to list, default is workspace root folder")
     private String folder = null;
 
-    @Option(name="-c", aliases = "--checkedOut", usage="list only checked out files")
+    @Option(name = "-c", aliases = "--checkedOut", usage = "list only checked out files")
     private boolean checkedOutDocsOnly = false;
 
     @Override
     public void execImpl() throws Exception {
 
-        if(checkedOutDocsOnly){
+        if (checkedOutDocsOnly) {
             DocumentsApi documentsApi = new DocumentsApi(client);
             List<DocumentRevisionDTO> documentRevisions = documentsApi.getCheckedOutDocuments(workspace);
             output.printDocumentRevisions(documentRevisions);
-        }else{
+        } else {
             FoldersApi foldersApi = new FoldersApi(client);
-            String decodedPath = folder == null ? workspace : workspace+"/"+folder;
-            List<DocumentRevisionDTO> documentRevisions = foldersApi.getDocumentsWithGivenFolderIdAndWorkspaceId(workspace,decodedPath);
+            String decodedPath = folder == null ? workspace : workspace + "/" + folder;
+            List<DocumentRevisionDTO> documentRevisions = foldersApi.getDocumentsWithGivenFolderIdAndWorkspaceId(workspace, decodedPath);
             output.printDocumentRevisions(documentRevisions);
         }
 
@@ -63,6 +61,6 @@ public class DocumentListCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentListCommandDescription",user);
+        return langHelper.getLocalizedMessage("DocumentListCommandDescription");
     }
 }

@@ -25,9 +25,7 @@ import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.services.FoldersApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -35,7 +33,6 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class DocumentCreationCommand extends BaseCommandLine {
@@ -49,10 +46,10 @@ public class DocumentCreationCommand extends BaseCommandLine {
     @Option(metaVar = "<description>", name = "-d", aliases = "--description", usage = "the description of the document to save")
     private String description;
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
-    @Argument(metaVar = "<file>", required = true, index=0, usage = "specify the file of the document to import")
+    @Argument(metaVar = "<file>", required = true, index = 0, usage = "specify the file of the document to import")
     private File file;
 
     @Override
@@ -77,12 +74,12 @@ public class DocumentCreationCommand extends BaseCommandLine {
         docIPK.setVersion("A");
         docIPK.setIteration(1);
 
-        FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+        FileHelper fh = new FileHelper(user, password, output, langHelper);
         fh.uploadDocumentFile(getServerURL(), file, docIPK);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentCreationCommandDescription",user);
+        return langHelper.getLocalizedMessage("DocumentCreationCommandDescription");
     }
 }

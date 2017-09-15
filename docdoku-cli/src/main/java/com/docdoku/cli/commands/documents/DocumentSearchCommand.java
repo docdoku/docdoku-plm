@@ -20,10 +20,9 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.services.DocumentsApi;
+import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -50,6 +49,6 @@ public class DocumentSearchCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentSearchCommandDescription", user);
+        return langHelper.getLocalizedMessage("DocumentSearchCommandDescription");
     }
 }

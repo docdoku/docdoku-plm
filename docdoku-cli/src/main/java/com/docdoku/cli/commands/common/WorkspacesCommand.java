@@ -20,18 +20,16 @@
 
 package com.docdoku.cli.commands.common;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.models.WorkspaceListDTO;
 import com.docdoku.api.services.AccountsApi;
 import com.docdoku.api.services.WorkspacesApi;
+import com.docdoku.cli.commands.BaseCommandLine;
+import com.docdoku.cli.helpers.AccountsManager;
 
 import java.io.IOException;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class WorkspacesCommand extends BaseCommandLine {
@@ -49,6 +47,6 @@ public class WorkspacesCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("WorkspaceCommandDescription",user);
+        return langHelper.getLocalizedMessage("WorkspaceCommandDescription");
     }
 }

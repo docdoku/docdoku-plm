@@ -20,11 +20,10 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.CountDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.services.PartsApi;
+import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -62,6 +61,6 @@ public class PartListCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartListCommandDescription",user);
+        return langHelper.getLocalizedMessage("PartListCommandDescription");
     }
 }

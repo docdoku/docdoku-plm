@@ -20,15 +20,13 @@
 
 package com.docdoku.cli.commands.common;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.services.AccountsApi;
+import com.docdoku.cli.commands.BaseCommandLine;
 
 import java.io.IOException;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class AccountInfosCommand extends BaseCommandLine {
@@ -41,6 +39,6 @@ public class AccountInfosCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("AccountInfosCommandDescription",user);
+        return langHelper.getLocalizedMessage("AccountInfosCommandDescription");
     }
 }

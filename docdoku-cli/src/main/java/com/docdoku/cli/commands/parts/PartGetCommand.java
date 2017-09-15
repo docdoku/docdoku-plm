@@ -28,9 +28,7 @@ import com.docdoku.api.models.PartUsageLinkDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -85,14 +83,14 @@ public class PartGetCommand extends BaseCommandLine {
 
     private void loadMetadata() throws IOException {
         if (path.isDirectory()) {
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1", user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if (partNumber == null || strRevision == null) {
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2", user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2"));
         }
         revision = strRevision;
         //The part is inferred from the cad file, hence fetch the fresh (latest) iteration
@@ -127,10 +125,10 @@ public class PartGetCommand extends BaseCommandLine {
         BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
 
         if (nativeCADFile != null) {
-            FileHelper fh = new FileHelper(user, password, output, new AccountsManager().getUserLocale(user));
+            FileHelper fh = new FileHelper(user, password, output, langHelper);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         } else {
-            output.printInfo(LangHelper.getLocalizedMessage("NoFileForPart", user) + " : " + pPartNumber +
+            output.printInfo(langHelper.getLocalizedMessage("NoFileForPart") + " : " + pPartNumber +
                     " " + pr.getVersion() + "." + pi.getIteration() + " (" + workspace + ")");
         }
 
@@ -147,6 +145,6 @@ public class PartGetCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartGetCommandDescription", user);
+        return langHelper.getLocalizedMessage("PartGetCommandDescription");
     }
 }

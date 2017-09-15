@@ -29,9 +29,7 @@ import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -41,7 +39,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -84,14 +81,14 @@ public class PartCheckOutCommand extends BaseCommandLine {
 
     private void loadMetadata() throws IOException {
         if (path.isDirectory()) {
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1", user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         partNumber = meta.getPartNumber(filePath);
         String strRevision = meta.getRevision(filePath);
         if (partNumber == null || strRevision == null) {
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2", user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2"));
         }
         revision = strRevision;
         //once partNumber and revision have been inferred, set path to folder where files are stored
@@ -108,12 +105,10 @@ public class PartCheckOutCommand extends BaseCommandLine {
         PartsApi partsApi = new PartsApi(client);
         PartApi partApi = new PartApi(client);
 
-        Locale locale = new AccountsManager().getUserLocale(user);
-
         PartRevisionDTO pr;
         PartIterationDTO pi;
 
-        output.printInfo(LangHelper.getLocalizedMessage("CheckingOutPart", locale) + " : " + pPartNumber);
+        output.printInfo(langHelper.getLocalizedMessage("CheckingOutPart") + " : " + pPartNumber);
 
         if (pRevision != null) {
             pr = partsApi.getPartRevision(workspace, pPartNumber, pRevision);
@@ -134,7 +129,7 @@ public class PartCheckOutCommand extends BaseCommandLine {
         BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
 
         if (nativeCADFile != null && !noDownload) {
-            FileHelper fh = new FileHelper(user, password, output, locale);
+            FileHelper fh = new FileHelper(user, password, output, langHelper);
             fh.downloadNativeCADFile(getServerURL(), path, workspace, pPartNumber, pr, pi, force);
         }
 
@@ -151,6 +146,6 @@ public class PartCheckOutCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartCheckOutCommandDescription", user);
+        return langHelper.getLocalizedMessage("PartCheckOutCommandDescription");
     }
 }

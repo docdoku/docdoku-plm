@@ -20,10 +20,9 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.FolderDTO;
 import com.docdoku.api.services.FoldersApi;
+import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -51,6 +50,6 @@ public class FolderListCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("FolderListCommandDescription",user);
+        return langHelper.getLocalizedMessage("FolderListCommandDescription");
     }
 }

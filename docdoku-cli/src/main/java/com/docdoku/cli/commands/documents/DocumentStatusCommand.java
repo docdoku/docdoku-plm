@@ -20,12 +20,11 @@
 
 package com.docdoku.cli.commands.documents;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.services.DocumentApi;
+import com.docdoku.cli.commands.BaseCommandLine;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
 
@@ -33,21 +32,20 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class DocumentStatusCommand extends BaseCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to get a status ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
+    @Option(metaVar = "<revision>", name = "-r", aliases = "--revision", usage = "specify revision of the document to get a status ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
     private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to get a status; if not specified choose the document corresponding to the file")
     private String id;
 
-    @Argument(metaVar = "[<file>]", index=0, usage = "specify the file of the document to get a status")
+    @Argument(metaVar = "[<file>]", index = 0, usage = "specify the file of the document to get a status")
     private File file;
 
-    @Option(name="-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = false, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
     private long lastModified;
@@ -56,14 +54,14 @@ public class DocumentStatusCommand extends BaseCommandLine {
     public void execImpl() throws Exception {
         try {
 
-            if(id==null || revision==null || workspace==null){
+            if (id == null || revision == null || workspace == null) {
                 loadMetadata();
             }
 
             DocumentApi documentApi = new DocumentApi(client);
 
-            DocumentRevisionDTO documentRevisionDTO = documentApi.getDocumentRevision(workspace,id,revision);
-            output.printDocumentRevision(documentRevisionDTO,lastModified);
+            DocumentRevisionDTO documentRevisionDTO = documentApi.getDocumentRevision(workspace, id, revision);
+            output.printDocumentRevision(documentRevisionDTO, lastModified);
 
         } catch (ApiException e) {
             MetaDirectoryManager meta = new MetaDirectoryManager(file.getParentFile());
@@ -73,8 +71,8 @@ public class DocumentStatusCommand extends BaseCommandLine {
     }
 
     private void loadMetadata() throws IOException {
-        if(file==null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1",user));
+        if (file == null) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(file.getParentFile());
         String filePath = file.getAbsolutePath();
@@ -82,15 +80,15 @@ public class DocumentStatusCommand extends BaseCommandLine {
         workspace = meta.getWorkspace(filePath);
         lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(id==null || strRevision==null || workspace == null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
+        if (id == null || strRevision == null || workspace == null) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2"));
         }
         revision = strRevision;
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentStatusCommandDescription",user);
+        return langHelper.getLocalizedMessage("DocumentStatusCommandDescription");
     }
 
 }

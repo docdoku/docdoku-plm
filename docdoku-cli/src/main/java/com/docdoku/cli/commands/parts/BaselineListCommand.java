@@ -20,10 +20,9 @@
 
 package com.docdoku.cli.commands.parts;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.api.models.ProductBaselineDTO;
 import com.docdoku.api.services.PartApi;
+import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
@@ -53,6 +52,6 @@ public class BaselineListCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("BaselineListCommandDescription",user);
+        return langHelper.getLocalizedMessage("BaselineListCommandDescription");
     }
 }

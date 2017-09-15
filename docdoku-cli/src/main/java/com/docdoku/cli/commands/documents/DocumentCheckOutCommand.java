@@ -27,9 +27,7 @@ import com.docdoku.api.models.UserDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -38,60 +36,56 @@ import javax.security.auth.login.LoginException;
 import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Locale;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class DocumentCheckOutCommand extends BaseCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to check out ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
+    @Option(metaVar = "<revision>", name = "-r", aliases = "--revision", usage = "specify revision of the document to check out ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
     private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to check out; if not specified choose the document corresponding to the file")
     private String id;
 
-    @Argument(metaVar = "[<file> | <dir>]", index=0, usage = "specify the file of the document to check out or the path where files are stored (default is working directory)")
+    @Argument(metaVar = "[<file> | <dir>]", index = 0, usage = "specify the file of the document to check out or the path where files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-n", aliases = "--no-download", usage="do not download the files of the document if any")
+    @Option(name = "-n", aliases = "--no-download", usage = "do not download the files of the document if any")
     private boolean noDownload;
 
-    @Option(name="-f", aliases = "--force", usage="overwrite existing files even if they have been modified locally")
+    @Option(name = "-f", aliases = "--force", usage = "overwrite existing files even if they have been modified locally")
     private boolean force;
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
     @Override
     public void execImpl() throws Exception {
-        if(id==null || revision==null){
+        if (id == null || revision == null) {
             loadMetadata();
         }
 
-        String strRevision = revision==null?null:revision;
+        String strRevision = revision == null ? null : revision;
         checkoutDocument(id, strRevision);
     }
 
     private void loadMetadata() throws IOException {
-        if(path.isDirectory()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1",user));
+        if (path.isDirectory()) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         id = meta.getDocumentId(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(id==null || strRevision==null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
+        if (id == null || strRevision == null) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2"));
         }
         revision = strRevision;
-        path=path.getParentFile();
+        path = path.getParentFile();
     }
 
     private void checkoutDocument(String id, String pRevision) throws IOException, ApiException, LoginException, NoSuchAlgorithmException {
-
-        Locale locale = new AccountsManager().getUserLocale(user);
 
         DocumentRevisionDTO documentRevisionKey = new DocumentRevisionDTO();
         documentRevisionKey.setWorkspaceId(workspace);
@@ -99,27 +93,27 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
         documentRevisionKey.setVersion(pRevision);
 
         DocumentApi documentApi = new DocumentApi(client);
-        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,pRevision);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace, id, pRevision);
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
 
         output.printInfo(
-                LangHelper.getLocalizedMessage("CheckingOutDocument",locale)
+                langHelper.getLocalizedMessage("CheckingOutDocument")
                         + " : "
                         + id + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
         UserDTO checkOutUser = dr.getCheckOutUser();
 
-        if(checkOutUser == null) {
-            try{
-                dr = documentApi.checkOutDocument(workspace,id,pRevision);
+        if (checkOutUser == null) {
+            try {
+                dr = documentApi.checkOutDocument(workspace, id, pRevision);
                 di = LastIterationHelper.getLastIteration(dr);
-            }catch (ApiException e){
+            } catch (ApiException e) {
                 output.printException(e);
             }
         }
 
-        if(!noDownload && !di.getAttachedFiles().isEmpty()){
-            FileHelper fh = new FileHelper(user,password,output,locale);
+        if (!noDownload && !di.getAttachedFiles().isEmpty()) {
+            FileHelper fh = new FileHelper(user, password, output, langHelper);
             fh.downloadDocumentFiles(getServerURL(), path, workspace, id, dr, di, force);
         }
 
@@ -127,6 +121,6 @@ public class DocumentCheckOutCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentCheckOutCommandDescription",user);
+        return langHelper.getLocalizedMessage("DocumentCheckOutCommandDescription");
     }
 }

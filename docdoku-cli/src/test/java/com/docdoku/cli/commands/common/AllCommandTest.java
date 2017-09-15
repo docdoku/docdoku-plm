@@ -52,6 +52,7 @@ public class AllCommandTest {
     private final static URL putPartFile = AllCommandTest.class.getClassLoader().getResource("com/docdoku/cli/commands/common/put-part.txt");
     private final static String NO_ERRORS_EXPECTED = "Should be no errors, error(s): \n";
     private final static String OUTPUT_EXPECTED = "Should have an output";
+    private final static LangHelper langHelper = new LangHelper(new Locale("en"));
 
     private final static ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final static ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -62,7 +63,7 @@ public class AllCommandTest {
     }
 
     @After
-    public void resetStreams(){
+    public void resetStreams() {
         outContent.reset();
         errContent.reset();
     }
@@ -85,7 +86,7 @@ public class AllCommandTest {
         reader.close();
 
         Assert.assertNotNull(workspaces);
-        Assert.assertTrue(workspaces.size()>0);
+        Assert.assertTrue(workspaces.size() > 0);
 
     }
 
@@ -107,7 +108,7 @@ public class AllCommandTest {
         reader.close();
 
         Assert.assertNotNull(account);
-        Assert.assertEquals(account.getString("login"), TestConfig.LOGIN );
+        Assert.assertEquals(account.getString("login"), TestConfig.LOGIN);
 
     }
 
@@ -115,12 +116,12 @@ public class AllCommandTest {
     public void documentCreationTest() throws Exception {
 
         String filePath = documentFile.getPath();
-        String documentId = "DOC-"+UUID.randomUUID().toString().substring(0,6);
+        String documentId = "DOC-" + UUID.randomUUID().toString().substring(0, 6);
         String documentTitle = "DocTitle";
         String documentDescription = "DocDescription";
 
         String[] command = {"cr", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE , "-o", documentId, "-N", documentTitle, "-d", documentDescription, filePath};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", documentId, "-N", documentTitle, "-d", documentDescription, filePath};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -138,10 +139,10 @@ public class AllCommandTest {
         JsonObject infoLine = firstLineReader.readObject();
         firstLineReader.close();
 
-        String uploadingFile = LangHelper.getLocalizedMessage("UploadingFile", new Locale("en"));
+        String uploadingFile = langHelper.getLocalizedMessage("UploadingFile");
         Assert.assertTrue(infoLine.getString("info").startsWith(uploadingFile));
 
-        String lastLine = splitOutput[linesCount-1];
+        String lastLine = splitOutput[linesCount - 1];
         JsonReader lastLineReader = Json.createReader(new StringReader(lastLine));
         JsonObject progressLine = lastLineReader.readObject();
         lastLineReader.close();
@@ -150,15 +151,15 @@ public class AllCommandTest {
     }
 
     @Test
-    public void partCreationTest(){
+    public void partCreationTest() {
 
         String filePath = partFile.getPath();
-        String partNumber  = "PART-"+UUID.randomUUID().toString().substring(0,6);
+        String partNumber = "PART-" + UUID.randomUUID().toString().substring(0, 6);
         String partTitle = "PartTitle";
         String partDescription = "PartDescription";
 
         String[] command = {"cr", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE , "-o", partNumber, "-N", partTitle, "-d", partDescription, filePath};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-N", partTitle, "-d", partDescription, filePath};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -176,10 +177,10 @@ public class AllCommandTest {
         JsonObject infoLine = firstLineReader.readObject();
         firstLineReader.close();
 
-        String uploadingFile = LangHelper.getLocalizedMessage("UploadingFile", new Locale("en"));
+        String uploadingFile = langHelper.getLocalizedMessage("UploadingFile");
         Assert.assertTrue(infoLine.getString("info").startsWith(uploadingFile));
 
-        String lastLine = splitOutput[linesCount-1];
+        String lastLine = splitOutput[linesCount - 1];
         JsonReader lastLineReader = Json.createReader(new StringReader(lastLine));
         JsonObject progressLine = lastLineReader.readObject();
         lastLineReader.close();
@@ -187,10 +188,10 @@ public class AllCommandTest {
     }
 
     @Test
-    public void documentListTest(){
+    public void documentListTest() {
 
         String[] command = {"l", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE};
+        String[] args = {"-w", TestConfig.WORKSPACE};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -207,7 +208,7 @@ public class AllCommandTest {
         int documentsCount = documents.size();
 
         // Test first object only
-        if(documentsCount > 0){
+        if (documentsCount > 0) {
             LOGGER.log(Level.INFO, "Testing first document in documents array");
             JsonValue jsonValue = documents.get(0);
             JsonValue.ValueType valueType = jsonValue.getValueType();
@@ -216,15 +217,14 @@ public class AllCommandTest {
             String id = document.getString("id");
             Assert.assertNotNull(id);
             Assert.assertFalse(id.isEmpty());
-        }
-        else {
+        } else {
             LOGGER.log(Level.WARNING, "No document to test in documents array");
         }
 
     }
 
     @Test
-    public void partListTest(){
+    public void partListTest() {
         String[] command = {"l", "part"};
         String[] args = {"-w", TestConfig.WORKSPACE};
         MainCommand.main(getArgs(command, args));
@@ -243,7 +243,7 @@ public class AllCommandTest {
     }
 
     @Test
-    public void partListCountTest(){
+    public void partListCountTest() {
 
         String[] command = {"l", "part"};
         String[] args = {"-w", TestConfig.WORKSPACE, "-c"};
@@ -259,16 +259,16 @@ public class AllCommandTest {
         JsonObject partsCount = reader.readObject();
         reader.close();
         Assert.assertNotNull(partsCount);
-        Assert.assertTrue(partsCount.getInt("count") >= 0 );
+        Assert.assertTrue(partsCount.getInt("count") >= 0);
     }
 
     @Test
-    public void partListTestWithLimit(){
+    public void partListTestWithLimit() {
 
         createPart();
 
         String[] command = {"l", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-s", "0", "-m", "1" };
+        String[] args = {"-w", TestConfig.WORKSPACE, "-s", "0", "-m", "1"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -286,12 +286,12 @@ public class AllCommandTest {
     }
 
     @Test
-    public void checkInCheckOutPartTest(){
+    public void checkInCheckOutPartTest() {
 
         String partNumber = createPart();
 
         String[] command = {"ci", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-n", "-o", partNumber, "-r" , "A", "-m", "Checked in from junit tests"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-n", "-o", partNumber, "-r", "A", "-m", "Checked in from junit tests"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -304,14 +304,14 @@ public class AllCommandTest {
         JsonObject checkinInfos = reader.readObject();
         reader.close();
 
-        String checkingInFile = LangHelper.getLocalizedMessage("CheckingInPart", new Locale("en"));
+        String checkingInFile = langHelper.getLocalizedMessage("CheckingInPart");
         Assert.assertTrue(checkinInfos.getString("info").startsWith(checkingInFile));
 
         outContent.reset();
         errContent.reset();
 
         String[] checkoutCommand = {"co", "part"};
-        String[] checkoutArgs = {"-w" , TestConfig.WORKSPACE, "-n", "-o", partNumber, "-r" , "A"};
+        String[] checkoutArgs = {"-w", TestConfig.WORKSPACE, "-n", "-o", partNumber, "-r", "A"};
         MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
 
         programOutput = outContent.toString();
@@ -324,14 +324,14 @@ public class AllCommandTest {
         JsonObject checkoutInfos = checkoutReader.readObject();
         reader.close();
 
-        String checkingOutFile = LangHelper.getLocalizedMessage("CheckingOutPart", new Locale("en"));
+        String checkingOutFile = langHelper.getLocalizedMessage("CheckingOutPart");
         Assert.assertTrue(checkoutInfos.getString("info").startsWith(checkingOutFile));
 
         outContent.reset();
         errContent.reset();
 
         String[] undoCheckoutCommand = {"uco", "part"};
-        String[] undoCheckoutArgs = {"-w" , TestConfig.WORKSPACE,  "-o", partNumber, "-r" , "A"};
+        String[] undoCheckoutArgs = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-r", "A"};
         MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
 
         programOutput = outContent.toString();
@@ -344,19 +344,19 @@ public class AllCommandTest {
         JsonObject undoCheckoutInfos = undoCheckoutReader.readObject();
         reader.close();
 
-        String undoCheckingOutFile = LangHelper.getLocalizedMessage("UndoCheckoutPart", new Locale("en"));
+        String undoCheckingOutFile = langHelper.getLocalizedMessage("UndoCheckoutPart");
         Assert.assertTrue(undoCheckoutInfos.getString("info").startsWith(undoCheckingOutFile));
 
     }
 
 
     @Test
-    public void checkInCheckOutDocumentTest(){
+    public void checkInCheckOutDocumentTest() {
 
         String documentId = createDocument();
 
         String[] command = {"ci", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-n", "-o", documentId, "-r" , "A", "-m", "Checked in from junit tests"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-n", "-o", documentId, "-r", "A", "-m", "Checked in from junit tests"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -369,14 +369,14 @@ public class AllCommandTest {
         JsonObject checkinInfos = reader.readObject();
         reader.close();
 
-        String checkingInFile = LangHelper.getLocalizedMessage("CheckingInDocument", new Locale("en"));
+        String checkingInFile = langHelper.getLocalizedMessage("CheckingInDocument");
         Assert.assertTrue(checkinInfos.getString("info").startsWith(checkingInFile));
 
         outContent.reset();
         errContent.reset();
 
         String[] checkoutCommand = {"co", "document"};
-        String[] checkoutArgs = {"-w" , TestConfig.WORKSPACE, "-n", "-o", documentId, "-r" , "A"};
+        String[] checkoutArgs = {"-w", TestConfig.WORKSPACE, "-n", "-o", documentId, "-r", "A"};
         MainCommand.main(getArgs(checkoutCommand, checkoutArgs));
 
         programOutput = outContent.toString();
@@ -389,14 +389,14 @@ public class AllCommandTest {
         JsonObject checkoutInfos = checkoutReader.readObject();
         reader.close();
 
-        String checkingOutFile = LangHelper.getLocalizedMessage("CheckingOutDocument", new Locale("en"));
+        String checkingOutFile = langHelper.getLocalizedMessage("CheckingOutDocument");
         Assert.assertTrue(checkoutInfos.getString("info").startsWith(checkingOutFile));
 
         outContent.reset();
         errContent.reset();
 
         String[] undoCheckoutCommand = {"uco", "document"};
-        String[] undoCheckoutArgs = {"-w" , TestConfig.WORKSPACE,  "-o", documentId, "-r" , "A"};
+        String[] undoCheckoutArgs = {"-w", TestConfig.WORKSPACE, "-o", documentId, "-r", "A"};
         MainCommand.main(getArgs(undoCheckoutCommand, undoCheckoutArgs));
 
         programOutput = outContent.toString();
@@ -409,7 +409,7 @@ public class AllCommandTest {
         JsonObject undoCheckoutInfos = undoCheckoutReader.readObject();
         reader.close();
 
-        String undoCheckingOutFile = LangHelper.getLocalizedMessage("UndoCheckoutDocument", new Locale("en"));
+        String undoCheckingOutFile = langHelper.getLocalizedMessage("UndoCheckoutDocument");
         Assert.assertTrue(undoCheckoutInfos.getString("info").startsWith(undoCheckingOutFile));
 
     }
@@ -422,7 +422,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"get", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", documentId, "-r", "A", "-i", "1", tmpDir.getPath()};
         MainCommand.main(getArgs(command, args));
 
 
@@ -434,7 +434,7 @@ public class AllCommandTest {
 
         File downloadedFile = new File(tmpDir.getAbsolutePath() + File.separator + FileHelper.getFileName(documentFile.getPath()));
         Assert.assertTrue(downloadedFile.exists());
-        Assert.assertTrue("File content should be the same",FileUtils.contentEquals(downloadedFile, new File(documentFile.getPath())));
+        Assert.assertTrue("File content should be the same", FileUtils.contentEquals(downloadedFile, new File(documentFile.getPath())));
 
         tmpDir.deleteOnExit();
 
@@ -448,7 +448,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"get", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r" , "A", "-i", "1", tmpDir.getPath()};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-r", "A", "-i", "1", tmpDir.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -459,7 +459,7 @@ public class AllCommandTest {
 
         File downloadedFile = new File(tmpDir.getAbsolutePath() + File.separator + FileHelper.getFileName(partFile.getPath()));
         Assert.assertTrue(downloadedFile.exists());
-        Assert.assertTrue("File content should be the same",FileUtils.contentEquals(downloadedFile, new File(partFile.getPath())));
+        Assert.assertTrue("File content should be the same", FileUtils.contentEquals(downloadedFile, new File(partFile.getPath())));
 
         tmpDir.deleteOnExit();
 
@@ -474,7 +474,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"put", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, "-r" , "A", putDocumentFile.getPath()};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", documentId, "-r", "A", putDocumentFile.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -493,10 +493,10 @@ public class AllCommandTest {
         JsonObject infoLine = firstLineReader.readObject();
         firstLineReader.close();
 
-        String uploadingFile = LangHelper.getLocalizedMessage("UploadingFile", new Locale("en"));
+        String uploadingFile = langHelper.getLocalizedMessage("UploadingFile");
         Assert.assertTrue(infoLine.getString("info").startsWith(uploadingFile));
 
-        String lastLine = splitOutput[linesCount-1];
+        String lastLine = splitOutput[linesCount - 1];
         JsonReader lastLineReader = Json.createReader(new StringReader(lastLine));
         JsonObject progressLine = lastLineReader.readObject();
         lastLineReader.close();
@@ -514,7 +514,7 @@ public class AllCommandTest {
         File tmpDir = Files.createTempDirectory("docdoku-cli-").toFile();
 
         String[] command = {"put", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r" , "A", putPartFile.getPath()};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-r", "A", putPartFile.getPath()};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -533,10 +533,10 @@ public class AllCommandTest {
         JsonObject infoLine = firstLineReader.readObject();
         firstLineReader.close();
 
-        String uploadingFile = LangHelper.getLocalizedMessage("UploadingFile", new Locale("en"));
+        String uploadingFile = langHelper.getLocalizedMessage("UploadingFile");
         Assert.assertTrue(infoLine.getString("info").startsWith(uploadingFile));
 
-        String lastLine = splitOutput[linesCount-1];
+        String lastLine = splitOutput[linesCount - 1];
         JsonReader lastLineReader = Json.createReader(new StringReader(lastLine));
         JsonObject progressLine = lastLineReader.readObject();
         lastLineReader.close();
@@ -547,12 +547,12 @@ public class AllCommandTest {
     }
 
     @Test
-    public void documentStatusTest(){
+    public void documentStatusTest() {
 
         String documentId = createDocument();
 
         String[] command = {"st", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, "-r" , "A"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", documentId, "-r", "A"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -565,7 +565,7 @@ public class AllCommandTest {
         JsonObject document = reader.readObject();
         reader.close();
 
-        Assert.assertEquals(document.getString("id"),documentId);
+        Assert.assertEquals(document.getString("id"), documentId);
         Assert.assertTrue(document.getBoolean("isCheckedOut"));
         Assert.assertEquals(document.getString("workspace"), TestConfig.WORKSPACE);
         Assert.assertEquals(document.getString("version"), "A");
@@ -576,12 +576,12 @@ public class AllCommandTest {
 
 
     @Test
-    public void partStatusTest(){
+    public void partStatusTest() {
 
         String partNumber = createPart();
 
         String[] command = {"st", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r" , "A"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-r", "A"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -594,7 +594,7 @@ public class AllCommandTest {
         JsonObject part = reader.readObject();
         reader.close();
 
-        Assert.assertEquals(part.getString("partNumber"),partNumber);
+        Assert.assertEquals(part.getString("partNumber"), partNumber);
         Assert.assertTrue(part.getBoolean("isCheckedOut"));
         Assert.assertTrue(part.getString("cadFileName").endsWith(FileHelper.getFileName(partFile.getPath())));
         Assert.assertEquals(part.getString("workspace"), TestConfig.WORKSPACE);
@@ -603,10 +603,10 @@ public class AllCommandTest {
     }
 
     @Test
-    public void folderListTest(){
+    public void folderListTest() {
 
         String[] command = {"f"};
-        String[] args = {"-w" , TestConfig.WORKSPACE};
+        String[] args = {"-w", TestConfig.WORKSPACE};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -621,7 +621,7 @@ public class AllCommandTest {
 
         Assert.assertNotNull(folders);
 
-        if(!folders.isEmpty()){
+        if (!folders.isEmpty()) {
             testSubFolder("", folders);
         }
 
@@ -633,7 +633,7 @@ public class AllCommandTest {
         String partNumber = createPart();
 
         String[] command = {"cv"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r", "A", "-i", "1"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-r", "A", "-i", "1"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -656,12 +656,12 @@ public class AllCommandTest {
 
 
     @Test
-    public void baselineListTest(){
+    public void baselineListTest() {
 
         String partNumber = createPart();
 
         String[] command = {"bl"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, "-r", "A"};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, "-r", "A"};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
@@ -680,9 +680,9 @@ public class AllCommandTest {
 
 
     @Test
-    public void helpTest(){
+    public void helpTest() {
 
-        String[] command = {"h","-F","json"};
+        String[] command = {"h", "-F", "json"};
         MainCommand.main(command);
 
         String programOutput = outContent.toString();
@@ -701,8 +701,7 @@ public class AllCommandTest {
     }
 
 
-
-    private void testSubFolder(String parent, JsonArray folders){
+    private void testSubFolder(String parent, JsonArray folders) {
 
         outContent.reset();
         errContent.reset();
@@ -710,11 +709,11 @@ public class AllCommandTest {
         String subFolder = folders.getString(0);
 
         String[] command = {"f"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-f", parent+subFolder};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-f", parent + subFolder};
         MainCommand.main(getArgs(command, args));
 
         String programOutput = outContent.toString();
-        String  programError = errContent.toString();
+        String programError = errContent.toString();
 
         Assert.assertTrue(programError, programError.isEmpty());
         Assert.assertFalse(OUTPUT_EXPECTED, programOutput.isEmpty());
@@ -723,21 +722,21 @@ public class AllCommandTest {
         JsonArray subFolders = reader.readArray();
         reader.close();
 
-        if(!subFolders.isEmpty()){
-            testSubFolder(parent+subFolder+":", subFolders);
+        if (!subFolders.isEmpty()) {
+            testSubFolder(parent + subFolder + ":", subFolders);
         }
 
         Assert.assertNotNull(subFolders);
 
     }
 
-    private String createPart(){
+    private String createPart() {
 
         String filePath = partFile.getPath();
-        String partNumber = "Part-"+UUID.randomUUID().toString().substring(0,6);
+        String partNumber = "Part-" + UUID.randomUUID().toString().substring(0, 6);
 
         String[] command = {"cr", "part"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", partNumber, filePath};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", partNumber, filePath};
         MainCommand.main(getArgs(command, args));
 
         outContent.reset();
@@ -747,13 +746,13 @@ public class AllCommandTest {
     }
 
 
-    private String createDocument(){
+    private String createDocument() {
 
         String filePath = documentFile.getPath();
-        String documentId = "Doc-"+UUID.randomUUID().toString().substring(0,6);
+        String documentId = "Doc-" + UUID.randomUUID().toString().substring(0, 6);
 
         String[] command = {"cr", "document"};
-        String[] args = {"-w" , TestConfig.WORKSPACE, "-o", documentId, filePath};
+        String[] args = {"-w", TestConfig.WORKSPACE, "-o", documentId, filePath};
         MainCommand.main(getArgs(command, args));
 
         outContent.reset();

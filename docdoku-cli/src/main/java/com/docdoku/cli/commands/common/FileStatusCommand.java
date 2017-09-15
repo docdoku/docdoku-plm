@@ -20,14 +20,13 @@
 
 package com.docdoku.cli.commands.common;
 
-import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
-import com.docdoku.cli.helpers.MetaDirectoryManager;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.services.PartApi;
+import com.docdoku.cli.commands.BaseCommandLine;
+import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 
 import java.io.File;
@@ -74,7 +73,7 @@ public class FileStatusCommand extends BaseCommandLine {
                 output.printException(e);
             }
         }else{
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("FileNotIndexedException",user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("FileNotIndexedException"));
         }
 
     }
@@ -82,7 +81,7 @@ public class FileStatusCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("FileStatusCommand",user);
+        return langHelper.getLocalizedMessage("FileStatusCommand");
     }
 
 }

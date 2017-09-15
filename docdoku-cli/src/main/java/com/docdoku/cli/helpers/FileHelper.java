@@ -33,7 +33,6 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
 public class FileHelper {
@@ -44,13 +43,13 @@ public class FileHelper {
     private String login;
     private String password;
     private CliOutput output;
-    private Locale locale;
+    private LangHelper langHelper;
 
-    public FileHelper(String login, String password, CliOutput output, Locale locale) {
+    public FileHelper(String login, String password, CliOutput output, LangHelper langHelper) {
         this.login = login;
         this.password = password;
         this.output = output;
-        this.locale = locale;
+        this.langHelper = langHelper;
     }
 
     private String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
@@ -65,11 +64,11 @@ public class FileHelper {
             URL url = new URL(pURL.replace(" ", "%20"));
 
             output.printInfo(
-                    LangHelper.getLocalizedMessage("DownloadingFile", locale)
+                    langHelper.getLocalizedMessage("DownloadingFile")
                             + " : "
                             + pLocalFile.getName() + " "
-                            + LangHelper.getLocalizedMessage("From", locale) + " "
-                            + url.getHost());
+                            + langHelper.getLocalizedMessage("From")
+                            + " " + url.getHost());
 
             performHeadHTTPMethod(url);
 
@@ -130,10 +129,10 @@ public class FileHelper {
             URL url = new URL(pURL);
 
             output.printInfo(
-                    LangHelper.getLocalizedMessage("UploadingFile", locale)
+                    langHelper.getLocalizedMessage("UploadingFile")
                             + " : "
                             + pLocalFile.getName() + " "
-                            + LangHelper.getLocalizedMessage("To", locale) + " "
+                            + langHelper.getLocalizedMessage("To") + " "
                             + url.getHost());
             performHeadHTTPMethod(url);
 
@@ -192,7 +191,7 @@ public class FileHelper {
         switch (code) {
             case 401:
             case 403:
-                throw new LoginException(LangHelper.getLocalizedMessage("LoginError", locale));
+                throw new LoginException(langHelper.getLocalizedMessage("LoginError"));
             case 500:
                 throw new IOException(conn.getHeaderField("Reason-Phrase"));
             default:

@@ -20,23 +20,23 @@
 
 package com.docdoku.cli.helpers;
 
-import java.io.IOException;
+import com.docdoku.core.util.PropertiesLoader;
+
 import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
 public class LangHelper {
 
-    private static final String BUNDLE_NAME = "com.docdoku.cli.i18n.LocalStrings";
+    private static final String BUNDLE_BASE_NAME = "/com/docdoku/cli/i18n/LocalStrings";
 
-    private LangHelper() {}
+    private final Properties properties;
 
-    public static String getLocalizedMessage(String key, String userLogin) throws IOException {
-        return getLocalizedMessage(key, new AccountsManager().getUserLocale(userLogin));
+    public LangHelper(Locale locale) {
+        properties = PropertiesLoader.loadPropertiesFile(locale, BUNDLE_BASE_NAME, getClass());
     }
 
-    public static String getLocalizedMessage(String key, Locale locale){
-        ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE_NAME, locale);
-        return bundle.getString(key);
+    public String getLocalizedMessage(String key) {
+        return properties.getProperty(key);
     }
 
 }

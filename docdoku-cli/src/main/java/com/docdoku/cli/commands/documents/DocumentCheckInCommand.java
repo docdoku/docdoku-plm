@@ -26,9 +26,7 @@ import com.docdoku.api.models.DocumentRevisionDTO;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.DocumentApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -37,24 +35,23 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- *
  * @author Morgan Guimard
  */
 public class DocumentCheckInCommand extends BaseCommandLine {
 
-    @Option(metaVar = "<revision>", name="-r", aliases = "--revision", usage="specify revision of the document to check in ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
+    @Option(metaVar = "<revision>", name = "-r", aliases = "--revision", usage = "specify revision of the document to check in ('A', 'B'...); if not specified the document identity (id and revision) corresponding to the file will be selected")
     private String revision;
 
     @Option(metaVar = "<id>", name = "-o", aliases = "--id", usage = "the id of the document to check in; if not specified choose the document corresponding to the file")
     private String id;
 
-    @Argument(metaVar = "[<file> | <dir>]", index=0, usage = "specify the file of the document to check in or the path where files are stored (default is working directory)")
+    @Argument(metaVar = "[<file> | <dir>]", index = 0, usage = "specify the file of the document to check in or the path where files are stored (default is working directory)")
     private File path = new File(System.getProperty("user.dir"));
 
-    @Option(name="-n", aliases = "--no-upload", usage="do not upload the file of the document if any")
+    @Option(name = "-n", aliases = "--no-upload", usage = "do not upload the file of the document if any")
     private boolean noUpload;
 
-    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
+    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
     protected String workspace;
 
     @Option(metaVar = "<message>", name = "-m", aliases = "--message", usage = "a message specifying the iteration modifications")
@@ -63,12 +60,12 @@ public class DocumentCheckInCommand extends BaseCommandLine {
     @Override
     public void execImpl() throws Exception {
 
-        if(id ==null || revision==null){
+        if (id == null || revision == null) {
             loadMetadata();
         }
 
         DocumentApi documentApi = new DocumentApi(client);
-        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace,id,revision);
+        DocumentRevisionDTO dr = documentApi.getDocumentRevision(workspace, id, revision);
 
         DocumentIterationDTO di = LastIterationHelper.getLastIteration(dr);
         DocumentIterationDTO docIPK = new DocumentIterationDTO();
@@ -77,13 +74,13 @@ public class DocumentCheckInCommand extends BaseCommandLine {
         docIPK.setVersion(revision);
         docIPK.setIteration(di.getIteration());
 
-        if(!noUpload && !di.getAttachedFiles().isEmpty()){
+        if (!noUpload && !di.getAttachedFiles().isEmpty()) {
 
-            for(BinaryResourceDTO binaryResourceDTO:di.getAttachedFiles()){
-                String fileName =  binaryResourceDTO.getName();
-                File localFile = new File(path,fileName);
-                if(localFile.exists()){
-                    FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+            for (BinaryResourceDTO binaryResourceDTO : di.getAttachedFiles()) {
+                String fileName = binaryResourceDTO.getName();
+                File localFile = new File(path, fileName);
+                if (localFile.exists()) {
+                    FileHelper fh = new FileHelper(user, password, output, langHelper);
 
                     fh.uploadDocumentFile(getServerURL(), localFile, docIPK);
                     localFile.setWritable(false, false);
@@ -92,35 +89,35 @@ public class DocumentCheckInCommand extends BaseCommandLine {
 
         }
 
-        if(message != null && !message.isEmpty()){
+        if (message != null && !message.isEmpty()) {
             di.setRevisionNote(message);
             documentApi.updateDocumentIteration(workspace, id, revision, di.getIteration(), di);
         }
 
-        output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id
+        output.printInfo(langHelper.getLocalizedMessage("CheckingInDocument") + " : " + id
                 + "-" + dr.getVersion() + "-" + di.getIteration() + " (" + workspace + ")");
 
-        documentApi.checkInDocument(workspace,id, revision);
+        documentApi.checkInDocument(workspace, id, revision);
 
     }
 
     private void loadMetadata() throws IOException {
-        if(path.isDirectory()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1",user));
+        if (path.isDirectory()) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         id = meta.getDocumentId(filePath);
         String strRevision = meta.getRevision(filePath);
-        if(id ==null || strRevision==null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
+        if (id == null || strRevision == null) {
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2"));
         }
         revision = strRevision;
-        path=path.getParentFile();
+        path = path.getParentFile();
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentCheckInCommandDescription",user);
+        return langHelper.getLocalizedMessage("DocumentCheckInCommandDescription");
     }
 }

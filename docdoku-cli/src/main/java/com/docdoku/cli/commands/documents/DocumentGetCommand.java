@@ -23,12 +23,10 @@ package com.docdoku.cli.commands.documents;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.DocumentIterationDTO;
 import com.docdoku.api.models.DocumentRevisionDTO;
-import com.docdoku.api.services.DocumentApi;
 import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.services.DocumentApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.FileHelper;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -76,14 +74,14 @@ public class DocumentGetCommand extends BaseCommandLine {
 
     private void loadMetadata() throws IOException {
         if(path.isDirectory()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1",user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(path.getParentFile());
         String filePath = path.getAbsolutePath();
         id = meta.getDocumentId(filePath);
         String strRevision = meta.getRevision(filePath);
         if(id==null || strRevision==null){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2",user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("DocumentIdOrRevisionNotSpecified2"));
         }
         revision = strRevision;
         iteration=0;
@@ -100,15 +98,15 @@ public class DocumentGetCommand extends BaseCommandLine {
         if(pIteration == 0){
             di = LastIterationHelper.getLastIteration(dr);
         }else if(pIteration > dr.getDocumentIterations().size()){
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("IterationNotExisting",user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("IterationNotExisting"));
         }else{
             di = dr.getDocumentIterations().get(pIteration-1);
         }
 
         if(di.getAttachedFiles().isEmpty()){
-            output.printInfo(LangHelper.getLocalizedMessage("NoFilesForDocument",user) + " : "  + id + " " + dr.getVersion() + "." + di.getIteration() + " (" + workspace + ")");
+            output.printInfo(langHelper.getLocalizedMessage("NoFilesForDocument") + " : "  + id + " " + dr.getVersion() + "." + di.getIteration() + " (" + workspace + ")");
         }else{
-            FileHelper fh = new FileHelper(user,password,output,new AccountsManager().getUserLocale(user));
+            FileHelper fh = new FileHelper(user,password,output,langHelper);
             fh.downloadDocumentFiles(getServerURL(), path, workspace, id, dr, di, force);
         }
 
@@ -116,6 +114,6 @@ public class DocumentGetCommand extends BaseCommandLine {
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("DocumentGetCommandDescription",user);
+        return langHelper.getLocalizedMessage("DocumentGetCommandDescription");
     }
 }

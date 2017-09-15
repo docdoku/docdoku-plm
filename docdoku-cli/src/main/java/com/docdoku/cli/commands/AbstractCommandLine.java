@@ -19,41 +19,42 @@
  */
 
 package com.docdoku.cli.commands;
+
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
 import com.docdoku.cli.helpers.CommandLine;
+import com.docdoku.cli.helpers.LangHelper;
 import org.kohsuke.args4j.Option;
 
 import java.util.Locale;
 
 /**
- *
  * @author Florent Garin
  */
 public abstract class AbstractCommandLine implements CommandLine {
 
-    @Option(name="-u", aliases = "--user", metaVar = "<user>", usage="user for login")
+    @Option(name = "-u", aliases = "--user", metaVar = "<user>", usage = "user for login")
     protected String user;
 
-    @Option(name="-F", aliases = "--format", metaVar = "<format>", usage="output format, possible value: json")
+    @Option(name = "-F", aliases = "--format", metaVar = "<format>", usage = "output format, possible value: json")
     protected CliOutput.formats format = CliOutput.formats.HUMAN;
 
 
     //A default value is set in case an exception is raised
     //inside the CmdLineParser.parseArgument(args) method.
     protected CliOutput output = CliOutput.getOutput(format, Locale.getDefault());
+    protected LangHelper langHelper;
 
     @Override
     public void exec() throws Exception {
         Locale userLocale = new AccountsManager().getUserLocale(user);
-        output = CliOutput.getOutput(format,userLocale);
-
+        langHelper = new LangHelper(userLocale);
+        output = CliOutput.getOutput(format, userLocale);
         execImpl();
-
     }
 
     @Override
-    public CliOutput getOutput(){
+    public CliOutput getOutput() {
         return output;
     }
 

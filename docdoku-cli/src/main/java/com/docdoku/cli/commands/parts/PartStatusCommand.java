@@ -24,7 +24,6 @@ import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.PartRevisionDTO;
 import com.docdoku.api.services.PartsApi;
 import com.docdoku.cli.commands.BaseCommandLine;
-import com.docdoku.cli.helpers.LangHelper;
 import com.docdoku.cli.helpers.MetaDirectoryManager;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.Option;
@@ -79,7 +78,7 @@ public class PartStatusCommand extends BaseCommandLine {
 
     private void loadMetadata() throws IOException {
         if (cadFile == null) {
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1", user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified1"));
         }
         MetaDirectoryManager meta = new MetaDirectoryManager(cadFile.getParentFile());
         String filePath = cadFile.getAbsolutePath();
@@ -88,14 +87,14 @@ public class PartStatusCommand extends BaseCommandLine {
         lastModified = meta.getLastModifiedDate(filePath);
         String strRevision = meta.getRevision(filePath);
         if (partNumber == null || strRevision == null || workspace == null) {
-            throw new IllegalArgumentException(LangHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2", user));
+            throw new IllegalArgumentException(langHelper.getLocalizedMessage("PartNumberOrRevisionNotSpecified2"));
         }
         revision = strRevision;
     }
 
     @Override
     public String getDescription() throws IOException {
-        return LangHelper.getLocalizedMessage("PartStatusCommandDescription", user);
+        return langHelper.getLocalizedMessage("PartStatusCommandDescription");
     }
 
 }
