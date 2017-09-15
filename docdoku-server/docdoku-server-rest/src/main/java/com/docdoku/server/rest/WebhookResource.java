@@ -194,14 +194,20 @@ public class WebhookResource {
         String uri = null;
         String authorization = null;
         for (WebhookAppParameterDTO parameter : parameters) {
-            if (parameter.getName().equals("method")) {
-                method = parameter.getValue();
-            }
-            if (parameter.getName().equals("uri")) {
-                uri = parameter.getValue();
-            }
-            if (parameter.getName().equals("authorization")) {
-                authorization = parameter.getValue();
+            if(parameter.getName()==null) continue;
+
+            switch(parameter.getName()){
+                case "method":
+                    method = parameter.getValue();
+                    break;
+
+                case "uri":
+                    uri = parameter.getValue();
+                    break;
+
+                case "authorization":
+                    authorization = parameter.getValue();
+                    break;
             }
         }
         return webhookManager.configureSimpleWebhook(workspaceId, webhookId, method, uri, authorization);
