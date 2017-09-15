@@ -20,11 +20,11 @@
 
 package com.docdoku.core.services;
 
-import com.docdoku.core.admin.WorkspaceOptions;
+import com.docdoku.core.admin.WorkspaceFrontOptions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.notification.NotificationOptions;
+import com.docdoku.core.admin.WorkspaceBackOptions;
 
 /**
  * @author Morgan Guimard
@@ -40,13 +40,13 @@ public interface IWorkspaceManagerLocal {
 
     Workspace enableWorkspace(String workspaceId, boolean enabled) throws WorkspaceNotFoundException;
 
-    void setNotificationOptions(String workspaceId, boolean sendEmails) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+    void updateWorkspaceBackOptions(WorkspaceBackOptions pWorkspaceBackOptions) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
 
-    NotificationOptions getNotificationOptions(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
+    WorkspaceBackOptions getWorkspaceBackOptions(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException;
     Workspace getWorkspace(String pWorkspaceId) throws WorkspaceNotFoundException, AccountNotFoundException;
     Workspace createWorkspace(String pID, Account pAdmin, String pDescription, boolean pFolderLocked) throws FolderAlreadyExistsException, UserAlreadyExistsException, WorkspaceAlreadyExistsException, CreationException,  NotAllowedException;
     Workspace updateWorkspace(String workspaceId, String description, boolean isFolderLocked) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
-    void updateWorkspaceOptions(WorkspaceOptions pWorkspaceOptions) throws AccessRightException, AccountNotFoundException;
-    WorkspaceOptions getWorkspaceOptions(String workspaceId) throws AccountNotFoundException, WorkspaceNotFoundException;
+    void updateWorkspaceFrontOptions(WorkspaceFrontOptions pWorkspaceFrontOptions) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException;
+    WorkspaceFrontOptions getWorkspaceFrontOptions(String workspaceId) throws AccountNotFoundException, WorkspaceNotFoundException;
 
 }

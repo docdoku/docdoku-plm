@@ -22,7 +22,7 @@ package com.docdoku.api;
 
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.client.ApiResponse;
-import com.docdoku.api.models.NotificationOptionsDTO;
+import com.docdoku.api.models.WorkspaceBackOptionsDTO;
 import com.docdoku.api.models.WorkspaceDTO;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.AfterClass;
@@ -33,14 +33,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class NotificationOptionsTest {
+public class WorkspaceBackOptionsTest {
 
     private WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
     private static WorkspaceDTO workspace;
 
     @BeforeClass
     public static void initWorkspace() throws ApiException {
-        workspace = TestUtils.createWorkspace(NotificationOptionsTest.class.getName());
+        workspace = TestUtils.createWorkspace(WorkspaceBackOptionsTest.class.getName());
     }
 
     @AfterClass
@@ -51,20 +51,20 @@ public class NotificationOptionsTest {
     @Test
     public void basicTests() throws ApiException {
 
-        NotificationOptionsDTO notificationOptions = workspacesApi.getNotificationOptions(workspace.getId());
-        Assert.assertNotNull(notificationOptions);
-        Assert.assertTrue(notificationOptions.getSendEmails());
-        Assert.assertEquals(workspace.getId(), notificationOptions.getWorkspaceId());
+        WorkspaceBackOptionsDTO workspaceBackOptions = workspacesApi.getWorkspaceBackOptions(workspace.getId());
+        Assert.assertNotNull(workspaceBackOptions);
+        Assert.assertTrue(workspaceBackOptions.getSendEmails());
+        Assert.assertEquals(workspace.getId(), workspaceBackOptions.getWorkspaceId());
 
-        notificationOptions.setSendEmails(false);
-        ApiResponse<Void> response = workspacesApi.updateNotificationOptionsWithHttpInfo(workspace.getId(), notificationOptions);
+        workspaceBackOptions.setSendEmails(false);
+        ApiResponse<Void> response = workspacesApi.updateWorkspaceBackOptionsWithHttpInfo(workspace.getId(), workspaceBackOptions);
         Assert.assertNotNull(response);
         Assert.assertEquals(204, response.getStatusCode());
 
-        notificationOptions = workspacesApi.getNotificationOptions(workspace.getId());
-        Assert.assertNotNull(notificationOptions);
-        Assert.assertFalse(notificationOptions.getSendEmails());
-        Assert.assertEquals(workspace.getId(), notificationOptions.getWorkspaceId());
+        workspaceBackOptions = workspacesApi.getWorkspaceBackOptions(workspace.getId());
+        Assert.assertNotNull(workspaceBackOptions);
+        Assert.assertFalse(workspaceBackOptions.getSendEmails());
+        Assert.assertEquals(workspace.getId(), workspaceBackOptions.getWorkspaceId());
 
     }
 }

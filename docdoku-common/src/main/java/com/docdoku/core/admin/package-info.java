@@ -19,7 +19,7 @@
  */
 
 /**
- * Provides security configuration classes.
+ * Provides configuration classes operative at workspace, platform, ui levels.
  *
  * @since 1.0
  */

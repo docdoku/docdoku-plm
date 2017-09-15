@@ -20,7 +20,8 @@
 
 package com.docdoku.server.dao;
 
-import com.docdoku.core.admin.WorkspaceOptions;
+import com.docdoku.core.admin.WorkspaceBackOptions;
+import com.docdoku.core.admin.WorkspaceFrontOptions;
 import com.docdoku.core.common.BinaryResource;
 import com.docdoku.core.common.UserGroup;
 import com.docdoku.core.common.Workspace;
@@ -64,14 +65,21 @@ public class WorkspaceDAO {
         storageManager = pStorageManager;
     }
 
-    public void updateWorkspaceOptions(WorkspaceOptions settings){
+    public void updateWorkspaceFrontOptions(WorkspaceFrontOptions settings){
         em.merge(settings);
     }
 
-    public WorkspaceOptions loadWorkspaceOptions(String pID){
-        return em.find(WorkspaceOptions.class, pID);
+    public void updateWorkspaceBackOptions(WorkspaceBackOptions settings){
+        em.merge(settings);
     }
 
+    public WorkspaceFrontOptions loadWorkspaceFrontOptions(String pID){
+        return em.find(WorkspaceFrontOptions.class, pID);
+    }
+
+    public WorkspaceBackOptions loadWorkspaceBackOptions(String pID){
+        return em.find(WorkspaceBackOptions.class, pID);
+    }
 
     public void createWorkspace(Workspace pWorkspace) throws WorkspaceAlreadyExistsException, CreationException, FolderAlreadyExistsException {
         try {
@@ -362,13 +370,12 @@ public class WorkspaceDAO {
         em.createQuery("DELETE FROM Webhook w where w.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
-        // Notification options
-        em.createQuery("DELETE FROM NotificationOptions n where n.workspace = :workspace")
+        // WorkspaceBackOptions
+        em.createQuery("DELETE FROM WorkspaceBackOptions n where n.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
 
-        // Finally delete the workspace and its settings
-        // Options
-        em.createQuery("DELETE FROM WorkspaceOptions wo where wo.workspace = :workspace")
+        // WorkspaceFrontOptions
+        em.createQuery("DELETE FROM WorkspaceFrontOptions wo where wo.workspace = :workspace")
                 .setParameter("workspace", workspace).executeUpdate();
        
         // Finally delete the workspace

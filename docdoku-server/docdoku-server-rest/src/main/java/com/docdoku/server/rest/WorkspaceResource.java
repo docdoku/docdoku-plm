@@ -19,12 +19,12 @@
  */
 package com.docdoku.server.rest;
 
-import com.docdoku.core.admin.WorkspaceOptions;
+import com.docdoku.core.admin.WorkspaceFrontOptions;
 import com.docdoku.core.common.*;
 import com.docdoku.core.document.DocumentRevision;
 import com.docdoku.core.exceptions.*;
 import com.docdoku.core.exceptions.NotAllowedException;
-import com.docdoku.core.notification.NotificationOptions;
+import com.docdoku.core.admin.WorkspaceBackOptions;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.security.WorkspaceUserGroupMembership;
@@ -746,86 +746,86 @@ public class WorkspaceResource {
     }
 
     @GET
-    @ApiOperation(value = "Get workspace customizations",
-            response = WorkspaceOptionsDTO.class)
-    @Path("/{workspaceId}/customizations")
+    @ApiOperation(value = "Get workspace front options",
+            response = WorkspaceFrontOptionsDTO.class)
+    @Path("/{workspaceId}/front-options")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieve of workspace customizations"),
+            @ApiResponse(code = 200, message = "Successful retrieve of workspace front options"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public WorkspaceOptionsDTO getWorkspaceOptions(
+    public WorkspaceFrontOptionsDTO getWorkspaceFrontOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) throws EntityNotFoundException {
 
-        WorkspaceOptions workspaceOptions = workspaceManager.getWorkspaceOptions(workspaceId);
-        if(workspaceOptions == null){
-            workspaceOptions=new WorkspaceOptions();
-            workspaceOptions.setDefaults();
+        WorkspaceFrontOptions workspaceFrontOptions = workspaceManager.getWorkspaceFrontOptions(workspaceId);
+        if(workspaceFrontOptions == null){
+            workspaceFrontOptions =new WorkspaceFrontOptions();
+            workspaceFrontOptions.setDefaults();
         }
 
-        return mapper.map(workspaceOptions, WorkspaceOptionsDTO.class);
+        return mapper.map(workspaceFrontOptions, WorkspaceFrontOptionsDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Update workspace customizations",
+    @ApiOperation(value = "Update workspace front options",
             response = Response.class)
-    @Path("/{workspaceId}/customizations")
+    @Path("/{workspaceId}/front-options")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful update of workspace customizations"),
+            @ApiResponse(code = 200, message = "Successful update of workspace front options"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateWorkspaceOptions(
+    public Response updateWorkspaceFrontOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-            @ApiParam(value = "Customization values", required = true) WorkspaceOptionsDTO workspaceOptionsDTO) throws AccessRightException, AccountNotFoundException {
+            @ApiParam(value = "Option values", required = true) WorkspaceFrontOptionsDTO workspaceFrontOptionsDTO) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
 
-        List<String> partTableColumns = workspaceOptionsDTO.getPartTableColumns();
-        List<String> documentTableColumns = workspaceOptionsDTO.getDocumentTableColumns();
+        List<String> partTableColumns = workspaceFrontOptionsDTO.getPartTableColumns();
+        List<String> documentTableColumns = workspaceFrontOptionsDTO.getDocumentTableColumns();
 
-        workspaceManager.updateWorkspaceOptions(new WorkspaceOptions(new Workspace(workspaceId),partTableColumns,documentTableColumns));
+        workspaceManager.updateWorkspaceFrontOptions(new WorkspaceFrontOptions(new Workspace(workspaceId), partTableColumns, documentTableColumns));
         return Response.noContent().build();
 
     }
 
 
     @GET
-    @ApiOperation(value = "Get notification options for workspace",
-            response = NotificationOptionsDTO.class
+    @ApiOperation(value = "Get workspace back options",
+            response = WorkspaceBackOptionsDTO.class
     )
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful retrieval of notification options"),
+            @ApiResponse(code = 200, message = "Successful retrieval of workspace back options"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("/{workspaceId}/notification-options")
+    @Path("/{workspaceId}/back-options")
     @Produces(MediaType.APPLICATION_JSON)
-    public NotificationOptionsDTO getNotificationOptions(
+    public WorkspaceBackOptionsDTO getWorkspaceBackOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId)
             throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
-        NotificationOptions notificationOptions = workspaceManager.getNotificationOptions(workspaceId);
-        return mapper.map(notificationOptions, NotificationOptionsDTO.class);
+        WorkspaceBackOptions workspaceBackOptions = workspaceManager.getWorkspaceBackOptions(workspaceId);
+        return mapper.map(workspaceBackOptions, WorkspaceBackOptionsDTO.class);
     }
 
     @PUT
-    @ApiOperation(value = "Set notification options for workspace",
+    @ApiOperation(value = "Update workspace back options",
             response = Response.class
     )
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successful update of notification options"),
+            @ApiResponse(code = 200, message = "Successful update of workspace back options"),
             @ApiResponse(code = 401, message = "Unauthorized"),
             @ApiResponse(code = 500, message = "Internal server error")
     })
-    @Path("/{workspaceId}/notification-options")
+    @Path("/{workspaceId}/back-options")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateNotificationOptions(
+    public Response updateWorkspaceBackOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId,
-            @ApiParam(value = "Notification options", required = true) NotificationOptionsDTO notificationOptionsDTO
+            @ApiParam(value = "Option values", required = true) WorkspaceBackOptionsDTO workspaceBackOptionsDTO
     ) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
-        workspaceManager.setNotificationOptions(workspaceId, notificationOptionsDTO.isSendEmails());
+        workspaceManager.updateWorkspaceBackOptions(new WorkspaceBackOptions(new Workspace(workspaceId), workspaceBackOptionsDTO.isSendEmails()));
         return Response.noContent().build();
     }
 

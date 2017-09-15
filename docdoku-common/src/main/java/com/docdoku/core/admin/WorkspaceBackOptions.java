@@ -18,47 +18,50 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.core.notification;
+package com.docdoku.core.admin;
 
 import com.docdoku.core.common.Workspace;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.io.Serializable;
 
 /**
+ * Class that wraps setting options of a particular workspace.
+ * These settings are related to back-end concerns.
+ *
  * @author Morgan Guimard
+ * @version 2.5, 14/09/17
+ * @since V2.5
  */
-@Table(name = "NOTIFICATIONOPTIONS")
+@Table(name = "WORKSPACEBACKOPTIONS")
 @Entity
-public class NotificationOptions implements Serializable {
+public class WorkspaceBackOptions implements Serializable {
 
-    public static final int UNIQUE_ID = 1;
     private static final boolean SEND_EMAILS_DEFAULT = true;
 
     @Id
-    @OneToOne
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
 
+
+    /**
+     * Indicates that the system must not send email notifications.
+     * Usually used when using a third notification system connected through
+     * webhooks.
+     */
     private boolean sendEmails;
 
-    public NotificationOptions() {
+    public WorkspaceBackOptions() {
     }
 
-    public NotificationOptions(Workspace workspace) {
+    public WorkspaceBackOptions(Workspace workspace) {
         this.workspace = workspace;
         this.sendEmails = SEND_EMAILS_DEFAULT;
     }
 
-    public NotificationOptions(Workspace workspace, boolean sendEmails) {
+    public WorkspaceBackOptions(Workspace workspace, boolean sendEmails) {
         this.workspace = workspace;
         this.sendEmails = sendEmails;
-    }
-
-    public static int getUniqueId() {
-        return UNIQUE_ID;
     }
 
     public Workspace getWorkspace() {
@@ -80,4 +83,5 @@ public class NotificationOptions implements Serializable {
     public String getWorkspaceId() {
         return workspace.getId();
     }
+
 }

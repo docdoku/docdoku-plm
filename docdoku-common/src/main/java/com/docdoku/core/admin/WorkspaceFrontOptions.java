@@ -25,18 +25,23 @@ import com.docdoku.core.common.Workspace;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Class that wraps setting options of a particular workspace.
+ * These settings are related to front-end concerns.
  *
  * @author Morgan Guimard
  * @version 2.5, 04/09/17
  * @since V2.5
  */
-@Table(name = "WORKSPACEOPTIONS")
+@Table(name = "WORKSPACEFRONTOPTIONS")
 @Entity
-public class WorkspaceOptions implements Serializable {
+public class WorkspaceFrontOptions implements Serializable {
+
+
+    private static final String[] PART_TABLE_COLUMNS_DEFAULT = {"pr.number","pr.version","pr.iteration","pr.type","pr.name","pr.author","pr.modificationDate","pr.lifecycleSate","pr.checkoutUser","pr.acl"};
 
     @Id
     @OneToOne(optional = false, fetch = FetchType.EAGER)
@@ -62,10 +67,10 @@ public class WorkspaceOptions implements Serializable {
     @Column(name="TABLECOLUMN")
     private List<String> documentTableColumns;
 
-    public WorkspaceOptions() {
+    public WorkspaceFrontOptions() {
     }
 
-    public WorkspaceOptions(Workspace workspace, List<String> partTableColumns, List<String> documentTableColumns) {
+    public WorkspaceFrontOptions(Workspace workspace, List<String> partTableColumns, List<String> documentTableColumns) {
         this.workspace = workspace;
         this.partTableColumns = partTableColumns;
         this.documentTableColumns = documentTableColumns;
@@ -96,7 +101,7 @@ public class WorkspaceOptions implements Serializable {
     }
 
     public void setDefaults() {
-        partTableColumns=new ArrayList<>();
+        partTableColumns=new ArrayList<>(Arrays.asList(PART_TABLE_COLUMNS_DEFAULT));
         documentTableColumns=new ArrayList<>();
     }
 }

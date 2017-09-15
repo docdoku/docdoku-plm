@@ -28,7 +28,7 @@ import com.docdoku.core.hooks.SNSWebhookApp;
 import com.docdoku.core.hooks.SimpleWebhookApp;
 import com.docdoku.core.hooks.Webhook;
 import com.docdoku.core.meta.Tag;
-import com.docdoku.core.notification.NotificationOptions;
+import com.docdoku.core.admin.WorkspaceBackOptions;
 import com.docdoku.core.product.PartRevision;
 import com.docdoku.core.services.INotifierLocal;
 import com.docdoku.core.services.IPlatformOptionsManagerLocal;
@@ -678,15 +678,15 @@ public class NotifierBean implements INotifierLocal {
 
     private void sendMessage(String workspaceId, String email, String name, String subject, String content) throws MessagingException {
 
-        NotificationOptions notificationOptions;
+        WorkspaceBackOptions workspaceBackOptions;
         try {
-            notificationOptions = workspaceManager.getNotificationOptions(workspaceId);
+            workspaceBackOptions = workspaceManager.getWorkspaceBackOptions(workspaceId);
         } catch (WorkspaceNotFoundException | AccountNotFoundException | AccessRightException e) {
             LOGGER.log(Level.SEVERE, null, e);
             return;
         }
 
-        if (notificationOptions.isSendEmails()) {
+        if (workspaceBackOptions.isSendEmails()) {
             sendEmail(email, name, subject, content);
         }
 

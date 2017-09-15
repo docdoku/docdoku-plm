@@ -4,7 +4,8 @@
   <persistence-unit name="DocDoku-PU" transaction-type="JTA">
     <jta-data-source>jdbc/docdokuPU</jta-data-source>
     <class>com.docdoku.core.admin.PlatformOptions</class>
-    <class>com.docdoku.core.admin.WorkspaceOptions</class>
+    <class>com.docdoku.core.admin.WorkspaceFrontOptions</class>
+    <class>com.docdoku.core.admin.WorkspaceBackOptions</class>
     <class>com.docdoku.core.common.Account</class>
     <class>com.docdoku.core.common.BinaryResource</class>
     <class>com.docdoku.core.common.Organization</class>
@@ -107,16 +108,15 @@
     <class>com.docdoku.core.hooks.SNSWebhookApp</class>
     <class>com.docdoku.core.hooks.Webhook</class>
     <class>com.docdoku.core.hooks.WebhookApp</class>
-    <class>com.docdoku.core.notification.NotificationOptions</class>
 
-        <class>com.docdoku.server.storage.CryptoConverter</class>
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
-        <properties>
-            <property name="javax.persistence.schema-generation.database.action" value="create"/>
-            <property name="javax.persistence.schema-generation.scripts.action" value="drop-and-create"/>
-            <property name="javax.persistence.schema-generation.scripts.create-target" value="create.sql"/>
-            <property name="javax.persistence.schema-generation.scripts.drop-target" value="drop.sql"/>
-            <property name="javax.persistence.sharedCache.mode" value="ALL"/>
-        </properties>
+    <class>com.docdoku.server.storage.CryptoConverter</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+        <property name="javax.persistence.schema-generation.database.action" value="create"/>
+        <property name="javax.persistence.schema-generation.scripts.action" value="drop-and-create"/>
+        <property name="javax.persistence.schema-generation.scripts.create-target" value="create.sql"/>
+        <property name="javax.persistence.schema-generation.scripts.drop-target" value="drop.sql"/>
+        <property name="javax.persistence.sharedCache.mode" value="ALL"/>
+    </properties>
     </persistence-unit>
 </persistence>

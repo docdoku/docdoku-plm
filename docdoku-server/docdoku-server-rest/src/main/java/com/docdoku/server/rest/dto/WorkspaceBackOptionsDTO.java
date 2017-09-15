@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-@ApiModel(value = "NotificationOptionsDTO", description = "This class is a representation of a {@link com.docdoku.core.notification.NotificationOptions} entity")
-public class NotificationOptionsDTO implements Serializable {
+@ApiModel(value = "WorkspaceBackOptionsDTO", description = "This class is a representation of a {@link com.docdoku.core.admin.WorkspaceBackOptions} entity")
+public class WorkspaceBackOptionsDTO implements Serializable {
 
     @ApiModelProperty(value = "Workspace id")
     private String workspaceId;
@@ -36,7 +36,7 @@ public class NotificationOptionsDTO implements Serializable {
     @ApiModelProperty(value = "Send emails flag")
     private boolean sendEmails;
 
-    public NotificationOptionsDTO() {
+    public WorkspaceBackOptionsDTO() {
     }
 
     public String getWorkspaceId() {

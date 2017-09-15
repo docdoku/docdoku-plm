@@ -21,17 +21,16 @@ package com.docdoku.server;
 
 
 import com.docdoku.core.admin.OperationSecurityStrategy;
-import com.docdoku.core.admin.WorkspaceOptions;
+import com.docdoku.core.admin.WorkspaceFrontOptions;
 import com.docdoku.core.common.Account;
 import com.docdoku.core.common.User;
 import com.docdoku.core.common.Workspace;
 import com.docdoku.core.exceptions.*;
-import com.docdoku.core.notification.NotificationOptions;
+import com.docdoku.core.admin.WorkspaceBackOptions;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.*;
 import com.docdoku.core.util.NamingConvention;
 import com.docdoku.server.dao.AccountDAO;
-import com.docdoku.server.dao.NotificationOptionsDAO;
 import com.docdoku.server.dao.UserDAO;
 import com.docdoku.server.dao.WorkspaceDAO;
 
@@ -219,9 +218,9 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public WorkspaceOptions getWorkspaceOptions(String workspaceId) throws AccountNotFoundException, WorkspaceNotFoundException {
+    public WorkspaceFrontOptions getWorkspaceFrontOptions(String workspaceId) throws AccountNotFoundException, WorkspaceNotFoundException {
 
-        WorkspaceOptions settings = new WorkspaceDAO(em).loadWorkspaceOptions(workspaceId);
+        WorkspaceFrontOptions settings = new WorkspaceDAO(em).loadWorkspaceFrontOptions(workspaceId);
         if (contextManager.isCallerInRole(UserGroupMapping.ADMIN_ROLE_ID)) {
             return settings;
         }
@@ -248,11 +247,14 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
     @Override
-    public void updateWorkspaceOptions(WorkspaceOptions pWorkspaceOptions) throws AccessRightException, AccountNotFoundException {
-        Workspace wks=em.find(Workspace.class,pWorkspaceOptions.getWorkspace().getId());
-        pWorkspaceOptions.setWorkspace(wks);
-        Account account = userManager.checkAdmin(wks);
-        new WorkspaceDAO(new Locale(account.getLanguage()), em).updateWorkspaceOptions(pWorkspaceOptions);
+    public void updateWorkspaceFrontOptions(WorkspaceFrontOptions pWorkspaceFrontOptions) throws AccessRightException, AccountNotFoundException, WorkspaceNotFoundException {
+        String workspaceId = pWorkspaceFrontOptions.getWorkspace().getId();
+        Account account = userManager.checkAdmin(workspaceId);
+        Locale locale = new Locale(account.getLanguage());
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+        pWorkspaceFrontOptions.setWorkspace(workspace);
+        new WorkspaceDAO(new Locale(account.getLanguage()), em).updateWorkspaceFrontOptions(pWorkspaceFrontOptions);
     }
 
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
@@ -269,21 +271,30 @@ public class WorkspaceManagerBean implements IWorkspaceManagerLocal {
     }
 
     @Override
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public void setNotificationOptions(String workspaceId, boolean sendEmails) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    public void updateWorkspaceBackOptions(WorkspaceBackOptions pWorkspaceBackOptions) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+        String workspaceId = pWorkspaceBackOptions.getWorkspace().getId();
         Account account = userManager.checkAdmin(workspaceId);
         Locale locale = new Locale(account.getLanguage());
-        NotificationOptionsDAO notificationOptionsDAO = new NotificationOptionsDAO(locale, em);
-        notificationOptionsDAO.updateNotificationOptions(workspaceId, sendEmails);
+        WorkspaceDAO workspaceDAO = new WorkspaceDAO(locale, em);
+        Workspace workspace = workspaceDAO.loadWorkspace(workspaceId);
+        pWorkspaceBackOptions.setWorkspace(workspace);
+        new WorkspaceDAO(new Locale(account.getLanguage()), em).updateWorkspaceBackOptions(pWorkspaceBackOptions);
     }
 
     @Override
-    @RolesAllowed(UserGroupMapping.REGULAR_USER_ROLE_ID)
-    public NotificationOptions getNotificationOptions(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
+    @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID, UserGroupMapping.ADMIN_ROLE_ID})
+    public WorkspaceBackOptions getWorkspaceBackOptions(String workspaceId) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException {
         Account account = userManager.checkAdmin(workspaceId);
         Locale locale = new Locale(account.getLanguage());
-        NotificationOptionsDAO notificationOptionsDAO = new NotificationOptionsDAO(locale, em);
-        return notificationOptionsDAO.getNotificationOptionsOrNew(workspaceId);
+        WorkspaceBackOptions workspaceBackOptions =  new WorkspaceDAO(locale, em).loadWorkspaceBackOptions(workspaceId);
+
+        Workspace workspace = em.find(Workspace.class, workspaceId);
+        if(workspaceBackOptions == null){
+            workspaceBackOptions =new WorkspaceBackOptions(workspace);
+        }
+
+        return workspaceBackOptions;
     }
 
 }
