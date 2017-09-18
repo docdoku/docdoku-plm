@@ -759,12 +759,7 @@ public class WorkspaceResource {
     public WorkspaceFrontOptionsDTO getWorkspaceFrontOptions(
             @ApiParam(value = "Workspace id", required = true) @PathParam("workspaceId") String workspaceId) throws EntityNotFoundException {
 
-        WorkspaceFrontOptions workspaceFrontOptions = workspaceManager.getWorkspaceFrontOptions(workspaceId);
-        if(workspaceFrontOptions == null){
-            workspaceFrontOptions =new WorkspaceFrontOptions();
-            workspaceFrontOptions.setDefaults();
-        }
-
+        WorkspaceFrontOptions workspaceFrontOptions = Optional.ofNullable(workspaceManager.getWorkspaceFrontOptions(workspaceId)).orElse(new WorkspaceFrontOptions());
         return mapper.map(workspaceFrontOptions, WorkspaceFrontOptionsDTO.class);
     }
 

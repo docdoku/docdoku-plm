@@ -40,9 +40,6 @@ import java.util.List;
 @Entity
 public class WorkspaceFrontOptions implements Serializable {
 
-
-    private static final String[] PART_TABLE_COLUMNS_DEFAULT = {"pr.number","pr.version","pr.iteration","pr.type","pr.name","pr.author","pr.modificationDate","pr.lifecycleSate","pr.checkoutUser","pr.acl"};
-
     @Id
     @OneToOne(optional = false, fetch = FetchType.EAGER)
     private Workspace workspace;
@@ -54,7 +51,7 @@ public class WorkspaceFrontOptions implements Serializable {
                     @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
             }
     )
-    @Column(name="TABLECOLUMN")
+    @Column(name = "TABLECOLUMN")
     private List<String> partTableColumns;
 
     @OrderColumn(name = "DOCUMENTCOLUMN_ORDER")
@@ -64,7 +61,7 @@ public class WorkspaceFrontOptions implements Serializable {
                     @JoinColumn(name = "WORKSPACE_ID", referencedColumnName = "WORKSPACE_ID")
             }
     )
-    @Column(name="TABLECOLUMN")
+    @Column(name = "TABLECOLUMN")
     private List<String> documentTableColumns;
 
     public WorkspaceFrontOptions() {
@@ -100,8 +97,4 @@ public class WorkspaceFrontOptions implements Serializable {
         this.workspace = workspace;
     }
 
-    public void setDefaults() {
-        partTableColumns=new ArrayList<>(Arrays.asList(PART_TABLE_COLUMNS_DEFAULT));
-        documentTableColumns=new ArrayList<>();
-    }
 }
