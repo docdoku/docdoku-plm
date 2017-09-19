@@ -99,7 +99,7 @@ public class DocumentApiTest {
         Assert.assertNull(lastIteration.getModificationDate());
         lastIteration.setRevisionNote("Something modified");
 
-        DocumentIterationDTO updatedIteration = documentApi.updateDocumentIteration(workspace.getId(), checkedOutDocument.getDocumentMasterId(), checkedOutDocument.getVersion(), "2", lastIteration);
+        DocumentIterationDTO updatedIteration = documentApi.updateDocumentIteration(workspace.getId(), checkedOutDocument.getDocumentMasterId(), checkedOutDocument.getVersion(), 2, lastIteration);
 
         Assert.assertNotNull(updatedIteration.getModificationDate());
         lastIteration.setModificationDate(updatedIteration.getModificationDate());
@@ -380,7 +380,7 @@ public class DocumentApiTest {
         attribute.setType(InstanceAttributeDTO.TypeEnum.TEXT);
         attribute.setValue(attrValue);
         lastIteration.getInstanceAttributes().add(attribute);
-        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "1", lastIteration);
+        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", 1, lastIteration);
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
 
         String attributeSearchQuery = "TEXT:" + attrName + ":" + attrValue;
@@ -587,7 +587,7 @@ public class DocumentApiTest {
         instanceAttributes.add(attribute1);
         instanceAttributes.add(attribute2);
 
-        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "1", lastIteration);
+        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", 1, lastIteration);
         return documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
     }
 
@@ -624,7 +624,7 @@ public class DocumentApiTest {
         List<InstanceAttributeDTO> instanceAttributes = lastIteration.getInstanceAttributes();
         instanceAttributes.add(attributeOld);
 
-        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "1", lastIteration);
+        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", 1, lastIteration);
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
 
         // Asynchronous indexation when checking in
@@ -637,7 +637,7 @@ public class DocumentApiTest {
         instanceAttributes.remove(attributeOld);
         instanceAttributes.add(attributeNew);
 
-        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", "2", lastIteration);
+        documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", 2, lastIteration);
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
 
         // Let some time to server for data indexing (asynchronous)

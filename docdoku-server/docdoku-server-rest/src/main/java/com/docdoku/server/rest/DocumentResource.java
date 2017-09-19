@@ -296,11 +296,10 @@ public class DocumentResource {
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Document master id") @PathParam("documentId") String documentId,
             @ApiParam(required = true, value = "Document version") @PathParam("documentVersion") String documentVersion,
-            @ApiParam(required = true, value = "Document iteration") @PathParam("docIteration") String docIteration,
+            @ApiParam(required = true, value = "Document iteration") @PathParam("docIteration") int docIteration,
             @ApiParam(required = true, value = "Document iteration to update") DocumentIterationDTO documentIterationDTO)
             throws EntityNotFoundException, NotAllowedException, AccessRightException, UserNotActiveException {
         String pRevisionNote = documentIterationDTO.getRevisionNote();
-        int pIteration = Integer.parseInt(docIteration);
 
         List<DocumentRevisionDTO> linkedDocs = documentIterationDTO.getLinkedDocuments();
         DocumentRevisionKey[] links = null;
@@ -329,7 +328,7 @@ public class DocumentResource {
         }
 
         DocumentRevision docR = documentService.updateDocument(
-                new DocumentIterationKey(workspaceId, documentId, documentVersion, pIteration),
+                new DocumentIterationKey(workspaceId, documentId, documentVersion, docIteration),
                 pRevisionNote, attributes, links, documentLinkComments);
 
         return mapper.map(docR.getLastIteration(), DocumentIterationDTO.class);

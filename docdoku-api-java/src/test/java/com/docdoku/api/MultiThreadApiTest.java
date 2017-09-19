@@ -129,7 +129,7 @@ public class MultiThreadApiTest {
         lastIteration.setRevisionNote("Updated by thread  [" + step + "]");
 
         documentApi.updateDocumentIteration(documentRevisionDTO.getWorkspaceId(), documentRevisionDTO.getDocumentMasterId(), documentRevisionDTO.getVersion(),
-                String.valueOf(lastIteration.getIteration()), lastIteration);
+                lastIteration.getIteration(), lastIteration);
         documentApi.checkInDocument(documentRevisionDTO.getWorkspaceId(), documentRevisionDTO.getDocumentMasterId(), documentRevisionDTO.getVersion());
 
         File downloaded = documentBinaryApi.downloadDocumentFile(documentRevisionDTO.getWorkspaceId(), documentRevisionDTO.getDocumentMasterId(),

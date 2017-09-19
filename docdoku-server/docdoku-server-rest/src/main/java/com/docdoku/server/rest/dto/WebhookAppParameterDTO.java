@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
 
 @XmlRootElement
-@ApiModel(value = "WebhookAppParameterDTO", description = "This class is a representation of a {@link com.docdoku.core.hooks.WebhookAppParameter} entity")
+@ApiModel(value = "WebhookAppParameterDTO", description = "This class carries on specific webhook app properties")
 public class WebhookAppParameterDTO implements Serializable {
 
     @ApiModelProperty(value = "Webhook app parameter name")

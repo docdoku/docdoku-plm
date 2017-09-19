@@ -309,11 +309,11 @@ public class PartsResource {
     public Response filterPartMasterInBaseline(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
             @ApiParam(required = true, value = "Part number") @PathParam("partNumber") String partNumber,
-            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") String baselineId)
+            @ApiParam(required = true, value = "Baseline id") @PathParam("baselineId") int baselineId)
             throws UserNotFoundException, WorkspaceNotFoundException, UserNotActiveException,
             BaselineNotFoundException, PartMasterNotFoundException, WorkspaceNotEnabledException {
 
-        ProductStructureFilter filter = filterService.getBaselinePSFilter(Integer.valueOf(baselineId));
+        ProductStructureFilter filter = filterService.getBaselinePSFilter(baselineId);
         PartMaster partMaster = productService.getPartMaster(new PartMasterKey(workspaceId, partNumber));
         List<PartIteration> partIterations = filter.filter(partMaster);
         if (!partIterations.isEmpty()) {
@@ -393,14 +393,14 @@ public class PartsResource {
     public Response exportExistingQuery(
             @Context HttpServletRequest request,
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Query id") @PathParam("queryId") String queryId,
+            @ApiParam(required = true, value = "Query id") @PathParam("queryId") int queryId,
             @ApiParam(required = true, value = "Choose export type", defaultValue = "json") @PathParam("export") String exportType)
             throws EntityNotFoundException, UserNotActiveException, AccessRightException, CreationException,
             QueryAlreadyExistsException, EntityConstraintException, NotAllowedException {
 
         User user = userManager.checkWorkspaceReadAccess(workspaceId);
         Locale locale = new Locale(user != null ? user.getLanguage() : "en");
-        Query query = productService.loadQuery(workspaceId, Integer.valueOf(queryId));
+        Query query = productService.loadQuery(workspaceId, queryId);
         return export(workspaceId, query, request, exportType, locale);
     }
 

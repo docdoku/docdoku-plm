@@ -30,6 +30,10 @@
                 <class-a>com.docdoku.core.security.ACL</class-a>
                 <class-b>com.docdoku.server.rest.dto.ACLDTO</class-b>
             </converter>
+            <converter type="com.docdoku.server.rest.converters.WebhookDozerConverter" >
+                <class-a>com.docdoku.core.hooks.Webhook</class-a>
+                <class-b>com.docdoku.server.rest.dto.WebhookDTO</class-b>
+            </converter>
         </custom-converters>    
     </configuration>
     

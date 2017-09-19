@@ -96,30 +96,11 @@ public class WebhookApiTest {
         webhookDTO.setActive(true);
         WebhookDTO webhook = webhookApi.createWebhook(workspace.getId(), webhookDTO);
 
-        SimpleWebhookDTO simpleWebhookDTO = new SimpleWebhookDTO();
-        simpleWebhookDTO.setMethod("POST");
-        simpleWebhookDTO.setUri("http://localhost:8080");
-        simpleWebhookDTO.setAuthorization("some authorization header");
-
-        SimpleWebhookDTO simpleApp = webhookApi.configureSimpleWebhook(workspace.getId(), webhook.getId(), simpleWebhookDTO);
-        Assert.assertNotNull(simpleApp);
-
         // SNS web hook
 
         webhookDTO.setName("A sns app");
         webhookDTO.setActive(true);
         webhook = webhookApi.updateWebhook(workspace.getId(), webhook.getId(), webhookDTO);
-
-        SNSWebhookDTO snsWebhookDTO = new SNSWebhookDTO();
-        snsWebhookDTO.setAwsAccount("My account");
-        snsWebhookDTO.setAwsSecret("My secret");
-        snsWebhookDTO.setRegion("My region");
-        snsWebhookDTO.setTopicArn("arn::topic:arn...");
-
-        SNSWebhookDTO snsApp = webhookApi.configureSNSWebhook(workspace.getId(), webhook.getId(), snsWebhookDTO);
-        Assert.assertNotNull(snsApp);
-        Assert.assertEquals("My account", snsApp.getAwsAccount());
-
     }
 
     @Test

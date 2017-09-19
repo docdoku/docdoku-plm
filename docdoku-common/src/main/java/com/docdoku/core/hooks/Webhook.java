@@ -4,7 +4,6 @@ import com.docdoku.core.common.Workspace;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Table(name = "WEBHOOK")
 @Entity
@@ -18,12 +17,12 @@ public class Webhook implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    protected String name;
+    private String name;
 
-    protected boolean active;
+    private boolean active;
 
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    protected Workspace workspace;
+    private  Workspace workspace;
 
     @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private WebhookApp webhookApp;
@@ -76,10 +75,6 @@ public class Webhook implements Serializable {
 
     public void setWebhookApp(WebhookApp webhookApp) {
         this.webhookApp = webhookApp;
-    }
-
-    public List<WebhookAppParameter> getParameters() {
-        return webhookApp.getParameters();
     }
 
     public String getAppName() {

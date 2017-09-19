@@ -27,8 +27,6 @@ import com.docdoku.core.hooks.Webhook;
 import com.docdoku.core.hooks.WebhookApp;
 import com.docdoku.core.security.UserGroupMapping;
 import com.docdoku.core.services.IWebhookManagerLocal;
-import com.docdoku.server.rest.dto.SNSWebhookDTO;
-import com.docdoku.server.rest.dto.SimpleWebhookDTO;
 import com.docdoku.server.rest.dto.WebhookAppParameterDTO;
 import com.docdoku.server.rest.dto.WebhookDTO;
 import io.swagger.annotations.*;
@@ -100,10 +98,11 @@ public class WebhookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public WebhookDTO getWebhook(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") Integer webhookId
+            @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") int webhookId
     ) throws WorkspaceNotFoundException, AccountNotFoundException, AccessRightException, WebhookNotFoundException {
         Webhook webHook = webhookManager.getWebHook(workspaceId, webhookId);
-        return mapper.map(webHook, WebhookDTO.class);
+        WebhookDTO dto = mapper.map(webHook, WebhookDTO.class);
+        return dto;
     }
 
     @POST
@@ -148,7 +147,7 @@ public class WebhookResource {
         return mapper.map(webHook, WebhookDTO.class);
     }
 
-    private WebhookApp configureWebhook(String workspaceId, Integer webhookId, WebhookDTO webhookDTO) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+    private WebhookApp configureWebhook(String workspaceId, int webhookId, WebhookDTO webhookDTO) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         List<WebhookAppParameterDTO> parameters = webhookDTO.getParameters();
         String appName = webhookDTO.getAppName();
         if (appName != null && parameters != null && !parameters.isEmpty()) {
@@ -165,30 +164,34 @@ public class WebhookResource {
         return webhookManager.configureSimpleWebhook(workspaceId, webhookId, "POST", null, null);
     }
 
-    private WebhookApp updateSNSWebhook(String workspaceId, Integer webhookId, List<WebhookAppParameterDTO> parameters)
+    private WebhookApp updateSNSWebhook(String workspaceId, int webhookId, List<WebhookAppParameterDTO> parameters)
             throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         String region = null;
         String topicArn = null;
         String awsAccount = null;
         String awsSecret = null;
         for (WebhookAppParameterDTO parameter : parameters) {
-            if (parameter.getName().equals("topicArn")) {
-                topicArn = parameter.getValue();
+            if(parameter.getName()==null) continue;
+            switch(parameter.getName()){
+                case "topicArn":
+                    topicArn = parameter.getValue();
+                    break;
+                case "region":
+                    region = parameter.getValue();
+                    break;
+                case "awsAccount":
+                    awsAccount = parameter.getValue();
+                    break;
+                case "awsSecret":
+                    awsSecret = parameter.getValue();
+                    break;
             }
-            if (parameter.getName().equals("region")) {
-                region = parameter.getValue();
-            }
-            if (parameter.getName().equals("awsAccount")) {
-                awsAccount = parameter.getValue();
-            }
-            if (parameter.getName().equals("awsSecret")) {
-                awsSecret = parameter.getValue();
-            }
+
         }
         return webhookManager.configureSNSWebhook(workspaceId, webhookId, topicArn, region, awsAccount, awsSecret);
     }
 
-    private WebhookApp updateSimpleWebhook(String workspaceId, Integer webhookId, List<WebhookAppParameterDTO> parameters)
+    private WebhookApp updateSimpleWebhook(String workspaceId, int webhookId, List<WebhookAppParameterDTO> parameters)
             throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         String method = null;
         String uri = null;
@@ -200,11 +203,9 @@ public class WebhookResource {
                 case "method":
                     method = parameter.getValue();
                     break;
-
                 case "uri":
                     uri = parameter.getValue();
                     break;
-
                 case "authorization":
                     authorization = parameter.getValue();
                     break;
@@ -226,49 +227,11 @@ public class WebhookResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response deleteWebhook(
             @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") Integer webhookId
+            @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") int webhookId
     ) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         webhookManager.deleteWebhook(workspaceId, webhookId);
         return Response.noContent().build();
     }
 
-    @PUT
-    @Path("/{webhookId}/simple-webhook")
-    @ApiOperation(value = "Associate a simple-webhook configuration to webhook",
-            response = SimpleWebhookDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful configuration of webhook"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 404, message = "Webhook not found"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @Produces(MediaType.APPLICATION_JSON)
-    public SimpleWebhookDTO configureSimpleWebhook(
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") Integer webhookId,
-            @ApiParam(required = true, value = "Simple webhook configuration") SimpleWebhookDTO simpleWebhookDTO
-    ) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
-        SimpleWebhookApp simpleWebhookApp = webhookManager.configureSimpleWebhook(workspaceId, webhookId, simpleWebhookDTO.getMethod(), simpleWebhookDTO.getUri(), simpleWebhookDTO.getAuthorization());
-        return mapper.map(simpleWebhookApp, SimpleWebhookDTO.class);
-    }
 
-    @PUT
-    @Path("/{webhookId}/sns-webhook")
-    @ApiOperation(value = "Associate a sns-webhook configuration to webhook",
-            response = SNSWebhookDTO.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "Successful configuration of webhook"),
-            @ApiResponse(code = 401, message = "Unauthorized"),
-            @ApiResponse(code = 404, message = "Webhook not found"),
-            @ApiResponse(code = 500, message = "Internal server error")
-    })
-    @Produces(MediaType.APPLICATION_JSON)
-    public SNSWebhookDTO configureSNSWebhook(
-            @ApiParam(required = true, value = "Workspace id") @PathParam("workspaceId") String workspaceId,
-            @ApiParam(required = true, value = "Webhook id") @PathParam("webhookId") Integer webhookId,
-            @ApiParam(required = true, value = "SNS webhook configuration") SNSWebhookDTO snsWebhookDTO
-    ) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
-        SNSWebhookApp snsWebhookApp = webhookManager.configureSNSWebhook(workspaceId, webhookId, snsWebhookDTO.getTopicArn(), snsWebhookDTO.getRegion(), snsWebhookDTO.getAwsAccount(), snsWebhookDTO.getAwsSecret());
-        return mapper.map(snsWebhookApp, SNSWebhookDTO.class);
-    }
 }

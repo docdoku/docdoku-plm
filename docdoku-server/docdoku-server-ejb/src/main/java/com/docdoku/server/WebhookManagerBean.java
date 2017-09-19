@@ -117,7 +117,7 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public SimpleWebhookApp configureSimpleWebhook(String workspaceId, Integer webhookId, String method, String uri, String authorization) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+    public SimpleWebhookApp configureSimpleWebhook(String workspaceId, int webhookId, String method, String uri, String authorization) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         Webhook webHook = getWebHook(workspaceId, webhookId);
         SimpleWebhookApp app = new SimpleWebhookApp(method, authorization, uri);
         webHook.setWebhookApp(app);
@@ -126,7 +126,7 @@ public class WebhookManagerBean implements IWebhookManagerLocal {
 
     @Override
     @RolesAllowed({UserGroupMapping.REGULAR_USER_ROLE_ID})
-    public SNSWebhookApp configureSNSWebhook(String workspaceId, Integer webhookId, String topicArn, String region, String awsAccount, String awsSecret) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
+    public SNSWebhookApp configureSNSWebhook(String workspaceId, int webhookId, String topicArn, String region, String awsAccount, String awsSecret) throws WorkspaceNotFoundException, AccessRightException, WebhookNotFoundException, AccountNotFoundException {
         Webhook webHook = getWebHook(workspaceId, webhookId);
         SNSWebhookApp app = new SNSWebhookApp(topicArn, region, awsAccount, awsSecret);
         webHook.setWebhookApp(app);

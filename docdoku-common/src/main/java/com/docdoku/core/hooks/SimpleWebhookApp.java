@@ -5,7 +5,7 @@ import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "SIMPLEWEBHOOK")
+@Table(name = "SIMPLEWEBHOOKAPP")
 @Entity
 public class SimpleWebhookApp extends WebhookApp {
 
@@ -26,14 +26,6 @@ public class SimpleWebhookApp extends WebhookApp {
     public SimpleWebhookApp() {
     }
 
-    @Override
-    public List<WebhookAppParameter> getParameters() {
-        List<WebhookAppParameter> parameters = new ArrayList<>();
-        parameters.add(new WebhookAppParameter("method", method));
-        parameters.add(new WebhookAppParameter("uri", uri));
-        parameters.add(new WebhookAppParameter("authorization", authorization));
-        return parameters;
-    }
 
     public String getMethod() {
         return method;

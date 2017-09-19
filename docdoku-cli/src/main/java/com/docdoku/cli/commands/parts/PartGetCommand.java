@@ -117,7 +117,7 @@ public class PartGetCommand extends BaseCommandLine {
             pr = partsApi.getPartRevision(workspace, pPartNumber, pRevision);
             pi = pIteration != null ? pr.getPartIterations().get(pIteration - 1) : LastIterationHelper.getLastIteration(pr);
         } else if (baselineId != null) {
-            pi = partsApi.filterPartMasterInBaseline(workspace, pPartNumber, String.valueOf(baselineId));
+            pi = partsApi.filterPartMasterInBaseline(workspace, pPartNumber, baselineId);
             pr = partsApi.getPartRevision(workspace, pPartNumber, pi.getVersion());
         } else {
             pr = partsApi.getLatestPartRevision(workspace, pPartNumber);

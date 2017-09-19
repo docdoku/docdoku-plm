@@ -94,7 +94,7 @@ public class DocumentCheckInCommand extends BaseCommandLine {
 
         if(message != null && !message.isEmpty()){
             di.setRevisionNote(message);
-            documentApi.updateDocumentIteration(workspace, id, revision, String.valueOf(di.getIteration()), di);
+            documentApi.updateDocumentIteration(workspace, id, revision, di.getIteration(), di);
         }
 
         output.printInfo(LangHelper.getLocalizedMessage("CheckingInDocument",user)  + " : " + id

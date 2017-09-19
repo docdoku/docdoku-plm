@@ -126,9 +126,9 @@ public class TaskResource {
 
         String[] split = taskId.split("-");
 
-        int workflowId = Integer.valueOf(split[0]);
-        int step = Integer.valueOf(split[1]);
-        int task = Integer.valueOf(split[2]);
+        int workflowId = Integer.parseInt(split[0]);
+        int step = Integer.parseInt(split[1]);
+        int task = Integer.parseInt(split[2]);
 
         TaskKey taskKey = new TaskKey(new ActivityKey(workflowId, step), task);
         TaskWrapper taskWrapper = taskManager.getTask(workspaceId, taskKey);
@@ -242,9 +242,9 @@ public class TaskResource {
             throws EntityNotFoundException, NotAllowedException, UserNotActiveException, AccessRightException {
 
         String[] split = taskId.split("-");
-        int workflowId = Integer.valueOf(split[0]);
-        int step = Integer.valueOf(split[1]);
-        int index = Integer.valueOf(split[2]);
+        int workflowId = Integer.parseInt(split[0]);
+        int step = Integer.parseInt(split[1]);
+        int index = Integer.parseInt(split[2]);
 
         taskManager.processTask(workspaceId, new TaskKey(new ActivityKey(workflowId, step), index), taskProcessDTO.getAction().name(), taskProcessDTO.getComment(), taskProcessDTO.getSignature());
         return Response.noContent().build();

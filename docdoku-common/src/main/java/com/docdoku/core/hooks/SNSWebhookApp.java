@@ -26,15 +26,6 @@ public class SNSWebhookApp extends WebhookApp {
     public SNSWebhookApp() {
     }
 
-    @Override
-    public List<WebhookAppParameter> getParameters() {
-        List<WebhookAppParameter> parameters = new ArrayList<>();
-        parameters.add(new WebhookAppParameter("topicArn", topicArn));
-        parameters.add(new WebhookAppParameter("region", region));
-        parameters.add(new WebhookAppParameter("awsAccount", awsAccount));
-        parameters.add(new WebhookAppParameter("awsSecret", awsSecret));
-        return parameters;
-    }
 
     @Override
     public String getAppName() {

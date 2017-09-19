@@ -26,7 +26,6 @@ public abstract class WebhookApp implements Serializable {
         this.id = id;
     }
 
-    public abstract List<WebhookAppParameter> getParameters();
 
     public abstract String getAppName();
 
