@@ -32,6 +32,7 @@ import com.docdoku.core.meta.Folder;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.PropertiesLoader;
 import com.docdoku.server.BinaryStorageManagerBean;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.util.DocumentUtil;
@@ -49,6 +50,8 @@ import java.util.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DocumentBaselineManagerBeanTest {
+
+    private final static String PROPERTIES_BASE_NAME = "/com/docdoku/core/i18n/LocalStrings";
 
     @InjectMocks
     DocumentBaselineManagerBean docBaselineManagerBean = new DocumentBaselineManagerBean();
@@ -91,10 +94,10 @@ public class DocumentBaselineManagerBeanTest {
         //when
         try {
             docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaselineType.RELEASED, "description", new ArrayList<>());
-        }catch (NotAllowedException e){
-            ResourceBundle bundle = ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", new Locale(user.getLanguage()));
-            String expected = bundle.getString("NotAllowedException66");
-            Assert.assertEquals(expected,e.getMessage());
+        } catch (NotAllowedException e) {
+            Properties properties = PropertiesLoader.loadLocalizedProperties(new Locale(user.getLanguage()), PROPERTIES_BASE_NAME, getClass());
+            String expected = properties.getProperty("NotAllowedException66");
+            Assert.assertEquals(expected, e.getMessage());
         }
 
     }
@@ -139,8 +142,8 @@ public class DocumentBaselineManagerBeanTest {
 
         //when
         List<DocumentRevisionKey> documentRevisionKeys = new ArrayList<>();
-        documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(),documentMaster1.getId(),documentMaster1.getLastRevision().getVersion()));
-        documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(),documentMaster2.getId(),documentMaster2.getLastRevision().getVersion()));
+        documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(), documentMaster1.getId(), documentMaster1.getLastRevision().getVersion()));
+        documentRevisionKeys.add(new DocumentRevisionKey(workspace.getId(), documentMaster2.getId(), documentMaster2.getLastRevision().getVersion()));
         DocumentBaseline documentBaseline = docBaselineManagerBean.createBaseline(workspace.getId(), "name", DocumentBaselineType.LATEST, "description", documentRevisionKeys);
 
         //Then

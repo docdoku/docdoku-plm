@@ -35,6 +35,7 @@ import com.docdoku.core.services.IPlatformOptionsManagerLocal;
 import com.docdoku.core.services.IWebhookManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.core.util.FileIO;
+import com.docdoku.core.util.PropertiesLoader;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.server.hooks.SNSWebhookRunner;
 import com.docdoku.server.hooks.SimpleWebhookRunner;
@@ -66,7 +67,7 @@ import java.util.logging.Logger;
 @Stateless(name = "MailerBean")
 public class NotifierBean implements INotifierLocal {
 
-    private static final String TEMPLATE_BASE_NAME = "com.docdoku.server.templates.MailText";
+    private static final String TEMPLATE_BASE_NAME = "/com/docdoku/server/templates/MailText";
 
     @Inject
     private ConfigManager configManager;
@@ -214,17 +215,13 @@ public class NotifierBean implements INotifierLocal {
 
         LOGGER.info("Sending recovery message \n\tfor the user which login is " + account.getLogin());
 
-        Locale locale = new Locale(account.getLanguage());
         Object[] args = {
                 getRecoveryUrl(recoveryUUID),
                 account.getLogin()
         };
 
-        String subject = getString("Recovery_title", locale);
-        String body = getBody("Recovery_text", args, locale);
-
         try {
-            sendEmail(account.getEmail(), account.getName(), subject, body);
+            sendMessage(account, "Recovery_title", "Recovery_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -236,17 +233,13 @@ public class NotifierBean implements INotifierLocal {
 
         LOGGER.info("Sending workspace deletion notification message \n\tfor the user which login is " + admin.getLogin());
 
-        Locale locale = new Locale(admin.getLanguage());
-
         Object[] args = {
                 workspaceId
         };
 
-        String subject = getSubject("WorkspaceDeletion_title", locale);
-        String body = getBody("WorkspaceDeletion_text", args, locale);
-
         try {
-            sendEmail(admin.getEmail(), admin.getName(), subject, body);
+            User adminUser = new User(new Workspace(workspaceId), admin);
+            sendMessage(adminUser, "WorkspaceDeletion_title", "WorkspaceDeletion_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -258,17 +251,12 @@ public class NotifierBean implements INotifierLocal {
 
         LOGGER.info("Sending workspace deletion error notification message \n\tfor the user which login is " + admin.getLogin());
 
-        Locale locale = new Locale(admin.getLanguage());
-
         Object[] args = {
                 workspaceId
         };
-
-        String subject = getSubject("WorkspaceDeletion_title", locale);
-        String body = getBody("WorkspaceDeletionError_text", args, locale);
-
         try {
-            sendEmail(admin.getEmail(), admin.getName(), subject, body);
+            User adminUser = new User(new Workspace(workspaceId), admin);
+            sendMessage(adminUser, "WorkspaceDeletion_title", "WorkspaceDeletionError_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -281,17 +269,19 @@ public class NotifierBean implements INotifierLocal {
 
         Workspace workspace = partRevision.getPartMaster().getWorkspace();
         Account admin = workspace.getAdmin();
+        User adminUser = new User(workspace, admin);
+
         User author = partRevision.getAuthor();
 
         LOGGER.info("Sending workflow relaunch notification email \n\tfor the part " + partRevision.getLastIteration() + " to admin: " + admin.getLogin());
 
         // Mail both workspace admin and partRevision author
-        sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), partRevision);
+        sendWorkflowRelaunchedNotification(adminUser, partRevision);
 
 
         if (!admin.getLogin().equals(author.getLogin())) {
             LOGGER.info("Sending workflow relaunch notification email \n\tfor the part " + partRevision.getLastIteration() + " to user: " + author.getLogin());
-            sendWorkflowRelaunchedNotification(author.getName(), author.getEmail(), author.getLanguage(), workspace.getId(), partRevision);
+            sendWorkflowRelaunchedNotification(author, partRevision);
         }
 
     }
@@ -302,12 +292,12 @@ public class NotifierBean implements INotifierLocal {
         Workspace workspace = documentRevision.getDocumentMaster().getWorkspace();
         Account admin = workspace.getAdmin();
         User author = documentRevision.getAuthor();
-
+        User adminUser = new User(workspace, admin);
         // Mail both workspace admin and documentMaster author
-        sendWorkflowRelaunchedNotification(admin.getName(), admin.getEmail(), admin.getLanguage(), workspace.getId(), documentRevision);
+        sendWorkflowRelaunchedNotification(adminUser, documentRevision);
 
         if (!admin.getLogin().equals(author.getLogin())) {
-            sendWorkflowRelaunchedNotification(author.getName(), author.getEmail(), author.getLanguage(), workspace.getId(), documentRevision);
+            sendWorkflowRelaunchedNotification(adminUser, documentRevision);
         }
     }
 
@@ -315,18 +305,14 @@ public class NotifierBean implements INotifierLocal {
     @Override
     public void sendWorkspaceIndexationSuccess(Account account, String workspaceId, String extraMessage) {
 
-        Locale locale = new Locale(account.getLanguage());
-
         Object[] args = {
                 workspaceId,
                 extraMessage
         };
 
-        String subject = getSubject("Indexer_success_title", locale);
-        String body = getBody("Indexer_success_text", args, locale);
-
         try {
-            sendEmail(account.getEmail(), account.getName(), subject, body);
+            User adminUser = new User(new Workspace(workspaceId), account);
+            sendMessage(adminUser, "Indexer_success_title", "Indexer_success_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -335,18 +321,15 @@ public class NotifierBean implements INotifierLocal {
     @Asynchronous
     @Override
     public void sendWorkspaceIndexationFailure(Account account, String workspaceId, String extraMessage) {
-        Locale locale = new Locale(account.getLanguage());
 
         Object[] args = {
                 workspaceId,
                 extraMessage
         };
 
-        String subject = getSubject("Indexer_failure_title", locale);
-        String body = getBody("Indexer_failure_text", args, locale);
-
         try {
-            sendEmail(account.getEmail(), account.getName(), subject, body);
+            User adminUser = new User(new Workspace(workspaceId), account);
+            sendMessage(adminUser, "Indexer_failure_title", "Indexer_failure_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -354,15 +337,9 @@ public class NotifierBean implements INotifierLocal {
 
     @Override
     public void sendBulkIndexationSuccess(Account account) {
-        Locale locale = new Locale(account.getLanguage());
-
         Object[] args = {};
-
-        String subject = getSubject("Indexer_bulk_success_title", locale);
-        String body = getBody("Indexer_bulk_success_text", args, locale);
-
         try {
-            sendEmail(account.getEmail(), account.getName(), subject, body);
+            sendMessage(account, "Indexer_bulk_success_title", "Indexer_bulk_success_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -370,15 +347,11 @@ public class NotifierBean implements INotifierLocal {
 
     @Override
     public void sendBulkIndexationFailure(Account account, String failureMessage) {
-        Locale locale = new Locale(account.getLanguage());
         Object[] args = {
                 failureMessage
         };
-        String subject = getSubject("Indexer_bulk_failure_title", locale);
-        String body = getBody("Indexer_bulk_failure_text", args, locale);
-
         try {
-            sendEmail(account.getEmail(), account.getName(), subject, body);
+            sendMessage(account, "Indexer_bulk_failure_title", "Indexer_bulk_failure_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
@@ -405,18 +378,14 @@ public class NotifierBean implements INotifierLocal {
                 accountDisabledMessage
         };
 
-        String subject = getSubject("SignUp_success_title", locale);
-        String body = getBody("SignUp_success_text", args, locale);
-
         try {
-            sendEmail(account.getEmail(), account.getName(), subject, body);
+            sendMessage(account, "SignUp_success_title", "SignUp_success_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
     }
 
-    private void sendStateNotification(User pSubscriber,
-                                       DocumentRevision pDocumentRevision) throws MessagingException {
+    private void sendStateNotification(User pSubscriber, DocumentRevision pDocumentRevision) throws MessagingException {
 
         LOGGER.info("Sending state notification emails \n\tfor the document " + pDocumentRevision.getLastIteration() + " to user " + pSubscriber.getLogin());
 
@@ -431,18 +400,13 @@ public class NotifierBean implements INotifierLocal {
                 stateName
         };
 
-        String subject = getSubject("StateNotification_title", locale);
-        String body = getBody("StateNotification_text", args, locale);
-
-        sendMessage(pSubscriber.getWorkspaceId(), pSubscriber, subject, body);
+        sendMessage(pSubscriber, "StateNotification_title", "StateNotification_text", args);
     }
 
     private void sendIterationNotification(User pSubscriber,
                                            DocumentRevision pDocumentRevision) throws MessagingException {
 
         LOGGER.info("Sending iteration notification emails \n\tfor the document " + pDocumentRevision.getLastIteration());
-
-        Locale locale = new Locale(pSubscriber.getLanguage());
 
         Object[] args = {
                 pDocumentRevision,
@@ -451,11 +415,7 @@ public class NotifierBean implements INotifierLocal {
                 pDocumentRevision.getLastIteration().getAuthor(),
                 getDocumentRevisionPermalinkURL(pDocumentRevision)
         };
-
-        String subject = getSubject("IterationNotification_title", locale);
-        String body = getBody("IterationNotification_text", args, locale);
-
-        sendMessage(pSubscriber.getWorkspaceId(), pSubscriber, subject, body);
+        sendMessage(pSubscriber, "IterationNotification_title", "IterationNotification_text", args);
 
     }
 
@@ -470,19 +430,12 @@ public class NotifierBean implements INotifierLocal {
     private void sendTaggedNotification(User pSubscriber,
                                         DocumentRevision pDocumentRevision, Tag pTag, boolean tagged) throws MessagingException {
         LOGGER.info("Sending tag notification emails \n\tfor the document " + pDocumentRevision.getLastIteration() + " to subscriber : " + pSubscriber.getLogin());
-
-        Locale locale = new Locale(pSubscriber.getLanguage());
-        String subject = getSubject("TagNotification_title", locale);
-
         Object[] args = {
                 pTag,
                 pDocumentRevision,
                 getDocumentRevisionPermalinkURL(pDocumentRevision)
         };
-
-        String body = getBody(tagged ? "TagNotificationTagged_text" : "TagNotificationUntagged_text", args, locale);
-
-        sendMessage(pSubscriber.getWorkspaceId(), pSubscriber, subject, body);
+        sendMessage(pSubscriber, "TagNotification_title", tagged ? "TagNotificationTagged_text" : "TagNotificationUntagged_text", args);
     }
 
     private void sendTaggedNotification(User pSubscriber, PartRevision pPartRevision, Tag pTag) throws MessagingException {
@@ -494,18 +447,13 @@ public class NotifierBean implements INotifierLocal {
     }
 
     private void sendTaggedNotification(User pSubscriber, PartRevision pPartRevision, Tag pTag, boolean tagged) throws MessagingException {
-        LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration());
-
-        Locale locale = new Locale(pSubscriber.getLanguage());
+        LOGGER.info("Sending tag notification emails \n\tfor the part " + pPartRevision.getLastIteration() + " to subscriber : " + pSubscriber.getLogin());
         Object[] args = {
                 pTag,
                 pPartRevision,
                 getPartRevisionPermalinkURL(pPartRevision)
         };
-
-        String subject = getSubject("TagNotification_title", locale);
-        String body = getBody(tagged ? "TagNotificationTagged_text" : "TagNotificationUnTagged_text", args, locale);
-        sendMessage(pSubscriber.getWorkspaceId(), pSubscriber, subject, body);
+        sendMessage(pSubscriber, "TagNotification_title", tagged ? "TagNotificationTagged_text" : "TagNotificationUntagged_text", args);
     }
 
     private void sendApproval(Task task, DocumentRevision pDocumentRevision) throws MessagingException {
@@ -539,10 +487,6 @@ public class NotifierBean implements INotifierLocal {
 
         LOGGER.info("Sending approval email \n\tfor the document " + pDocumentRevision.getLastIteration() + " to user: " + worker.getLogin());
 
-        Locale locale = new Locale(worker.getLanguage());
-
-        String subject = getSubject("Approval_title", locale);
-
         Object[] args = {
                 task.getTitle(),
                 getDocumentRevisionPermalinkURL(pDocumentRevision),
@@ -551,19 +495,13 @@ public class NotifierBean implements INotifierLocal {
                 getTaskUrl(task, pDocumentRevision.getWorkspaceId())
         };
 
-        String body = getBody("Approval_document_text", args, locale);
-
-        sendMessage(worker.getWorkspaceId(), worker, subject, body);
+        sendMessage(worker, "Approval_title", "Approval_document_text", args);
     }
 
 
     private void sendApprovalToUser(User worker, Task pTask, PartRevision partRevision) throws MessagingException {
 
         LOGGER.info("Sending approval email \n\tfor the part " + partRevision.getLastIteration() + " to user: " + worker.getLogin());
-
-        Locale locale = new Locale(worker.getLanguage());
-
-        String subject = getSubject("Approval_title", locale);
 
         Object[] args = {
                 pTask.getTitle(),
@@ -573,57 +511,38 @@ public class NotifierBean implements INotifierLocal {
                 getTaskUrl(pTask, partRevision.getWorkspaceId())
         };
 
-        String body = getBody("Approval_part_text", args, locale);
-
-        sendMessage(worker.getWorkspaceId(), worker, subject, body);
-
+        sendMessage(worker, "Approval_title", "Approval_part_text", args);
     }
 
 
-    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, PartRevision partRevision) {
-
-        Locale locale = new Locale(userLanguage);
-
+    private void sendWorkflowRelaunchedNotification(User user, PartRevision partRevision) {
         Object[] args = {
                 partRevision.getPartNumber() + "-" + partRevision.getVersion(),
-                workspaceId,
+                user.getWorkspace().getId(),
                 partRevision.getWorkflow().getLifeCycleState()
         };
-
-        String subject = getSubject("PartRevision_workflow_relaunched_title", locale);
-        String body = getBody("PartRevision_workflow_relaunched_text", args, locale);
-
         try {
-            sendMessage(workspaceId, userEmail, userName, subject, body);
+            sendMessage(user, "PartRevision_workflow_relaunched_title", "PartRevision_workflow_relaunched_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
     }
 
 
-    private void sendWorkflowRelaunchedNotification(String userName, String userEmail, String userLanguage, String workspaceId, DocumentRevision documentRevision) {
-
-
-        Locale locale = new Locale(userLanguage);
-
+    private void sendWorkflowRelaunchedNotification(User user, DocumentRevision documentRevision) {
         Object[] args = {
                 documentRevision.getId() + "-" + documentRevision.getVersion(),
-                workspaceId,
+                user.getWorkspace().getId(),
                 documentRevision.getWorkflow().getLifeCycleState()
         };
-
-        String subject = getSubject("DocumentRevision_workflow_relaunched_title", locale);
-        String body = getBody("DocumentRevision_workflow_relaunched_text", args, locale);
-
         try {
-            sendMessage(workspaceId, userEmail, userName, subject, body);
+            sendMessage(user, "DocumentRevision_workflow_relaunched_title", "DocumentRevision_workflow_relaunched_text", args);
         } catch (MessagingException pMEx) {
             logMessagingException(pMEx);
         }
     }
 
     // URIs
-    // todo : move to properties file and format
     private String getDocumentRevisionPermalinkURL(DocumentRevision pDocR) {
         return configManager.getCodebase() + "/documents/index.html#" + pDocR.getWorkspaceId() + "/" + FileIO.encode(pDocR.getId()) + "/" + pDocR.getVersion();
     }
@@ -649,22 +568,21 @@ public class NotifierBean implements INotifierLocal {
 
     // Template utils methods
 
-    private ResourceBundle getBundle(Locale pLocale) {
-        return ResourceBundle.getBundle(TEMPLATE_BASE_NAME, pLocale);
+    private Properties getProperties(Locale pLocale) {
+        return PropertiesLoader.loadLocalizedProperties(pLocale, TEMPLATE_BASE_NAME, getClass());
     }
 
     private String getString(String string, Locale pLocale) {
-        return getBundle(pLocale).getString(string);
+        return getProperties(pLocale).getProperty(string);
     }
 
     private String format(String string, Object[] args, Locale pLocale) {
         return MessageFormat.format(getString(string, pLocale), args);
     }
 
-    private String getBody(String string, Object[] args, Locale pLocale) {
+    private String getHTMLBody(String content, Locale pLocale) {
         String mailBodyTemplate = getString("MailBodyTemplate", pLocale);
-        String body = format(string, args, pLocale);
-        return MessageFormat.format(mailBodyTemplate, body);
+        return MessageFormat.format(mailBodyTemplate, content);
     }
 
     private String getSubject(String string, Locale pLocale) {
@@ -672,11 +590,26 @@ public class NotifierBean implements INotifierLocal {
         return mailSubjectTemplate + " " + getString(string, pLocale);
     }
 
-    private void sendMessage(String workspaceId, User user, String subject, String content) throws MessagingException {
-        sendMessage(workspaceId, user.getEmail(), user.getName(), subject, content);
+    // Direct account message
+    // Only emails should be sent
+    private void sendMessage(Account account, String subjectKey, String contentKey, Object[] contentArgs) throws MessagingException {
+        Locale locale = new Locale(account.getLanguage());
+        String subject = getSubject(subjectKey, locale);
+        String content = format(contentKey, contentArgs, locale);
+        String name = account.getName();
+        String email = account.getEmail();
+        sendEmail(email, name, subject, getHTMLBody(content, locale));
     }
 
-    private void sendMessage(String workspaceId, String email, String name, String subject, String content) throws MessagingException {
+    // User in workspace message
+    private void sendMessage(User user, String subjectKey, String contentKey, Object[] contentArgs) throws MessagingException {
+        Locale locale = new Locale(user.getLanguage());
+        String subject = getSubject(subjectKey, locale);
+        String content = format(contentKey, contentArgs, locale);
+        String name = user.getName();
+        String login = user.getLogin();
+        String email = user.getEmail();
+        String workspaceId = user.getWorkspaceId();
 
         WorkspaceBackOptions workspaceBackOptions;
         try {
@@ -687,7 +620,7 @@ public class NotifierBean implements INotifierLocal {
         }
 
         if (workspaceBackOptions.isSendEmails()) {
-            sendEmail(email, name, subject, content);
+            sendEmail(email, name, subject, getHTMLBody(content, locale));
         }
 
         List<Webhook> activeWebHooks;
@@ -700,7 +633,7 @@ public class NotifierBean implements INotifierLocal {
         }
 
         for (Webhook webhook : activeWebHooks) {
-            runHook(webhook, email, name, subject, content);
+            runHook(webhook, login, email, name, subject, content);
         }
 
     }
@@ -727,7 +660,7 @@ public class NotifierBean implements INotifierLocal {
         }
     }
 
-    private void runHook(Webhook webhook, String email, String name, String subject, String content) {
+    private void runHook(Webhook webhook, String login, String email, String name, String subject, String content) {
         LOGGER.log(Level.INFO, " Running hook " + webhook.getName());
         String appName = webhook.getAppName();
         WebhookRunner runner;
@@ -744,7 +677,7 @@ public class NotifierBean implements INotifierLocal {
                 return;
         }
 
-        runner.run(webhook, email, name, subject, content);
+        runner.run(webhook, login, email, name, subject, content);
     }
 
 }

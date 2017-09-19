@@ -27,7 +27,7 @@ public class SimpleWebhookRunner implements WebhookRunner {
     }
 
     @Override
-    public void run(Webhook webhook, String email, String name, String subject, String content) {
+    public void run(Webhook webhook, String login, String email, String name, String subject, String content) {
 
         SimpleWebhookApp webhookApp = (SimpleWebhookApp) webhook.getWebhookApp();
         String method = webhookApp.getMethod();
@@ -42,11 +42,11 @@ public class SimpleWebhookRunner implements WebhookRunner {
             switch (method) {
                 case "POST":
                     request = new HttpPost(uri);
-                    ((HttpPost) request).setEntity(getEntity(email, name, subject, content));
+                    ((HttpPost) request).setEntity(getEntity(login, email, name, subject, content));
                     break;
                 case "PUT":
                     request = new HttpPut(uri);
-                    ((HttpPut) request).setEntity(getEntity(email, name, subject, content));
+                    ((HttpPut) request).setEntity(getEntity(login, email, name, subject, content));
                     break;
                 default:
                     LOGGER.log(Level.SEVERE, "Unsupported method " + method);
@@ -68,13 +68,13 @@ public class SimpleWebhookRunner implements WebhookRunner {
 
     }
 
-    public HttpEntity getEntity(String email, String name, String subject, String content) throws UnsupportedEncodingException {
+    public HttpEntity getEntity(String login, String email, String name, String subject, String content) throws UnsupportedEncodingException {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        String encoding = "ISO-8859-1";
-        objectBuilder.add("email", new String(email.getBytes(), encoding));
-        objectBuilder.add("name", new String(name.getBytes(), encoding));
-        objectBuilder.add("subject", new String(subject.getBytes(), encoding));
-        objectBuilder.add("content", new String(content.getBytes(), encoding));
+        objectBuilder.add("login", login);
+        objectBuilder.add("email", email);
+        objectBuilder.add("name", name);
+        objectBuilder.add("subject", subject);
+        objectBuilder.add("content", content);
         return new StringEntity(objectBuilder.build().toString());
     }
 }

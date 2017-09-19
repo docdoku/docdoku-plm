@@ -32,7 +32,7 @@ public class LangHelper {
     private final Properties properties;
 
     public LangHelper(Locale locale) {
-        properties = PropertiesLoader.loadPropertiesFile(locale, BUNDLE_BASE_NAME, getClass());
+        properties = PropertiesLoader.loadLocalizedProperties(locale, BUNDLE_BASE_NAME, getClass());
     }
 
     public String getLocalizedMessage(String key) {

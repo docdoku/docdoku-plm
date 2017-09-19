@@ -82,6 +82,6 @@ public abstract class ApplicationException extends Exception {
     }
 
     private void loadFile(Locale locale) {
-        properties = PropertiesLoader.loadPropertiesFile(locale, BUNDLE_BASE_NAME, getClass());
+        properties = PropertiesLoader.loadLocalizedProperties(locale, BUNDLE_BASE_NAME, getClass());
     }
 }

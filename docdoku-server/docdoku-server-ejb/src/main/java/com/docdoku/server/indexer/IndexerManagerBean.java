@@ -32,6 +32,7 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.INotifierLocal;
+import com.docdoku.core.util.PropertiesLoader;
 import com.docdoku.server.dao.*;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
@@ -84,7 +85,7 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     @Inject
     private IBinaryStorageManagerLocal storageManager;
 
-    private static final String I18N_CONF = "com.docdoku.core.i18n.LocalStrings";
+    private static final String I18N_CONF = "/com/docdoku/core/i18n/LocalStrings";
 
     private static final Logger LOGGER = Logger.getLogger(IndexerManagerBean.class.getName());
 
@@ -497,7 +498,8 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
     }
 
     private String getString(String key, Locale locale) {
-        return ResourceBundle.getBundle(I18N_CONF, locale).getString(key);
+        Properties properties = PropertiesLoader.loadLocalizedProperties(locale, I18N_CONF, getClass());
+        return properties.getProperty(key);
     }
 
     private List<DocumentRevision> documentIterationKeysToDocumentRevisions(boolean fetchHeadOnly, Set<DocumentIterationKey> documentIterationKeys) {

@@ -27,6 +27,7 @@ import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
+import com.docdoku.core.util.PropertiesLoader;
 import com.docdoku.server.importers.PartImporter;
 import com.docdoku.server.importers.PathDataImporter;
 
@@ -37,10 +38,7 @@ import javax.enterprise.inject.Any;
 import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,7 +151,8 @@ public class ImporterBean implements IImporterManagerLocal {
     private ImportResult getNoImporterAvailableError(File file, String fileName, Locale locale) {
         List<String> errors = new ArrayList<>();
         List<String> warnings = new ArrayList<>();
-        errors.add(ResourceBundle.getBundle("com.docdoku.core.i18n.LocalStrings", locale).getString("NoImporterAvailable"));
+        Properties properties = PropertiesLoader.loadLocalizedProperties(locale, "/com/docdoku/core/i18n/LocalStrings", getClass());
+        errors.add(properties.getProperty("NoImporterAvailable"));
         return new ImportResult(file, warnings, errors);
     }
 }

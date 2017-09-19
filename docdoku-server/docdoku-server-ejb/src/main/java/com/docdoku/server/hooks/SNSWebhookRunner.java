@@ -11,7 +11,6 @@ import com.docdoku.core.hooks.Webhook;
 
 import javax.json.Json;
 import javax.json.JsonObjectBuilder;
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,7 +22,7 @@ public class SNSWebhookRunner implements WebhookRunner {
     }
 
     @Override
-    public void run(Webhook webhook, String email, String name, String subject, String content) {
+    public void run(Webhook webhook, String login, String email, String name, String subject, String content) {
 
         SNSWebhookApp webhookApp = (SNSWebhookApp) webhook.getWebhookApp();
         String topicArn = webhookApp.getTopicArn();
@@ -36,7 +35,7 @@ public class SNSWebhookRunner implements WebhookRunner {
         try {
             PublishRequest publishReq = new PublishRequest()
                     .withTopicArn(topicArn)
-                    .withMessage(getMessage(email, name, subject, content));
+                    .withMessage(getMessage(login, email, name, subject, content));
             snsClient.publish(publishReq);
 
         } catch (Exception e) {
@@ -46,13 +45,13 @@ public class SNSWebhookRunner implements WebhookRunner {
         }
     }
 
-    private String getMessage(String email, String name, String subject, String content) throws UnsupportedEncodingException {
+    private String getMessage(String login, String email, String name, String subject, String content) {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-        String encoding = "ISO-8859-1";
-        objectBuilder.add("email", new String(email.getBytes(), encoding));
-        objectBuilder.add("name", new String(name.getBytes(), encoding));
-        objectBuilder.add("subject", new String(subject.getBytes(), encoding));
-        objectBuilder.add("content", new String(content.getBytes(), encoding));
+        objectBuilder.add("login", login);
+        objectBuilder.add("email", email);
+        objectBuilder.add("name", name);
+        objectBuilder.add("subject", subject);
+        objectBuilder.add("content", content);
         return objectBuilder.build().toString();
     }
 

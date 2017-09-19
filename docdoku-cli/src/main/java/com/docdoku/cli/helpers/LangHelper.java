@@ -27,12 +27,12 @@ import java.util.Properties;
 
 public class LangHelper {
 
-    private static final String BUNDLE_BASE_NAME = "/com/docdoku/cli/i18n/LocalStrings";
+    private static final String PROPERTIES_FILE_BASE_NAME = "/com/docdoku/cli/i18n/LocalStrings";
 
     private final Properties properties;
 
     public LangHelper(Locale locale) {
-        properties = PropertiesLoader.loadPropertiesFile(locale, BUNDLE_BASE_NAME, getClass());
+        properties = PropertiesLoader.loadLocalizedProperties(locale, PROPERTIES_FILE_BASE_NAME, getClass());
     }
 
     public String getLocalizedMessage(String key) {

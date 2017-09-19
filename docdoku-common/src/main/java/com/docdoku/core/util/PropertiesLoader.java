@@ -11,25 +11,28 @@ import java.util.logging.Logger;
 
 public class PropertiesLoader {
 
+    private PropertiesLoader() {
+    }
+
     private final static Logger LOGGER = Logger.getLogger(PropertiesLoader.class.getName());
 
-    public static Properties loadPropertiesFile(Locale locale, String bundleBaseName, Class loader) {
+    public static Properties loadLocalizedProperties(Locale locale, String propertiesFileBaseName, Class loader) {
 
         Properties properties = new Properties();
 
-        String bundle;
+        String baseName;
 
         switch (locale.getLanguage()) {
             case "fr":
-                bundle = bundleBaseName + "_fr.properties";
+                baseName = propertiesFileBaseName + "_fr.properties";
                 break;
 
             default:
-                bundle = bundleBaseName + "_en.properties";
+                baseName = propertiesFileBaseName + "_en.properties";
                 break;
         }
 
-        try (InputStream is = loader.getResourceAsStream(bundle)) {
+        try (InputStream is = loader.getResourceAsStream(baseName)) {
             properties.load(new InputStreamReader(is, "UTF-8"));
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, null, e);
