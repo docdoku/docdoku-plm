@@ -21,10 +21,10 @@
 package com.docdoku.server.extras;
 
 import com.docdoku.core.product.PartIteration;
+import com.docdoku.core.util.PropertiesLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * @author kelto on 05/01/16.
@@ -36,8 +36,8 @@ public class PartTitleBlockData extends TitleBlockData {
 
     PartTitleBlockData(PartIteration partIteration, Locale pLocale) {
         locale = pLocale;
-        bundle = ResourceBundle.getBundle(BASE_NAME, pLocale);
-        dateFormat = new SimpleDateFormat(bundle.getString("date.format"));
+        properties = PropertiesLoader.loadLocalizedProperties(locale, PROPERTIES_BASE_NAME, getClass());
+        dateFormat = new SimpleDateFormat(properties.getProperty("date.format"));
         authorName = partIteration.getAuthor().getName();
         version = partIteration.getVersion();
         creationDate = dateFormat.format(partIteration.getPartRevision().getCreationDate());

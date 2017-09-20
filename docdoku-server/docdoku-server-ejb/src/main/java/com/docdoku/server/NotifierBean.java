@@ -67,7 +67,7 @@ import java.util.logging.Logger;
 @Stateless(name = "MailerBean")
 public class NotifierBean implements INotifierLocal {
 
-    private static final String TEMPLATE_BASE_NAME = "/com/docdoku/server/templates/MailText";
+    private static final String TEMPLATE_BASE_NAME = "/com/docdoku/server/templates/NotificationText";
 
     @Inject
     private ConfigManager configManager;
@@ -573,11 +573,11 @@ public class NotifierBean implements INotifierLocal {
     }
 
     private String getString(String string, Locale pLocale) {
-        return getProperties(pLocale).getProperty(string);
+        return getProperties(pLocale).getProperty(string).replaceAll("'", "’");
     }
 
     private String format(String string, Object[] args, Locale pLocale) {
-        return MessageFormat.format(getString(string, pLocale), args);
+        return MessageFormat.format(getString(string, pLocale).replaceAll("'", "’"), args);
     }
 
     private String getHTMLBody(String content, Locale pLocale) {

@@ -11,6 +11,8 @@ import java.util.logging.Logger;
 
 public class PropertiesLoader {
 
+    public final static String[] SUPPORTED_LANGUAGES = {"fr", "en", "ru"};
+
     private PropertiesLoader() {
     }
 
@@ -25,6 +27,10 @@ public class PropertiesLoader {
         switch (locale.getLanguage()) {
             case "fr":
                 baseName = propertiesFileBaseName + "_fr.properties";
+                break;
+
+            case "ru":
+                baseName = propertiesFileBaseName + "_ru.properties";
                 break;
 
             default:

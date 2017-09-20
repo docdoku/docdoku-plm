@@ -27,7 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.Properties;
 
 
 /**
@@ -40,9 +40,9 @@ import java.util.ResourceBundle;
  */
 public abstract class TitleBlockData {
 
-    protected static final String BASE_NAME = "com.docdoku.server.extras.localization.TitleBlockData";
+    protected static final String PROPERTIES_BASE_NAME = "/com/docdoku/server/extras/localization/TitleBlockData";
 
-    protected ResourceBundle bundle;
+    protected Properties properties;
     protected SimpleDateFormat dateFormat;
     protected String title;
     protected String subject;
@@ -60,10 +60,10 @@ public abstract class TitleBlockData {
     protected String lifeCycleState;
 
     public String getBundleString(String key) {
-        return bundle.getString(key);
+        return properties.getProperty(key);
     }
 
-    public String format(Date date){
+    public String format(Date date) {
         return dateFormat.format(date);
     }
 
