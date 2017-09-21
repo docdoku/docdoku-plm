@@ -8,7 +8,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
@@ -35,7 +37,7 @@ public class SimpleWebhookRunner implements WebhookRunner {
         String authorization = webhookApp.getAuthorization();
 
         HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpRequestBase request;
+        HttpUriRequest request;
 
         try {
 
@@ -47,6 +49,10 @@ public class SimpleWebhookRunner implements WebhookRunner {
                 case "PUT":
                     request = new HttpPut(uri);
                     ((HttpPut) request).setEntity(getEntity(login, email, name, subject, content));
+                    break;
+                case "GET":
+                    RequestBuilder requestBuilder = RequestBuilder.get(uri);
+                    request = addGetParams(requestBuilder, login, email, name, subject, content);
                     break;
                 default:
                     LOGGER.log(Level.SEVERE, "Unsupported method " + method);
@@ -61,11 +67,20 @@ public class SimpleWebhookRunner implements WebhookRunner {
             }
 
         } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Unsupported method " + method);
+            LOGGER.log(Level.SEVERE, null, ex);
         } finally {
             LOGGER.log(Level.SEVERE, "Webhook runner terminated");
         }
 
+    }
+
+    private HttpUriRequest addGetParams(RequestBuilder requestBuilder, String login, String email, String name, String subject, String content) {
+        requestBuilder.addParameter("login", login);
+        requestBuilder.addParameter("email", email);
+        requestBuilder.addParameter("name", name);
+        requestBuilder.addParameter("subject", subject);
+        requestBuilder.addParameter("content", content);
+        return requestBuilder.build();
     }
 
     public HttpEntity getEntity(String login, String email, String name, String subject, String content) throws UnsupportedEncodingException {
@@ -75,6 +90,6 @@ public class SimpleWebhookRunner implements WebhookRunner {
         objectBuilder.add("name", name);
         objectBuilder.add("subject", subject);
         objectBuilder.add("content", content);
-        return new StringEntity(objectBuilder.build().toString());
+        return new StringEntity(objectBuilder.build().toString(), ContentType.APPLICATION_JSON);
     }
 }
