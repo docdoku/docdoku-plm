@@ -32,7 +32,7 @@ import com.docdoku.core.meta.Folder;
 import com.docdoku.core.exceptions.NotAllowedException;
 import com.docdoku.core.services.IDocumentManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.util.PropertiesLoader;
+import com.docdoku.i18n.PropertiesLoader;
 import com.docdoku.server.BinaryStorageManagerBean;
 import com.docdoku.server.dao.WorkspaceDAO;
 import com.docdoku.server.util.DocumentUtil;

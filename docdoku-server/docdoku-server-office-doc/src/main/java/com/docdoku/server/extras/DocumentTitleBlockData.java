@@ -20,7 +20,7 @@
 package com.docdoku.server.extras;
 
 import com.docdoku.core.document.DocumentIteration;
-import com.docdoku.core.util.PropertiesLoader;
+import com.docdoku.i18n.PropertiesLoader;
 
 import java.text.SimpleDateFormat;
 import java.util.Locale;

@@ -286,6 +286,7 @@
         </dependencies>
     </dependencyManagement>
     <modules>
+        <module>docdoku-i18n</module>
         <module>docdoku-common</module>
         <module>docdoku-server</module>
         <module>docdoku-api</module>

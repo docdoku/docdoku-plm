@@ -35,7 +35,7 @@ import com.docdoku.core.services.IPlatformOptionsManagerLocal;
 import com.docdoku.core.services.IWebhookManagerLocal;
 import com.docdoku.core.services.IWorkspaceManagerLocal;
 import com.docdoku.core.util.FileIO;
-import com.docdoku.core.util.PropertiesLoader;
+import com.docdoku.i18n.PropertiesLoader;
 import com.docdoku.core.workflow.Task;
 import com.docdoku.server.hooks.SNSWebhookRunner;
 import com.docdoku.server.hooks.SimpleWebhookRunner;

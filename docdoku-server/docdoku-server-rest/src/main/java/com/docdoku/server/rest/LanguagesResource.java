@@ -20,7 +20,7 @@
 package com.docdoku.server.rest;
 
 import com.docdoku.core.security.UserGroupMapping;
-import com.docdoku.core.util.PropertiesLoader;
+import com.docdoku.i18n.PropertiesLoader;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

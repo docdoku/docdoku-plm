@@ -32,7 +32,7 @@ import com.docdoku.core.services.IAccountManagerLocal;
 import com.docdoku.core.services.IBinaryStorageManagerLocal;
 import com.docdoku.core.services.IIndexerManagerLocal;
 import com.docdoku.core.services.INotifierLocal;
-import com.docdoku.core.util.PropertiesLoader;
+import com.docdoku.i18n.PropertiesLoader;
 import com.docdoku.server.dao.*;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;

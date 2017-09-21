@@ -27,7 +27,7 @@ import com.docdoku.core.product.ImportPreview;
 import com.docdoku.core.product.ImportResult;
 import com.docdoku.core.services.IImporterManagerLocal;
 import com.docdoku.core.services.IUserManagerLocal;
-import com.docdoku.core.util.PropertiesLoader;
+import com.docdoku.i18n.PropertiesLoader;
 import com.docdoku.server.importers.PartImporter;
 import com.docdoku.server.importers.PathDataImporter;
 
