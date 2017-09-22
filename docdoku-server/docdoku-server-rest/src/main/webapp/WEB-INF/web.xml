@@ -28,7 +28,7 @@
     <env-entry>
         <env-entry-name>public-paths</env-entry-name>
         <env-entry-type>java.lang.String</env-entry-type>
-        <env-entry-value>/api,/api/accounts/create,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**,/ws</env-entry-value>
+        <env-entry-value>/api,/api/accounts/create,/api/shared/**,/api/languages,/api/timezones,/api/auth/**,/api/files/*/documents/**,/api/files/*/parts/**,/ws,/api/platform/health</env-entry-value>
     </env-entry>
 
     <security-role>

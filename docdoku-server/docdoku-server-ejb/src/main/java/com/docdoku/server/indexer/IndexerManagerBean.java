@@ -36,6 +36,7 @@ import com.docdoku.i18n.PropertiesLoader;
 import com.docdoku.server.dao.*;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestResult;
+import io.searchbox.cluster.Health;
 import io.searchbox.core.*;
 import io.searchbox.indices.CreateIndex;
 import io.searchbox.indices.mapping.PutMapping;
@@ -289,6 +290,16 @@ public class IndexerManagerBean implements IIndexerManagerLocal {
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, "Cannot index the whole workspace: The Elasticsearch server does not seem to respond");
             mailer.sendBulkIndexationFailure(account, getString("IndexerNotAvailableForRequest", new Locale(account.getLanguage())));
+        }
+    }
+
+    @Override
+    public boolean ping() {
+        try {
+            JestResult result = esClient.execute(new Health.Builder().build());
+            return result.isSucceeded();
+        } catch (IOException e) {
+            return false;
         }
     }
 

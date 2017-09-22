@@ -57,4 +57,5 @@ public interface IIndexerManagerLocal {
 
     void indexWorkspaceData(String workspaceId) throws AccountNotFoundException;
 
+    boolean ping();
 }
