@@ -1,0 +1,3 @@
+[submodule "eplmp"]
+	path = eplmp
+	url = git@github.com:polarsys/eplmp.git
