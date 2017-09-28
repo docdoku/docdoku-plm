@@ -286,18 +286,22 @@
         </dependencies>
     </dependencyManagement>
     <modules>
-        <module>docdoku-i18n</module>
-        <module>docdoku-common</module>
-        <module>docdoku-server</module>
+
+        <module>eplmp/eplmp-i18n</module>
+        <module>eplmp/eplmp-core</module>
+        <module>eplmp/eplmp-server</module>
+
         <module>docdoku-api</module>
         <module>docdoku-api-java</module>
         <module>docdoku-api-js</module>
         <module>docdoku-cli</module>
+
         <module>converter-dae</module>
         <module>converter-all</module>
         <module>converter-ifc</module>
         <module>converter-obj</module>
         <module>converter-step</module>
+
     </modules>
     <build>
         <pluginManagement>
