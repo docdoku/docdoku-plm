@@ -37,7 +37,7 @@ public class TestConfig {
 
     static {
         HOST = System.getProperty("host") != null ? System.getProperty("host") : "localhost";
-        CONTEXT_ROOT = System.getProperty("contextRoot") != null ? System.getProperty("contextRoot") : "/docdoku-server-rest";
+        CONTEXT_ROOT = System.getProperty("contextRoot") != null ? System.getProperty("contextRoot") : "/eplmp-server-rest";
         PORT = System.getProperty("port") != null ? System.getProperty("port") : "8080";
         LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
         PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";

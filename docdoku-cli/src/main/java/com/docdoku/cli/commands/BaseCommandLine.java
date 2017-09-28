@@ -42,8 +42,8 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
     @Option(name = "-h", aliases = "--host", metaVar = "<host>", usage = "host of the DocDokuPLM server to connect; default is docdokuplm.net")
     protected String host = "docdokuplm.net";
 
-    @Option(name = "-C", aliases = "--context-path", metaVar = "<contextPath>", usage = "Context root for DocdokuPLM API, default is /docdoku-server-rest")
-    protected String contextPath = "/docdoku-server-rest";
+    @Option(name = "-C", aliases = "--context-path", metaVar = "<contextPath>", usage = "Context root for DocdokuPLM API, default is /eplmp-server-rest")
+    protected String contextPath = "/eplmp-server-rest";
 
     @Option(name = "-p", aliases = "--password", metaVar = "<password>", usage = "password to log in")
     protected String password;
