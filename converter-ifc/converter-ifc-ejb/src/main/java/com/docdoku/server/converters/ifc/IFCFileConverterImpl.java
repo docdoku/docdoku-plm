@@ -20,9 +20,9 @@
 
 package com.docdoku.server.converters.ifc;
 
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
-import com.docdoku.server.converters.ConverterUtils;
+import org.polarsys.eplmp.server.converters.CADConverter;
+import org.polarsys.eplmp.server.converters.ConversionResult;
+import org.polarsys.eplmp.server.converters.ConverterUtils;
 
 import javax.ejb.Stateless;
 import java.io.IOException;

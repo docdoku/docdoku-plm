@@ -20,10 +20,9 @@
 
 package com.docdoku.cli.helpers;
 
-import com.docdoku.i18n.PropertiesLoader;
-
-import java.util.Locale;
+import org.polarsys.eplmp.i18n.PropertiesLoader;
 import java.util.Properties;
+import java.util.Locale;
 
 public class LangHelper {
 

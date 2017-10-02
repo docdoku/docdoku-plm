@@ -1,12 +1,12 @@
 package com.docdoku.server.converters.dae;
 
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
 import org.junit.Assert;
 import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.polarsys.eplmp.server.converters.CADConverter;
+import org.polarsys.eplmp.server.converters.ConversionResult;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

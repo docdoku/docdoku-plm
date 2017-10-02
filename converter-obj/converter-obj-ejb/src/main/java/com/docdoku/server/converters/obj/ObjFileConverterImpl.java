@@ -20,8 +20,9 @@
 
 package com.docdoku.server.converters.obj;
 
-import com.docdoku.server.converters.CADConverter;
-import com.docdoku.server.converters.ConversionResult;
+
+import org.polarsys.eplmp.server.converters.CADConverter;
+import org.polarsys.eplmp.server.converters.ConversionResult;
 
 import javax.ejb.Stateless;
 import java.net.URI;
