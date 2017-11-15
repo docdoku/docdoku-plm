@@ -156,6 +156,11 @@
                 <version>0.5.1</version>
             </dependency>
             <dependency>
+                <groupId>com.nimbusds</groupId>
+                <artifactId>oauth2-oidc-sdk</artifactId>
+                <version>5.38</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-contrib</artifactId>
                 <version>3.6</version>
