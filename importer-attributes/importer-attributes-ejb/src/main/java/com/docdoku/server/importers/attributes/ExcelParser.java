@@ -38,7 +38,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class ExcelParser that give method to parse the Excel File
+ * Class ExcelParser that offers methods to parse the Excel File.
  *
  * @author Laurent Le Van
  * @version 1.0.0
@@ -112,13 +112,13 @@ public class ExcelParser {
     private Cell[][] cells;
 
     /**
-     * A String array to stock the head formats (format for each attributes)
+     * A String array to store the head formats (one for each attribute)
      */
     private String[] headFormat;
 
 
     /**
-     * Default Constructor that create an empty object
+     * Default Constructor that creates an empty object
      */
     public ExcelParser() {
         this.wb = null;
@@ -127,7 +127,7 @@ public class ExcelParser {
     }
 
     /**
-     * Load the XLS file
+     * Loads the XLS file
      *
      * @param file XLS file
      */
@@ -175,8 +175,8 @@ public class ExcelParser {
 
 
     /**
-     * Function that check if an empty value type corresponds to the attribute type
-     * 1. Check header - 2. Check attribute type 3.Check id
+     * Function that checks if an empty value type corresponds to the attribute type
+     * 1. Check header - 2. Check attribute type - 3. Check id
      *
      * @param header type of attributes
      * @param row    row of the data
@@ -206,8 +206,8 @@ public class ExcelParser {
 
 
     /**
-     * Function that check if the value type correspond to the attribute type
-     * 1. Check header - 2. Check attribute type 3.Check id
+     * Function that checks if the value type corresponds to the attribute type
+     * 1. Check header - 2. Check attribute type - 3. Check id
      *
      * @param header type of attributes
      * @param value  value of that attribute
@@ -264,10 +264,10 @@ public class ExcelParser {
     }
 
     /**
-     * Check if a data has a valid date format
+     * Checks if the data has a valid date format
      *
      * @param dateToCheck the String data you want to check
-     * @return True if valid format , False else
+     * @return True if valid format, False otherwise
      */
     private boolean checkDate(String dateToCheck) {
         SDF.setLenient(false);
@@ -276,7 +276,7 @@ public class ExcelParser {
 
 
     /**
-     * Method that add error on the error Map
+     * Method that adds errors on the error Map
      *
      * @param result   the List which will contain error
      * @param errorKey error key
@@ -291,7 +291,7 @@ public class ExcelParser {
     }
 
     /**
-     * Check if the header of the file is valid
+     * Checks if the header of the file is valid
      *
      * @param result a Map of String error
      * @return a Map of String error or null if no error
@@ -364,7 +364,7 @@ public class ExcelParser {
 
 
     /**
-     * Check file's body
+     * Checks file's body
      *
      * @param result a Map of String error
      * @return a Map of String error or null if no error
@@ -476,9 +476,9 @@ public class ExcelParser {
 
 
     /**
-     * Check if the file respect conditions for import
+     * Checks if the file respects import conditions
      *
-     * @return null if no error else return a HashMap of the different errors
+     * @return null if no error else return a HashMap of the various errors
      */
     public List<String> checkFile() {
 
@@ -632,7 +632,7 @@ public class ExcelParser {
      * @param id              id of this attribute
      * @param j               line of the data in the file
      * @param k               column of the data in the file
-     * @param listOfAttribute list of the differents attributes which are present in the file
+     * @param listOfAttribute list of the attributes which are present in the file
      * @return a new Attribute
      */
     public Attribute createDateOrNumeric(String id, int j, int k, AttributeModel[] listOfAttribute) {
@@ -647,7 +647,7 @@ public class ExcelParser {
 
 
     /**
-     * This method parse the file and create a Map of articles
+     * This method parses the file and creates a Map of articles
      *
      * @param listOfAttribute List of names of Attributes we found in the header
      * @return Map that has part number as keys and article as values
@@ -733,7 +733,7 @@ public class ExcelParser {
 
 
     /**
-     * This method parse the file and create a Map of Deliverable
+     * This method parses the file and creates a Map of Deliverable
      *
      * @param listOfAttribute list of attributes names
      * @return Map that has part number as keys and article as values

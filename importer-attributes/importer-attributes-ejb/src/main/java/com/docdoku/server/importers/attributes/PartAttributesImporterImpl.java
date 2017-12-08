@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class that import attribute modification on attribute's part from an Excel File.
+ * Class that imports attribute modification on attribute part from an Excel File.
  *
  * @author Laurent Le Van
  * @version 1.0.0

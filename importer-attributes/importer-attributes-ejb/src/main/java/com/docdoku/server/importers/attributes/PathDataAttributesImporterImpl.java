@@ -54,7 +54,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class that import attribute modification on attribute's Path Data from an Excel File.
+ * Class that imports attribute modification on attribute Path Data from an Excel File.
  *
  * @author Laurent Le Van
  * @version 1.0.0
@@ -73,7 +73,7 @@ public class PathDataAttributesImporterImpl implements PathDataImporter {
     private Properties properties;
 
     /**
-     * Check if valid extension
+     * Checks if valid extension
      *
      * @param importFileName name of the file we want to import
      * @return true if good extension, false else

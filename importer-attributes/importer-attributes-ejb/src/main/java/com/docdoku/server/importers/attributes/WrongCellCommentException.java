@@ -1,7 +1,7 @@
 package com.docdoku.server.importers.attributes;
 
 /**
- * Exception raised when comments are not present or in wrong order
+ * Exception raised when comments are not present or in a wrong order
  *
  * @author Morgan Guimard
  * @version 1.0.0
