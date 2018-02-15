@@ -225,9 +225,7 @@
     </dependencyManagement>
     <modules>
 
-        <module>eplmp/eplmp-i18n</module>
-        <module>eplmp/eplmp-core</module>
-        <module>eplmp/eplmp-server</module>
+        <module>eplmp</module>
 
         <module>docdoku-api</module>
         <module>docdoku-api-java</module>
