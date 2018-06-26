@@ -18,10 +18,10 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands.documents;
+package com.docdoku.cli.commands.common;
 
-import com.docdoku.api.models.FolderDTO;
-import com.docdoku.api.services.FoldersApi;
+import com.docdoku.api.models.ProductBaselineDTO;
+import com.docdoku.api.services.PartApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
@@ -32,24 +32,26 @@ import java.util.List;
  *
  * @author Morgan Guimard
  */
-public class FolderListCommand extends BaseCommandLine {
+public class BaselineListCommand extends BaseCommandLine {
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name="-f", aliases = "--folder", usage="remote folder to list sub folders, default is workspace root folder")
-    private String folder = null;
+    @Option(metaVar = "<partnumber>", required = true, name = "-o", aliases = "--part", usage = "the part number of the part to verify the existence of baselines")
+    private String number;
+
+    @Option(metaVar = "<revision>", required = true, name="-r", aliases = "--revision", usage="specify revision of the part to analyze ('A', 'B'...)")
+    private String revision;
 
     @Override
     public void execImpl() throws Exception {
-        FoldersApi foldersApi = new FoldersApi(client);
-        String decodedPath = folder == null ? workspace : workspace+":"+folder;
-        List<FolderDTO> folders = foldersApi.getSubFolders(workspace,decodedPath);
-        output.printFolders(folders);
+        PartApi partApi = new PartApi(client);
+        List<ProductBaselineDTO> productBaselines = partApi.getBaselinesWherePartRevisionHasIterations(workspace, number, revision);
+        output.printBaselines(productBaselines);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return langHelper.getLocalizedMessage("FolderListCommandDescription");
+        return langHelper.getLocalizedMessage("BaselineListCommandDescription");
     }
 }

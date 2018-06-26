@@ -28,16 +28,11 @@ import javax.json.*;
 import java.io.*;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class JSONOutput extends CliOutput {
 
-    private static final Logger LOGGER = Logger.getLogger(JSONOutput.class.getName());
-    private final static PrintStream ERROR_STREAM = System.err;
-    private final static PrintStream OUTPUT_STREAM = System.out;
-
-    public JSONOutput() {
-    }
+    private static final PrintStream ERROR_STREAM = System.err;
+    private static final PrintStream OUTPUT_STREAM = System.out;
 
     @Override
     public void printException(Exception e) {
@@ -70,6 +65,11 @@ public class JSONOutput extends CliOutput {
                 .add("info", s)
                 .build();
         OUTPUT_STREAM.println(jsonObj.toString());
+    }
+
+    @Override
+    public void print(String s) {
+        //
     }
 
     @Override
@@ -181,50 +181,51 @@ public class JSONOutput extends CliOutput {
 
         JsonObjectBuilder jsonStatusBuilder = Json.createObjectBuilder();
 
-        if (pr != null) {
-            UserDTO user = pr.getCheckOutUser();
-            String login = user != null ? user.getLogin() : "";
-            Date checkoutDate = pr.getCheckOutDate();
-            Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-            jsonStatusBuilder.add("isReleased", pr.getStatus().equals(PartRevisionDTO.StatusEnum.RELEASED));
-            jsonStatusBuilder.add("isCheckedOut", user != null);
-            jsonStatusBuilder.add("partNumber", pr.getNumber());
-            jsonStatusBuilder.add("checkoutUser", login);
-            if (timeStamp != null) {
-                jsonStatusBuilder.add("checkoutDate", timeStamp);
-            } else {
-                jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
+        if (pr == null) {
+            return jsonStatusBuilder.build();
+        }
+
+        UserDTO user = pr.getCheckOutUser();
+        String login = user != null ? user.getLogin() : "";
+        Date checkoutDate = pr.getCheckOutDate();
+        Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+        jsonStatusBuilder.add("isReleased", pr.getStatus().equals(PartRevisionDTO.StatusEnum.RELEASED));
+        jsonStatusBuilder.add("isCheckedOut", user != null);
+        jsonStatusBuilder.add("partNumber", pr.getNumber());
+        jsonStatusBuilder.add("checkoutUser", login);
+        if (timeStamp != null) {
+            jsonStatusBuilder.add("checkoutDate", timeStamp);
+        } else {
+            jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
+        }
+        jsonStatusBuilder.add("workspace", pr.getWorkspaceId());
+        jsonStatusBuilder.add("version", pr.getVersion());
+
+        if (pr.getDescription() != null) {
+            jsonStatusBuilder.add("description", pr.getDescription());
+        } else {
+            jsonStatusBuilder.add("description", JsonValue.NULL);
+        }
+
+        jsonStatusBuilder.add("lastModified", lastModified);
+
+        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
+
+        if (lastIteration != null) {
+            BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
+            if (nativeCADFile != null) {
+                jsonStatusBuilder.add("cadFileName", nativeCADFile.getFullName());
             }
-            jsonStatusBuilder.add("workspace", pr.getWorkspaceId());
-            jsonStatusBuilder.add("version", pr.getVersion());
+        }
 
-            if (pr.getDescription() != null) {
-                jsonStatusBuilder.add("description", pr.getDescription());
-            } else {
-                jsonStatusBuilder.add("description", JsonValue.NULL);
+        List<PartIterationDTO> partIterations = pr.getPartIterations();
+
+        if (partIterations != null) {
+            JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
+            for (PartIterationDTO partIteration : partIterations) {
+                jsonIterationsBuilder.add(partIteration.getIteration());
             }
-
-            jsonStatusBuilder.add("lastModified", lastModified);
-
-            PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
-
-            if (lastIteration != null) {
-                BinaryResourceDTO nativeCADFile = lastIteration.getNativeCADFile();
-                if (nativeCADFile != null) {
-                    jsonStatusBuilder.add("cadFileName", nativeCADFile.getFullName());
-                }
-            }
-
-            List<PartIterationDTO> partIterations = pr.getPartIterations();
-
-            if (partIterations != null) {
-                JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
-                for (PartIterationDTO partIteration : partIterations) {
-                    jsonIterationsBuilder.add(partIteration.getIteration());
-                }
-                jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
-            }
-
+            jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
         }
 
         return jsonStatusBuilder.build();
@@ -234,49 +235,52 @@ public class JSONOutput extends CliOutput {
 
         JsonObjectBuilder jsonStatusBuilder = Json.createObjectBuilder();
 
-        if (documentRevisionDTO != null) {
-            UserDTO userDTO = documentRevisionDTO.getCheckOutUser();
-            String login = userDTO != null ? userDTO.getLogin() : "";
-            Date checkoutDate = documentRevisionDTO.getCheckOutDate();
-            Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
-            jsonStatusBuilder.add("isCheckedOut", checkoutDate != null);
-            jsonStatusBuilder.add("id", documentRevisionDTO.getDocumentMasterId());
-            jsonStatusBuilder.add("checkoutUser", login);
-            if (timeStamp != null) {
-                jsonStatusBuilder.add("checkoutDate", timeStamp);
-            } else {
-                jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
-            }
-            jsonStatusBuilder.add("workspace", documentRevisionDTO.getWorkspaceId());
-            jsonStatusBuilder.add("version", documentRevisionDTO.getVersion());
-
-            if (documentRevisionDTO.getDescription() != null) {
-                jsonStatusBuilder.add("description", documentRevisionDTO.getDescription());
-            } else {
-                jsonStatusBuilder.add("description", JsonValue.NULL);
-            }
-
-            jsonStatusBuilder.add("lastModified", lastModified);
-
-            DocumentIterationDTO lastIterationDTO = getDocumentRevisionDTOLastIteration(documentRevisionDTO);
-
-            if (lastIterationDTO != null && lastIterationDTO.getAttachedFiles() != null) {
-                JsonArrayBuilder jsonFilesBuilder = Json.createArrayBuilder();
-                for (BinaryResourceDTO binaryResourceDTO : lastIterationDTO.getAttachedFiles())
-                    jsonFilesBuilder.add(binaryResourceDTO.getFullName());
-
-                jsonStatusBuilder.add("files", jsonFilesBuilder.build());
-            }
-
-            List<DocumentIterationDTO> documentIterations = documentRevisionDTO.getDocumentIterations();
-            if (documentIterations != null) {
-                JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
-                for (DocumentIterationDTO documentIteration : documentIterations) {
-                    jsonIterationsBuilder.add(documentIteration.getIteration());
-                }
-                jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
-            }
+        if (documentRevisionDTO == null) {
+            return jsonStatusBuilder.build();
         }
+
+        UserDTO userDTO = documentRevisionDTO.getCheckOutUser();
+        String login = userDTO != null ? userDTO.getLogin() : "";
+        Date checkoutDate = documentRevisionDTO.getCheckOutDate();
+        Long timeStamp = checkoutDate != null ? checkoutDate.getTime() : null;
+        jsonStatusBuilder.add("isCheckedOut", checkoutDate != null);
+        jsonStatusBuilder.add("id", documentRevisionDTO.getDocumentMasterId());
+        jsonStatusBuilder.add("checkoutUser", login);
+        if (timeStamp != null) {
+            jsonStatusBuilder.add("checkoutDate", timeStamp);
+        } else {
+            jsonStatusBuilder.add("checkoutDate", JsonValue.NULL);
+        }
+        jsonStatusBuilder.add("workspace", documentRevisionDTO.getWorkspaceId());
+        jsonStatusBuilder.add("version", documentRevisionDTO.getVersion());
+
+        if (documentRevisionDTO.getDescription() != null) {
+            jsonStatusBuilder.add("description", documentRevisionDTO.getDescription());
+        } else {
+            jsonStatusBuilder.add("description", JsonValue.NULL);
+        }
+
+        jsonStatusBuilder.add("lastModified", lastModified);
+
+        DocumentIterationDTO lastIterationDTO = getDocumentRevisionDTOLastIteration(documentRevisionDTO);
+
+        if (lastIterationDTO != null && lastIterationDTO.getAttachedFiles() != null) {
+            JsonArrayBuilder jsonFilesBuilder = Json.createArrayBuilder();
+            for (BinaryResourceDTO binaryResourceDTO : lastIterationDTO.getAttachedFiles())
+                jsonFilesBuilder.add(binaryResourceDTO.getFullName());
+
+            jsonStatusBuilder.add("files", jsonFilesBuilder.build());
+        }
+
+        List<DocumentIterationDTO> documentIterations = documentRevisionDTO.getDocumentIterations();
+        if (documentIterations != null) {
+            JsonArrayBuilder jsonIterationsBuilder = Json.createArrayBuilder();
+            for (DocumentIterationDTO documentIteration : documentIterations) {
+                jsonIterationsBuilder.add(documentIteration.getIteration());
+            }
+            jsonStatusBuilder.add("iterations", jsonIterationsBuilder.build());
+        }
+
         return jsonStatusBuilder.build();
     }
 

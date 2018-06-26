@@ -20,12 +20,7 @@
 
 package com.docdoku.cli;
 
-import com.docdoku.cli.commands.common.AccountInfosCommand;
-import com.docdoku.cli.commands.common.FileStatusCommand;
-import com.docdoku.cli.commands.common.HelpCommand;
-import com.docdoku.cli.commands.common.WorkspacesCommand;
-import com.docdoku.cli.commands.documents.*;
-import com.docdoku.cli.commands.parts.*;
+import com.docdoku.cli.commands.common.*;
 import com.docdoku.cli.helpers.CommandLine;
 import org.kohsuke.args4j.CmdLineParser;
 
@@ -33,142 +28,87 @@ import java.util.Arrays;
 
 public class MainCommand {
 
-
-    private static final String PART = "part";
-    private static final String DOCUMENT = "document";
-
     /**
      * Main function wrapper
      */
     public static void main(String[] args) {
         try {
+            CommandLine cl = null;
+
             switch (args[0]) {
                 case "status":
                 case "stat":
                 case "st":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentStatusCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new FileStatusCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new StatusCommand();
                     break;
                 case "get":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartGetCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentGetCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new GetCommand();
                     break;
                 case "put":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartPutCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentPutCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new PutCommand();
                     break;
                 case "checkout":
                 case "co":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartCheckOutCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentCheckOutCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new CheckoutCommand();
                     break;
                 case "undocheckout":
                 case "uco":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartUndoCheckOutCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentUndoCheckOutCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new UndoCheckoutCommand();
                     break;
                 case "checkin":
                 case "ci":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartCheckInCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentCheckInCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new CheckInCommand();
                     break;
-
                 case "search":
                 case "s":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartSearchCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentSearchCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new SearchCommand();
                     break;
-
                 case "create":
                 case "cr":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartCreationCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentCreationCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new CreateCommand();
                     break;
                 case "list":
                 case "l":
-                    if (PART.equals(args[1])) {
-                        execCommand(new PartListCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else if (DOCUMENT.equals(args[1])) {
-                        execCommand(new DocumentListCommand(), Arrays.copyOfRange(args, 2, args.length));
-                    } else {
-                        execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    }
+                    cl = new ListCommand();
                     break;
-
                 case "folders":
                 case "f":
-                    execCommand(new FolderListCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    cl = new FolderListCommand();
                     break;
 
                 case "baselinelist":
                 case "bl":
-                    execCommand(new BaselineListCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    cl = new BaselineListCommand();
                     break;
 
                 case "conversion":
                 case "cv":
-                    execCommand(new ConversionCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    cl = new ConversionCommand();
                     break;
 
                 case "workspaces":
                 case "wl":
-                    execCommand(new WorkspacesCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    cl = new WorkspacesCommand();
                     break;
 
                 case "account":
                 case "a":
-                    execCommand(new AccountInfosCommand(), Arrays.copyOfRange(args, 1, args.length));
+                    cl = new AccountInfosCommand();
                     break;
 
                 case "help":
                 case "?":
                 case "h":
-                    execCommand(new HelpCommand(), Arrays.copyOfRange(args, 1, args.length));
-                    break;
-                default:
-                    execCommand(new HelpCommand(), args);
+                    cl = new HelpCommand();
                     break;
             }
+
+            if(cl != null) {
+                execCommand(cl, Arrays.copyOfRange(args, 1, args.length));
+            } else {
+                execCommand(new HelpCommand(), args);
+            }
+
         } catch (Exception e) {
             execCommand(new HelpCommand(), args);
         }

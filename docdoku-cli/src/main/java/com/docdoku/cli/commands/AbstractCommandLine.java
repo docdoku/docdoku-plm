@@ -26,6 +26,7 @@ import com.docdoku.cli.helpers.CommandLine;
 import com.docdoku.cli.helpers.LangHelper;
 import org.kohsuke.args4j.Option;
 
+import java.io.IOException;
 import java.util.Locale;
 
 /**
@@ -44,6 +45,10 @@ public abstract class AbstractCommandLine implements CommandLine {
     //inside the CmdLineParser.parseArgument(args) method.
     protected CliOutput output = CliOutput.getOutput(format, Locale.getDefault());
     protected LangHelper langHelper;
+
+    public AbstractCommandLine() {
+        langHelper = new LangHelper(Locale.getDefault());
+    }
 
     @Override
     public void exec() throws Exception {

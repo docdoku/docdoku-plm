@@ -20,236 +20,35 @@
 
 package com.docdoku.cli.helpers;
 
+import com.docdoku.api.client.ApiClient;
+import com.docdoku.api.client.ApiException;
+import com.docdoku.api.client.ApiResponse;
 import com.docdoku.api.models.*;
 import com.docdoku.api.models.utils.LastIterationHelper;
+import com.docdoku.api.services.DocumentBinaryApi;
+import com.docdoku.api.services.PartBinaryApi;
 
-import javax.security.auth.login.LoginException;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.DigestInputStream;
+import java.io.Console;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.zip.GZIPInputStream;
+import java.util.List;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class FileHelper {
 
-    private static final int CHUNK_SIZE = 1024 * 8;
-    private static final int BUFFER_CAPACITY = 1024 * 32;
-
-    private String login;
-    private String password;
+    private ApiClient client;
     private CliOutput output;
     private LangHelper langHelper;
 
-    public FileHelper(String login, String password, CliOutput output, LangHelper langHelper) {
-        this.login = login;
-        this.password = password;
+    public FileHelper(ApiClient client, CliOutput output, LangHelper langHelper) {
+        this.client = client;
         this.output = output;
         this.langHelper = langHelper;
-    }
-
-    private String downloadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
-        FilterInputStream in = null;
-        OutputStream out = null;
-        HttpURLConnection conn = null;
-        try (FileOutputStream fos = new FileOutputStream(pLocalFile)) {
-            //Hack for NTLM proxy
-            //perform a head method to negotiate the NTLM proxy authentication
-            // Always replace trailing slashes with %20
-            // avoid 505 bad http version error cause servers interpret everything after first space as the http version
-            URL url = new URL(pURL.replace(" ", "%20"));
-
-            output.printInfo(
-                    langHelper.getLocalizedMessage("DownloadingFile")
-                            + " : "
-                            + pLocalFile.getName() + " "
-                            + langHelper.getLocalizedMessage("From")
-                            + " " + url.getHost());
-
-            performHeadHTTPMethod(url);
-
-            out = new BufferedOutputStream(fos, BUFFER_CAPACITY);
-
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setUseCaches(false);
-            conn.setAllowUserInteraction(true);
-            conn.setRequestProperty("Connection", "Keep-Alive");
-            conn.setRequestProperty("Accept-Encoding", "gzip");
-            conn.setRequestMethod("GET");
-            byte[] encoded = Base64.getEncoder().encode((login + ":" + password).getBytes("ISO-8859-1"));
-            conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
-            conn.connect();
-            manageHTTPCode(conn);
-
-
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            InputStream connInputStream;
-            if ("gzip".equals(conn.getContentEncoding())) {
-                connInputStream = new GZIPInputStream(conn.getInputStream());
-            } else {
-                connInputStream = conn.getInputStream();
-            }
-
-            in = output.getMonitor(conn.getContentLength(), new DigestInputStream(new BufferedInputStream(connInputStream, BUFFER_CAPACITY), md));
-
-            byte[] data = new byte[CHUNK_SIZE];
-            int length;
-
-            while ((length = in.read(data)) != -1) {
-                out.write(data, 0, length);
-            }
-            out.flush();
-
-            byte[] digest = md.digest();
-            return Base64.getEncoder().encodeToString(digest);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-            if (in != null) {
-                in.close();
-            }
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-    }
-
-    private String uploadFile(File pLocalFile, String pURL) throws IOException, LoginException, NoSuchAlgorithmException {
-        InputStream in = null;
-        OutputStream out = null;
-        HttpURLConnection conn = null;
-        try (FileInputStream fis = new FileInputStream(pLocalFile)) {
-            //Hack for NTLM proxy
-            //perform a head method to negociate the NTLM proxy authentication
-            URL url = new URL(pURL);
-
-            output.printInfo(
-                    langHelper.getLocalizedMessage("UploadingFile")
-                            + " : "
-                            + pLocalFile.getName() + " "
-                            + langHelper.getLocalizedMessage("To") + " "
-                            + url.getHost());
-            performHeadHTTPMethod(url);
-
-
-            conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setUseCaches(false);
-            conn.setAllowUserInteraction(true);
-            conn.setRequestProperty("Connection", "Keep-Alive");
-            byte[] encoded = Base64.getEncoder().encode((login + ":" + password).getBytes("ISO-8859-1"));
-            conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
-
-            String lineEnd = "\r\n";
-            String twoHyphens = "--";
-            String boundary = "--------------------" + Long.toString(System.currentTimeMillis(), 16);
-            byte[] header = (twoHyphens + boundary + lineEnd + "Content-Disposition: form-data; name=\"upload\";" + " filename=\"" + pLocalFile.getName() + "\"" + lineEnd + lineEnd).getBytes("ISO-8859-1");
-            byte[] footer = (lineEnd + twoHyphens + boundary + twoHyphens + lineEnd).getBytes("ISO-8859-1");
-
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            long len = header.length + pLocalFile.length() + footer.length;
-            conn.setFixedLengthStreamingMode((int) len);
-            out = new BufferedOutputStream(conn.getOutputStream(), BUFFER_CAPACITY);
-            out.write(header);
-
-            byte[] data = new byte[CHUNK_SIZE];
-            int length;
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            in = output.getMonitor(pLocalFile.length(), new DigestInputStream(new BufferedInputStream(fis, BUFFER_CAPACITY), md));
-            while ((length = in.read(data)) != -1) {
-                out.write(data, 0, length);
-            }
-
-            out.write(footer);
-            out.flush();
-
-            manageHTTPCode(conn);
-
-            byte[] digest = md.digest();
-            return Base64.getEncoder().encodeToString(digest);
-        } finally {
-            if (out != null) {
-                out.close();
-            }
-            if (in != null) {
-                in.close();
-            }
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-    }
-
-    private void manageHTTPCode(HttpURLConnection conn) throws IOException, LoginException {
-        int code = conn.getResponseCode();
-        switch (code) {
-            case 401:
-            case 403:
-                throw new LoginException(langHelper.getLocalizedMessage("LoginError"));
-            case 500:
-                throw new IOException(conn.getHeaderField("Reason-Phrase"));
-            default:
-                break;
-        }
-    }
-
-    private void performHeadHTTPMethod(URL url) throws IOException {
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setUseCaches(false);
-        conn.setAllowUserInteraction(true);
-        conn.setRequestProperty("Connection", "Keep-Alive");
-        byte[] encoded = Base64.getEncoder().encode((login + ":" + password).getBytes("ISO-8859-1"));
-        conn.setRequestProperty("Authorization", "Basic " + new String(encoded, "US-ASCII"));
-        conn.setRequestMethod("HEAD");
-        conn.connect();
-    }
-
-    private static String getPartURL(URL serverURL, PartIterationDTO pPartIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
-        return serverURL
-                + "/api/files/"
-                + URLEncoder.encode(pPartIPK.getWorkspaceId(), "UTF-8") + "/"
-                + "parts/"
-                + URLEncoder.encode(pPartIPK.getNumber(), "UTF-8") + "/"
-                + pPartIPK.getVersion() + "/"
-                + pPartIPK.getIteration() + "/nativecad/"
-                + pRemoteFileName;
-    }
-
-    private static String getDocumentURL(URL serverURL, DocumentIterationDTO pDocIPK, String pRemoteFileName) throws UnsupportedEncodingException, MalformedURLException {
-        return serverURL
-                + "/api/files/"
-                + URLEncoder.encode(pDocIPK.getWorkspaceId(), "UTF-8") + "/"
-                + "documents/"
-                + URLEncoder.encode(pDocIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + pDocIPK.getVersion() + "/"
-                + pDocIPK.getIteration() + "/"
-                + pRemoteFileName;
-    }
-
-    public static String getPartURLUpload(URL serverURL, PartIterationDTO pPart) throws UnsupportedEncodingException, MalformedURLException {
-        return serverURL
-                + "/api/files/"
-                + URLEncoder.encode(pPart.getWorkspaceId(), "UTF-8") + "/"
-                + "parts/"
-                + URLEncoder.encode(pPart.getNumber(), "UTF-8") + "/"
-                + pPart.getVersion() + "/"
-                + pPart.getIteration() + "/nativecad/";
-    }
-
-    private static String getDocumentURLUpload(URL serverURL, DocumentIterationDTO docIPK) throws UnsupportedEncodingException {
-        return serverURL
-                + "/api/files/"
-                + URLEncoder.encode(docIPK.getWorkspaceId(), "UTF-8") + "/"
-                + "documents/"
-                + URLEncoder.encode(docIPK.getDocumentMasterId(), "UTF-8") + "/"
-                + docIPK.getVersion() + "/"
-                + docIPK.getIteration();
     }
 
     public static boolean confirmOverwrite(String fileName) {
@@ -258,52 +57,47 @@ public class FileHelper {
         return "y".equalsIgnoreCase(response);
     }
 
-    public void uploadNativeCADFile(URL serverURL, File cadFile, PartIterationDTO partIPK) throws IOException, LoginException, NoSuchAlgorithmException {
-        String digest = uploadFile(cadFile, FileHelper.getPartURLUpload(serverURL, partIPK));
-
-        File path = cadFile.getParentFile();
-        MetaDirectoryManager meta = new MetaDirectoryManager(path);
-
-        saveMetadata(meta, partIPK, digest, cadFile);
-
-    }
-
-    public void downloadNativeCADFile(URL serverURL, File path, String workspace, String partNumber, PartRevisionDTO pr, PartIterationDTO pi, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        BinaryResourceDTO nativeCADFile = pi.getNativeCADFile();
-        String fileName = nativeCADFile.getName();
-        UserDTO checkOutUser = pr.getCheckOutUser();
-        PartIterationDTO lastIteration = LastIterationHelper.getLastIteration(pr);
-        PartIterationDTO partIPK = new PartIterationDTO();
-        partIPK.setWorkspaceId(workspace);
-        partIPK.setNumber(partNumber);
-        partIPK.setVersion(pr.getVersion());
-        partIPK.setIteration(pi.getIteration());
-
-        boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration() == pi.getIteration());
-        File localFile = new File(path, fileName);
-        MetaDirectoryManager meta = new MetaDirectoryManager(path);
-
-        if (localFile.exists() && !force && localFile.lastModified() != meta.getLastModifiedDate(localFile.getAbsolutePath())) {
-            boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
-            if (!confirm) {
-                return;
+    public File downloadPartFile(File path, String pWorkspace, String pPartNumber, String pVersion, int pIteration, String pFilename, String pType, String pSubType, boolean force) {
+        PartBinaryApi partBinaryApi = new PartBinaryApi(client);
+        File localFile = new File(path, pFilename);
+        MetaDirectoryManager meta;
+        try {
+            meta = new MetaDirectoryManager(path);
+            if (localFile.exists() && !force && localFile.lastModified() != meta.getLastModifiedDate(localFile.getAbsolutePath())) {
+                boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
+                if (!confirm)
+                    return null;
             }
+            File result = partBinaryApi.downloadPartFile(pWorkspace, pPartNumber, pVersion, pIteration, pSubType, pFilename, pType, null, null, null, null, null);
+            Files.move(result.toPath(), localFile.toPath(), REPLACE_EXISTING);
+            output.printInfo(langHelper.getLocalizedMessage("DownloadindFileSuccess"));
+            return localFile;
+        } catch (ApiException | IOException e) {
+            output.printInfo(langHelper.getLocalizedMessage("DownloadingFileFailure"));
+            output.printException(e);
         }
-        localFile.delete();
-        String digest = downloadFile(localFile, FileHelper.getPartURL(serverURL, partIPK, fileName));
-        localFile.setWritable(writable, false);
-
-        saveMetadata(meta, partIPK, digest, localFile);
+        return null;
     }
 
-    private void saveMetadata(MetaDirectoryManager meta, PartIterationDTO partIPK, String digest, File localFile) throws IOException {
-        String filePath = localFile.getAbsolutePath();
-        meta.setDigest(filePath, digest);
-        meta.setPartNumber(filePath, partIPK.getNumber());
-        meta.setWorkspace(filePath, partIPK.getWorkspaceId());
-        meta.setRevision(filePath, partIPK.getVersion());
-        meta.setIteration(filePath, partIPK.getIteration());
-        meta.setLastModifiedDate(filePath, localFile.lastModified());
+    public boolean uploadPartFile(String pWorkspace, String pPartNumber, String pVersion, int pIteration, File pFile) {
+        PartBinaryApi partBinaryApi = new PartBinaryApi(client);
+        ApiResponse<Void> response;
+        try {
+            output.printInfo(
+                    langHelper.getLocalizedMessage("UploadingFile")
+                            + " : "
+                            + pFile.getName());
+            response = partBinaryApi.uploadNativeCADFileWithHttpInfo(pWorkspace, pPartNumber, pVersion, pIteration, pFile);
+            if (response.getStatusCode() == 201) {
+                output.printInfo(langHelper.getLocalizedMessage("UploadingFileSuccess"));
+                return true;
+            } else {
+                output.printInfo(langHelper.getLocalizedMessage("UploadingFileFailed"));
+            }
+        } catch (ApiException e) {
+            output.printInfo(langHelper.getLocalizedMessage("UploadingFileFailed"));
+        }
+        return false;
     }
 
     private void saveMetadata(MetaDirectoryManager meta, DocumentIterationDTO docIPK, String digest, File localFile) throws IOException {
@@ -316,53 +110,95 @@ public class FileHelper {
         meta.setLastModifiedDate(filePath, localFile.lastModified());
     }
 
-    public void downloadDocumentFiles(URL serverURL, File path, String workspace, String id, DocumentRevisionDTO dr, DocumentIterationDTO di, boolean force) throws IOException, LoginException, NoSuchAlgorithmException {
-        for (BinaryResourceDTO binaryResourceDTO : di.getAttachedFiles()) {
-            String fileName = binaryResourceDTO.getName();
-            UserDTO checkOutUser = dr.getCheckOutUser();
-            DocumentIterationDTO docIPK = new DocumentIterationDTO();
-            docIPK.setWorkspaceId(workspace);
-            docIPK.setDocumentMasterId(id);
-            docIPK.setVersion(dr.getVersion());
-            docIPK.setIteration(di.getIteration());
-
-            DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(dr);
-
-            boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(login)) && (lastIteration.getIteration() == di.getIteration());
-            File localFile = new File(path, fileName);
-            MetaDirectoryManager meta = new MetaDirectoryManager(path);
-
-            if (localFile.exists() && !force && localFile.lastModified() != meta.getLastModifiedDate(localFile.getAbsolutePath())) {
-                boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
-                if (!confirm) {
-                    return;
-                }
-            }
-
-            localFile.delete();
-            String digest = downloadFile(localFile, FileHelper.getDocumentURL(serverURL, docIPK, fileName));
-            localFile.setWritable(writable, false);
-
-            saveMetadata(meta, docIPK, digest, localFile);
-
+    public File downloadDocumentFile(String pWorkspace, String pId, String pVersion, int pIteration, String pFilename, String pType) {
+        DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(client);
+        try {
+            output.printInfo(
+                    langHelper.getLocalizedMessage("DownloadingFile")
+                            + " : "
+                            + pFilename);
+            File result = documentBinaryApi.downloadDocumentFile(pWorkspace, pId, pVersion, pIteration, pFilename, pType, null, null, null, null, null);
+            output.printInfo(langHelper.getLocalizedMessage("DownloadindFileSuccess"));
+            return result;
+        } catch (ApiException e) {
+            output.printInfo(langHelper.getLocalizedMessage("DownloadingFileFailure"));
+            output.printException(e);
         }
+        return null;
     }
 
+    public boolean uploadDocumentFile(String pWorkspace, String pId, String pVersion, int pIteration, File pFile) {
+        DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(client);
+        ApiResponse<Void> response;
+        try {
+            output.printInfo(
+                    langHelper.getLocalizedMessage("UploadingFile")
+                            + " : "
+                            + pFile.getName());
+            response = documentBinaryApi.uploadDocumentFilesWithHttpInfo(pWorkspace, pId, pVersion, pIteration, pFile);
+            if (response.getStatusCode() == 201) {
+                output.printInfo(langHelper.getLocalizedMessage("UploadingFileSuccess"));
+                return true;
+            } else {
+                output.printInfo(langHelper.getLocalizedMessage("UploadingFileFailed"));
+            }
+        } catch (ApiException e) {
+            output.printInfo(langHelper.getLocalizedMessage("UploadingFileFailed"));
+        }
+        return false;
+    }
 
-    public void uploadDocumentFile(URL serverURL, File file, DocumentIterationDTO docIPK) throws IOException, LoginException, NoSuchAlgorithmException {
-        String digest = uploadFile(file, FileHelper.getDocumentURLUpload(serverURL, docIPK));
+    public List<File> downloadDocumentFiles(File path, String user, String pWorkspace, String pId, DocumentRevisionDTO pDocumentRevision, DocumentIterationDTO pDocumentIteration, boolean force) throws IOException {
+        List<File> files = new ArrayList<>();
+        if(this.client == null) {
+            throw new NullPointerException(langHelper.getLocalizedMessage("NullAPIClientException"));
+        }
+        String version = pDocumentRevision.getVersion();
+        int iteration = pDocumentIteration.getIteration();
+        UserDTO checkOutUser = pDocumentRevision.getCheckOutUser();
+        DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(pDocumentRevision);
+        boolean writable = (checkOutUser != null) && (checkOutUser.getLogin().equals(user)) && (lastIteration.getIteration() == pDocumentIteration.getIteration());
+        for(BinaryResourceDTO binaryResource : pDocumentIteration.getAttachedFiles()) {
+            String fileName = binaryResource.getName();
+            MetaDirectoryManager meta = new MetaDirectoryManager(path);
 
-        File path = file.getParentFile();
-        MetaDirectoryManager meta = new MetaDirectoryManager(path);
+            File localFile = new File(path, fileName);
+            if (localFile.exists() && !force && localFile.lastModified() != meta.getLastModifiedDate(localFile.getAbsolutePath())) {
+                boolean confirm = FileHelper.confirmOverwrite(localFile.getAbsolutePath());
+                if (!confirm)
+                    continue;
+            }
 
-        saveMetadata(meta, docIPK, digest, file);
+            File result = downloadDocumentFile(pWorkspace, pId, version, iteration, fileName, pDocumentRevision.getType());
+
+            try {
+                MessageDigest md = MessageDigest.getInstance("MD5");
+                md.update(Files.readAllBytes(result.toPath()));
+                byte[] digest = md.digest();
+                String digestString = Base64.getEncoder().encodeToString(digest);
+
+                result.setWritable(writable, false);
+
+                DocumentIterationDTO docIPK = new DocumentIterationDTO();
+                docIPK.setWorkspaceId(pWorkspace);
+                docIPK.setDocumentMasterId(pId);
+                docIPK.setVersion(version);
+                docIPK.setIteration(iteration);
+                saveMetadata(meta, docIPK, digestString, result);
+                Files.move(result.toPath(), localFile.toPath(), REPLACE_EXISTING);
+                files.add(localFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return files;
     }
 
     public static String getFileName(String path) {
         if (path == null || path.isEmpty()) {
             return null;
         }
-        int lastSlash = path.lastIndexOf("/");
+        int lastSlash = path.lastIndexOf('/');
         return path.substring(lastSlash + 1, path.length());
     }
 

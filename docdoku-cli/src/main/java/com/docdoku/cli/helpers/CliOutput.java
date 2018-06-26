@@ -36,6 +36,7 @@ import static com.docdoku.cli.helpers.CliOutput.formats.HUMAN;
  * @since   V2.0
  */
 public abstract class CliOutput {
+    protected boolean debug = false;
 
     public enum formats {
         HUMAN,
@@ -58,6 +59,8 @@ public abstract class CliOutput {
     public abstract void printUsage();
     public abstract void printInfo(String s);
 
+    public abstract void print(String s);
+
     public abstract void printWorkspaces(List<WorkspaceDTO> workspaceDTOs);
     public abstract void printPartRevisionsCount(int partRevisionsCount);
     public abstract void printPartRevisions(List<PartRevisionDTO> partRevisions);
@@ -70,5 +73,8 @@ public abstract class CliOutput {
     public abstract void printFolders(List<FolderDTO> folders);
 
     public abstract FilterInputStream getMonitor(long maximum, InputStream in);
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 
 }

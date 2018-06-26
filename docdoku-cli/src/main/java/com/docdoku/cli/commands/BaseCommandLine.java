@@ -24,6 +24,7 @@ import com.docdoku.api.DocdokuPLMClientFactory;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
+import com.docdoku.cli.helpers.LangHelper;
 import org.kohsuke.args4j.Option;
 
 import java.io.Console;
@@ -34,10 +35,11 @@ import java.util.Locale;
 /**
  * @author Florent Garin
  */
+
 public abstract class BaseCommandLine extends AbstractCommandLine {
 
-    @Option(name = "-P", aliases = "--port", metaVar = "<port>", usage = "port number to use for connection; default is 80")
-    protected int port = 80;
+    @Option(name = "-P", aliases = "--port", metaVar = "<port>", usage = "port number to use for connection; default is 443 for SSL otherwise 80")
+    protected int port = -1;
 
     @Option(name = "-h", aliases = "--host", metaVar = "<host>", usage = "host of the DocDokuPLM server to connect; default is docdokuplm.net")
     protected String host = "docdokuplm.net";
@@ -50,6 +52,9 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
     @Option(name = "-S", aliases = "--ssl", usage = "use a SSL (TLS) connection")
     protected boolean ssl;
+
+    @Option(name = "-dbg", aliases = "--debug", usage = "enable debug mode")
+    protected boolean debug = false;
 
     protected ApiClient client;
 
@@ -72,9 +77,13 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
     @Override
     public void exec() throws Exception {
-
         Locale userLocale = new AccountsManager().getUserLocale(user);
+        langHelper = new LangHelper(userLocale);
         output = CliOutput.getOutput(format, userLocale);
+        output.setDebug(debug);
+        if(port == -1) {
+            port = ssl ? 443 : 80;
+        }
         if (user == null && format.equals(CliOutput.formats.HUMAN)) {
             promptForUser();
         }

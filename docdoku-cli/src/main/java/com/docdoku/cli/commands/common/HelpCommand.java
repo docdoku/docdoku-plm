@@ -21,7 +21,6 @@
 package com.docdoku.cli.commands.common;
 
 import com.docdoku.cli.commands.AbstractCommandLine;
-import com.docdoku.cli.commands.parts.*;
 import com.docdoku.cli.helpers.CommandLine;
 import org.kohsuke.args4j.Argument;
 
@@ -42,31 +41,59 @@ public class HelpCommand extends AbstractCommandLine {
         CommandLine cl;
         switch(command){
             case "status": case "stat": case "st":
-                cl=new PartStatusCommand();
+                cl=new StatusCommand();
                 break;
 
             case "get":
-                cl=new PartGetCommand();
+                cl=new GetCommand();
                 break;
 
             case "put":
-                cl=new PartPutCommand();
+                cl=new PutCommand();
                 break;
 
             case "checkout": case "co":
-                cl=new PartCheckOutCommand();
+                cl=new CheckoutCommand();
                 break;
 
             case "undocheckout": case "uco":
-                cl=new PartUndoCheckOutCommand();
+                cl=new UndoCheckoutCommand();
                 break;
 
             case "checkin": case "ci":
-                cl=new PartCheckInCommand();
+                cl=new CheckInCommand();
+                break;
+
+            case "search": case "s":
+                cl=new SearchCommand();
                 break;
 
             case "create": case "cr":
-                cl=new PartCreationCommand();
+                cl=new CreateCommand();
+                break;
+
+            case "list": case "l":
+                cl=new ListCommand();
+                break;
+
+            case "folders": case "f":
+                cl=new FolderListCommand();
+                break;
+
+            case "baselinelist": case "bl":
+                cl=new BaselineListCommand();
+                break;
+
+            case "conversion": case "cv":
+                cl=new ConversionCommand();
+                break;
+
+            case "workspaces": case "wl":
+                cl=new WorkspacesCommand();
+                break;
+
+            case "account": case "a":
+                cl=new AccountInfosCommand();
                 break;
 
             case "help": case "?" : case "h":
