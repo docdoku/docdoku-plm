@@ -32,86 +32,90 @@ public class MainCommand {
      * Main function wrapper
      */
     public static void main(String[] args) {
-        try {
-            CommandLine cl = null;
 
-            switch (args[0]) {
-                case "status":
-                case "stat":
-                case "st":
-                    cl = new StatusCommand();
-                    break;
-                case "get":
-                    cl = new GetCommand();
-                    break;
-                case "put":
-                    cl = new PutCommand();
-                    break;
-                case "checkout":
-                case "co":
-                    cl = new CheckoutCommand();
-                    break;
-                case "undocheckout":
-                case "uco":
-                    cl = new UndoCheckoutCommand();
-                    break;
-                case "checkin":
-                case "ci":
-                    cl = new CheckInCommand();
-                    break;
-                case "search":
-                case "s":
-                    cl = new SearchCommand();
-                    break;
-                case "create":
-                case "cr":
-                    cl = new CreateCommand();
-                    break;
-                case "list":
-                case "l":
-                    cl = new ListCommand();
-                    break;
-                case "folders":
-                case "f":
-                    cl = new FolderListCommand();
-                    break;
+        CommandLine cl = null;
 
-                case "baselinelist":
-                case "bl":
-                    cl = new BaselineListCommand();
-                    break;
+        if(args.length == 0){
+            execCommand(new HelpCommand(), args);
+            return;
+        }
 
-                case "conversion":
-                case "cv":
-                    cl = new ConversionCommand();
-                    break;
+        switch (args[0]) {
+            case "status":
+            case "stat":
+            case "st":
+                cl = new StatusCommand();
+                break;
+            case "get":
+                cl = new GetCommand();
+                break;
+            case "put":
+                cl = new PutCommand();
+                break;
+            case "checkout":
+            case "co":
+                cl = new CheckoutCommand();
+                break;
+            case "undocheckout":
+            case "uco":
+                cl = new UndoCheckoutCommand();
+                break;
+            case "checkin":
+            case "ci":
+                cl = new CheckInCommand();
+                break;
+            case "search":
+            case "s":
+                cl = new SearchCommand();
+                break;
+            case "create":
+            case "cr":
+                cl = new CreateCommand();
+                break;
+            case "list":
+            case "l":
+                cl = new ListCommand();
+                break;
+            case "folders":
+            case "f":
+                cl = new FolderListCommand();
+                break;
 
-                case "workspaces":
-                case "wl":
-                    cl = new WorkspacesCommand();
-                    break;
+            case "baselinelist":
+            case "bl":
+                cl = new BaselineListCommand();
+                break;
 
-                case "account":
-                case "a":
-                    cl = new AccountInfosCommand();
-                    break;
+            case "conversion":
+            case "cv":
+                cl = new ConversionCommand();
+                break;
 
-                case "help":
-                case "?":
-                case "h":
-                    cl = new HelpCommand();
-                    break;
-            }
+            case "workspaces":
+            case "wl":
+                cl = new WorkspacesCommand();
+                break;
 
-            if(cl != null) {
-                execCommand(cl, Arrays.copyOfRange(args, 1, args.length));
-            } else {
-                execCommand(new HelpCommand(), args);
-            }
+            case "account":
+            case "a":
+                cl = new AccountInfosCommand();
+                break;
 
-        } catch (Exception e) {
+            case "help":
+            case "?":
+            case "h":
+                cl = new HelpCommand();
+                break;
+            default:
+                break;
+        }
+
+        if (cl != null) {
+            execCommand(cl, Arrays.copyOfRange(args, 1, args.length));
+        } else {
             execCommand(new HelpCommand(), args);
         }
+
     }
 
     private MainCommand() {

@@ -174,7 +174,7 @@ public class GetCommand extends BaseCommandLine {
         PartIterationDTO pi;
         if (pRevision != null) {
             pr = partsApi.getPartRevision(workspace, pPartNumber, pRevision);
-            pi = pIteration  > 0 ? pr.getPartIterations().get(pIteration) : LastIterationHelper.getLastIteration(pr);
+            pi = pIteration  > 0 ? pr.getPartIterations().get(pIteration-1) : LastIterationHelper.getLastIteration(pr);
         } else if (baselineId != null) {
             pi = partsApi.filterPartMasterInBaseline(workspace, pPartNumber, baselineId);
             pr = partsApi.getPartRevision(workspace, pPartNumber, pi.getVersion());
