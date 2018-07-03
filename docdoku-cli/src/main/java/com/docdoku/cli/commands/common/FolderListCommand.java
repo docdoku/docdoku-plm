@@ -18,10 +18,10 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands.documents;
+package com.docdoku.cli.commands.common;
 
-import com.docdoku.api.models.DocumentRevisionDTO;
-import com.docdoku.api.services.DocumentsApi;
+import com.docdoku.api.models.FolderDTO;
+import com.docdoku.api.services.FoldersApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
@@ -29,26 +29,27 @@ import java.io.IOException;
 import java.util.List;
 
 /**
+ *
  * @author Morgan Guimard
  */
-public class DocumentSearchCommand extends BaseCommandLine {
+public class FolderListCommand extends BaseCommandLine {
 
-    @Option(name = "-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage = "workspace on which operations occur")
+    @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(name = "-s", aliases = "--search", required = true, metaVar = "<search>", usage = "search string")
-    protected String searchValue;
+    @Option(name="-f", aliases = "--folder", usage="remote folder to list sub folders, default is workspace root folder")
+    private String folder = null;
 
     @Override
     public void execImpl() throws Exception {
-        DocumentsApi documentsApi = new DocumentsApi(client);
-        List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace, searchValue,
-                null, null, null, null, null, null, null, null, null, null, null, null, null, 0, 10000, false);
-        output.printDocumentRevisions(documentRevisions);
+        FoldersApi foldersApi = new FoldersApi(client);
+        String decodedPath = folder == null ? workspace : workspace+":"+folder;
+        List<FolderDTO> folders = foldersApi.getSubFolders(workspace,decodedPath);
+        output.printFolders(folders);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return langHelper.getLocalizedMessage("DocumentSearchCommandDescription");
+        return langHelper.getLocalizedMessage("FolderListCommandDescription");
     }
 }

@@ -35,8 +35,8 @@ import java.util.Locale;
 public class HumanOutput extends CliOutput {
 
     private LangHelper langHelper;
-    private final static PrintStream ERROR_STREAM = System.err;
-    private final static PrintStream OUTPUT_STREAM = System.out;
+    private static final PrintStream ERROR_STREAM = System.err;
+    private static final PrintStream OUTPUT_STREAM = System.out;
 
     public HumanOutput(Locale pLocale) {
         langHelper = new LangHelper(pLocale);
@@ -44,6 +44,9 @@ public class HumanOutput extends CliOutput {
 
     @Override
     public void printException(Exception e) {
+        if(debug) {
+            e.printStackTrace();
+        }
         ERROR_STREAM.println(e.getMessage());
         if (e instanceof CmdLineException) {
             printUsage();
@@ -70,21 +73,31 @@ public class HumanOutput extends CliOutput {
 
     private void printAvailableCommands() {
         ERROR_STREAM.println(langHelper.getLocalizedMessage("AvailableCommands") + ":");
+        ERROR_STREAM.println("   account (a)");
+        ERROR_STREAM.println("   baselinelist (bl)");
         ERROR_STREAM.println("   checkin (ci)");
         ERROR_STREAM.println("   checkout (co)");
+        ERROR_STREAM.println("   conversion (cv)");
         ERROR_STREAM.println("   create (cr)");
+        ERROR_STREAM.println("   folders (f)");
         ERROR_STREAM.println("   get");
         ERROR_STREAM.println("   help (?, h)");
+        ERROR_STREAM.println("   list (l)");
         ERROR_STREAM.println("   put");
+        ERROR_STREAM.println("   search (s)");
         ERROR_STREAM.println("   status (stat, st)");
         ERROR_STREAM.println("   undocheckout (uco)");
-        ERROR_STREAM.println();
-        ERROR_STREAM.println(langHelper.getLocalizedMessage("InstructionCommands"));
+        ERROR_STREAM.println("   workspaces (wl)");
     }
 
     @Override
     public void printInfo(String s) {
         OUTPUT_STREAM.println(s);
+    }
+
+    @Override
+    public void print(String s) {
+        OUTPUT_STREAM.print(s);
     }
 
     @Override

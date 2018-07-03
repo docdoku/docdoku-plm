@@ -18,40 +18,42 @@
  * along with DocDokuPLM.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.docdoku.cli.commands.parts;
+package com.docdoku.cli.commands.common;
 
-import com.docdoku.api.models.ProductBaselineDTO;
+import com.docdoku.api.models.ConversionDTO;
 import com.docdoku.api.services.PartApi;
 import com.docdoku.cli.commands.BaseCommandLine;
 import org.kohsuke.args4j.Option;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  *
  * @author Morgan Guimard
  */
-public class BaselineListCommand extends BaseCommandLine {
+public class ConversionCommand extends BaseCommandLine {
 
     @Option(name="-w", aliases = "--workspace", required = true, metaVar = "<workspace>", usage="workspace on which operations occur")
     protected String workspace;
 
-    @Option(metaVar = "<partnumber>", required = true, name = "-o", aliases = "--part", usage = "the part number of the part to verify the existence of baselines")
+    @Option(metaVar = "<partnumber>", required = true, name = "-o", aliases = "--part", usage = "the part number of the part to verify the existence of conversion")
     private String number;
 
     @Option(metaVar = "<revision>", required = true, name="-r", aliases = "--revision", usage="specify revision of the part to analyze ('A', 'B'...)")
     private String revision;
 
+    @Option(name="-i", required = true, aliases = "--iteration", metaVar = "<iteration>", usage="specify iteration of the part to retrieve ('1','2', '24'...); default is the latest")
+    private int iteration;
+
     @Override
     public void execImpl() throws Exception {
         PartApi partApi = new PartApi(client);
-        List<ProductBaselineDTO> productBaselines = partApi.getBaselinesWherePartRevisionHasIterations(workspace, number, revision);
-        output.printBaselines(productBaselines);
+        ConversionDTO conversion = partApi.getConversionStatus(workspace, number, revision, iteration);
+        output.printConversion(conversion);
     }
 
     @Override
     public String getDescription() throws IOException {
-        return langHelper.getLocalizedMessage("BaselineListCommandDescription");
+        return langHelper.getLocalizedMessage("ConversionCommandDescription");
     }
 }
