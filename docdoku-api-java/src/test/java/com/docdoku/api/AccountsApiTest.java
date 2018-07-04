@@ -57,9 +57,7 @@ public class AccountsApiTest {
         account.setPassword(TestConfig.PASSWORD);
 
         AccountDTO updatedAccount = accountsApi.updateAccount(account);
-        Assert.assertEquals(updatedAccount.getName(), newName);
-        Assert.assertEquals(updatedAccount, account);
-
+        Assert.assertEquals(updatedAccount.getName(), account.getName());
     }
 
     @Test

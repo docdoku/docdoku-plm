@@ -32,8 +32,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import javax.ejb.Singleton;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -232,7 +234,7 @@ public class DocumentApiTest {
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "C");
 
         // Let some time to server for data indexing (asynchronous)
-        Thread.sleep(2000);
+        Thread.sleep(5000);
 
         List<DocumentRevisionDTO> documentRevisions = documentsApi.searchDocumentRevision(workspace.getId(), null, null,
                 null, null, "B", null, null, null, null, null, null, null, null, null, FROM, SIZE, false);
@@ -633,9 +635,7 @@ public class DocumentApiTest {
         // Update document with new attribute
         document = documentApi.checkOutDocument(workspace.getId(), documentCreation.getReference(), "A");
         lastIteration = LastIterationHelper.getLastIteration(document);
-        instanceAttributes = lastIteration.getInstanceAttributes();
-        instanceAttributes.remove(attributeOld);
-        instanceAttributes.add(attributeNew);
+        lastIteration.setInstanceAttributes(Collections.singletonList(attributeNew));
 
         documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", 2, lastIteration);
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");

@@ -31,6 +31,7 @@ import com.docdoku.api.services.WorkspacesApi;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -38,6 +39,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -65,7 +68,7 @@ public class PartQueryApiTest {
     }
 
     @Test
-    public void partQueryTests() throws ApiException {
+    public void partQueryTests() throws ApiException, IOException {
 
         QueryDTO queryDTO = new QueryDTO();
         QueryRuleDTO mainRule = new QueryRuleDTO();
@@ -87,9 +90,9 @@ public class PartQueryApiTest {
         queryDTO.setName("QUERY-" + TestUtils.randomString());
         queryDTO.setQueryRule(mainRule);
 
-        String result = partsApi.runCustomQuery(workspace.getId(), queryDTO, false, "JSON");
-        // Parse result
-
+        File file = partsApi.runCustomQuery(workspace.getId(), queryDTO, false, "JSON");
+        String result = FileUtils.readFileToString(file);
+        Assert.assertNotNull(result);
         JsonArray rows = new Gson().fromJson(result, JsonArray.class);
         Assert.assertEquals(1, rows.size());
         JsonObject row = rows.get(0).getAsJsonObject();
