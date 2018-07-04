@@ -125,7 +125,7 @@
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.1.4</version>
+                <version>3.1.7</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
@@ -149,7 +149,19 @@
                             <info>
                                 <title>DocdokuPLM API</title>
                                 <version>2.5.0</version>
-                                <description>DocDokuPLM JavaScript client SDK</description>
+                                <description>DocDokuPLM REST API</description>
+                                <termsOfService>
+                                    https://www.docdokuplm.com/
+                                </termsOfService>
+                                <contact>
+                                    <email>api@docdokuplm.com</email>
+                                    <name>DocDoku</name>
+                                    <url>http://www.docdokuplm.com/</url>
+                                </contact>
+                                <license>
+                                    <url>GNU Affero General Public License v3.0</url>
+                                    <name>AGPL-3.0</name>
+                                </license>
                             </info>
                             <securityDefinitions>
                                 <securityDefinition>
@@ -179,6 +191,31 @@
                             <overWriteReleases>false</overWriteReleases>
                             <overWriteSnapshots>false</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.swagger</groupId>
+                <artifactId>swagger-codegen-maven-plugin</artifactId>
+                <version>2.1.5</version>
+                <executions>
+                    <execution>
+                        <id>generateHTML</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.build.directory}/swagger/swagger.json</inputSpec>
+                            <language>html</language>
+                            <output>${project.build.directory}/html</output>
+                            <apiPackage>com.docdoku.api.services</apiPackage>
+                            <invokerPackage>com.docdoku.api.client</invokerPackage>
+                            <modelPackage>com.docdoku.api.models</modelPackage>
+                            <configOptions>
+                                <serializableModel>true</serializableModel>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>

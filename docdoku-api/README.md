@@ -1,9 +1,25 @@
 # Docdoku API
 
-This module generates a json file to describe web services.
+This module generates a JSON file that describes all web services from eplmp-server-rest module
 
-## Swagger UI
+## Build commands
 
-You can launch a local instance of SwaggerUI, by simply run `npm run doc` in docdoku-api root directory.
+    mvn clean install
 
-Then launch your favorite web browser and reach the following URI: `http://localhost:20000/?url=swagger.json`
+## Dev commands
+
+Validate the json file
+
+    npm run validate
+    
+Launch a local instance of SwaggerUI
+
+    npm run doc
+    
+Then access to `http://localhost:20000/?url=swagger.json`
+
+## Static doc
+
+    npm run static
+    
+Then access to `http://localhost:20000/?url=swagger.json`

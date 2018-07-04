@@ -4,11 +4,17 @@
   "description": "Simply install swagger-ui",
   "author": "Morgan Guimard",
   "scripts": {
-    "doc": "mvn clean install -Denv.API_HOST=localhost:8080 && cp ./target/swagger/swagger.json ./node_modules/swagger-ui/dist/swagger.json && ./node_modules/.bin/http-server ./node_modules/swagger-ui/dist -p 20000 --cors",
-    "predoc": "npm install"
+    "doc": "mvn clean install -Denv.API_HOST=localhost:8080 && cp ./target/swagger/swagger.json ./node_modules/swagger-ui-dist/swagger.json && http-server ./node_modules/swagger-ui-dist -p 20000 --cors",
+    "predoc": "npm install",
+    "validate": "swagger-cli validate target/swagger/swagger.json",
+    "prevalidate": "npm install",
+    "static": "cd target/html && concurrently \"http-server -a localhost -p 9010\" \"open http://localhost:9010/\"",
+    "prestatic": "npm install"
   },
   "devDependencies": {
-    "http-server": "^0.9.0",
-    "swagger-ui": "^2.2.6"
+    "concurrently": "3.6.0",
+    "http-server": "0.9.0",
+    "swagger-cli": "2.1.0",
+    "swagger-ui-dist": "3.17.2"
   }
 }
