@@ -9,9 +9,13 @@
   },
   "scripts": {
     "prebuild": "npm install",
-    "build": "grunt build"
+    "build": "grunt build",
+    "predoc": "npm run build",
+    "doc": "cd target/docdoku-plm-api/site && concurrently \"http-server -a localhost -p 9011\" \"open http://localhost:9011/\""
   },
   "devDependencies": {
+    "concurrently": "3.6.0",
+    "http-server": "0.9.0",
     "chai": "^3.5.0",
     "grunt": "~0.4.1",
     "grunt-browserify": "^5.0.0",
