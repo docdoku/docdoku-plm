@@ -58,7 +58,7 @@
             <plugin>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>2.3.1</version>
                 <executions>
                     <execution>
                         <phase>process-sources</phase>
@@ -69,6 +69,10 @@
                             <inputSpec>${project.build.directory}/swagger/swagger.json</inputSpec>
                             <language>javascript</language>
                             <output>${project.build.directory}/docdoku-plm-api/npm/</output>
+                            <configOptions>
+                                <projectName>docdoku-plm-api</projectName>
+                                <projectDescription>DocDokuPLM JavaScript API</projectDescription>
+                            </configOptions>
                         </configuration>
                     </execution>
                 </executions>
