@@ -10,18 +10,18 @@
     "prevalidate": "npm install",
     "static": "cd target/html && concurrently \"http-server -a localhost -p 9010\" \"open http://localhost:9010/\"",
     "prestatic": "npm install",
-
     "build": "npm run zip-ui",
     "prebuild": "npm install",
     "postinstall": "npm run replace-url && npm run copy-json",
     "copy-json": "cp ./target/swagger/swagger.json ./node_modules/swagger-ui-dist/swagger.json",
-    "replace-url": "sed -i 's!https://petstore.swagger.io/v2/swagger.json!swagger.json!g' ./node_modules/swagger-ui-dist/index.html",
+    "replace-url": "replace 'https://petstore.swagger.io/v2/swagger.json' 'swagger.json' node_modules/swagger-ui-dist/index.html",
     "zip-ui": "bestzip ./target/docdoku-api-reference.zip  ./node_modules/swagger-ui-dist/*"
   },
   "devDependencies": {
     "bestzip": "1.1.4",
     "concurrently": "3.6.0",
     "http-server": "0.9.0",
+    "replace": "^1.0.0",
     "swagger-cli": "2.1.0",
     "swagger-ui-dist": "3.17.2"
   }
