@@ -1,5 +1,5 @@
 var DocdokuPlmApi = require('../../target/docdoku-plm-api/npm');
-var basePath = 'http://localhost:8080/api';
+var basePath = 'http://localhost:8080/eplmp-server-rest/api';
 
 var guestClient = new DocdokuPlmApi.ApiClient();
 guestClient.basePath = basePath;
