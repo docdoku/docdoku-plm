@@ -102,7 +102,7 @@
     </dependencies>
 
     <properties>
-        <env.API_HOST>https://docdokuplm.net</env.API_HOST>
+        <env.API_HOST>docdokuplm.net</env.API_HOST>
         <env.API_BASE_PATH>/eplmp-server-rest/api</env.API_BASE_PATH>
         <env.API_TITLE>DocDokuPLM API</env.API_TITLE>
         <env.API_VERSION>${project.version}</env.API_VERSION>
