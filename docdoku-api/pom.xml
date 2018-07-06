@@ -20,7 +20,15 @@
         <dependency>
             <groupId>org.polarsys.eplmp</groupId>
             <artifactId>eplmp-core</artifactId>
-            <version>2.5-SNAPSHOT</version>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.polarsys.eplmp</groupId>
+            <artifactId>eplmp-server-rest</artifactId>
+            <version>${project.version}</version>
+            <classifier>sources</classifier>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -93,36 +101,51 @@
         </dependency>
     </dependencies>
 
+    <properties>
+        <env.API_HOST>https://docdokuplm.net</env.API_HOST>
+        <env.API_BASE_PATH>/eplmp-server-rest/api</env.API_BASE_PATH>
+        <env.API_TITLE>DocDokuPLM API</env.API_TITLE>
+        <env.API_VERSION>${project.version}</env.API_VERSION>
+        <env.API_DESCRIPTION>DocdokuPLM API Description and Reference</env.API_DESCRIPTION>
+        <env.API_TOS_URL>https://www.docdokuplm.com/</env.API_TOS_URL>
+        <env.API_CONTACT_MAIL>contact@docdokuplm.com</env.API_CONTACT_MAIL>
+        <env.API_CONTACT_NAME>Docdoku</env.API_CONTACT_NAME>
+        <env.API_CONTACT_URL>https://www.docdokuplm.com/</env.API_CONTACT_URL>
+        <env.API_LICENCE_URL> GNU AFFERO GENERAL PUBLIC LICENSE Version 3</env.API_LICENCE_URL>
+        <env.API_LICENCE_NAME>AGPL-3.0</env.API_LICENCE_NAME>
+    </properties>
+
     <build>
         <plugins>
-            <!-- Sources directories -->
+            <!-- Unpack eplmp server rest module -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.10</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.2</version>
                 <executions>
                     <execution>
-                        <phase>generate-sources</phase>
+                        <id>unpack</id>
+                        <phase>process-sources</phase>
                         <goals>
-                            <goal>add-source</goal>
+                            <goal>unpack</goal>
                         </goals>
                         <configuration>
-                            <sources>
-                                <source>${project.parent.basedir}/eplmp/eplmp-server/eplmp-server-rest/src/main/java
-                                </source>
-                            </sources>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.polarsys.eplmp</groupId>
+                                    <artifactId>eplmp-server-rest</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>sources</classifier>
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/eplmp</outputDirectory>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
 
-            <!-- Compile sources -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-
-            <!-- Generate json file -->
+            <!--Generate JSON Description-->
             <plugin>
                 <groupId>com.github.kongchen</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
@@ -139,7 +162,7 @@
                     <apiSources>
                         <apiSource>
                             <host>${env.API_HOST}</host>
-                            <basePath>/eplmp-server-rest/api</basePath>
+                            <basePath>${env.API_BASE_PATH}</basePath>
                             <locations>
                                 <location>org.polarsys.eplmp.server.rest</location>
                             </locations>
@@ -148,20 +171,20 @@
                                 <scheme>https</scheme>
                             </schemes>
                             <info>
-                                <title>DocdokuPLM API</title>
-                                <version>2.5.0</version>
-                                <description>DocDokuPLM REST API</description>
+                                <title>${env.API_TITLE}</title>
+                                <version>${project.version}</version>
+                                <description>${env.API_DESCRIPTION}</description>
                                 <termsOfService>
-                                    https://www.docdokuplm.com/
+                                    ${env.API_TOS_URL}
                                 </termsOfService>
                                 <contact>
-                                    <email>api@docdokuplm.com</email>
-                                    <name>DocDoku</name>
-                                    <url>http://www.docdokuplm.com/</url>
+                                    <email>${env.API_CONTACT_MAIL}</email>
+                                    <name>${env.API_CONTACT_NAME}</name>
+                                    <url>${env.API_CONTACT_URL}</url>
                                 </contact>
                                 <license>
-                                    <url>GNU Affero General Public License v3.0</url>
-                                    <name>AGPL-3.0</name>
+                                    <url>${env.API_LICENCE_URL}</url>
+                                    <name>${env.API_LICENCE_NAME}</name>
                                 </license>
                             </info>
                             <securityDefinitions>
@@ -178,26 +201,8 @@
                     </apiSources>
                 </configuration>
             </plugin>
-            <!-- Prepare embedded dependencies -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
+             <!-- Generate static html doc -->
             <plugin>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
@@ -223,6 +228,51 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!--Build the swagger-ui-dist-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.3.2</version>
+                <executions>
+                    <execution>
+                        <id>build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>npm</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>build</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Export API json file for other modules -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <classifier>json</classifier>
+                            <classesDirectory>${project.build.directory}/swagger</classesDirectory>
+                            <include>**/*</include>
+                        </configuration>
+                        <id>pack-api</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 </project>

@@ -231,8 +231,6 @@
     </dependencyManagement>
     <modules>
 
-        <module>eplmp</module>
-
         <module>docdoku-api</module>
         <module>docdoku-api-java</module>
         <module>docdoku-api-js</module>
