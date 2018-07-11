@@ -236,19 +236,6 @@
                 <version>1.3.2</version>
                 <executions>
                     <execution>
-                        <id>install-dep</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>npm</executable>
-                            <arguments>
-                                <argument>install</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>build</id>
                         <phase>package</phase>
                         <goals>
