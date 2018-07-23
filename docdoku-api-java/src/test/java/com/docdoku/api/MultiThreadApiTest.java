@@ -50,8 +50,8 @@ import java.util.logging.Logger;
 @RunWith(JUnit4.class)
 public class MultiThreadApiTest {
 
-    private static final int MAX_THREADS = 100;
-    private static final int TIME_PER_THREAD = 150;
+    private static final int MAX_THREADS = 10;
+    private static final int TIME_PER_THREAD = 1000;
     private static final long WAIT_TIME = MAX_THREADS * TIME_PER_THREAD;
     private static WorkspaceDTO workspace;
 
