@@ -59,7 +59,7 @@ public class GetCommand extends BaseCommandLine {
             aliases = "--revision",
             usage="specify revision of the target to retrieve ('A', 'B'...); default is the latest"
     )
-    private String revision;
+    private String revision = "A";
 
     @Option(
             name="-i",
