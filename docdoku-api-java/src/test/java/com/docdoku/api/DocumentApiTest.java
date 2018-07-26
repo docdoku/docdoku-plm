@@ -23,6 +23,7 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiCallback;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
+import com.docdoku.api.models.utils.AttributesHelper;
 import com.docdoku.api.models.utils.LastIterationHelper;
 import com.docdoku.api.services.*;
 import org.junit.AfterClass;
@@ -377,10 +378,9 @@ public class DocumentApiTest {
         String attrValue = TestUtils.randomString();
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
-        InstanceAttributeDTO attribute = new InstanceAttributeDTO();
-        attribute.setName(attrName);
-        attribute.setType(InstanceAttributeDTO.TypeEnum.TEXT);
-        attribute.setValue(attrValue);
+        InstanceAttributeDTO attribute = AttributesHelper.createInstanceAttribute(
+                InstanceAttributeDTO.TypeEnum.TEXT,attrName,attrValue);
+
         lastIteration.getInstanceAttributes().add(attribute);
         documentApi.updateDocumentIteration(workspace.getId(), documentCreation.getReference(), "A", 1, lastIteration);
         documentApi.checkInDocument(workspace.getId(), documentCreation.getReference(), "A");
@@ -575,15 +575,10 @@ public class DocumentApiTest {
         DocumentRevisionDTO document = foldersApi.createDocumentMasterInFolder(workspace.getId(), documentCreation, workspace.getId());
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
 
-        InstanceAttributeDTO attribute1 = new InstanceAttributeDTO();
-        attribute1.setName(attrName1);
-        attribute1.setType(InstanceAttributeDTO.TypeEnum.TEXT);
-        attribute1.setValue(attrValue);
-
-        InstanceAttributeDTO attribute2 = new InstanceAttributeDTO();
-        attribute2.setName(attrName2);
-        attribute2.setType(InstanceAttributeDTO.TypeEnum.TEXT);
-        attribute2.setValue(attrValue);
+        InstanceAttributeDTO attribute1 = AttributesHelper.createInstanceAttribute(
+                InstanceAttributeDTO.TypeEnum.TEXT, attrName1, attrValue);
+        InstanceAttributeDTO attribute2 = AttributesHelper.createInstanceAttribute(
+                InstanceAttributeDTO.TypeEnum.TEXT, attrName2, attrValue);
 
         List<InstanceAttributeDTO> instanceAttributes = lastIteration.getInstanceAttributes();
         instanceAttributes.add(attribute1);
@@ -613,15 +608,11 @@ public class DocumentApiTest {
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(document);
 
-        InstanceAttributeDTO attributeOld = new InstanceAttributeDTO();
-        attributeOld.setName(attrName);
-        attributeOld.setType(InstanceAttributeDTO.TypeEnum.TEXT);
-        attributeOld.setValue(attrValueOld);
+        InstanceAttributeDTO attributeOld = AttributesHelper.createInstanceAttribute(
+                InstanceAttributeDTO.TypeEnum.TEXT,attrName,attrValueOld);
 
-        InstanceAttributeDTO attributeNew = new InstanceAttributeDTO();
-        attributeNew.setName(attrName);
-        attributeNew.setType(InstanceAttributeDTO.TypeEnum.TEXT);
-        attributeNew.setValue(attrValueNew);
+        InstanceAttributeDTO attributeNew = AttributesHelper.createInstanceAttribute(
+                InstanceAttributeDTO.TypeEnum.TEXT,attrName,attrValueNew);
 
         List<InstanceAttributeDTO> instanceAttributes = lastIteration.getInstanceAttributes();
         instanceAttributes.add(attributeOld);
