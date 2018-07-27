@@ -43,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @RunWith(JUnit4.class)
 public class PartQueryApiTest {
@@ -90,7 +91,7 @@ public class PartQueryApiTest {
         queryDTO.setName("QUERY-" + TestUtils.randomString());
         queryDTO.setQueryRule(mainRule);
 
-        File file = partsApi.runCustomQuery(workspace.getId(), queryDTO, false, "JSON");
+        File file = partsApi.runCustomQuery(workspace.getId(), queryDTO, true, "JSON");
         String result = FileUtils.readFileToString(file);
         Assert.assertNotNull(result);
         JsonArray rows = new Gson().fromJson(result, JsonArray.class);
@@ -101,6 +102,24 @@ public class PartQueryApiTest {
         Assert.assertEquals(part.getNumber(), row.get("pm.number").getAsString());
         Assert.assertEquals(part.getName(), row.get("pm.name").getAsString());
 
+        file = partsApi.exportCustomQuery(workspace.getId(), queryDTO, "XLS");
+        Assert.assertTrue(file.getName().endsWith(".xls"));
+        Assert.assertTrue(file.length() > 0);
+
+
+        List<QueryDTO> customQueries = partsApi.getCustomQueries(workspace.getId());
+        Assert.assertEquals(1, customQueries.size());
+
+        QueryDTO queryDTOFetched = customQueries.get(0);
+
+        file = partsApi.exportExistingQuery(workspace.getId(), queryDTOFetched.getId(), "XLS");
+        Assert.assertTrue(file.getName().endsWith(".xls"));
+        Assert.assertTrue(file.length() > 0);
+
+        partsApi.deleteQuery(workspace.getId(), queryDTOFetched.getId());
+        customQueries = partsApi.getCustomQueries(workspace.getId());
+        Assert.assertTrue(customQueries.isEmpty());
+
     }
 
     public void simpleOR() {
@@ -110,7 +129,6 @@ public class PartQueryApiTest {
         ruleA.setOperator("begins_with");
         ruleA.setType("string");
         ruleA.setValues(Collections.singletonList("A"));
-
 
         QueryRuleDTO ruleB = new QueryRuleDTO();
 

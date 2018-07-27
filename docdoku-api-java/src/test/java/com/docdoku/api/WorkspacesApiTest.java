@@ -24,6 +24,9 @@ package com.docdoku.api;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.*;
+import com.docdoku.api.services.DocumentApi;
+import com.docdoku.api.services.PartApi;
+import com.docdoku.api.services.ProductsApi;
 import com.docdoku.api.services.WorkspacesApi;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.List;
+import java.util.Map;
 
 @RunWith(JUnit4.class)
 public class WorkspacesApiTest {
@@ -150,6 +154,60 @@ public class WorkspacesApiTest {
 
         workspacesForConnectedUser = workspacesApi.getWorkspacesForConnectedUser();
         Assert.assertTrue(!workspacesForConnectedUser.getAllWorkspaces().contains(createdWorkspace));
+    }
+
+    @Test
+    public void testStats() throws ApiException {
+        WorkspacesApi workspacesApi = new WorkspacesApi(TestConfig.REGULAR_USER_CLIENT);
+        DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
+        PartApi partApi = new PartApi(TestConfig.REGULAR_USER_CLIENT);
+        ProductsApi productsApi = new ProductsApi(TestConfig.REGULAR_USER_CLIENT);
+
+        DocumentRevisionDTO document = TestUtils.createDocument(workspace.getId(), null);
+        documentApi.checkOutDocument(workspace.getId(), document.getDocumentMasterId(), document.getVersion());
+
+        PartRevisionDTO part = TestUtils.createPart(workspace.getId(), null);
+        partApi.checkIn(workspace.getId(), part.getNumber(), part.getVersion());
+        partApi.checkOut(workspace.getId(), part.getNumber(), part.getVersion());
+
+        ConfigurationItemDTO product = new ConfigurationItemDTO();
+        product.setId(TestUtils.randomString());
+        product.setDesignItemNumber(part.getNumber());
+        product.setWorkspaceId(workspace.getId());
+
+        productsApi.createConfigurationItem(workspace.getId(), product);
+
+        StatsOverviewDTO statsOverview = workspacesApi.getStatsOverview(workspace.getId());
+        Assert.assertNotNull(statsOverview);
+        Assert.assertEquals(1, statsOverview.getParts().intValue());
+        Assert.assertEquals(1, statsOverview.getDocuments().intValue());
+        Assert.assertEquals(1, statsOverview.getProducts().intValue());
+
+        Map<String, List<Map<String, Long>>> checkedOutDocumentsStats =
+                workspacesApi.getCheckedOutDocumentsStats(workspace.getId());
+        checkedOutDocumentsStats.entrySet()
+                .stream()
+                .forEach(e -> {
+                    Assert.assertEquals(TestConfig.LOGIN, e.getKey());
+                    Assert.assertEquals(1, e.getValue().size());
+                });
+
+        Map<String, List<Map<String, Long>>> checkedOutPartsStats =
+                workspacesApi.getCheckedOutPartsStats(workspace.getId());
+
+        checkedOutPartsStats.entrySet()
+                .stream()
+                .forEach(e -> {
+                    Assert.assertEquals(TestConfig.LOGIN, e.getKey());
+                    Assert.assertEquals(1, e.getValue().size());
+                });
+
+        UserStatsDTO usersStats = workspacesApi.getUsersStats(workspace.getId());
+        Assert.assertNotNull(usersStats.getActiveusers());
+
+        DiskUsageSpaceDTO diskSpaceUsageStats = workspacesApi.getDiskSpaceUsageStats(workspace.getId());
+        Assert.assertNotNull(diskSpaceUsageStats);
+
     }
 
     private UserGroupDTO createGroup() throws ApiException {
