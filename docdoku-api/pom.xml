@@ -111,7 +111,7 @@
         <env.API_CONTACT_MAIL>contact@docdokuplm.com</env.API_CONTACT_MAIL>
         <env.API_CONTACT_NAME>Docdoku</env.API_CONTACT_NAME>
         <env.API_CONTACT_URL>https://www.docdokuplm.com/</env.API_CONTACT_URL>
-        <env.API_LICENCE_URL> GNU AFFERO GENERAL PUBLIC LICENSE Version 3</env.API_LICENCE_URL>
+        <env.API_LICENCE_URL>GNU AFFERO GENERAL PUBLIC LICENSE Version 3</env.API_LICENCE_URL>
         <env.API_LICENCE_NAME>AGPL-3.0</env.API_LICENCE_NAME>
     </properties>
 
@@ -202,7 +202,7 @@
                 </configuration>
             </plugin>
 
-             <!-- Generate static html doc -->
+            <!-- Generate static html doc -->
             <plugin>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-codegen-maven-plugin</artifactId>
@@ -262,7 +262,9 @@
                         <configuration>
                             <classifier>json</classifier>
                             <classesDirectory>${project.build.directory}/swagger</classesDirectory>
-                            <include>**/*</include>
+                            <includes>
+                                <include>**/*</include>
+                            </includes>
                         </configuration>
                         <id>pack-api</id>
                         <phase>package</phase>
