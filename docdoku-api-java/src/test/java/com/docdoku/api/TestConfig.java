@@ -26,9 +26,8 @@ import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.services.AccountsApi;
 
 /**
- * Config parser
- * <p>
- * Override any value from cli: -Denv.PARAM_NAME=PARAM_VALUE
+ * Static test config
+ * Override any value from pom.xml / env args: -Denv.PARAM_NAME=PARAM_VALUE
  *
  * @Author Morgan Guimard
  */
@@ -37,7 +36,6 @@ public class TestConfig {
     public static String URL;
     public static String LOGIN;
     public static String PASSWORD;
-    public static String WORKSPACE;
     public static String ROOT_LOGIN;
     public static String ROOT_PASSWORD;
     public static String EMAIL;
@@ -56,45 +54,35 @@ public class TestConfig {
     public static ApiClient REGULAR_USER_CLIENT;
 
     static {
-        parseProperties();
-        createClients();
-        try {
-            initTestAccount();
-        } catch (ApiException e) {
-            e.printStackTrace();
-        }
-    }
 
+        URL = System.getProperty("url");
+        LOGIN = System.getProperty("login");
+        NAME = System.getProperty("name");
+        PASSWORD = System.getProperty("password");
+        ROOT_PASSWORD = System.getProperty("root_password");
+        ROOT_LOGIN = System.getProperty("root_login");
+        EMAIL = System.getProperty("email");
+        LANGUAGE = System.getProperty("language");
+        TIMEZONE = System.getProperty("timezone");
+        DEBUG = Boolean.valueOf(System.getProperty("debug"));
 
-    private static void parseProperties() {
-        URL = System.getProperty("url") != null ? System.getProperty("url") : "http://localhost:8080/eplmp-server-rest/api";
-        LOGIN = System.getProperty("login") != null ? System.getProperty("login") : "test";
-        NAME = System.getProperty("name") != null ? System.getProperty("name") : "test";
-        PASSWORD = System.getProperty("password") != null ? System.getProperty("password") : "test";
-        ROOT_PASSWORD = System.getProperty("root_password") != null ? System.getProperty("root_password") : "root";
-        ROOT_LOGIN = System.getProperty("root_login") != null ? System.getProperty("root_login") : "root";
-        // workspace argument is now deprecated (wont be used)
-        WORKSPACE = System.getProperty("workspace") != null ? System.getProperty("workspace") : "test-api-java";
-        EMAIL = System.getProperty("email") != null ? System.getProperty("email") : "";
-        LANGUAGE = System.getProperty("language") != null ? System.getProperty("language") : "en";
-        TIMEZONE = System.getProperty("timezone") != null ? System.getProperty("timezone") : "CET";
-        DEBUG = System.getProperty("debug") != null && Boolean.parseBoolean(System.getProperty("debug"));
-    }
-
-    private static void createClients() {
         GUEST_CLIENT = DocdokuPLMClientFactory.createClient(URL, DEBUG);
         BASIC_CLIENT = DocdokuPLMClientFactory.createBasicClient(URL, LOGIN, PASSWORD, DEBUG);
         COOKIE_CLIENT = DocdokuPLMClientFactory.createCookieClient(URL, LOGIN, PASSWORD, DEBUG);
         JWT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, LOGIN, PASSWORD, DEBUG);
         ROOT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG);
         REGULAR_USER_CLIENT = JWT_CLIENT;
+
+        // init test account
+        try {
+            AccountsApi accountsApi = new AccountsApi(REGULAR_USER_CLIENT);
+            AccountDTO account = accountsApi.getAccount();
+            account.setEmail(EMAIL);
+            account.setPassword(PASSWORD);
+            accountsApi.updateAccount(account);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void initTestAccount() throws ApiException {
-        AccountsApi accountsApi = new AccountsApi(REGULAR_USER_CLIENT);
-        AccountDTO account = accountsApi.getAccount();
-        account.setEmail(null);
-        account.setPassword(PASSWORD);
-        accountsApi.updateAccount(account);
-    }
 }
