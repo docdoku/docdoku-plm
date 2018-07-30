@@ -52,7 +52,7 @@ public class WorkflowApiTest {
     private PartsApi partsApi = new PartsApi(TestConfig.REGULAR_USER_CLIENT);
     private DocumentApi documentApi = new DocumentApi(TestConfig.REGULAR_USER_CLIENT);
     private FoldersApi foldersApi = new FoldersApi(TestConfig.REGULAR_USER_CLIENT);
-    private  DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(TestConfig.REGULAR_USER_CLIENT);
+    private DocumentBinaryApi documentBinaryApi = new DocumentBinaryApi(TestConfig.REGULAR_USER_CLIENT);
 
     private static WorkspaceDTO workspace;
 
@@ -62,7 +62,8 @@ public class WorkflowApiTest {
     }
 
     @AfterClass
-    public static void deleteWorkspace() throws ApiException {
+    public static void deleteWorkspace() throws ApiException, InterruptedException {
+        Thread.sleep(2000);
         TestUtils.deleteWorkspace(workspace);
     }
 
@@ -83,11 +84,14 @@ public class WorkflowApiTest {
         workspaceWorkflowCreationDTO.setWorkflowModelId(workflowModel.getId());
 
         WorkspaceWorkflowDTO workspaceWorkflow = workspaceWorkflowsApi.createWorkspaceWorkflow(workspace.getId(), workspaceWorkflowCreationDTO);
-        Assert.assertEquals(workspaceWorkflow.getId(),workspaceWorkflowCreationDTO.getId());
-        Assert.assertEquals(workspaceWorkflow.getWorkspaceId(),workspace.getId());
+        Assert.assertEquals(workspaceWorkflow.getId(), workspaceWorkflowCreationDTO.getId());
+        Assert.assertEquals(workspaceWorkflow.getWorkspaceId(), workspace.getId());
         runAsserts(workspaceWorkflow.getWorkflow(), workflowModel);
         processTask(workspaceWorkflow.getWorkflow(), workflowModel);
+        rejectAndRelaunch(workspace.getId(), workspaceWorkflow.getWorkflow().getId());
 
+        workspaceWorkflow = workspaceWorkflowsApi.getWorkspaceWorkflow(workspace.getId(), workspaceWorkflow.getId());
+        assertRelaunched(workspaceWorkflow.getWorkflow());
         workspaceWorkflowsApi.deleteWorkspaceWorkflow(workspace.getId(), workspaceWorkflow.getId());
     }
 
@@ -102,22 +106,20 @@ public class WorkflowApiTest {
         List<RoleMappingDTO> roleMapping = resolveDefaultRoles(workflowModel);
 
         // Create a part
-
-        // Create a part
         PartCreationDTO part = new PartCreationDTO();
         part.setNumber(TestUtils.randomString());
         part.setWorkflowModelId(workflowModelReference);
         part.setRoleMapping(roleMapping);
         PartRevisionDTO newPart = partsApi.createNewPart(workspace.getId(), part);
-        partsApi.checkIn(workspace.getId(), newPart.getNumber(),newPart.getVersion());
+        partsApi.checkIn(workspace.getId(), newPart.getNumber(), newPart.getVersion());
 
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(workspace.getId(), newPart.getWorkflow().getId());
-        Assert.assertEquals(workflow,newPart.getWorkflow());
+        Assert.assertEquals(workflow, newPart.getWorkflow());
         runAsserts(newPart.getWorkflow(), workflowModel);
-
         processTask(newPart.getWorkflow(), workflowModel);
-
-
+        rejectAndRelaunch(workspace.getId(), newPart.getWorkflow().getId());
+        PartRevisionDTO partRevision = partsApi.getPartRevision(workspace.getId(), newPart.getNumber(), newPart.getVersion());
+        assertRelaunched(partRevision.getWorkflow());
     }
 
     @Test
@@ -139,6 +141,7 @@ public class WorkflowApiTest {
         // Upload file
         DocumentRevisionDTO createdDocument = foldersApi.createDocumentMasterInFolder(workspace.getId(), document, workspace.getId());
         URL fileURL = WorkflowApiTest.class.getClassLoader().getResource("com/docdoku/api/attached-file.zip");
+        Assert.assertNotNull(fileURL);
         File file = new File(fileURL.getPath());
 
         DocumentIterationDTO lastIteration = LastIterationHelper.getLastIteration(createdDocument);
@@ -153,19 +156,18 @@ public class WorkflowApiTest {
         documentApi.checkInDocument(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
 
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(workspace.getId(), createdDocument.getWorkflow().getId());
-        Assert.assertEquals(workflow,createdDocument.getWorkflow());
+        Assert.assertEquals(workflow, createdDocument.getWorkflow());
 
         runAsserts(createdDocument.getWorkflow(), workflowModel);
         processTask(createdDocument.getWorkflow(), workflowModel);
-
+        rejectAndRelaunch(workspace.getId(), createdDocument.getWorkflow().getId());
         DocumentRevisionDTO documentRevision = documentApi.getDocumentRevision(workspace.getId(), createdDocument.getDocumentMasterId(), createdDocument.getVersion());
-        Assert.assertTrue("Task is refreshed on document getter", documentRevision.getWorkflow().getActivities().get(0).getTasks().get(0).getStatus().equals(TaskDTO.StatusEnum.APPROVED));
-
+        assertRelaunched(documentRevision.getWorkflow());
     }
 
     private void runAsserts(WorkflowDTO workflowDTO, WorkflowModelDTO workflowModel) {
         Assert.assertNotNull(workflowDTO);
-        Assert.assertEquals(workflowDTO.getFinalLifeCycleState(),workflowModel.getFinalLifeCycleState());
+        Assert.assertEquals(workflowDTO.getFinalLifeCycleState(), workflowModel.getFinalLifeCycleState());
         Assert.assertNotNull(workflowDTO.getActivities());
         Assert.assertEquals(workflowDTO.getActivities().size(), workflowModel.getActivityModels().size());
         Assert.assertEquals(workflowDTO.getActivities().get(0).getLifeCycleState(), workflowModel.getActivityModels().get(0).getLifeCycleState());
@@ -180,15 +182,18 @@ public class WorkflowApiTest {
 
         // Retrieve workflow by it's id
         WorkflowDTO workflow = workflowsApi.getWorkflowInstance(workspace.getId(), createdWorkflow.getId());
-        Assert.assertEquals(workflow,createdWorkflow);
+        Assert.assertEquals(workflow, createdWorkflow);
 
         // Get first running task, assert our user is in assigned users
         ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workflow);
         List<TaskDTO> runningTasks = WorkflowHelper.getRunningTasks(currentActivity);
         TaskDTO firstTask = runningTasks.get(0);
 
+        Assert.assertNotNull(currentActivity);
         Assert.assertTrue(firstTask.getAssignedUsers().contains(me));
         Assert.assertEquals(firstTask.getStatus(), TaskDTO.StatusEnum.IN_PROGRESS);
+
+        String taskId = workflow.getId() + "-" + currentActivity.getStep() + "-" + firstTask.getNum();
 
         // Approve the first task
         TaskProcessDTO taskProcessDTO = new TaskProcessDTO();
@@ -196,20 +201,66 @@ public class WorkflowApiTest {
         taskProcessDTO.setSignature("data:image/gif;base64,R0lGODlhAQABAAAAACw=");
         taskProcessDTO.setAction(TaskProcessDTO.ActionEnum.APPROVE);
 
-        String taskId = workflow.getId() + "-" + currentActivity.getStep() + "-" + firstTask.getNum();
 
         tasksApi.processTask(workspace.getId(), taskId, taskProcessDTO);
 
         TaskDTO task = tasksApi.getTask(workspace.getId(), taskId);
         Assert.assertEquals(TaskDTO.StatusEnum.APPROVED, task.getStatus());
-
         workflow = workflowsApi.getWorkflowInstance(workspace.getId(), workflow.getId());
-
         currentActivity = WorkflowHelper.getCurrentActivity(workflow);
         Assert.assertNotNull(currentActivity);
         TaskDTO nextTask = WorkflowHelper.getRunningTasks(currentActivity).get(0);
-        Assert.assertEquals("2nd task must be the next running task", createdFrom.getActivityModels().get(0).getTaskModels().get(1).getTitle(),nextTask.getTitle());
+        Assert.assertEquals("2nd task must be the next running task", createdFrom.getActivityModels().get(0).getTaskModels().get(1).getTitle(), nextTask.getTitle());
 
+
+        // Approve the 2nd task
+        taskProcessDTO = new TaskProcessDTO();
+        taskProcessDTO.setComment("Okay");
+        taskProcessDTO.setSignature("data:image/gif;base64,R0lGODlhAQABAAAAACw=");
+        taskProcessDTO.setAction(TaskProcessDTO.ActionEnum.APPROVE);
+        taskId = workflow.getId() + "-" + currentActivity.getStep() + "-" + nextTask.getNum();
+
+        tasksApi.processTask(workspace.getId(), taskId, taskProcessDTO);
+        task = tasksApi.getTask(workspace.getId(), taskId);
+        Assert.assertEquals(TaskDTO.StatusEnum.APPROVED, task.getStatus());
+        workflow = workflowsApi.getWorkflowInstance(workspace.getId(), workflow.getId());
+        currentActivity = WorkflowHelper.getCurrentActivity(workflow);
+        Assert.assertNotNull(currentActivity);
+
+        Assert.assertEquals("ACTIVITY_2", currentActivity.getLifeCycleState());
+        nextTask = WorkflowHelper.getRunningTasks(currentActivity).get(0);
+        Assert.assertEquals("TASK_3", nextTask.getTitle());
+
+
+    }
+
+
+    private void rejectAndRelaunch(String workspaceId, Integer workflowId) throws ApiException {
+
+        WorkflowDTO workflow = workflowsApi.getWorkflowInstance(workspaceId, workflowId);
+
+        ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workflow);
+
+        // Reject the next task (server should abort and relaunch to 1st activity)
+        TaskProcessDTO taskProcessDTO = new TaskProcessDTO();
+        taskProcessDTO.setComment("Okay");
+        taskProcessDTO.setSignature("data:image/gif;base64,R0lGODlhAQABAAAAACw=");
+        taskProcessDTO.setAction(TaskProcessDTO.ActionEnum.REJECT);
+        TaskDTO nextTask = WorkflowHelper.getRunningTasks(currentActivity).get(0);
+        Assert.assertNotNull(currentActivity);
+
+        String taskId = workflow.getId() + "-" + currentActivity.getStep() + "-" + nextTask.getNum();
+
+        tasksApi.processTask(workspace.getId(), taskId, taskProcessDTO);
+
+    }
+
+    private void assertRelaunched(WorkflowDTO workflow) {
+        ActivityDTO currentActivity = WorkflowHelper.getCurrentActivity(workflow);
+        Assert.assertNotNull(currentActivity);
+        Assert.assertEquals("ACTIVITY_1", currentActivity.getLifeCycleState());
+        TaskDTO nextTask = WorkflowHelper.getRunningTasks(currentActivity).get(0);
+        Assert.assertEquals("TASK_1", nextTask.getTitle());
     }
 
     private List<RoleMappingDTO> resolveDefaultRoles(WorkflowModelDTO workflowModel) {
@@ -217,15 +268,15 @@ public class WorkflowApiTest {
         List<RoleMappingDTO> roleMapping = new ArrayList<>();
 
         // we need to resolve the roles (use defaults assignments)
-        for(RoleDTO role:rolesInvolved){
+        for (RoleDTO role : rolesInvolved) {
 
             RoleMappingDTO roleMappingDTO = new RoleMappingDTO();
             roleMappingDTO.setRoleName(role.getName());
 
-            for(UserGroupDTO group :role.getDefaultAssignedGroups()){
+            for (UserGroupDTO group : role.getDefaultAssignedGroups()) {
                 roleMappingDTO.getGroupIds().add(group.getId());
             }
-            for(UserDTO user:role.getDefaultAssignedUsers()){
+            for (UserDTO user : role.getDefaultAssignedUsers()) {
                 roleMappingDTO.getUserLogins().add(user.getLogin());
             }
             roleMapping.add(roleMappingDTO);
@@ -250,7 +301,7 @@ public class WorkflowApiTest {
         role.getDefaultAssignedUsers().add(user);
 
         // Assign default assigned groups
-        if(!userGroups.isEmpty()) {
+        if (!userGroups.isEmpty()) {
             role.getDefaultAssignedGroups().add(userGroups.get(0));
         }
 
@@ -280,17 +331,35 @@ public class WorkflowApiTest {
         activityModelDTO.setType(ActivityModelDTO.TypeEnum.SEQUENTIAL);
         activityModelDTO.setTaskModels(tasks);
 
-        List<ActivityModelDTO> activityModels = new ArrayList<>();
-        activityModels.add(activityModelDTO);
+        // Create a second activity model
+        ActivityModelDTO activityModelDTO2 = new ActivityModelDTO();
+        activityModelDTO2.setLifeCycleState("ACTIVITY_2");
+        activityModelDTO2.setStep(1);
+        activityModelDTO2.setType(ActivityModelDTO.TypeEnum.SEQUENTIAL);
+        activityModelDTO2.setTaskModels(tasks);
+        activityModelDTO2.setRelaunchStep(0);
+
+        TaskModelDTO taskModelDTO_3 = new TaskModelDTO();
+        taskModelDTO_3.setTitle("TASK_3");
+        taskModelDTO_3.setInstructions("Do something please");
+        taskModelDTO_3.setNum(0);
+        taskModelDTO_3.setRole(createdRole);
+
+        List<TaskModelDTO> tasks2 = new ArrayList<>();
+        tasks2.add(taskModelDTO_3);
+        activityModelDTO2.setTaskModels(tasks2);
 
         // Create a workflow model
+        List<ActivityModelDTO> activityModels = new ArrayList<>();
+        activityModels.add(activityModelDTO);
+        activityModels.add(activityModelDTO2);
         WorkflowModelDTO workflowModelDTO = new WorkflowModelDTO();
         workflowModelDTO.setReference(workflowModelReference);
         workflowModelDTO.setFinalLifeCycleState("FINAL_STATE");
         workflowModelDTO.setActivityModels(activityModels);
 
-        WorkflowModelDTO workflowModel = workflowModelsApi.createWorkflowModel(workspace.getId(), workflowModelDTO);
-        return workflowModel;
+
+        return workflowModelsApi.createWorkflowModel(workspace.getId(), workflowModelDTO);
     }
 
 }
