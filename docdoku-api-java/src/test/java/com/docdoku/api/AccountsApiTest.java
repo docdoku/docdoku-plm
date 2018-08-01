@@ -28,6 +28,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.springframework.http.HttpStatus;
+
+import javax.ws.rs.core.Response;
 
 @RunWith(JUnit4.class)
 public class AccountsApiTest {
@@ -74,7 +77,7 @@ public class AccountsApiTest {
         try {
             accountsApi.createAccount(accountDTO);
         } catch (ApiException e) {
-            Assert.assertEquals(400, e.getCode());
+            Assert.assertEquals(Response.Status.CONFLICT.getStatusCode(), e.getCode());
         }
 
     }

@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.net.URL;
 import java.util.Calendar;
@@ -189,17 +190,17 @@ public class SharedDocumentApiTest {
             try {
                 documentBinaryApi.downloadDocumentFile(workspace.getId(), privateDocument.getDocumentMasterId(),
                         privateDocument.getVersion(), lastIteration.getIteration(), name, null, null, null, sharedDocument.getUuid(), null, null);
-                Assert.fail("Should have throw an exception with forbidden http response");
+                Assert.fail("Should have throw an exception with bad request http response");
             } catch (ApiException e) {
-                Assert.assertEquals(404, e.getCode());
+                Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), e.getCode());
             }
 
             try {
                 documentBinaryApi.downloadDocumentFile(workspace.getId(), privateDocument.getDocumentMasterId(),
                         privateDocument.getVersion(), lastIteration.getIteration(), name, null, null, null, sharedDocument.getUuid(), "wrong-password", null);
-                Assert.fail("Should have throw an exception with forbidden http response");
+                Assert.fail("Should have throw an exception with bad request http response");
             } catch (ApiException e) {
-                Assert.assertEquals(404, e.getCode());
+                Assert.assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), e.getCode());
             }
 
             File downloadedFile = documentBinaryApi.downloadDocumentFile(workspace.getId(), privateDocument.getDocumentMasterId(),
