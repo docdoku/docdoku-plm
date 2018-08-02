@@ -41,9 +41,9 @@ import java.util.logging.Logger;
  *
  * @Author Morgan Guimard
  */
-public class DocdokuPLMClientFactory {
+public class DocDokuPLMClientFactory {
 
-    private static final Logger LOGGER = Logger.getLogger(DocdokuPLMClientFactory.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(DocDokuPLMClientFactory.class.getName());
 
     /**
      * Create a guest client, no debug

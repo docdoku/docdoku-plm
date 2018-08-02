@@ -1,12 +1,12 @@
 # Docdoku API Java
 
-Generates a jar that could be used in other projects to consume DocdokuPLM web services
+Generates a jar that could be used in other projects to consume DocDokuPLM web services
 
 ## Documentation
 
 Create a client, then use http services, example :
 
-    ApiClient client = new DocdokuPLMBasicClient("http://localhost:8080/api", login, password).getClient();
+    ApiClient client = new DocDokuPLMBasicClient("http://localhost:8080/api", login, password).getClient();
     AccountDTO myAccount = new AccountsApi(client).getAccount();
     
 See all classes under `src/test/java` for api usage

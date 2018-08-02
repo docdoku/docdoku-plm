@@ -20,7 +20,7 @@
 
 package com.docdoku.cli.commands;
 
-import com.docdoku.api.DocdokuPLMClientFactory;
+import com.docdoku.api.DocDokuPLMClientFactory;
 import com.docdoku.api.client.ApiClient;
 import com.docdoku.cli.helpers.AccountsManager;
 import com.docdoku.cli.helpers.CliOutput;
@@ -44,7 +44,7 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
     @Option(name = "-h", aliases = "--host", metaVar = "<host>", usage = "host of the DocDokuPLM server to connect; default is docdokuplm.net")
     protected String host = "docdokuplm.net";
 
-    @Option(name = "-C", aliases = "--context-path", metaVar = "<contextPath>", usage = "Context root for DocdokuPLM API, default is /eplmp-server-rest")
+    @Option(name = "-C", aliases = "--context-path", metaVar = "<contextPath>", usage = "Context root for DocDokuPLM API, default is /eplmp-server-rest")
     protected String contextPath = "/eplmp-server-rest";
 
     @Option(name = "-p", aliases = "--password", metaVar = "<password>", usage = "password to log in")
@@ -93,7 +93,7 @@ public abstract class BaseCommandLine extends AbstractCommandLine {
 
         String apiBasePath = getServerURL().toString() + "/api";
 
-        client = DocdokuPLMClientFactory.createJWTClient(apiBasePath, user, password);
+        client = DocDokuPLMClientFactory.createJWTClient(apiBasePath, user, password);
 
         execImpl();
 

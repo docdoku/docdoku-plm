@@ -67,8 +67,8 @@ public class DocumentUserACLTest {
         UserDTO user2 = new UserDTO();
         user2.setLogin(account2.getLogin());
 
-        user1Client = DocdokuPLMClientFactory.createJWTClient(TestConfig.URL, account1.getLogin(), TestConfig.PASSWORD);
-        user2Client = DocdokuPLMClientFactory.createJWTClient(TestConfig.URL, account2.getLogin(), TestConfig.PASSWORD);
+        user1Client = DocDokuPLMClientFactory.createJWTClient(TestConfig.URL, account1.getLogin(), TestConfig.PASSWORD);
+        user2Client = DocDokuPLMClientFactory.createJWTClient(TestConfig.URL, account2.getLogin(), TestConfig.PASSWORD);
 
         UserGroupDTO group = new UserGroupDTO();
         group.setId(TestUtils.randomString());

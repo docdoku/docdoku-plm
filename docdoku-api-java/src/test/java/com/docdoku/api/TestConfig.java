@@ -66,11 +66,11 @@ public class TestConfig {
         TIMEZONE = System.getProperty("timezone");
         DEBUG = Boolean.valueOf(System.getProperty("debug"));
 
-        GUEST_CLIENT = DocdokuPLMClientFactory.createClient(URL, DEBUG);
-        BASIC_CLIENT = DocdokuPLMClientFactory.createBasicClient(URL, LOGIN, PASSWORD, DEBUG);
-        COOKIE_CLIENT = DocdokuPLMClientFactory.createCookieClient(URL, LOGIN, PASSWORD, DEBUG);
-        JWT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, LOGIN, PASSWORD, DEBUG);
-        ROOT_CLIENT = DocdokuPLMClientFactory.createJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG);
+        GUEST_CLIENT = DocDokuPLMClientFactory.createClient(URL, DEBUG);
+        BASIC_CLIENT = DocDokuPLMClientFactory.createBasicClient(URL, LOGIN, PASSWORD, DEBUG);
+        COOKIE_CLIENT = DocDokuPLMClientFactory.createCookieClient(URL, LOGIN, PASSWORD, DEBUG);
+        JWT_CLIENT = DocDokuPLMClientFactory.createJWTClient(URL, LOGIN, PASSWORD, DEBUG);
+        ROOT_CLIENT = DocDokuPLMClientFactory.createJWTClient(URL, ROOT_LOGIN, ROOT_PASSWORD, DEBUG);
         REGULAR_USER_CLIENT = JWT_CLIENT;
 
         // init test account

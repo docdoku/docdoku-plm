@@ -14,7 +14,7 @@ Build properties (defaults)
     -Denv.API_BASE_PATH=/eplmp-server-rest/api
     -Denv.API_TITLE=DocDokuPLM API
     -Denv.API_VERSION=${project.version}
-    -Denv.API_DESCRIPTION=DocdokuPLM API Description and Reference
+    -Denv.API_DESCRIPTION=DocDokuPLM API Description and Reference
     -Denv.API_TOS_URL=https://www.docdokuplm.com/
     -Denv.API_CONTACT_MAIL=contact@docdokuplm.com
     -Denv.API_CONTACT_NAME=Docdoku

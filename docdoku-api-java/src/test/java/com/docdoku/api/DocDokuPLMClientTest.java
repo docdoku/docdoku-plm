@@ -33,13 +33,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 /**
- * This class tests DocdokuPLMClient class
+ * This class tests DocDokuPLMClient class
  *
  * @Author Morgan Guimard
  */
 
 @RunWith(JUnit4.class)
-public class DocdokuPLMClientTest {
+public class DocDokuPLMClientTest {
     @Test
     public void basicTests() throws ApiException {
         runTest(TestConfig.BASIC_CLIENT);

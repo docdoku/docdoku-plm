@@ -38,7 +38,7 @@ public class AccountsApiTest {
     @Test
     public void createAccountTest() throws ApiException {
         AccountDTO accountDTO = TestUtils.createAccount();
-        ApiClient accountClient = DocdokuPLMClientFactory.createJWTClient(TestConfig.URL, accountDTO.getLogin(), TestConfig.PASSWORD);
+        ApiClient accountClient = DocDokuPLMClientFactory.createJWTClient(TestConfig.URL, accountDTO.getLogin(), TestConfig.PASSWORD);
         AccountDTO account = new AccountsApi(accountClient).getAccount();
         Assert.assertEquals(account.getLogin(), accountDTO.getLogin());
     }

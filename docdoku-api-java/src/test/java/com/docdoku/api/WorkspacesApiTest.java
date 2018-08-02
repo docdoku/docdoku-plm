@@ -146,7 +146,7 @@ public class WorkspacesApiTest {
         Assert.assertTrue(workspacesForConnectedUser.getAllWorkspaces().contains(createdWorkspace));
         Assert.assertTrue(!workspacesForConnectedUser.getAdministratedWorkspaces().contains(createdWorkspace));
 
-        ApiClient newAdminClient = DocdokuPLMClientFactory.createJWTClient(TestConfig.URL, userToAdd.getLogin(),
+        ApiClient newAdminClient = DocDokuPLMClientFactory.createJWTClient(TestConfig.URL, userToAdd.getLogin(),
                 TestConfig.PASSWORD, TestConfig.DEBUG);
 
         new WorkspacesApi(newAdminClient).deleteWorkspace(workspaceId);

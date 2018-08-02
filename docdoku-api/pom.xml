@@ -106,7 +106,7 @@
         <env.API_BASE_PATH>/eplmp-server-rest/api</env.API_BASE_PATH>
         <env.API_TITLE>DocDokuPLM API</env.API_TITLE>
         <env.API_VERSION>${project.version}</env.API_VERSION>
-        <env.API_DESCRIPTION>DocdokuPLM API Description and Reference</env.API_DESCRIPTION>
+        <env.API_DESCRIPTION>DocDokuPLM API Description and Reference</env.API_DESCRIPTION>
         <env.API_TOS_URL>https://www.docdokuplm.com/</env.API_TOS_URL>
         <env.API_CONTACT_MAIL>https://www.docdokuplm.com/contact-us/</env.API_CONTACT_MAIL>
         <env.API_CONTACT_NAME>Docdoku</env.API_CONTACT_NAME>

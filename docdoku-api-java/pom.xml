@@ -276,15 +276,15 @@
                 <configuration>
                     <groups>
                         <group>
-                            <title>DocdokuPLM Java client API</title>
+                            <title>DocDokuPLM Java client API</title>
                             <packages>com.docdoku.api:com.docdoku.api.*</packages>
                         </group>
                         <group>
-                            <title>DocdokuPLM Extension points API</title>
+                            <title>DocDokuPLM Extension points API</title>
                             <packages>org.polarsys.eplmp.server:org.polarsys.eplmp.server.*</packages>
                         </group>
                         <group>
-                            <title>DocdokuPLM core documentation</title>
+                            <title>DocDokuPLM core documentation</title>
                             <packages>org.polarsys.eplmp.core.*</packages>
                         </group>
                     </groups>

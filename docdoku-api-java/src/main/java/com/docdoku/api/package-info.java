@@ -19,7 +19,7 @@
  */
 
 /**
- * DocdokuPLM Java client API classes
+ * DocDokuPLM Java client API classes
  *
  * @since 1.0
  */
