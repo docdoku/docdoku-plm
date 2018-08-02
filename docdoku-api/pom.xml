@@ -108,7 +108,7 @@
         <env.API_VERSION>${project.version}</env.API_VERSION>
         <env.API_DESCRIPTION>DocdokuPLM API Description and Reference</env.API_DESCRIPTION>
         <env.API_TOS_URL>https://www.docdokuplm.com/</env.API_TOS_URL>
-        <env.API_CONTACT_MAIL>contact@docdokuplm.com</env.API_CONTACT_MAIL>
+        <env.API_CONTACT_MAIL>https://www.docdokuplm.com/contact-us/</env.API_CONTACT_MAIL>
         <env.API_CONTACT_NAME>Docdoku</env.API_CONTACT_NAME>
         <env.API_CONTACT_URL>https://www.docdokuplm.com/</env.API_CONTACT_URL>
         <env.API_LICENCE_URL>GNU AFFERO GENERAL PUBLIC LICENSE Version 3</env.API_LICENCE_URL>
