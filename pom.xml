@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.docdoku</groupId>
     <artifactId>docdoku-plm</artifactId>
-    <version>2.5-SNAPSHOT</version>
+    <version>2.5.0</version>
     <packaging>pom</packaging>
     <name>docdoku-plm DocDokuPLM</name>
     <description>DocDokuPLM is a high end Open Source PLM solution.</description>
