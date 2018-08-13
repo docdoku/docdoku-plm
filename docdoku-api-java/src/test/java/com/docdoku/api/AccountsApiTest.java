@@ -24,6 +24,7 @@ import com.docdoku.api.client.ApiClient;
 import com.docdoku.api.client.ApiException;
 import com.docdoku.api.models.AccountDTO;
 import com.docdoku.api.services.AccountsApi;
+import com.docdoku.api.services.AdminApi;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,6 +59,9 @@ public class AccountsApiTest {
         AccountDTO account = accountsApi.getAccount();
         account.setName(newName);
         account.setPassword(TestConfig.PASSWORD);
+        account.setLanguage(TestConfig.LANGUAGE);
+        account.setLogin(TestConfig.LOGIN);
+        account.setTimeZone(TestConfig.TIMEZONE);
 
         AccountDTO updatedAccount = accountsApi.updateAccount(account);
         Assert.assertEquals(updatedAccount.getName(), account.getName());
@@ -79,6 +83,22 @@ public class AccountsApiTest {
         } catch (ApiException e) {
             Assert.assertEquals(Response.Status.CONFLICT.getStatusCode(), e.getCode());
         }
+
+    }
+
+    @Test
+    public void updateAccountTestAdmin() throws ApiException{
+
+        AdminApi adminApi = new AdminApi(TestConfig.ROOT_CLIENT);
+        AccountDTO account = adminApi.getAccounts().get(0);
+        account.setName("nameRoot");
+        account.setPassword(TestConfig.ROOT_PASSWORD);
+        account.setLanguage(TestConfig.LANGUAGE);
+        account.setLogin(TestConfig.ROOT_LOGIN);
+        account.setTimeZone(TestConfig.TIMEZONE);
+
+        AccountDTO updatedAccount = adminApi.updateAccount(account);
+        Assert.assertTrue(updatedAccount.getAdmin());
 
     }
 
