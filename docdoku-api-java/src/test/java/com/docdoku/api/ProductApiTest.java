@@ -131,12 +131,12 @@ public class ProductApiTest {
 
         productsApi.createConfigurationItem(workspace.getId(), product);
 
-        ProductBaselineDTO baseline = new ProductBaselineDTO();
-        baseline.setType(ProductBaselineDTO.TypeEnum.LATEST);
+        ProductBaselineCreationDTO baseline = new ProductBaselineCreationDTO();
+        baseline.setType(ProductBaselineCreationDTO.TypeEnum.LATEST);
         baseline.setName("Generated baseline");
         baseline.setConfigurationItemId(product.getId());
 
-        ProductBaselineDTO productBaseline = productBaselineApi.createProductBaseline(workspace.getId(), baseline);
+        ProductBaselineDTO productBaseline = productBaselineApi.createProductBaseline(workspace.getId(), baseline, false);
         List<ProductBaselineDTO> productBaselines = productBaselineApi.getProductBaselinesForProduct(workspace.getId(), product.getId());
         Assert.assertEquals(1, productBaselines.stream()
                 .filter(productBaselineDTO -> productBaseline.getId().equals(productBaselineDTO.getId()))

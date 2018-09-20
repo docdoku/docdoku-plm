@@ -67,14 +67,14 @@ public class ProductInstanceBinaryApiTest {
                 .createConfigurationItem(workspaceId, productCreation);
 
 
-        ProductBaselineDTO baselineCreation = new ProductBaselineDTO();
+        ProductBaselineCreationDTO baselineCreation = new ProductBaselineCreationDTO();
         baselineCreation.setConfigurationItemId(product.getId());
         baselineCreation.setName(TestUtils.randomString());
-        baselineCreation.setType(ProductBaselineDTO.TypeEnum.LATEST);
+        baselineCreation.setType(ProductBaselineCreationDTO.TypeEnum.LATEST);
 
         ProductBaselineDTO baseline =
                 new ProductBaselineApi(client).createProductBaseline(workspaceId,
-                        baselineCreation);
+                        baselineCreation, false);
 
         ProductInstanceCreationDTO instance = new ProductInstanceCreationDTO();
         instance.setConfigurationItemId(product.getId());

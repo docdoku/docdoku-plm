@@ -273,11 +273,11 @@ public class ProductBaselineApiTest {
     }
 
     private static void createBaseline() throws ApiException {
-        ProductBaselineDTO baselineCreation = new ProductBaselineDTO();
+        ProductBaselineCreationDTO baselineCreation = new ProductBaselineCreationDTO();
         baselineCreation.setConfigurationItemId(product.getId());
         baselineCreation.setName("B1");
-        baselineCreation.setType(ProductBaselineDTO.TypeEnum.LATEST);
-        productBaselineApi.createProductBaseline(workspace.getId(), baselineCreation);
+        baselineCreation.setType(ProductBaselineCreationDTO.TypeEnum.LATEST);
+        productBaselineApi.createProductBaseline(workspace.getId(), baselineCreation, false);
     }
 
 

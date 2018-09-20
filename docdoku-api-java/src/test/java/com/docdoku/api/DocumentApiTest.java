@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import javax.ejb.Singleton;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
