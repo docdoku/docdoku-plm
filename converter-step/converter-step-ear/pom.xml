@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.docdoku</groupId>
         <artifactId>converter-step</artifactId>
-        <version>2.5.4</version>
+        <version>2.5.5-SNAPSHOT</version>
     </parent>
     <artifactId>converter-step-ear</artifactId>
     <packaging>ear</packaging>

@@ -4,7 +4,7 @@
     <parent>
         <groupId>com.docdoku</groupId>
         <artifactId>converter-dae</artifactId>
-        <version>2.5.4</version>
+        <version>2.5.5-SNAPSHOT</version>
     </parent>
     <artifactId>converter-dae-ear</artifactId>
     <packaging>ear</packaging>
