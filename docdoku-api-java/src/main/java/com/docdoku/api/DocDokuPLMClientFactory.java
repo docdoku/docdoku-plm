@@ -121,6 +121,23 @@ public class DocDokuPLMClientFactory {
     }
 
     /**
+     * Create a jwt client from host and token, no debug
+     **/
+    public static ApiClient createJWTClient(String host, String token) {
+        return createJWTClient(host,token,false);
+    }
+
+    /**
+     * Create a jwt client from host and token, debug control
+     **/
+    public static ApiClient createJWTClient(String host, String token, boolean debug) {
+        final ApiClient client = createClient(host, debug);
+        client.addDefaultHeader("Authorization", "Bearer " + token);
+        return client;
+    }
+
+
+    /**
      * Create a cookie client, no debug
      *
      * Soon to be deprecated, consider using createJWTClient instead
