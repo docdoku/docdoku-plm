@@ -18,7 +18,7 @@
     "zip-ui": "bestzip ./target/docdoku-api-reference.zip  ./node_modules/swagger-ui-dist/*"
   },
   "devDependencies": {
-    "bestzip": "1.1.4",
+    "bestzip": "2.1.7",
     "concurrently": "3.6.0",
     "http-server": "0.9.0",
     "replace-in-file": "^3.4.0",
