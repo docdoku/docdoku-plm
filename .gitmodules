@@ -1,0 +1,28 @@
+[submodule "docdoku-plm-server"]
+	path = docdoku-plm-server
+	url = https://github.com/docdoku/docdoku-plm-server.git
+	branch = master
+[submodule "docdoku-plm-front"]
+	path = docdoku-plm-front
+	url = https://github.com/docdoku/docdoku-plm-front.git
+	branch = master
+[submodule "docdoku-plm-sample-data"]
+	path = docdoku-plm-sample-data
+	url = https://github.com/docdoku/docdoku-plm-sample-data.git
+	branch = master
+[submodule "docdoku-plm-doc"]
+	path = docdoku-plm-doc
+	url = https://github.com/docdoku/docdoku-plm-doc.git
+	branch = master
+[submodule "docdoku-plm-docker"]
+	path = docdoku-plm-docker
+	url = https://github.com/docdoku/docdoku-plm-docker.git
+	branch = master
+[submodule "docdoku-plm-conversion-service"]
+	path = docdoku-plm-conversion-service
+	url = https://github.com/docdoku/docdoku-plm-conversion-service.git
+	branch = master
+[submodule "docdoku-plm-api"]
+	path = docdoku-plm-api
+	url = https://github.com/docdoku/docdoku-plm-api.git
+	branch = master
