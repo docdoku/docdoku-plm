@@ -24,10 +24,10 @@ fi
 
 if test -f package.json; then
     git checkout dev
-    npm version $RELEASE
+    npm version --no-git-tag-version $RELEASE
     git commit -am \"Prepare $RELEASE release\"
     git tag $RELEASE
-    npm version $SNAPSHOT
+    npm version --no-git-tag-version $SNAPSHOT
     git commit -am \"Prepare $SNAPSHOT snapshot\"
     git checkout master
     git merge $RELEASE
